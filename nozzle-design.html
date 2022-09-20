@@ -1,0 +1,3027 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset=utf-8 />
+  <title>Rocket Nozzle Design</title>
+  <style>
+    /*html, body {margin: 0; height: 100%; overflow: hidden}*/
+    input[type='number']::-webkit-inner-spin-button,
+    input[type='number']::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      appearance: none;
+      margin: 0;
+    }
+
+    .sliderInput {
+      -webkit-appearance: none;
+      appearance: none;
+      position: absolute;
+      height: 12px;
+      width: 50px;
+      border-radius: 5px;
+      text-align: center;
+      font-family: Courier New, serif;
+      font-weight: bold;
+      color: #00508a;
+    }
+
+    .slider {
+      -webkit-appearance: none;
+      appearance: none;
+      position: absolute;
+      width: 200px;
+      height: 15px;
+      border-radius: 15px;
+      background: #d3d3d3;
+      outline: none;
+      opacity: 0.8;
+      -webkit-transition: .2s;
+      transition: opacity .2s;
+    }
+    
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      perspective: 1px;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #00508a;
+      border-collapse: separate;
+      border-radius: 20px;
+      background: #ffffff;
+      opacity: 1;
+      cursor: grab;
+    }
+
+    .slider:hover {
+      opacity: 1;
+      /* Fully shown on mouse-over */
+      background: #189aca;
+      cursor: pointer;
+    }
+
+    .OutputLabel {
+      -webkit-appearance: none;
+      position: absolute;
+      font-family: Garamond, serif;
+      font-size: 14px;
+      color: #757575;
+    }
+    .OutputData{
+      -webkit-appearance: none;
+      appearance: none;
+      position: absolute;
+      height: 18px;
+      width: 113px;
+      font-family: Courier New, serif;
+      font-size: 16px;
+      font-weight: bold;
+      color: #189aca;
+      text-align: right;
+      background-color: #ffffff;
+      border: 1px solid #00508a;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      -khtml-border-radius: 5px;
+      border-radius: 5px;
+      border-collapse: separate;
+      transform: translateZ(0);
+    }
+    .unitdropdown{
+      font-family: Garamond, serif;
+      font-size: 15px;
+      text-align: right;
+      color: #00508a;
+      border: 0px;
+    }
+    
+     /* The container */
+    .container {
+      /*display: block;*/
+      position: absolute;
+      cursor: pointer;
+      font-family: Garamond, serif;
+      font-size: 14px;
+      color: #00508a;
+      /*
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;*/
+    }
+
+    /* Hide the browser's default radio button */
+    .container input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      color: #ff0000;
+    }
+
+    /* Create a custom radio button */
+    .checkmark {
+      
+      appearance: none;
+      
+      position: absolute;
+      height: 21px;
+      width: 21Px;
+      border-radius: 50%;
+      cursor: pointer;
+      color: #ff0000;
+    }
+
+    /* On mouse-over, add a grey background color */
+    .container:hover input ~ .checkmark {
+      position: absolute;
+      color: #189aca;
+    }
+
+    /* When the radio button is checked, add a blue background */
+    .container input:checked ~ .checkmark {
+      position: absolute;
+      background-color: #ff0000;
+      color: #ff0000;
+    }
+
+    /* Create the indicator (the dot/circle - hidden when not checked) */
+    .checkmark:after {
+      content: "";
+      position: absolute;
+      display: none;
+      color: #ff0000;
+    }
+
+    /* Show the indicator (dot/circle) when checked */
+    .container input:checked ~ .checkmark:after {
+      /*display: block;*/
+      color: #ff0000;
+    }
+
+    /* Style the indicator (dot/circle) */
+    .container .checkmark:after {
+      height: 21px;
+      width: 21Px;
+      border-radius: 50%;
+      color: #ff0000;
+    }
+
+  </style>
+</head>
+
+<body>
+  <canvas id="BorderCanvas"></canvas>
+  <script type="text/javascript">
+    var canvas = document.getElementById('BorderCanvas');
+    if (canvas.getContext) {
+      var context = canvas.getContext('2d');
+      var xsize = 880;
+      var ysize = 1425;
+      canvas.style.width = xsize + "px";
+      canvas.style.height = ysize + "px";
+      // Set actual size in memory (scaled to account for extra pixel density).
+      var scale = 1; //window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+      canvas.width = Math.floor(xsize * scale);
+      canvas.height = Math.floor(ysize * scale);
+      // Normalize coordinate system to use css pixels.
+      context.scale(scale, scale);
+      context.clearRect(0, 0, canvas.width / scale, canvas.height / scale);
+      context.beginPath();
+      context.lineJoin = "round";
+      context.moveTo(0, 0);
+      context.lineTo(canvas.width / scale, 0);
+      context.strokeStyle = '#00508a';
+      context.stroke();
+      ////
+      context.beginPath();
+      context.lineJoin = "round";
+      context.moveTo(0, 0);
+      context.lineTo(0, canvas.height / scale);
+      context.stroke();
+      ////
+      context.beginPath();
+      context.lineJoin = "round";
+      context.moveTo(canvas.width / scale, canvas.height / scale);
+      context.lineTo(canvas.width / scale, 0);
+      context.stroke();
+      ////
+      context.beginPath();
+      context.lineJoin = "round";
+      context.moveTo(canvas.width / scale, canvas.height / scale);
+      context.lineTo(0, canvas.height / scale);
+      context.stroke();
+      ////
+    }
+  </script>
+  <div class="gammaLabel1" z-index: 1; style="position:absolute; left:120px; top:66px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
+    γ
+  </div>
+  <div class="RLabel1" z-index: 1; style="position:absolute; left:120px; top:139px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
+    R
+  </div>
+  <div class="PcLabel1" z-index: 1; style="position:absolute; left:74px; top:209px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
+    Chamber Pressure
+  </div>
+  <div class="tLabel1" z-index: 1; style="position:absolute; left:62px; top:281px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
+    Chamber Temperature
+  </div>
+  <div class="DtLabel1" z-index: 1; style="position:absolute; left:84px; top:350px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
+    Nozzle Throat
+  </div>
+  <div class="DtLabel2" z-index: 1; style="position:absolute; left:98px; top:363px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
+    Diameter
+  </div>
+  <div class="EffLabel1" z-index: 1; style="position:absolute; left:96px; top:433px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
+    Efficiency
+  </div>
+  <div class="EffLabel2" z-index: 1; style="position:absolute; left:40px; top:420px; font-family: Garamond, serif; font-size: 12px; color: #757575;">
+    Combustion
+  </div>
+  <div class="EffLabel3" z-index: 1; style="position:absolute; left:162px; top:420px; font-family: Garamond, serif; font-size: 12px; color: #757575;">
+    Nozzle
+  </div>
+  <div class="exAltLabel1" z-index: 1; style="position:absolute; left:78px; top:500px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
+    Exhaust Pressure
+  </div>
+  <div class="exAltLabel2" z-index: 1; style="position:absolute; left:74px; top:515px; font-family: Garamond, serif; font-size: 12px; color: #757575;">
+    & Equivalent Altitude
+  </div>
+  <div class="exAltLabel1" z-index: 1; style="position:absolute; left:76px; top:580px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
+    Ambient Pressure
+  </div>
+  <div class="exAltLabel2" z-index: 1; style="position:absolute; left:74px; top:595px; font-family: Garamond, serif; font-size: 12px; color: #757575;">
+    & Equivalent Altitude
+  </div>
+  <div class="IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII"> </div>
+    <div id="Foutput" class="OutputData" z-index: 1 style="position:absolute; left:241px; top:95px;">
+      F
+    </div>
+    <div id="Flabel" class="OutputLabel" z-index: 1 style="position:absolute; left:278px; top:75px;">
+      Thrust
+    </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:361px; top:97px; text-align: left; width: 25px;">
+      N
+  </div>
+    <div id="ISPoutput" class="OutputData" z-index: 1 style="position:absolute; left:408px; top:95px;">
+      ISP
+    </div>
+    <div id="ISPlabel1" class="OutputLabel" z-index: 1 style="position:absolute; left:411px; top:75px; font-size: 14px;">
+      I
+    </div>
+    <div id="ISPlabel2" class="OutputLabel" z-index: 1 style="position:absolute; left:416px; top:80px; font-size: 11px;">
+      SP
+    </div>
+    <div id="ISPlabel3" class="OutputLabel" z-index: 1 style="position:absolute; left:431px; top:75px; font-size: 12px;">
+      (Specific Impulse)
+    </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:528px; top:97px; text-align: left; width: 25px;">
+      s
+  </div>
+    <div id="Mdotoutput" class="OutputData" z-index: 1 style="position:absolute; left:575px; top:95px;">
+      mdot
+    </div>
+    <div id="Mdotlabel" class="OutputLabel" z-index: 1 style="position:absolute; left:586px; top:75px;">
+      Mass Flow Rate
+    </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:695px; top:97px; text-align: left; width: 25px;">
+      kg/s
+  </div>
+    <div id="LNoutput" class="OutputData" z-index: 1 style="position:absolute; left:715px; top:140px;">
+      LN
+    </div>
+    <div id="LNlabel" class="OutputLabel" z-index: 1 style="position:absolute; left:720px; top:120px; text-align:center; width: 100px;">
+      Nozzle Length
+    </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:835px; top:142px; text-align: left; width: 25px;">
+      m
+  </div>
+    <div id="DEoutput" class="OutputData" z-index: 1 style="position:absolute; left:715px; top:190px;">
+      DE
+    </div>
+    <div id="DElabel" class="OutputLabel" z-index: 1 style="position:absolute; left:720px; top:170px; text-align: center; width: 100px;">
+      Exit Diameter
+    </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:835px; top:192px; text-align: left; width: 25px;">
+      m
+  </div>
+    <div id="ARATIOoutput" class="OutputData" z-index: 1 style="position:absolute; left:715px; top:240px;">
+      ARATIO
+    </div>
+    <div id="ARATIOlabel" class="OutputLabel" z-index: 1 style="position:absolute; left:720px; top:220px; text-align: center; width: 100px;">
+      Expansion Ratio
+    </div>
+    <div id="Meoutput" class="OutputData" z-index: 1 style="position:absolute; left:715px; top:290px;">
+      ME
+    </div>
+    <div id="Melabel" class="OutputLabel" z-index: 1 style="position:absolute; left:720px; top:270px; text-align: center; width: 100px;">
+      Exit Mach
+    </div>
+    <div id="PePcoutput" class="OutputData" z-index: 1 style="position:absolute; left:715px; top:340px;">
+      PePc
+    </div>
+    <div id="PePclabel" class="OutputLabel" z-index: 1 style="position:absolute; left:720px; top:320px; text-align: center; width: 100px;">
+      Pressure Ratio
+    </div>
+    <div id="Veoutput" class="OutputData" z-index: 1 style="position:absolute; left:715px; top:390px;">
+      VE
+    </div>
+    <div id="Velabel" class="OutputLabel" z-index: 1 style="position:absolute; left:720px; top:370px; text-align: center; width: 100px;">
+      Exit Velocity
+    </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:835px; top:392px; text-align: left; width: 25px;">
+      m/s
+  </div>
+    <div id="Teoutput" class="OutputData" z-index: 1 style="position:absolute; left:715px; top:440px;">
+      TE
+    </div>
+    <div id="Telabel" class="OutputLabel" z-index: 1 style="position:absolute; left:720px; top:420px; text-align: center; width: 100px;">
+      Exit Temperature
+    </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:835px; top:442px; text-align: left; width: 25px;">
+      °K
+    </div>
+    <div id="Cstaroutput" class="OutputData" z-index: 1 style="position:absolute; left:715px; top:507px;">
+      CSTAR
+    </div>
+    <div id="Cstarlabel" class="OutputLabel" z-index: 1 style="position:absolute; left:720px; top:470px; text-align: center; width: 100px;">
+      Characteristic Velocity (C*)
+    </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:835px; top:509px; text-align: left; width: 25px;">
+      m/s
+    </div>
+  
+    <div id="ISP2output" class="OutputData" z-index: 1 style="position:absolute; left:715px; top:773px;">
+      ISP2
+    </div>
+    <div id="ISP2label1" class="OutputLabel" z-index: 1 style="position:absolute; left:718px; top:753px; font-size: 14px;">
+      I
+    </div>
+    <div id="ISP2label2" class="OutputLabel" z-index: 1 style="position:absolute; left:723px; top:758px; font-size: 11px;">
+      SP
+    </div>
+    <div id="ISP2label3" class="OutputLabel" z-index: 1 style="position:absolute; left:738px; top:753px; font-size: 12px;">
+      (Specific Impulse)
+    </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:835px; top:775px; text-align: left; width: 25px;">
+      s
+    </div>
+  
+    <div id="FTotaloutput" class="OutputData" z-index: 1 style="position:absolute; left:715px; top:840px;">
+      FTotal
+    </div>
+    <div id="FTotallabel" class="OutputLabel" z-index: 1 style="position:absolute; left:722px; top:820px; text-align: center; width: 100px;">
+      Total Thrust
+    </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:835px; top:842px; text-align: left; width: 25px;">
+      N
+    </div>
+  
+    <div id="TWRoutput" class="OutputData" z-index: 1 style="position:absolute; left:715px; top:900px;">
+      TWR
+    </div>
+    <div id="TWRlabel" class="OutputLabel" z-index: 1 style="position:absolute; left:722px; top:880px; text-align: center; width: 100px;">
+      TWR
+    </div>
+  
+    <div id="DVoutput" class="OutputData" z-index: 1 style="position:absolute; left:715px; top:960px;">
+      DV
+    </div>
+    <div id="DVlabel" class="OutputLabel" z-index: 1 style="position:absolute; left:722px; top:940px; text-align: center; width: 100px;">
+      ∆V
+    </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:835px; top:962px; text-align: left; width: 25px;">
+      km/s
+    </div>
+
+    <div class="slidecontainer">
+      <form>
+        <input id="gammaSlider" class="slider" type="range" name="gammaSlider" min="1.01" max="2" step="0.01" value="1.18" oninput="this.form.gammaInput.value=this.value;GammaChangeFunction(this.value);" />
+        <input id="gammaInput" class="sliderInput" type="number" name="gammaInput" min="1.01" max="2" value="1.18" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.gammaSlider.value=this.value;GammaChangeFunction(this.value);"/>
+      </form>
+      <form>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:187px; top:99px; text-align: right; width: 25px;">
+      J/kg.K
+  </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:200px; top:140px; text-align: right; width: 25px;">
+      500
+  </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:22px; top:140px; text-align: left; width: 25px;">
+      100
+  </div>
+        <input id="Rslider" class="slider" type="range" name="Rslider" min="100" max="500" step="0.01" value="375" oninput="this.form.Rinput.value=this.value;RChangeFunction(this.value);" />
+        <input id="Rinput" class="sliderInput" type="number" name="RInput" min="100" max="500" value="375" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.Rslider.value=this.value;RChangeFunction(this.value);"/>
+      </form>
+      <form>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:197px; top:169px; text-align: right; width: 25px;">
+      MPa
+  </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:200px; top:210px; text-align: right; width: 25px;">
+      25
+  </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:22px; top:210px; text-align: left; width: 25px;">
+      1
+  </div>
+        <input id="PcSlider" class="slider" type="range" name="PcSlider" min="1000000" max="25000000" step="1000" value="7900000" oninput="this.form.PcInput.value=this.value/1000000;PcChangeFunction(this.value);" />
+        <input id="PcInput" class="sliderInput" type="number" name="PcInput" min="1" max="25" value="7.9" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.PcSlider.value=this.value*1000000;PcChangeFunction(this.value*1000000);" />
+      </form>
+      <form>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:198px; top:239px; text-align: right; width: 25px;">
+      °K
+  </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:197px; top:282px; text-align: right; width: 25px;">
+      5000
+  </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:22px; top:282px; text-align: left; width: 25px;">
+      1000
+  </div>
+        <input id="tSlider" class="slider" type="range" name="tSlider" min="1000" max="5000" step="0.1" value="3572" oninput="this.form.tInput.value=this.value;TChangeFunction(this.value);" />
+        <input id="tInput" class="sliderInput" type="number" name="tInput" min="1000" max="5000" value="3572" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.tSlider.value=this.value;TChangeFunction(this.value);" />
+      </form>
+      <form>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:198px; top:309px; text-align: right; width: 25px;">
+      m
+  </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:197px; top:352px; text-align: right; width: 25px;">
+      1
+  </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:22px; top:352px; text-align: left; width: 25px;">
+      0.001
+  </div>
+        <input id="DtSlider" class="slider" type="range" name="DtSlider" min="0.001" max="1" step="0.001" value="0.72" oninput="this.form.DtInput.value=this.value;DtChangeFunction(this.value);" />
+        <input id="DtInput" class="sliderInput" type="number" name="DtInput" min="0.001" max="1" value="0.72" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.DtSlider.value=this.value;DtChangeFunction(this.value);" />
+      </form>
+      <form>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:198px; top:379px; text-align: right; width: 25px;">
+      %
+  </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:88px; top:379px; text-align: right; width: 25px;">
+      %
+  </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:197px; top:422px; text-align: right; width: 25px;">
+      98
+  </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:22px; top:422px; text-align: left; width: 25px;">
+      85
+  </div>
+        <input id="CeffSlider" class="slider" type="range" name="CeffSlider" min="85" max="98" step="0.1" value="90" oninput="this.form.CeffInput.value=this.value;CeffChangeFunction(this.value);" />
+        <input id="CeffInput" class="sliderInput" type="number" name="CeffInput" min="85" max="98" value="90" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.CeffSlider.value=this.value;CeffChangeFunction(this.value);" />
+      </form>
+      <form>
+        <input id="NeffSlider" class="slider" type="range" name="NeffSlider" min="85" max="98" step="0.1" value="97" oninput="this.form.NeffInput.value=this.value;NeffChangeFunction(this.value);" />
+        <input id="NeffInput" class="sliderInput" type="number" name="NeffInput" min="85" max="98" value="97" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.NeffSlider.value=this.value;NeffChangeFunction(this.value);" />
+      </form>
+      <form>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:198px; top:458.5px; text-align: right; width: 25px;">
+      km
+  </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:106px; top:458.5px; text-align: right; width: 25px;">
+      kPa
+  </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:195px; top:500px; text-align: right; width: 25px;">
+      space
+  </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:23px; top:500px; text-align: left; width: 40px;">
+      sea-lvl
+  </div>
+        <input id="exAltSlider" class="slider" type="range" name="exAltSlider" min="0" max="100000" step="100" value="2000" oninput="this.form.exAltInput.value=this.value/1000;this.form.exAltPressureInput.value=convAlt2Press(this.value)/1000;ExAltChangeFunction(this.value);" />
+        <input id="exAltInput" class="sliderInput" type="number" name="exAltInput" min="0" max="100" value="2" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.exAltPressureInput.value=convAlt2Press(this.value*1000)/1000;this.form.exAltSlider.value=this.value*1000;ExAltChangeFunction(this.value*1000);" />
+        <input id="exAltPressureInput" class="sliderInput" type="number" name="exAltPressureInput" min="0.00070871" max="101.325" value="79.912" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.exAltSlider.value=convPress2Alt(this.value*1000);this.form.exAltInput.value=convPress2Alt(this.value*1000)/1000;ExAltChangeFunction(convPress2Alt(this.value*1000));" />
+      </form>
+      <form>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:198px; top:538.5px; text-align: right; width: 25px;">
+      km
+  </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:106px; top:538.5px; text-align: right; width: 25px;">
+      kPa
+  </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:195px; top:580px; text-align: right; width: 25px;">
+      space
+  </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:23px; top:580px; text-align: left; width: 40px;">
+      sea-lvl
+  </div>
+        <input id="altSlider" class="slider" type="range" name="altSlider" min="0" max="100000" step="100" value="0" oninput="this.form.altInput.value=this.value/1000;this.form.altPressureInput.value=convAlt2Press(this.value)/1000;AltChangeFunction(this.value);" />
+        <input id="altInput" class="sliderInput" type="number" name="altInput" min="0" max="100" value="0" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.altSlider.value=this.value*1000;this.form.altPressureInput.value=convAlt2Press(this.value*1000)/1000;AltChangeFunction(this.value*1000);" />
+        <input id="altPressureInput" class="sliderInput" type="number" name="altPressureInput" min="0.00070871" max="101.325" value="101.325" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.altSlider.value=convPress2Alt(this.value*1000);this.form.altInput.value=convPress2Alt(this.value*1000)/1000;AltChangeFunction(convPress2Alt(this.value*1000));" />
+      </form>
+    </div>
+    <div>
+      <form>
+        <label for="plumecheck" style=" position:absolute; left:500px; top:582px; font-family: Garamond, serif; font-size: 14px; color: #00508a;"> Plume: </label>
+        <input type="checkbox" id="showplumecheck" checked= true name="showplumecheck" onchange="ShowPlumeCheckChangeFunction();" style=" position:absolute; left:550px; top:580px;">
+        <label for="showplumecheck" style=" position:absolute; left:575px; top:582px; font-family: Garamond, serif; font-size: 14px; color: #757575;"> Show </label>
+        <input type="checkbox" id="animplumecheck" checked= true name="animplumecheck" onchange="AnimPlumeCheckChangeFunction();"  style=" position:absolute; left:618px; top:580px;">
+        <label for="animplumecheck" style=" position:absolute; left:642px; top:582px; font-family: Garamond, serif; font-size: 14px; color: #757575;"> Animate </label>
+        <input type="checkbox" id="matchpepacheck" checked= false name="matchpepacheck" onchange="MatchPePaCheckChangeFunction();"  style=" position:absolute; left:235px; top:580px;">
+        <label for="matchpepacheck" style=" position:absolute; left:258px; top:582px; font-family: Garamond, serif; font-size: 14px; color: #757575;"> Match Exhaust Pressure to Ambient </label>
+      </form>
+    </div>
+    
+    <div class="slidecontainer">
+      <form>
+        <input id="engNoSlider" class="slider" type="range" name="engNoSlider" min="1" max="9" step="1" value="5" oninput="this.form.engNoInput.value=this.value;engNoChangeFunction(this.value);" style="position:absolute; top:773px; left:52px; width: 140px;"/>
+        <input id="engNoInput" class="sliderInput" type="number" name="engNoInput" min="1" max="9" value="5" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.engNoSlider.value=this.value;engNoChangeFunction(this.value);" style="position:absolute; top:752px; left:95.3px; border: 1px solid #00508a;"/>
+      </form>
+  </div>
+  <div class="engNoLabel" z-index: 1; style="position:absolute; top:794px; left:68.7px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
+    Number of Engines
+  </div>
+  
+   <div class="slidecontainer">
+      <form>
+        <input id="engMassSlider" class="slider" type="range" name="engMassSlider" min="1" max="1000" step="0.1" value="8" oninput="this.form.engMassInput.value=this.value;engMassChangeFunction(this.value);" style="position:absolute; top:843px; left:52px; width: 140px;"/>
+        <input id="engMassInput" class="sliderInput" type="number" name="engMassInput" min="1" max="1000" value="8" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.engMassSlider.value=this.value;engMassChangeFunction(this.value);" style="position:absolute; top:822px; left:95.3px; border: 1px solid #00508a;"/>
+      </form>
+      <select id="engMassUnit" class="unitdropdown" style="position:absolute; top:819px; left:164.7px" oninput="engMassUnitChangeFunction();">
+        <option value="kg">kg</option>
+        <option value="t" selected>t</option>
+      </select>
+  </div>
+  <div class="engMassLabel" z-index: 1; style="position:absolute; top:864px; left:68.7px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
+    Engine Unit Mass
+  </div>
+  
+    <div class="slidecontainer">
+      <form>
+        <input id="fuelMassSlider" class="slider" type="range" name="fuelMassSlider" min="1" max="3000" step="0.1" value="2077" oninput="this.form.fuelMassInput.value=this.value;fuelMassChangeFunction(this.value);" style="position:absolute; top:773px; left:238px;"/>
+        <input id="fuelMassInput" class="sliderInput" type="number" name="fuelMassInput" min="1" max="3000" value="2077" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.fuelMassSlider.value=this.value;fuelMassChangeFunction(this.value);" style="position:absolute; top:752px; left:311px; border: 1px solid #00508a;"/>
+      </form>
+      <select id="fuelMassUnit" class="unitdropdown" style="position:absolute; top:749px; left:410px" oninput="fuelMassUnitChangeFunction();">
+        <option value="kg">kg</option>
+        <option value="t" selected>t</option>
+      </select>
+  </div>
+  <div class="fuelMassLabel" z-index: 1; style="position:absolute; top:794px; left:310px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
+    Fuel Mass
+  </div>
+  
+  <div class="slidecontainer">
+      <form>
+        <input id="payloadMassSlider" class="slider" type="range" name="payloadMassSlider" min="1" max="3000" step="0.1" value="850" oninput="this.form.payloadMassInput.value=this.value;payloadMassChangeFunction(this.value);" style="position:absolute; top:773px; left:488px;"/>
+        <input id="payloadMassInput" class="sliderInput" type="number" name="payloadMassInput" min="1" max="3000" value="850" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.payloadMassSlider.value=this.value;payloadMassChangeFunction(this.value);" style="position:absolute; top:752px; left:561px; border: 1px solid #00508a;"/>
+      </form>
+      <select id="payloadMassUnit" class="unitdropdown" style="position:absolute; top:749px; left:660px" oninput="payloadMassUnitChangeFunction();">
+        <option value="kg">kg</option>
+        <option value="t" selected>t</option>
+      </select>
+  </div>
+  <div class="payloadMassLabel" z-index: 1; style="position:absolute; top:794px; left:552px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
+    Payload Mass
+  </div>
+  
+    <canvas id="NozzleCanvas"></canvas>
+    <canvas id="ParticleCanvas"></canvas>
+    <canvas id="VehicleCanvas"></canvas>
+    <canvas id="DVMapCanvas"></canvas>
+  
+  <div>
+    <form>
+  <input type="radio" id="EarthButton" name = "mapstarter" class="checkmark" value="0" checked="checked" style="position:absolute;top:840.5px;left:287.5px" onchange="DVcheckchange(this.value);">
+  <label for="EarthButton" class="container" style="position:absolute;top:845px;left:253px">Earth</label>
+      
+  <input type="radio" id="LEOButton" name = "mapstarter" class="checkmark" value="1" style="position:absolute;top:840.5px;left:444.5px" onchange="DVcheckchange(this.value);">
+  <label for="LEOButton" class="container" style="position:absolute;top:830px;left:470px">Low Earth Orbit</label>
+      
+  <input type="radio" id="GTOButton" name = "mapstarter" class="checkmark" value="2" style="position:absolute;top:863.5px;left:524.5px" onchange="DVcheckchange(this.value);">
+  <label for="GTOButton" class="container" style="position:absolute;top:867.5px;left:555px">GTO</label>
+      
+  <input type="radio" id="GEOButton" name = "mapstarter" class="checkmark" value="3" style="position:absolute;top:928.5px;left:454.5px" onchange="DVcheckchange(this.value);">
+  <label for="GEOButton" class="container" style="position:absolute;top:953.5px;left:454px">GEO</label>
+      
+  <input type="radio" id="L45Button" name = "mapstarter" class="checkmark" value="4" style="position:absolute;top:948.5px;left:384.5px" onchange="DVcheckchange(this.value);">
+  <label for="L45Button" class="container" style="position:absolute;top:953.5px;left:355px">L4/5</label>
+      
+  <input type="radio" id="EC3Button" name = "mapstarter" class="checkmark" value="5" style="position:absolute;top:948.5px;left:524.5px" onchange="DVcheckchange(this.value);">
+  <label for="EC3Button" class="container" style="position:absolute;top:953.5px;left:555px">Earth C3</label>
+      
+  <input type="radio" id="LUOButton" name = "mapstarter" class="checkmark" value="6" style="position:absolute;top:988.5px;left:454.5px" onchange="DVcheckchange(this.value);">
+  <label for="LUOButton" class="container" style="position:absolute;top:1013.5px;left:464px">Lunar Orbit</label>
+      
+  <input type="radio" id="LUNButton" name = "mapstarter" class="checkmark" value="7" style="position:absolute;top:1058.5px;left:374.5px" onchange="DVcheckchange(this.value);">
+  <label for="LUNButton" class="container" style="position:absolute;top:1063.5px;left:313px">The Moon</label>
+      
+  <input type="radio" id="MTRButton" name = "mapstarter" class="checkmark" value="8" style="position:absolute;top:1028.5px;left:574.5px" onchange="DVcheckchange(this.value);">
+  <label for="MTRButton" class="container" style="position:absolute;top:1033.5px;left:605px">Mars Transfer</label>
+      
+  <input type="radio" id="MC3Button" name = "mapstarter" class="checkmark" value="9" style="position:absolute;top:1088.5px;left:574.5px" onchange="DVcheckchange(this.value);">
+  <label for="MC3Button" class="container" style="position:absolute;top:1093.5px;left:605px">Mars C3</label>
+      
+  <input type="radio" id="DTRButton" name = "mapstarter" class="checkmark" value="10" style="position:absolute;top:1128.5px;left:544.5px" onchange="DVcheckchange(this.value);">
+  <label for="DTRButton" class="container" style="position:absolute;top:1128.5px;left:575px">Deimos</label>
+  <label for="DTRButton" class="container" style="position:absolute;top:1139.5px;left:575px">Transfer</label>
+      
+  <input type="radio" id="DEIButton" name = "mapstarter" class="checkmark" value="11" style="position:absolute;top:1128.5px;left:484.5px" onchange="DVcheckchange(this.value);">
+  <label for="DEIButton" class="container" style="position:absolute;top:1133.5px;left:440px">Deimos</label>
+      
+  <input type="radio" id="PTRButton" name = "mapstarter" class="checkmark" value="12" style="position:absolute;top:1178.5px;left:544.5px" onchange="DVcheckchange(this.value);">
+  <label for="PTRButton" class="container" style="position:absolute;top:1178.5px;left:575px">Phobos</label>
+  <label for="PTRButton" class="container" style="position:absolute;top:1189.5px;left:575px">Transfer</label>
+      
+  <input type="radio" id="PHOButton" name = "mapstarter" class="checkmark" value="13" style="position:absolute;top:1178.5px;left:484.5px" onchange="DVcheckchange(this.value);">
+  <label for="PHOButton" class="container" style="position:absolute;top:1183.5px;left:443px">Phobos</label>
+      
+  <input type="radio" id="LMOButton" name = "mapstarter" class="checkmark" value="14" style="position:absolute;top:1258.5px;left:464.5px" onchange="DVcheckchange(this.value);">
+  <label for="LMOButton" class="container" style="position:absolute;top:1263.5px;left:495px">Low Mars Orbit</label>
+      
+  <input type="radio" id="MARButton" name = "mapstarter" class="checkmark" value="15" style="position:absolute;top:1258.5px;left:324.5px" onchange="DVcheckchange(this.value);">
+  <label for="MARButton" class="container" style="position:absolute;top:1263.5px;left:293px">Mars</label>
+      
+    </form>
+  </div>
+  <div style="position:absolute; top:920px; left: 25px; width: 205px; margin: auto;border: 1px solid #fff; font-family: Helvetica, serif; font-size: 13px; color: #757575;">
+Click a starting point on the Delta-V map to predict the range of paths achievable by the above rocket engine and vehicle configuration, travelling between some of the nearer parts of the Solar System.
+<br>
+Default start: Earth.
+<br>
+<br>
+Note: This Delta-V budget map does not take rocket-staging into account, nor does it facilitate boosters (hence why some of the presets fail to lift off from earth when in reality they are able to).
+    <br>
+    <br>
+    The calculation also freezes the above engine ISP at its design ambient pressure/altitude, so atmospheres of destinations/origins don't alter the engine performance like they would in real life.
+<br>
+It also assumes that at each subsequent waypoint after the original launch point, the vehicle has a sufficient thrust to weight ratio (TWR) to lift off again.
+  </div>
+  <div>
+    <label for="enginePresetList" style="position:absolute;top:28px;left:250px;font-family:Garamond,serif;font-size:16px;color:#757575;">Engine Preset:</label>
+    <select name="enginePresetList" id="enginePresetList" style="position:absolute;top:28px;left:355px;width:335px;font-family:Garamond,serif;font-size:14px;color:#00508a;"onchange="enginePresetChange(this.value);">
+      <option value="custom">Custom</option>
+      <option value="saturnv">Rocketdyne F-1, Saturn V 1st Stage (LOX + RP-1)</option>
+      <option value="falcon9">Merlin 1D, Falcon 9 1st Stage (LOX + RP-1)</option>
+      <option value="ariane5">Vulcain 2, Ariane 5/6 Core Stage (LOX + LH2)</option>
+      <option value="soyuz2">RD-107A (Soyuz-2 1st Stage, LOX + Kerosene)</option>
+      <option value="autophage">Autophage hybrid prototype (N2H4O3 + C2H4)</option>
+    </select>
+  </div>
+    <script type="text/javascript">
+      var gammaSlider = document.getElementById("gammaSlider");
+      gammaSlider.style.top = "50px";
+      gammaSlider.style.left = "62px";//"132.5px";
+      gammaSlider.style.width = "120px";
+      var gammaInput = document.getElementById("gammaInput");
+      gammaInput.style.top = "29px";
+      gammaInput.style.left = 22 + 100 - 27 + "px";//22 + 135 + "px";
+      //gammaInput.style.width = "35px";
+      gammaInput.style.border = "1px solid #00508a";
+      var Rslider = document.getElementById("Rslider");
+      Rslider.style.top = "120px";
+      Rslider.style.left = "22px";
+      var Rinput = document.getElementById("Rinput");
+      Rinput.style.top = "99px";
+      Rinput.style.left = 22 + 100 - 27 + "px";
+      Rinput.style.border = "1px solid #00508a";
+      var PcSlider = document.getElementById("PcSlider");
+      PcSlider.style.top = "190px";
+      PcSlider.style.left = "22px";
+      var PcInput = document.getElementById("PcInput");
+      PcInput.style.top = "169px";
+      PcInput.style.left = 22 + 100 - 27 + "px";
+      PcInput.style.border = "1px solid #00508a";
+      var tSlider = document.getElementById("tSlider");
+      tSlider.style.top = "260px";
+      tSlider.style.left = "22px";
+      var tInput = document.getElementById("tInput");
+      tInput.style.top = "239px";
+      tInput.style.left = 22 + 100 - 27 + "px";
+      tInput.style.border = "1px solid #00508a";
+      var DtSlider = document.getElementById("DtSlider");
+      DtSlider.style.top = "330px";
+      DtSlider.style.left = "22px";
+      //DtSlider.style.oninput = DtChangeFunction(DtSlider.value);
+      var DtInput = document.getElementById("DtInput");
+      DtInput.style.top = "309px";
+      DtInput.style.left = 22 + 100 - 27 + "px";
+      DtInput.style.border = "1px solid #00508a";
+      var CeffSlider = document.getElementById("CeffSlider");
+      CeffSlider.style.top = "400px";
+      CeffSlider.style.left = "22px";
+      CeffSlider.style.width = "90px";
+      var CeffInput = document.getElementById("CeffInput");
+      CeffInput.style.top = "379px";
+      CeffInput.style.left = 22 + 25 + "px";
+      CeffInput.style.width = "35px";
+      CeffInput.style.border = "1px solid #00508a";
+      var NeffSlider = document.getElementById("NeffSlider");
+      NeffSlider.style.top = "400px";
+      NeffSlider.style.left = "132.5px";
+      NeffSlider.style.width = "90px";
+      var NeffInput = document.getElementById("NeffInput");
+      NeffInput.style.top = "379px";
+      NeffInput.style.left = 22 + 135 + "px";
+      NeffInput.style.width = "35px";
+      NeffInput.style.border = "1px solid #00508a";
+      var exAltSlider = document.getElementById("exAltSlider");
+      exAltSlider.style.top = "480px";
+      exAltSlider.style.left = "22px";
+      var exAltInput = document.getElementById("exAltPressureInput");
+      exAltInput.style.top = "459px";
+      exAltInput.style.left = 22+25+"px";//22 + 100 - 27 + "px";
+      exAltInput.style.border = "1px solid #00508a";
+      var exAltInput = document.getElementById("exAltInput");
+      exAltInput.style.top = "459px";
+      exAltInput.style.left = 22 + 120 + "px";//22 + 100 - 27 + "px";
+      exAltInput.style.border = "1px solid #00508a";
+      var altSlider = document.getElementById("altSlider");
+      altSlider.style.top = "560px";
+      altSlider.style.left = "22px";
+      var altInput = document.getElementById("altPressureInput");
+      altInput.style.top = "539px";
+      altInput.style.left = 22 + 25 + "px";
+      altInput.style.border = "1px solid #00508a";
+      var altInput = document.getElementById("altInput");
+      altInput.style.top = "539px";
+      altInput.style.left = 22 + 120 + "px";
+      altInput.style.border = "1px solid #00508a";
+      var can = document.getElementById('NozzleCanvas');
+      can.style.position = 'absolute';
+      can.style.top = "120px";
+      can.style.left = "240px";
+      var pcan = document.getElementById('ParticleCanvas');
+      pcan.style.position = 'absolute';
+      pcan.style.top = "120px";
+      pcan.style.left = "240px";
+      var can = document.getElementById('VehicleCanvas');
+      can.style.position = 'absolute';
+      can.style.top = "620px";
+      can.style.left = "25px";
+      var can = document.getElementById('DVMapCanvas');
+      can.style.position = 'absolute';
+      can.style.top = "822px";
+      can.style.left = "240px";
+      ////comment the following out before inserting to site
+      
+      enginePresetList.value = "saturnv";
+      globals = [];
+      globals['GAMMA'] = 1.18;
+      globals['R'] = 375;
+      globals['PC'] = 7900000;
+      globals['T'] = 3572;
+      globals['DT'] = 0.72;
+      globals['CEFF'] = 90;
+      globals['NEFF'] = 97;
+      globals['EXALT'] = 2000;
+      globals['ALT'] = 0;
+      globals['ARATIO'] = 0;
+      globals['LN'] = 2.49;
+      globals['ValidForPlume'] = 1;
+      
+      globals['engineNo'] = 5;
+      globals['fuelmass'] = 2077e3;
+      globals['payloadmass'] = 850e3;
+      globals['enginemass'] = 8e3;
+      
+      globals['select'] = 0;
+      globals['dv'] = 15.3;
+      globals['twr'] = 1.4;
+      
+      
+      class Particle {
+        constructor(xi, yi) {
+          this.trail = 20;
+          var pcanvas = document.getElementById('ParticleCanvas');
+          this.xi = xi; //xi * 50 + pcanvas.width / 2 / scale;
+          this.ii = yi; //yi * pcanvas.height / scale - this.trail / 2; //-this.trail;
+          this.x1 = 0;//this.pts[b.ii].x;
+          this.y1 = 0;//this.pts[b.ii].y;
+          this.x2 = 0;//this.pts[b.ii + pl].x;
+          this.y2 = 0;//this.pts[b.ii + pl].y;
+          var particlelength = 2*Math.ceil(8*Math.random()/(Math.pow(globals['LN'],1)));
+          if (particlelength > 20){
+            particlelength = 20;
+          }
+          this.pl = particlelength;
+        }
+      }
+      class PlumeSimulation {
+        constructor(dt,mdot,Ve,pts) {
+          this.particleList = [];
+          this.pts = pts;
+          this.dt = dt;
+          this.mdot = mdot;
+          this.Ve = Ve;
+        }
+        AddParticle(particle) {
+          this.particleList.push(particle);
+          return particle;
+        }
+        Reset() {
+          //console.log(this.mdot)
+          var b
+          for (b of this.particleList) {
+            //b.x = b.xi;
+            //b.y = b.yi;
+            b.ii = b.yi;
+            b.pl = Math.ceil(8*Math.random());
+            //b.yspeed = 0;
+          }
+          this.particleList = [];
+        }
+        MakeParticles(sim) {
+          
+        let apc = document.getElementById('animplumecheck');
+        if (apc.checked == 1 && apc.disabled == false && globals['ValidForPlume'] == 1){
+          var massdelta = Math.pow(this.mdot/Math.pow(this.dt,2),0.4);
+          //console.log(this.Ve/500)
+          var Xno = Math.ceil(massdelta/2.5);
+          var Yno = Math.ceil(massdelta/2.5);
+          //console.log(Math.max(Xno*Yno))
+          var Pxi
+          var Pyi
+          //console.log(pts.length)
+          for (let i = 0; i < Xno; ++i) {
+            for (let j = 1; j < Yno; ++j) {
+              //for (let k = 0; k < pts.l)
+              Pxi = i / Xno;
+              Pyi = Math.max(0,Math.ceil(this.pts.length*(j / Yno)-(Math.random()*this.pts.length/(Yno/2)))); //+Math.random()-0.5;
+              sim.AddParticle(new Particle(Pxi, Pyi));
+              sim.AddParticle(new Particle(-Pxi, Pyi));
+            }
+          }
+        }
+        }
+        Update(deltat) {
+          var b;
+          var pcanvas = document.getElementById('ParticleCanvas');
+          var pcontext = pcanvas.getContext('2d');
+          for (b of this.particleList) {
+            b.ii = b.ii+Math.ceil(this.Ve/1000);
+            if ((b.ii + b.pl) >= this.pts.length) {
+              b.ii = 0;
+            }
+            b.x1 = b.xi * this.pts[b.ii].x;
+            b.y1 = this.pts[b.ii].y;
+            b.x2 = b.xi * this.pts[b.ii + b.pl].x;
+            b.y2 = this.pts[b.ii + b.pl].y;
+            /*
+            b.y = b.y + b.yspeed;
+            if (b.y > pcanvas.height / scale + b.trail / 2) {
+                b.y = - b.trail / 2;
+            }
+            */
+          }
+        }
+      }
+      var pcanvas = document.getElementById('ParticleCanvas');
+      var pcontext = pcanvas.getContext('2d');
+      var xsize = 450;
+      var ysize = 450;
+      pcanvas.style.width = xsize + "px";
+      pcanvas.style.height = ysize + "px";
+      pcontext.clearRect(0, 0, pcanvas.width, pcanvas.height)
+      // Set actual size in memory (scaled to account for extra pixel density).
+      var scale = 2; //window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+      pcanvas.width = Math.floor(xsize * scale);
+      pcanvas.height = Math.floor(ysize * scale);
+      // Normalize coordinate system to use css pixels.
+      pcontext.scale(scale, scale);
+      console.clear();
+      var sim;
+      document.getElementById('matchpepacheck').checked = false;
+      document.getElementById('showplumecheck').checked = true;
+      document.getElementById('animplumecheck').checked = true;
+      document.getElementById('animplumecheck').disabled = false;
+      dummyPts = [{x:0,y:0},{x:0,y:0},{x:0,y:0},{x:0,y:0},{x:0,y:0},
+                 {x:0,y:0},{x:0,y:0},{x:0,y:0},{x:0,y:0},{x:0,y:0},
+                 {x:0,y:0},{x:0,y:0},{x:0,y:0},{x:0,y:0},{x:0,y:0},
+                 {x:0,y:0},{x:0,y:0},{x:0,y:0},{x:0,y:0},{x:0,y:0},
+                 {x:0,y:0},{x:0,y:0},{x:0,y:0},{x:0,y:0},{x:0,y:0},
+                 {x:0,y:0},{x:0,y:0},{x:0,y:0},{x:0,y:0},{x:0,y:0},
+                 {x:0,y:0},{x:0,y:0},{x:0,y:0},{x:0,y:0},{x:0,y:0}];
+      InitPlume(0.72, 1990.1, 2974.5, dummyPts);
+      var timer = 0;
+      timer = AnimationFrame(timer);
+      CalculateN();
+
+      function InitPlume(dt, mdot, Ve, pts) {
+        
+            sim = new PlumeSimulation(dt,mdot,Ve,pts);
+            sim.MakeParticles(sim);
+            return sim;
+      }
+
+      function AnimationFrame(timer) {
+        if (timer == 0) {
+          window.clearTimeout(timer);
+          //console.log('resetTimer')
+          //console.log(sim.Ve)
+          sim.Reset();
+        }
+        const SimStepsPerFrame = 1; //1 or originally 1000
+        var FrameDelayMillis = 20;//sim.Ve/500; //10
+        var deltat = (0.0025 * FrameDelayMillis) / SimStepsPerFrame;
+        for (let i = 0; i < SimStepsPerFrame; ++i) {
+          sim.Update(deltat);
+        }
+        Render(sim);
+        return timer = window.setTimeout(AnimationFrame, FrameDelayMillis)
+      }
+
+      function Render(sim) {
+        let cx = 225;
+        var pcanvas = document.getElementById('ParticleCanvas');
+        var pcontext = pcanvas.getContext('2d');
+        pcontext.clearRect(0, 0, pcanvas.width, pcanvas.height)
+        for (let b of sim.particleList) {
+          pcontext.globalAlpha = 0.5;
+          pcontext.beginPath()
+          pcontext.moveTo(cx + b.x1, b.y1);
+          pcontext.lineTo(cx + b.x2, b.y2 + 0*b.trail);
+          pcontext.lineWidth = 2;//Math.random()*3;
+          pcontext.strokeStyle = '#ffffff';
+          pcontext.stroke();
+          pcontext.closePath();
+        }
+      }
+      
+      function enginePresetChange(value) {
+        let EPchoice = value;
+        if (EPchoice.includes("saturnv")) {
+          //Saturn V 1st Stage (Rocketdyne F-1)
+          gammaInput.value = 1.18;
+          gammaInput.oninput();
+          Rinput.value = 361.56;
+          Rinput.oninput();
+          PcInput.value = 7.90;
+          PcInput.oninput();
+          tInput.value = 3572;
+          tInput.oninput();
+          DtInput.value = 0.72;
+          DtInput.oninput();
+          CeffInput.value = 90;
+          CeffInput.oninput();
+          NeffInput.value = 97;
+          NeffInput.oninput();
+          matchpepacheck.checked = false;
+          exAltInput.value = 2;
+          exAltInput.oninput();
+          altInput.value = 0;
+          altInput.oninput();
+          //
+          fuelMassUnit.value = 't';
+          fuelMassUnit.oninput();
+          payloadMassUnit.value = 't';
+          payloadMassUnit.oninput();
+          engMassUnit.value = 't';
+          engMassUnit.oninput();
+          fuelMassInput.value = 2077;
+          fuelMassInput.oninput();
+          payloadMassInput.value = 850;
+          payloadMassInput.oninput();
+          engMassInput.value = 8;
+          engMassInput.oninput();
+          engNoInput.value = 5;
+          engNoInput.oninput();
+          enginePresetList.value = "saturnv";
+        }else if (EPchoice.includes("autophage")) {
+          //Autophage
+          gammaInput.value = 1.2;
+          gammaInput.oninput();
+          Rinput.value = 361.56;
+          Rinput.oninput();
+          PcInput.value = 1.268;
+          PcInput.oninput();
+          tInput.value = 2103;
+          tInput.oninput();
+          DtInput.value = 0.002;
+          DtInput.oninput();
+          CeffInput.value = 90;
+          CeffInput.oninput();
+          NeffInput.value = 95;
+          NeffInput.oninput();
+          matchpepacheck.checked = false;
+          exAltInput.value = 0;
+          exAltInput.oninput();
+          altInput.value = 100;
+          altInput.oninput();
+          //
+          fuelMassUnit.value = 'kg';
+          fuelMassUnit.oninput();
+          payloadMassUnit.value = 'kg';
+          payloadMassUnit.oninput();
+          engMassUnit.value = 'kg';
+          engMassUnit.oninput();
+          fuelMassInput.value = 1;
+          fuelMassInput.oninput();
+          payloadMassInput.value = 1;
+          payloadMassInput.oninput();
+          engMassInput.value = 1;
+          engMassInput.oninput();
+          engNoInput.value = 1;
+          engNoInput.oninput();
+          enginePresetList.value = "autophage";
+        } else if (EPchoice.includes("falcon9")) {
+          //Falcon 9 1st Stage (Merlin 1D)
+          gammaInput.value = 1.24;
+          gammaInput.oninput();
+          Rinput.value = 397;
+          Rinput.oninput();
+          PcInput.value = 9.70;
+          PcInput.oninput();
+          tInput.value = 3650;
+          tInput.oninput();
+          DtInput.value = 0.25;
+          DtInput.oninput();
+          CeffInput.value = 97;
+          CeffInput.oninput();
+          NeffInput.value = 97;
+          NeffInput.oninput();
+          matchpepacheck.checked = false;
+          exAltInput.value = 5;
+          exAltInput.oninput();
+          altInput.value = 0;
+          altInput.oninput();
+          //
+          fuelMassUnit.value = 't';
+          fuelMassUnit.oninput();
+          payloadMassUnit.value = 't';
+          payloadMassUnit.oninput();
+          engMassUnit.value = 'kg';
+          engMassUnit.oninput();
+          fuelMassInput.value = 396;
+          fuelMassInput.oninput();
+          payloadMassInput.value = 153;
+          payloadMassInput.oninput();
+          engMassInput.value = 490;
+          engMassInput.oninput();
+          engNoInput.value = 9;
+          engNoInput.oninput();
+          enginePresetList.value = "falcon9";
+        } else if (EPchoice.includes("ariane5")) {
+          //Ariane 5/6 Core Stage (Vulcain 1 or 2?)
+          gammaInput.value = 1.01;
+          gammaInput.oninput();
+          Rinput.value = 397;
+          Rinput.oninput();
+          PcInput.value = 11.73;
+          PcInput.oninput();
+          tInput.value = 3700;
+          tInput.oninput();
+          DtInput.value = 0.262;
+          DtInput.oninput();
+          CeffInput.value = 98;
+          CeffInput.oninput();
+          NeffInput.value = 98;
+          NeffInput.oninput();
+          matchpepacheck.checked = false;
+          exAltInput.value = 10;
+          exAltInput.oninput();
+          altInput.value = 0;
+          altInput.oninput();
+          //
+          fuelMassUnit.value = 't';
+          fuelMassUnit.oninput();
+          payloadMassUnit.value = 't';
+          payloadMassUnit.oninput();
+          engMassUnit.value = 't';
+          engMassUnit.oninput();
+          fuelMassInput.value = 170;
+          fuelMassInput.oninput();
+          payloadMassInput.value = 607;
+          payloadMassInput.oninput();
+          engMassInput.value = 1.686;
+          engMassInput.oninput();
+          engNoInput.value = 1;
+          engNoInput.oninput();
+          enginePresetList.value = "ariane5";
+        } else if (EPchoice.includes("soyuz2")) {
+          //Soyuz-2 1st Stage (RD-107A)
+          gammaInput.value = 1.2;
+          gammaInput.oninput();
+          Rinput.value = 397;
+          Rinput.oninput();
+          PcInput.value = 6.0;
+          PcInput.oninput();
+          tInput.value = 3700;
+          tInput.oninput();
+          DtInput.value = 0.166;
+          DtInput.oninput();
+          CeffInput.value = 98;
+          CeffInput.oninput();
+          NeffInput.value = 98;
+          NeffInput.oninput();
+          matchpepacheck.checked = false;
+          exAltInput.value = 2;
+          exAltInput.oninput();
+          altInput.value = 0;
+          altInput.oninput();
+          //
+          fuelMassUnit.value = 't';
+          fuelMassUnit.oninput();
+          payloadMassUnit.value = 't';
+          payloadMassUnit.oninput();
+          engMassUnit.value = 't';
+          engMassUnit.oninput();
+          fuelMassInput.value = 154;
+          fuelMassInput.oninput();
+          payloadMassInput.value = 157.660;
+          payloadMassInput.oninput();
+          engMassInput.value = 1.190;
+          engMassInput.oninput();
+          engNoInput.value = 4;
+          engNoInput.oninput();
+          enginePresetList.value = "soyuz2";
+        }else {
+          enginePresetList.Value = "custom";
+          CalculateN();
+          //$w('#EnginePreset').value = "custom";
+        }
+      }
+      function ShowPlumeCheckChangeFunction(){
+        var sp = document.getElementById('showplumecheck');
+        var ap = document.getElementById('animplumecheck');
+        if (sp.checked == false){
+          ap.disabled = true;
+        }else{
+          ap.disabled = false;
+        }
+        CalculateN();
+      }
+      
+      function AnimPlumeCheckChangeFunction(){
+        CalculateN();
+      }
+      function MatchPePaCheckChangeFunction(){
+        ExAltChangeFunction(document.getElementById('altSlider').value);
+        AltChangeFunction(document.getElementById('altSlider').value);
+      }
+      
+      function GammaChangeFunction(val) {
+        globals['GAMMA'] = Number(val);
+        enginePresetList.value = "custom";
+        CalculateN();
+      }
+
+      function RChangeFunction(val) {
+        globals['R'] = Number(val);
+        enginePresetList.value = "custom";
+        CalculateN();
+      }
+
+      function PcChangeFunction(val) {
+        globals['PC'] = Number(val);
+        enginePresetList.value = "custom";
+        CalculateN();
+      }
+
+      function TChangeFunction(val) {
+        globals['T'] = Number(val);
+        enginePresetList.value = "custom";
+        CalculateN();
+      }
+
+      function DtChangeFunction(val) {
+        globals['DT'] = Number(val);
+        enginePresetList.value = "custom";
+        CalculateN();
+      }
+
+      function CeffChangeFunction(val) {
+        globals['CEFF'] = Number(val);
+        enginePresetList.value = "custom";
+        CalculateN();
+      }
+
+      function NeffChangeFunction(val) {
+        globals['NEFF'] = Number(val);
+        enginePresetList.value = "custom";
+        CalculateN();
+      }
+
+      function ExAltChangeFunction(val) {
+        globals['EXALT'] = Number(val);
+        enginePresetList.value = "custom";
+        var mp = document.getElementById('matchpepacheck');
+        if (mp.checked == true){
+          document.getElementById('altSlider').value = val;
+          document.getElementById('altInput').value = val/1000;
+          document.getElementById('altPressureInput').value = convAlt2Press(val)/1000;
+          globals['ALT'] = Number(val);
+        }
+        CalculateN();
+      }
+      
+      function convAlt2Press(val){
+        let he = val;
+        let R_uni = 8.31447;
+        let Pasl = 101325;
+        let m_air = 0.029;
+        let Tair = 288.15;
+        let g0 = 9.80665;
+        let Phex = -m_air * g0 * he / (R_uni * Tair);
+        let Pe = Pasl * Math.exp(Phex);
+        return Pe;
+      }
+      function convPress2Alt(val){
+        let Pe = val;
+        let R_uni = 8.31447;
+        let Pasl = 101325;
+        let m_air = 0.029;
+        let Tair = 288.15;
+        let g0 = 9.80665;
+        let he = -(R_uni*Tair*Math.log(Pe/Pasl))/(m_air*g0);
+        return he;
+      }
+      //console.log(convPress2Alt(79.912*1000))
+      
+      function AltChangeFunction(val) {
+        globals['ALT'] = Number(val);
+        enginePresetList.value = "custom";
+        var mp = document.getElementById('matchpepacheck');
+        if (mp.checked == true){
+          document.getElementById('exAltSlider').value = val;
+          document.getElementById('exAltInput').value = val/1000;
+          document.getElementById('exAltPressureInput').value = convAlt2Press(val)/1000;
+          globals['EXALT'] = Number(val);
+        }
+        CalculateN();
+      }
+      
+      function engNoChangeFunction(val){
+        globals['engineNo'] = Number(val);
+        CalculateN();
+      }
+      function engMassChangeFunction(val){
+        var emu = document.getElementById('engMassUnit').value;
+        if (emu == "kg"){
+          emu = 1;
+        }else{
+          emu = 1000;
+        }
+        globals['enginemass'] = Number(val)*emu;
+        CalculateN();
+      }
+      function engMassUnitChangeFunction(val){
+        var emv = document.getElementById('engMassSlider').value;
+        engMassChangeFunction(emv);
+      }
+      function fuelMassChangeFunction(val){
+        var fmu = document.getElementById('fuelMassUnit').value;
+        if (fmu == "kg"){
+          fmu = 1;
+        }else{
+          fmu = 1000;
+        }
+        globals['fuelmass'] = Number(val)*fmu;
+        CalculateN();
+      }
+      function fuelMassUnitChangeFunction(val){
+        var fmv = document.getElementById('fuelMassSlider').value;
+        fuelMassChangeFunction(fmv);
+      }
+      function payloadMassChangeFunction(val){
+        var pmu = document.getElementById('payloadMassUnit').value;
+        if (pmu == "kg"){
+          pmu = 1;
+        }else{
+          pmu = 1000;
+        }
+        globals['payloadmass'] = Number(val)*pmu;
+        CalculateN();
+      }
+      function payloadMassUnitChangeFunction(val){
+        var pmv = document.getElementById('payloadMassSlider').value;
+        payloadMassChangeFunction(pmv);
+      }
+      
+      function DVcheckchange(val){
+        globals['select'] = val;
+        CalculateN();
+      }
+//////////////////////////////////////////////////////
+////////////CALCULATE NOZZLE//////////////////////////
+//////////////////////////////////////////////////////
+      function CalculateN() {
+        //console.log(8/Math.pow(globals['LN'],0.33))
+        //function CalculateN(event) {
+        //Add your code for this event here:
+        //%Nozzle Throat Diameter:
+        let Dt = globals['DT']; //$w('#DtSlider').value/1000;
+        //0.002; //%m
+        //$w('#Dttext').text = Dt.toPrecision(3).toString();
+        //%Chamber Temperature:
+        let t = globals['T']; //$w('#tSlider').value//2103; //%K
+        //$w('#ttext').text = t.toString();
+        //%Chamber Pressure:
+        let Pc = globals['PC']; //$w('#PcSlider').value;//1268000; //%Pa
+        //$w('#Pctext').text = Pcmpa.toString();
+        //let Pc = Pcmpa*1000000;
+        //%Combustion Efficiency:
+        let etap = globals['CEFF']; //$w('#CeffSlider').value;//0.9; //%(0.9-0.98)
+        let eta = etap / 100;
+        //$w('#Cefftext').text = etap.toPrecision(2).toString();
+        //%Nozzle Efficiency:
+        let lambdap = globals['NEFF']; //$w('#NeffSlider').value;//0.9; //%(0.9-0.98)
+        let lambda = lambdap / 100;
+        //%Gamma
+        //let gamma = 1.2; //%(>1)
+        //%(set to zero to allow calculation by Shomate Coefficients)
+        //%(For performance calcs): total vehicle mass
+        //let v_mass_initial = 5; //%kg
+        //%(For performance calcs): vehicle dry mass
+        //let v_mass_dry = 1.33; //%kg
+        //Universal gas constant in J/mol.K
+        let R_uni = 8.31447;
+        //R = exhaust gas constant in J/kg.K
+        let R = globals['R'];
+        //reassign gamma to k
+        var k
+        let gamma = globals['GAMMA']; //$w('#gammaSlider').value;//1.2;
+        //console.log(gamma)
+        if (gamma === 1) {
+          k = 1.01;
+        } else {
+          k = gamma;
+        }
+        k = Number(k);
+        eta = Number(eta);
+        R = Number(R);
+        t = Number(t);
+        //console.log(k)
+        //$w('#gammatext').text = k.toString();
+        //Characteristic Nozzle exhaust velocity, cstar
+        //combustion efficiency eta involved from this point
+        //1-1.15 frozen flow range, 0.9-0.98 equilibrium flow range
+        let powerb = (2 / (k + 1));
+        let powerx = (k + 1) / (2 * (k - 1));
+        let cstar = eta * Math.sqrt(k * R * t) / (k * Math.pow(powerb, powerx));
+        //(eta*sqrt(k*R*t))/(k*(2/(k+1))^((k+1)/(2*(k-1))));
+        Cstaroutput.textContent = cstar.toPrecision(5).toString();
+        //nb - cstar is equal to exhaust velocity divided by thrust coefficient.
+        //Throat Diameter and Area
+        let Astar = (0.25) * Math.PI * Math.pow(Dt, 2); //m^2
+        //Chamber pressure then used to calculate throat mass flow rate
+        //n.b. assume constant mass flow given the case of invariable nozzle geometry
+        //throat mass flow is chamber pressure * throat area / char exhaust velocity
+        let mdot = Pc * Astar / cstar;
+        //$w('#mdotOutput').text = mdot.toPrecision(5);
+        Mdotoutput.textContent = mdot.toPrecision(5).toString();
+        globals['MDOT'] = mdot;
+        //kg/s
+        //alternative mass flow calc - does it match up with mdot?
+        //let mdotAlt = (Astar*Pc/Math.sqrt(t))*Math.sqrt(k/R)*Math.pow((k+1)/2,-(k+1)/(2*k-2));
+        //kg/s
+        //Relationship between Exit Pressure and Exit Mach:
+        //PLOT CURVE
+        //Me = 0.5:0.02:3.5;
+        //Pe = Pc*(1+((k-1)/2)*Me.^2).^(k/(1-k));
+        //plot(Me,Pe)
+        //Me = 2.06275;   %Found from curve for Pe = Pa
+        //%Exit Pressure:
+        let he = globals['EXALT'];
+        let hekm = he / 1000;
+        let Pasl = 101325;
+        let m_air = 0.029;
+        let Tair = 288.15;
+        let g0 = 9.80665;
+        let Phex = -m_air * g0 * he / (R_uni * Tair);
+        let Pe = Pasl * Math.exp(Phex);
+        globals['PE'] = Pe;
+        let Pekpa = Pe / 1000;
+        //EXIT MACH
+        let Me = (Math.SQRT2 * Math.sqrt((Pc * Math.pow(Pe / Pc, 1 / k)) - Pe)) / Math.sqrt((k * Pe) - Pe);
+        Meoutput.textContent = Me.toPrecision(5).toString();
+        //pressureRatio
+        let PePc = Pe / Pc;
+        PePcoutput.textContent = PePc.toPrecision(4).toString();
+        let MeSquared = Math.pow(Me, 2);
+        //Exit Temperature
+        let Te = t / (1 + ((MeSquared) * (k - 1) / 2));
+        Teoutput.textContent = Te.toPrecision(5).toString();
+        //Exit velocity
+        let Ve = Me * Math.sqrt(k * R * Te);
+        Veoutput.textContent = Ve.toPrecision(5).toString();
+        globals['VE'] = Ve;
+        //Nozzle Area Ratio (Ae/A*) (assuming constant mass flow rate):
+        //Plot relationship between area ratio and exit mach number
+        //M = 1:0.02:3.5;
+        //Aratio = (((k+1)/2)^(-((k+1)/(2*(k-1)))))*((1+((k-1)/2)*M.^2).^((k+1)/(2*(k-1))))./M;
+        //plot(M,Aratio)
+        //ylabel('A/A*'); xlabel('Mach Number');
+        //Or
+        let Aratio = Math.pow((k + 1) / 2, -(k + 1) / (2 * k - 2)) * Math.pow(1 + MeSquared * (k - 1) / 2, (k + 1) / (2 * k - 2)) / Me;
+        //Design point for nozzle achieved!
+        //N.B. This is also described as the Expansion Ratio
+        ARATIOoutput.textContent = Aratio.toPrecision(5).toString();
+        globals['ARATIO'] = Aratio;
+        let h = globals['ALT']; //$w('#altSlider').value;
+        let hkm = h / 1000;
+        //$w('#htext').text = hkm.toPrecision(3).toString();
+        //let Pasl = 101325;
+        //let m_air = 0.029;
+        //let Tair = 288.15;
+        //let g0 = 9.80665;
+        let Phx = -m_air * g0 * h / (R_uni * Tair);
+        let Ph = Pasl * Math.exp(Phx);
+        globals['PH'] = Ph;
+        let Phkpa = Ph / 1000;
+        //$w('#Phtext').text = Phkpa.toPrecision(5).toString();
+        //Thrust
+        let F = mdot * Ve + ((Pe - Ph) * Math.sqrt(Aratio * Astar) / Math.PI);
+        globals['FORCE'] = F;
+        //$w('#thrusttext').text = F.toPrecision(5).toString();
+        Foutput.textContent = F.toPrecision(5).toString();
+        //Nozzle End Diameter:
+        let De = Math.sqrt(4 * Aratio * Astar / Math.PI);
+        globals['DE'] = De;
+        //let DEoutput = document.getElementById("DEoutput");
+        DEoutput.textContent = De.toPrecision(3).toString();
+        //$w('#DEtext').text = De.toPrecision(3).toString();
+        //nozzle cone half angle:
+        let thetaCN = Math.acos(2 * lambda - 1);
+        //thetaCNdeg=thetaCN*180/pi;
+        //length of nozzle:
+        let Ln = (De - Dt) / (2 * Math.tan(thetaCN));
+        globals['LN'] = Ln;
+        //let LNoutput = document.getElementById("LNoutput");
+        //console.log(LNoutput.textContent)
+        LNoutput.textContent = Ln.toPrecision(3).toString();
+        //$w('#LNtext').text = Ln.toPrecision(3).toString();
+        let ispsq = Math.sqrt((2 / (k - 1)) * Math.pow(2 / (k + 1), (k + 1) / (k - 1)) * (1 - Math.pow((Pe / Pc), (k - 1) / k)));
+        let isp = lambda * ((cstar * k / g0) * ispsq + cstar * Aratio * (Pe - Ph) / (g0 * Pc));
+        if (isp < 0) {
+          isp = 0;
+        }
+        globals['ISP'] = isp;
+        //$w('#ISPOutput').text = isp.toPrecision(3).toString();
+        ISPoutput.textContent = isp.toPrecision(5).toString();
+        ISP2output.textContent = isp.toPrecision(5).toString();
+        //let showplume = globals['SHOWPLUME'];//$w('#plumecheck').checked;
+        //$w("#htmlNozzle").postMessage([Dt,De,Ln,lambda,Pc,t,showplume,Pe,Ph,isp,F]);
+        
+        globals['SHOWPLUME'] = document.getElementById('showplumecheck').checked;
+        if (Aratio < 12000 && F > 0 && isp > 0){
+          globals['VALIDFORPLUME'] = 1;
+        }else{
+          globals['VALIDFORPLUME'] = 0;
+        }
+        drawNozzle();
+        drawRVehicle();
+        /////////////////
+        /*
+        let engineNo = 5; //$w('#engineNoSlider').value;
+        */
+        let engineNo = globals['engineNo'];
+        //$w('#engineNotext').text = engineNo.toPrecision(1).toString()
+        /*
+        let fuelUnitchoice = 't'; //$w('#fuelUnitdropdown').value;
+        var fuelUnit;
+        if (fuelUnitchoice.includes("kg")) {
+          fuelUnit = 1;
+        } else if (fuelUnitchoice.includes("t")) {
+          fuelUnit = 1e3;
+        }
+        let fuelMass = 100 * fuelUnit;
+        */
+        let fuelMass = globals['fuelmass'];
+        //$w('#fuelmassSlider').value*fuelUnit;
+        //$w('#fuelmasstext').text = $w('#fuelmassSlider').value.toPrecision(5).toString()
+        /*
+        let payloadUnitchoice = 't'; //$w('#payloadunitdropdown').value;
+        var payloadUnit
+        if (payloadUnitchoice.includes("kg")) {
+          payloadUnit = 1;
+        } else if (fuelUnitchoice.includes("t")) {
+          payloadUnit = 1e3;
+        }
+        let payloadMass = 100 * payloadUnit;
+        */
+        let payloadMass = globals['payloadmass'];
+        
+        //$w('#PayloadmassSlider').value*payloadUnit;
+        //$w('#payloadmasstext').text = $w('#PayloadmassSlider').value.toPrecision(5).toString()
+        /*
+        let engineUnitchoice = 't'; //$w('#engineUnitdropdown').value;
+        var engineUnit
+        if (engineUnitchoice.includes("kg")) {
+          engineUnit = 1;
+        } else if (engineUnitchoice.includes("t")) {
+          engineUnit = 1e3;
+        }
+        let engineMass = 1 * engineUnit * engineNo;
+        */
+        let engineMass = globals['enginemass']*engineNo;
+        //$w('#enginemassSlider').value*engineUnit*engineNo;
+        //$w('#enginemassText').text = $w('#enginemassSlider').value.toPrecision(5).toString()
+        var localgrav
+        localgrav = 0;
+        
+        if (globals['select'] == 0){
+          localgrav = 9.80665; //earth
+        }else if (globals['select'] == 7){
+          localgrav = 1.625; //moon //7
+        }else if (globals['select'] == 15){
+          localgrav = 3.72076; //mars //16
+        }else if (globals['select'] == 11){
+          localgrav = 0.003; //deimos //12
+        }else if (globals['select'] == 13){
+          localgrav = 0.0057; //phobos //14
+        }else {
+          localgrav = 0;
+        }
+        
+        let TotalThrust = F * engineNo;
+        
+        FTotaloutput.textContent = TotalThrust.toPrecision(5).toString();
+        
+        var TWR
+        if (localgrav == 0) {
+          TWR = '---';
+          //$w('#TWRtext').text = TWR;
+        TWRoutput.textContent = 'weightless';
+        } else {
+          TWR = TotalThrust / ((payloadMass + fuelMass + engineMass) * localgrav);
+        TWRoutput.textContent = TWR.toPrecision(5).toString();
+          //$w('#TWRtext').text = TWR.toPrecision(5).toString()
+        }
+        
+        //$w('#TotalThrusttext').text = TotalThrust.toPrecision(5).toString()
+        //$w('#ISPtext2').text = isp.toPrecision(3).toString();
+        //delta V in km/s
+        let deltaV = isp * g0 * Math.log((payloadMass + fuelMass + engineMass) / (payloadMass + engineMass)) / 1e3;
+        DVoutput.textContent = deltaV.toPrecision(5).toString();
+        //$w('#deltaVtext').text = deltaV.toPrecision(3).toString();
+        globals['dv'] = deltaV;
+        globals['twr'] = TWR;
+        
+        
+        drawDVmap(); //$w("#htmlVehicle").postMessage([Dt,De,Ln,engineNo,fuelMass,payloadMass]);
+        //computeDVmap_click();
+      }
+      /////////////////////////////////////////////////////////////////////////////
+      ////////////////////////////DRAW NOZZLE//////////////////////////////////////
+      /////////////////////////////////////////////////////////////////////////////
+      function drawNozzle() { //triggered when msg recieved
+        //console.log(DT);
+        //do other stuff
+        var canvas = document.getElementById('NozzleCanvas');
+        if (canvas.getContext) {
+          var context = canvas.getContext('2d');
+          var xsize = 450;
+          var ysize = 450;
+          canvas.style.width = xsize + "px";
+          canvas.style.height = ysize + "px";
+          // Set actual size in memory (scaled to account for extra pixel density).
+          var scale = 2; //window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+          canvas.width = Math.floor(xsize * scale);
+          canvas.height = Math.floor(ysize * scale);
+          // Normalize coordinate system to use css pixels.
+          context.scale(scale, scale);
+          // Reset the current path
+          let cx = 225;
+          let cy = 225;
+          context.clearRect(0, 0, canvas.width / scale, canvas.height / scale);
+          context.beginPath();
+          context.lineJoin = "round";
+          context.moveTo(0, 0);
+          context.lineTo(canvas.width / scale, 0);
+          context.strokeStyle = '#00508a';
+          context.stroke();
+          ////
+          context.beginPath();
+          context.lineJoin = "round";
+          context.moveTo(0, 0);
+          context.lineTo(0, canvas.width / scale);
+          context.stroke();
+          ////
+          context.beginPath();
+          context.lineJoin = "round";
+          context.moveTo(canvas.width / scale, canvas.width / scale);
+          context.lineTo(canvas.width / scale, 0);
+          context.stroke();
+          ////
+          context.beginPath();
+          context.lineJoin = "round";
+          context.moveTo(canvas.width / scale, canvas.width / scale);
+          context.lineTo(0, canvas.width / scale);
+          context.stroke();
+          ////
+          //
+          let Pe = globals['PE'] / 100000;
+          let Ph = globals['PH'] / 100000;
+          //var showplumeelement = document.getElementById('showplumecheck');//globals['SHOWPLUME'];
+          //let showplume = showplumeelement.checked;
+          let showplume = globals['SHOWPLUME'];
+          let validforplume = globals['VALIDFORPLUME'];
+          //let showplume = 1;
+          //console.log(showplume)
+          let Pc = globals['PC'] / 1000000;
+          let t = globals['T'];
+          let lambda = globals['NEFF'] / 100;
+          let dt = globals['DT'];
+          let dE = globals['DE'];
+          let Ln = globals['LN'];
+          let ISP = globals['ISP'];
+          let Force = globals['FORCE'];
+          let mdot = globals['MDOT'];
+          let Ve = globals['VE'];
+          let Aratio = globals['ARATIO'];
+          //ratio for screen
+          let Lnc = (Ln / (Ln + dE)) * canvas.width / scale;
+          let dEc = (dE / (Ln + dE)) * canvas.width / scale;
+          let dtc = (dt / (Ln + dE)) * canvas.width / scale;
+          let dty = cy - 150;
+          let dtxL = cx - dtc / 2;
+          let dtxR = cx + dtc / 2;
+          let dExL = -dEc / 2;
+          let dExR = +dEc / 2;
+          let dR = dEc / dtc;
+          let dthick = (0.08/(Ln+dE))*canvas.width/scale;
+          //10 / (dt * 1.6); //8.5/(Math.pow(dt,0.2));
+          if (dthick < 5.55){
+            dthick = 5.55;
+          }else if (dthick > 250){
+            dthick = 250;
+          }
+          //console.log(dthick)
+          //Chamberfill L
+          context.beginPath();
+          context.moveTo(dtxL, dty);
+          context.lineTo(0, 0);
+          context.lineTo(cx, 0)
+          context.lineTo(cx, dty);
+          context.lineTo(dtxL, dty);
+          var CLgradient = context.createLinearGradient(0, cy, cx, 0);
+          CLgradient.addColorStop(0, '#ff8515');
+          CLgradient.addColorStop(.12 + t / 6000, '#ff3515');
+          CLgradient.addColorStop(1, '#ffff00');
+          context.fillStyle = CLgradient;
+          context.fill();
+          //Chamberfill R
+          context.beginPath();
+          context.moveTo(dtxR, dty);
+          context.lineTo(canvas.width / scale, 0);
+          context.lineTo(cx, 0)
+          context.lineTo(cx, dty);
+          context.lineTo(dtxR, dty);
+          var CRgradient = context.createLinearGradient(canvas.width / scale, cy, cx, 0);
+          CRgradient.addColorStop(0, '#ff8515');
+          CRgradient.addColorStop(.12 + t / 6000, '#ff3515');
+          CRgradient.addColorStop(1, '#ffff00');
+          context.fillStyle = CRgradient;
+          context.fill();
+          //rim
+          context.beginPath();
+          context.ellipse(cx, dty + Lnc, dExR, dEc / (dR * 4), 2 * Math.PI, 2 * Math.PI, Math.PI);
+          context.ellipse(cx, dty + Lnc, dExR + dthick, (dEc + dthick) / ((dEc / (dtc + dthick)) * 4), 2 * Math.PI, 2 * Math.PI, Math.PI);
+          context.strokeStyle = '#00508a';
+          context.stroke();
+          context.fillStyle = '#3f3f3f';
+          context.fill();
+          //ringDT
+          context.beginPath();
+          context.ellipse(cx, dty, dtc / 2, dtc / (dR * 4), 2 * Math.PI, Math.PI, 2 * Math.PI);
+          context.bezierCurveTo(dtxR, dty + Lnc / 12, cx + dExR * Math.sqrt(lambda), dty + Lnc / 2, cx + dExR, dty + Lnc);
+          //ringDE
+          context.ellipse(cx, dty + Lnc, dExR, dEc / (dR * 4), 2 * Math.PI, 2 * Math.PI, Math.PI);
+          context.bezierCurveTo(cx + dExL, dty + Lnc, cx + dExL * Math.sqrt(lambda), dty + Lnc / 2, dtxL, dty);
+          
+          var Ngradient = context.createLinearGradient(cx + dExL, 0, cx + dExR, 0);
+          Ngradient.addColorStop(0, '#959595');
+          Ngradient.addColorStop(0.3, '#d5d5d5');
+          Ngradient.addColorStop(0.5, '#e2e2e2');
+          Ngradient.addColorStop(0.7, '#d5d5d5');
+          Ngradient.addColorStop(1, '#959595')
+          context.strokeStyle = '#00104a';
+          context.stroke();
+          context.fillStyle = Ngradient;
+          context.fill();
+          //PLUME
+          var Pexp
+          let Pdiff = (Pe - Ph);
+          Pexp = Pdiff * 150;
+          if (cx + dExR + Pexp < cx + dtc) {
+            Pexp = -dExR + dtc;
+          }
+          if (validforplume == 1) {
+            if (showplume == 1){
+          //if (showplume == 1 && globals['ValidForPlume'] == 1) {
+              var PHgradient = context.createLinearGradient(cx, dty, cx, dty + Lnc);
+              PHgradient.addColorStop(0, "rgba(255, 0, 0, 0)");
+              PHgradient.addColorStop(0.1, "rgba(255, 50, 155, 0.7)");
+              PHgradient.addColorStop(1, "rgba(255, 230, 55, 0)")
+              //
+              //plumeRH
+              context.beginPath();
+              context.moveTo(cx, canvas.width / scale);
+              context.lineTo(cx, 0)
+              context.lineTo(canvas.width / scale, 0);
+              context.lineTo(dtxR, dty);
+              context.bezierCurveTo(dtxR, dty + Lnc / 12, cx + dExR * Math.sqrt(lambda), dty + Lnc / 2, cx + dExR, dty + Lnc);
+              context.bezierCurveTo(cx + dExR, dty + Lnc + 20, cx + dExR + Pexp / 2, dty + Lnc + 80, cx + dExR + Pexp, canvas.width / scale)
+              context.lineTo(cx, canvas.width / scale)
+              context.fillStyle = PHgradient;
+              context.fill();
+              //plumeLH
+              context.beginPath();
+              context.moveTo(cx, canvas.width / scale);
+              context.lineTo(cx, 0)
+              context.lineTo(0, 0);
+              context.lineTo(dtxL, dty);
+              context.bezierCurveTo(dtxL, dty + Lnc / 12, cx + dExL * Math.sqrt(lambda), dty + Lnc / 2, cx + dExL, dty + Lnc);
+              context.bezierCurveTo(cx + dExL, dty + Lnc + 20, cx + dExL - Pexp / 2, dty + Lnc + 80, cx + dExL - Pexp, canvas.width / scale)
+              context.lineTo(cx, canvas.width / scale)
+              context.fillStyle = PHgradient;
+              context.fill();
+              var PVgradient = context.createLinearGradient(cx + dExL, 0, cx + dExR, 0);
+              PVgradient.addColorStop(0, "rgba(255, 230, 0, 0.8)");
+              PVgradient.addColorStop(0.3, "rgba(255, 205, 0, 0.3)");
+              PVgradient.addColorStop(0.5, "rgba(255, 160, 0, 0.8)");
+              PVgradient.addColorStop(0.7, "rgba(255, 205, 0, 0.3)");
+              PVgradient.addColorStop(1, "rgba(255, 230, 0, 0.8)")
+              //
+              //plumeRV
+              context.beginPath();
+              context.moveTo(cx, canvas.width / scale);
+              context.lineTo(cx, 0)
+              context.lineTo(canvas.width / scale, 0);
+              context.lineTo(dtxR, dty);
+              context.bezierCurveTo(dtxR, dty + Lnc / 12, cx + dExR * Math.sqrt(lambda), dty + Lnc / 2, cx + dExR, dty + Lnc);
+              context.bezierCurveTo(cx + dExR, dty + Lnc + 20, cx + dExR + Pexp / 2, dty + Lnc + 80, cx + dExR + Pexp, canvas.width / scale)
+              context.lineTo(cx, canvas.width / scale)
+              context.fillStyle = PVgradient;
+              context.fill();
+              //plumeLV
+              context.beginPath();
+              context.moveTo(cx, canvas.width / scale);
+              context.lineTo(cx, 0)
+              context.lineTo(0, 0);
+              context.lineTo(dtxL, dty);
+              context.bezierCurveTo(dtxL, dty + Lnc / 12, cx + dExL * Math.sqrt(lambda), dty + Lnc / 2, cx + dExL, dty + Lnc);
+              context.bezierCurveTo(cx + dExL, dty + Lnc + 20, cx + dExL - Pexp / 2, dty + Lnc + 80, cx + dExL - Pexp, canvas.width / scale)
+              context.lineTo(cx, canvas.width / scale)
+              context.fillStyle = PVgradient;
+              context.fill();
+            }
+          //}
+          //if (ISP > 0 && Force > 0 && Aratio < 12000) {
+            let gridscaleF = (1 / dt) * (canvas.width / scale) * (dt / (Ln + dE)) / 2.05;
+            //console.log((canvas.width/scale)/gridscaleF)
+            if ((canvas.width / scale) / gridscaleF > 128) { //16
+              gridscale = gridscaleF * 16;
+            } else if ((canvas.width / scale) / gridscaleF > 64) {
+              gridscale = gridscaleF * 8;
+            } else if ((canvas.width / scale) / gridscaleF > 32) {
+              gridscale = gridscaleF * 4;
+            } else if ((canvas.width / scale) / gridscaleF > 16) {
+              gridscale = gridscaleF * 2;
+            } else if ((canvas.width / scale) / gridscaleF < 4) {
+              gridscale = gridscaleF / 2;
+            } else if ((canvas.width / scale) / gridscaleF < 2) {
+              gridscale = gridscaleF / 4;
+            } else if ((canvas.width / scale) / gridscaleF < 1) {
+              gridscale = gridscaleF / 8;
+            } else {
+              gridscale = gridscaleF;
+            }
+            //console.log(gridscale)
+            //grid
+            context.lineWidth = 1;
+            context.beginPath()
+            for (i = cy - 150; i < canvas.width / scale; i += gridscale) {
+              context.moveTo(0, i);
+              context.lineTo(canvas.width / scale, i);
+              context.strokeStyle = '#e9e9e9';
+              context.stroke();
+            }
+            for (i = cx; i < canvas.width / scale; i += gridscale) {
+              context.moveTo(i, 0);
+              context.lineTo(i, canvas.width / scale);
+              context.strokeStyle = '#e9e9e9';
+              context.stroke();
+            }
+            for (i = cy - 150; i > 0; i -= gridscale) {
+              context.moveTo(0, i);
+              context.lineTo(canvas.width / scale, i);
+              context.strokeStyle = '#e9e9e9';
+              context.stroke();
+            }
+            for (i = cx; i > 0; i -= gridscale) {
+              context.moveTo(i, 0);
+              context.lineTo(i, canvas.width / scale);
+              context.strokeStyle = '#e9e9e9';
+              context.stroke();
+            }
+          } else {
+            context.font = "25px Garamond";
+            context.fillStyle = "red";
+            context.textAlign = "center";
+            context.fillText("unviable engine or", (canvas.width / scale) / 2, 375);
+            context.fillText("unphysical solution.", (canvas.width / scale) / 2, 405);
+          }
+          //Chamber Pressure Indication
+          let Chamberline = Pc / 2.5;
+          if (Chamberline < 1) {
+            let Chamberline = 1;
+          } else {
+            let Chamberline = Pc / 2.5;
+          }
+          //ChamberL Pressure
+          let maxPlines = Math.ceil(Pc)+2;
+          for (i = 0; i < maxPlines*4; i += 1) {
+            context.globalAlpha = 0.05*Pc/(i+1);
+            context.lineWidth = 4*2/(Math.pow(Pc,0.35)); //Math.max(20,Chamberline*i);
+            context.beginPath();
+            context.moveTo(dtxL, dty);
+            context.lineTo((i/(maxPlines*1.5))*canvas.width/scale/2,-1);
+            context.strokeStyle = "rgba("+(i+1)*8*t/1000+","+0+","+0+"," + 1 + ")";
+            context.stroke();
+            //ChamberR Pressure
+            context.beginPath();
+            context.moveTo(dtxR, dty);
+            context.lineTo(canvas.width/scale-(i/(maxPlines*1.5))*canvas.width/scale/2,-1);
+            //context.strokeStyle = '#bb0000';
+            context.stroke();
+            context.lineWidth = 1;
+            context.globalAlpha = 1;
+          }
+          
+          //Nozzle L
+          context.beginPath();
+          context.moveTo(dtxL, dty);
+          context.bezierCurveTo(dtxL, dty + Lnc / 12, cx + dExL * Math.sqrt(lambda), dty + Lnc / 2, cx + dExL, dty + Lnc);
+          context.lineTo(cx + dExL - dthick, dty + Lnc)
+          context.bezierCurveTo(cx + dExL - dthick, dty + Lnc * 0.8, cx + (dExL - dthick) * Math.sqrt(lambda), dty + Lnc / 1.5, dtxL - Math.pow(dthick, 1.5), dty + Lnc / 12);
+          context.lineTo(0, 20);
+          context.lineTo(0, 0);
+          context.strokeStyle = '#00508a';
+          context.stroke();
+          context.fillStyle = '#757575';
+          context.fill();
+          //Nozzle R
+          context.beginPath();
+          context.moveTo(dtxR, dty);
+          context.bezierCurveTo(dtxR, dty + Lnc / 12, cx + dExR * Math.sqrt(lambda), dty + Lnc / 2, cx + dExR, dty + Lnc);
+          context.lineTo(cx + dExR + dthick, dty + Lnc)
+          context.bezierCurveTo(cx + dExR + dthick, dty + Lnc * 0.8, cx + (dExR + dthick) * Math.sqrt(lambda), dty + Lnc / 1.5, dtxR + Math.pow(dthick, 1.5), dty + Lnc / 12);
+          context.lineTo(canvas.width / scale, 20);
+          context.lineTo(canvas.width / scale, 0);
+          context.strokeStyle = '#00508a';
+          context.stroke();
+          context.fillStyle = '#757575';
+          context.fill();
+          
+          
+          
+          //var cBezLeft=[{x:dtxL,y: dty},{x:dtxL,y:dty+Lnc/12},{x:cx+dExL*Math.sqrt(lambda),y:dty+Lnc/2},{x:cx+dExL,y:dty+Lnc}];
+          //console.log(dty)
+          
+          
+          var cBezLeft = [{
+            x: -cx + 0 * dty * (Math.random() - 0.5) * 0.2,
+            y: dty * 0
+          }, {
+            x: -cx * 0.2,
+            y: dty * 0.2 + 0 * dty * (Math.random() - 0.5) * t * Pc / 1000000
+          }, {
+            x: -cx * 0.4,
+            y: dty * 0.4 + 0 * dty * (Math.random() - 0.5) * t * Pc / 1000000
+          }, {
+            x: dtxL - cx,
+            y: dty
+          }];
+          var cPoints = findCBezPoints(cBezLeft, dty * 2.5);
+          
+          var pPoints
+          if (validforplume == 1){
+            var nBezLeft = [{
+              x: dtxL - cx,
+              y: dty
+            }, {
+              x: dtxL - cx,
+              y: dty + Lnc / 12
+            }, {
+              x: dExL * Math.sqrt(lambda),
+              y: dty + Lnc / 2
+            }, {
+              x: dExL,
+              y: dty + Lnc
+            }];
+            var nPoints = findCBezPoints(nBezLeft, (Lnc) / 2);
+            //context.lineTo(dtxL, dty);
+            //context.bezierCurveTo(dtxL, dty + Lnc / 12,
+            //                        cx + dExL * Math.sqrt(lambda), dty + Lnc / 2,
+            //                        cx + dExL, dty + Lnc);
+            //cx + dExL, dty + Lnc + 20,
+            //cx + dExL - Pexp / 2, dty + Lnc + 80,
+            //cx + dExL - Pexp, canvas.width / scale
+            var olength = canvas.width / scale - Lnc - dty;
+            var oBezLeft = [{
+              x: dExL,
+              y: canvas.width / scale - olength * 0.99 //dty+Lnc*1.01
+            }, {
+              x: dExL,
+              y: canvas.width / scale - olength * 0.66 //dty +Lnc*1.8
+            }, {
+              x: dExL - Pexp / 2,
+              y: canvas.width / scale - olength * 0.33 //dty + (canvas.width/scale-Lnc-dty)*2
+            }, {
+              x: dExL - Pexp,
+              y: canvas.width / scale + olength * 0.01
+            }];
+            var oPoints = findCBezPoints(oBezLeft, (canvas.width / scale - Lnc - dty) / 3)
+
+            pPoints = cPoints.concat(nPoints, oPoints);
+            
+          }else{
+            pPoints = cPoints;
+          }
+          //nPoints.push(oPoints)
+          //console.log(oPoints)
+          //console.log(cPoints)
+          //drawPlots(pPoints);
+          
+          //console.log(Math.pow(mdot/Math.pow(dt,2),0.33))
+          //console.log(Ve)
+          //AnimatePlume(dt,mdot,Ve);
+          //InitPlume(dt, mdot, Ve);
+          //var sim;
+          InitPlume(dt, mdot, Ve, pPoints);
+          //var timer = 0;
+          //timer = AnimationFrame(timer);
+          function drawPlots(pts) {
+            context.fillStyle = 'black';
+            // don't draw the last dot b/ its radius will display past the curve
+            let plumepaths = 10;
+            for (var i = 0; i < pts.length - 1; i++) {
+              for (var j = 0; j < plumepaths; j++) {
+                context.beginPath();
+                context.arc(cx + (j / plumepaths) * pts[i].x, pts[i].y, 1, 0, Math.PI * 2);
+                context.fill();
+              }
+            }
+          }
+
+          function findCBezPoints(b, tests) {
+            var startPt = b[0];
+            var controlPt1 = b[1];
+            var controlPt2 = b[2];
+            var endPt = b[3];
+            var pts = [b[0]];
+            var lastPt = b[0];
+            //var tests = 50; ///
+            for (var t = 0; t <= tests; t++) {
+              // calc another point along the curve
+              var pt = getCubicBezierXYatT(b[0], b[1], b[2], b[3], t / tests);
+              // add the pt if it's not already in the pts[] array
+              var dx = pt.x - lastPt.x;
+              var dy = pt.y - lastPt.y;
+              var d = Math.sqrt(dx * dx + dy * dy);
+              var dInt = parseInt(d);
+              if (dInt > 0 || t == tests) {
+                lastPt = pt;
+                pts.push(pt);
+              }
+            }
+            return (pts);
+          }
+          // Given the 4 control points on a Bezier curve
+          // Get x,y at interval T along the curve (0<=T<=1)
+          // The curve starts when T==0 and ends when T==1
+          function getCubicBezierXYatT(startPt, controlPt1, controlPt2, endPt, T) {
+            var x = CubicN(T, startPt.x, controlPt1.x, controlPt2.x, endPt.x);
+            var y = CubicN(T, startPt.y, controlPt1.y, controlPt2.y, endPt.y);
+            return ({
+              x: x,
+              y: y
+            });
+          }
+          // cubic helper formula
+          function CubicN(T, a, b, c, d) {
+            var t2 = T * T;
+            var t3 = t2 * T;
+            return a + (-a * 3 + T * (3 * a - a * T)) * T + (3 * b + T * (-6 * b + b * 3 * T)) * T + (c * 3 - c * 3 * T) * t2 + d * t3;
+          }
+        }
+      }
+      
+function drawRVehicle(){//triggered when msg recieved
+  //console.log(DT);
+  //do other stuff
+  
+  var canvas = document.getElementById('VehicleCanvas');
+  if (canvas.getContext)
+   {
+    var context = canvas.getContext('2d');
+     
+    var xsize = 840;
+    var ysize = 125;
+    canvas.style.width = xsize + "px";
+    canvas.style.height = ysize + "px";
+
+    // Set actual size in memory (scaled to account for extra pixel density).
+    var scale = 2;//window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+    canvas.width = Math.floor(xsize * scale);
+    canvas.height = Math.floor(ysize * scale);
+      
+
+    // Normalize coordinate system to use css pixels.
+    context.scale(scale, scale);
+    
+     
+    // Reset the current path
+    let cx = (canvas.width/scale)/2;
+    let cy = (canvas.height/scale)/2;
+    
+    context.lineWidth = 1;
+    context.clearRect(0, 0, canvas.width/scale, canvas.height/scale);
+    context.beginPath();
+    context.lineJoin = "round";
+    context.moveTo(0,0);
+    context.lineTo(canvas.width/scale,0);
+    context.strokeStyle = '#00508a';
+    context.stroke();
+    ////
+    context.beginPath();
+    context.lineJoin = "round";
+    context.moveTo(0,0);
+    context.lineTo(0,canvas.height/scale);
+    context.stroke();
+    ////
+    context.beginPath();
+    context.lineJoin = "round";
+    context.moveTo(canvas.width/scale,canvas.height/scale);
+    context.lineTo(canvas.width/scale,0);
+    context.stroke();
+    ////
+    context.beginPath();
+    context.lineJoin = "round";
+    context.moveTo(canvas.width/scale,canvas.height/scale);
+    context.lineTo(0,canvas.height/scale);
+    context.stroke();
+    ////
+    //
+    let dt = globals['DT'];
+    let dE = globals['DE'];
+    let Ln = globals['LN'];
+    
+    //ratio for screen
+    let Lnc = (Ln/(Ln+dE))*(canvas.width/scale)/10;
+    let dEc = (dE/(Ln+dE))*(canvas.width/scale)/10;
+    let dtc = (dt/(Ln+dE))*(canvas.width/scale)/10;
+
+    let dty = cy-150;
+    let dtxL = cx-dtc/2;
+    let dtxR = cx+dtc/2;
+    let dExL = -dEc/2;
+    let dExR = +dEc/2;
+    let dR = dEc/dtc;
+     
+    
+    let fuelmass = globals['fuelmass'];
+    let payloadmass = globals['payloadmass'];
+    let wetmass = fuelmass+payloadmass;
+    
+    
+    VehicleL = (canvas.width/scale)*0.5*Math.pow(wetmass/3120000,0.05);
+    VehicleW = (canvas.height/scale)*0.065/Math.pow(wetmass/3120000,0.13);
+    
+    //Fuel Tank Dimensions
+    let fuelW = VehicleW;//*1*payloadmass/wetmass;//*fuelmass/wetmass;
+    let fuelL = VehicleL*1*fuelmass/wetmass;
+    let fuelBx = cx-180+fuelL/5;
+    
+    context.beginPath();
+    context.moveTo(fuelBx,cy+fuelW*.7)
+    context.lineTo(fuelBx,cy)
+    context.lineTo(fuelBx+fuelL,cy)
+    context.lineTo(fuelBx+fuelL,cy+fuelW*.7)
+    context.lineTo(fuelBx,cy+fuelW*.7)
+    context.fillStyle = '#189ACA'
+    context.fill()
+    
+    context.beginPath();
+    context.moveTo(fuelBx,cy-fuelW*.7)
+    context.lineTo(fuelBx,cy)
+    context.lineTo(fuelBx+fuelL,cy)
+    context.lineTo(fuelBx+fuelL,cy-fuelW*.7)
+    context.lineTo(fuelBx,cy-fuelW*.7)
+    context.fillStyle = '#a5d5f5'
+    context.fill()
+    
+    context.beginPath();
+    context.moveTo(fuelBx,cy+fuelW)
+    context.lineTo(fuelBx,cy-fuelW)
+    context.lineTo(fuelBx+fuelL,cy-fuelW)
+    context.lineTo(fuelBx+fuelL,cy+fuelW)
+    context.lineTo(fuelBx,cy+fuelW)
+    context.strokeStyle = '#00508a';
+    context.stroke();
+    
+    
+    //Payload Dimensions
+    let Pload1W = VehicleW*1;//*1*payloadmass/wetmass;
+    let Pload1Bx = fuelBx+fuelL;
+    let Pload1L = VehicleL*1*payloadmass/wetmass;
+    
+    
+    context.lineWidth = 2;
+    context.beginPath();
+    context.moveTo(2+Pload1Bx,cy+Pload1W)
+    context.lineTo(2+Pload1Bx,cy-Pload1W)
+    context.lineTo(2+Pload1Bx+Pload1L/1,cy-Pload1W)
+    context.lineTo(2+Pload1Bx+Pload1L/1,cy+Pload1W)
+    context.lineTo(2+Pload1Bx,cy+Pload1W)
+    context.strokeStyle = '#00508a';
+    context.stroke();
+    
+    context.beginPath();
+    context.moveTo(2+Pload1Bx,cy+Pload1W*.7)
+    context.lineTo(2+Pload1Bx,cy-Pload1W*.7)
+    context.lineTo(2+Pload1Bx+Pload1L/1,cy-Pload1W*.7)
+    context.lineTo(2+Pload1Bx+Pload1L/1,cy+Pload1W*.7)
+    context.lineTo(2+Pload1Bx,cy+Pload1W*.7)
+    context.strokeStyle = '#ffffff';
+    context.stroke();
+    context.fillStyle = '#a5a5a5'; //2.76; 00508a
+    context.fill();
+     
+    context.lineWidth = 1.5;
+    context.beginPath();
+    context.moveTo(2+Pload1Bx,cy+Pload1W)
+    context.lineTo(2+Pload1Bx,cy-Pload1W)
+    context.lineTo(2+Pload1Bx+Pload1L/1,cy-Pload1W)
+    context.lineTo(2+Pload1Bx+Pload1L/1,cy+Pload1W)
+    context.lineTo(2+Pload1Bx,cy+Pload1W)
+    context.strokeStyle = '#00508a';
+    context.stroke();
+    
+    context.lineWidth = 1;
+    nL = Pload1L+(fuelL+Pload1L)/9;//2+Math.log(fuelmass/wetmass);
+    //console.log(nL)
+    //Pload1L*
+    context.beginPath();
+    context.moveTo(4+Pload1Bx+nL,cy+Pload1W/2)
+    context.bezierCurveTo(4+Pload1Bx+nL,cy+Pload1W/2,4+Pload1Bx+nL+VehicleL/VehicleW,cy,4+Pload1Bx+nL,cy-Pload1W/2)
+    context.lineTo(4+Pload1Bx+nL,cy-Pload1W/2)
+    context.lineTo(4+Pload1Bx+Pload1L/1,cy-Pload1W)
+    context.lineTo(4+Pload1Bx+Pload1L/1,cy+Pload1W)
+    context.lineTo(4+Pload1Bx+nL,cy+Pload1W/2)
+    context.strokeStyle = '#00508a';
+    context.stroke();
+    
+    let engineBx = fuelBx-fuelW/3;
+     
+    context.beginPath();
+    context.moveTo(engineBx,cy+fuelW)
+    context.lineTo(engineBx,cy-fuelW)
+    context.lineTo(fuelBx-2,cy-fuelW)
+    context.lineTo(fuelBx-2,cy+fuelW)
+    context.lineTo(engineBx,cy+fuelW)
+    context.strokeStyle = '#00508a';
+    context.stroke();
+    
+    let LL = 1;
+    
+    let ncx = cx/4.25;
+    let nbk2L = .9*LL;
+    let nbk1L = .85*LL;
+    let nmidL = .8*LL;
+    let nfd1L = .75*LL;
+    let nfd2L = .7*LL;
+    let nRdtW = LL*dtc/2000;
+    let nRdEW = LL*dEc/2000;
+     
+    let engineNo = globals['engineNo'];
+    if (engineNo == 1){
+        engrad = 35;
+        context.beginPath();
+        context.ellipse(ncx, cy, 60, 60, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#757575';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy, engrad, engrad, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+      
+        let ecy = [cy];
+
+        let eLfrac = [nmidL];
+
+        for (i = 0; i < engineNo; i++) {
+
+          context.beginPath()
+          context.moveTo(engineBx,ecy[i]+fuelW*nRdtW*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]+fuelW*nRdEW*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]-fuelW*nRdEW*engrad)
+          context.lineTo(engineBx,ecy[i]-fuelW*nRdtW*engrad)
+          context.strokeStyle = '#ffffff'
+          context.lineWidth = 2;
+          context.stroke();
+          context.fillStyle = '#00508a'
+          context.fill()
+
+        }
+      
+    }else if (engineNo == 2){
+        engrad = 25;
+        context.beginPath();
+        context.ellipse(ncx, cy, 60, 60, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#757575';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy+engrad*1.1, engrad, engrad, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy-engrad*1.1, engrad, engrad, 1, 0, 2*Math.PI)
+        context.stroke();
+        
+        let kf = 1.25;
+      
+        let ecy = [cy+fuelW/3*kf*1.1,
+                  cy-fuelW/3*kf*1.1];
+
+        let eLfrac = [nmidL,
+                     nmidL];
+
+        for (i = 0; i < engineNo; i++) {
+
+          context.beginPath()
+          context.moveTo(engineBx,ecy[i]+fuelW*nRdtW*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]+fuelW*nRdEW*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]-fuelW*nRdEW*engrad)
+          context.lineTo(engineBx,ecy[i]-fuelW*nRdtW*engrad)
+          context.strokeStyle = '#ffffff'
+          context.lineWidth = 2;
+          context.stroke();
+          context.fillStyle = '#00508a'
+          context.fill()
+
+        }
+      
+     }else if (engineNo == 3){
+        engrad = 23;
+        context.beginPath();
+        context.ellipse(ncx, cy, 60, 60, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#757575';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy-engrad*1.28, engrad, engrad, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx+engrad*1.14, cy+engrad/Math.sqrt(2), engrad, engrad, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx-engrad*1.14, cy+engrad/Math.sqrt(2), engrad, engrad, 1, 0, 2*Math.PI)
+        context.stroke();
+       
+        let kf = 1.19;
+       
+        let ecy = [cy+fuelW/3*kf*1/Math.sqrt(2),
+                  cy-fuelW/3*kf*1.28,
+                  cy+fuelW/3*kf*1/Math.sqrt(2)];
+
+        let eLfrac = [nbk1L,
+                     nmidL,
+                     nfd1L];
+
+        for (i = 0; i < engineNo; i++) {
+
+          context.beginPath()
+          context.moveTo(engineBx,ecy[i]+fuelW*nRdtW*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]+fuelW*nRdEW*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]-fuelW*nRdEW*engrad)
+          context.lineTo(engineBx,ecy[i]-fuelW*nRdtW*engrad)
+          context.strokeStyle = '#ffffff'
+          context.lineWidth = 2;
+          context.stroke();
+          context.fillStyle = '#00508a'
+          context.fill()
+
+        }
+       
+     }else if (engineNo == 4){
+        engrad = 20;
+        context.beginPath();
+        context.ellipse(ncx, cy, 60, 60, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#757575';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy+engrad*1.65, engrad, engrad, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy-engrad*1.65, engrad, engrad, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx+engrad*1.65, cy, engrad, engrad, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx-engrad*1.65, cy, engrad, engrad, 1, 0, 2*Math.PI)
+        context.stroke();
+       
+        let ecy = [cy,
+                  cy+fuelW/3*1.65,
+                  cy-fuelW/3*1.65,
+                  cy];
+
+        let eLfrac = [nbk1L,
+                     nmidL,
+                     nmidL,
+                     nfd1L];
+
+        for (i = 0; i < engineNo; i++) {
+
+          context.beginPath()
+          context.moveTo(engineBx,ecy[i]+fuelW*nRdtW*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]+fuelW*nRdEW*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]-fuelW*nRdEW*engrad)
+          context.lineTo(engineBx,ecy[i]-fuelW*nRdtW*engrad)
+          context.strokeStyle = '#ffffff'
+          context.lineWidth = 2;
+          context.stroke();
+          context.fillStyle = '#00508a'
+          context.fill()
+
+        }
+       
+      }else if (engineNo == 5){
+        engrad = 17;
+        context.beginPath();
+        context.ellipse(ncx, cy, 60, 60, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#757575';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx-engrad*2.2/Math.sqrt(2), cy+engrad*2.2/Math.sqrt(2), engrad, engrad, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx+engrad*2.2/Math.sqrt(2), cy+engrad*2.2/Math.sqrt(2), engrad, engrad, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx+engrad*2.2/Math.sqrt(2), cy-engrad*2.2/Math.sqrt(2), engrad, engrad, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx-engrad*2.2/Math.sqrt(2), cy-engrad*2.2/Math.sqrt(2), engrad, engrad, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy, engrad, engrad, 1, 0, 2*Math.PI)
+        context.stroke();
+        
+        let kf = 1/1.14;
+
+        let ecy = [cy-fuelW/3*kf*2.2/Math.sqrt(2),
+                  cy+fuelW/3*kf*2.2/Math.sqrt(2),
+                  cy,
+                  cy-fuelW/3*kf*2.2/Math.sqrt(2),
+                  cy+fuelW/3*kf*2.2/Math.sqrt(2)];
+
+        let eLfrac = [nbk1L,
+                     nbk1L,
+                     nmidL,
+                     nfd1L,
+                     nfd1L];
+
+        for (i = 0; i < engineNo; i++) {
+
+          context.beginPath()
+          context.moveTo(engineBx,ecy[i]+fuelW*nRdtW*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]+fuelW*nRdEW*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]-fuelW*nRdEW*engrad)
+          context.lineTo(engineBx,ecy[i]-fuelW*nRdtW*engrad)
+          context.strokeStyle = '#ffffff'
+          context.lineWidth = 2;
+          context.stroke();
+          context.fillStyle = '#00508a'
+          context.fill()
+
+        }
+      
+      }else if (engineNo == 6){
+        engrad = 28;
+        context.beginPath();
+        context.ellipse(ncx, cy, 60, 60, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#757575';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx+engrad*2/Math.sqrt(3), cy+engrad*1.14/Math.sqrt(3), engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx-engrad*2/Math.sqrt(3), cy+engrad*1.14/Math.sqrt(3), engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy-engrad*1.33, engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy+engrad*1.33, engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx+engrad*2/Math.sqrt(3), cy-engrad*1.14/Math.sqrt(3), engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx-engrad*2/Math.sqrt(3), cy-engrad*1.14/Math.sqrt(3), engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        
+        let kf = 1.36;
+        
+        let ecy = [cy-fuelW/3*kf*1.14/Math.sqrt(3),
+                  cy+fuelW/3*kf*1.14/Math.sqrt(3),
+                  cy-fuelW/3*kf*1.33,
+                  cy+fuelW/3*kf*1.33,
+                  cy-fuelW/3*kf*1.14/Math.sqrt(3),
+                  cy+fuelW/3*kf*1.14/Math.sqrt(3)];
+
+        let eLfrac = [nbk1L,
+                     nbk1L,
+                     nmidL,
+                     nmidL,
+                     nfd1L,
+                     nfd1L];
+
+        for (i = 0; i < engineNo; i++) {
+
+          context.beginPath()
+          context.moveTo(engineBx,ecy[i]+fuelW*nRdtW*0.6*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]+fuelW*nRdEW*0.6*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]-fuelW*nRdEW*0.6*engrad)
+          context.lineTo(engineBx,ecy[i]-fuelW*nRdtW*0.6*engrad)
+          context.strokeStyle = '#ffffff'
+          context.lineWidth = 2;
+          context.stroke();
+          context.fillStyle = '#00508a'
+          context.fill()
+
+        }
+        
+      }else if (engineNo == 7){
+      engrad = 27;
+        context.beginPath();
+        context.ellipse(ncx, cy, 60, 60, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#757575';
+        context.stroke();
+      context.beginPath();
+      context.ellipse(ncx-engrad*1.28, cy, engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+      context.strokeStyle = '#00508a';
+      context.stroke();
+      context.beginPath();
+      context.ellipse(ncx+engrad*1.14/Math.sqrt(3), cy+engrad*2/Math.sqrt(3), engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+      context.stroke();
+      context.beginPath();
+      context.ellipse(ncx-engrad*1.14/Math.sqrt(3), cy+engrad*2/Math.sqrt(3), engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+      context.stroke();
+      context.beginPath();
+      context.ellipse(ncx+engrad*1.28, cy, engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+      context.strokeStyle = '#00508a';
+      context.stroke();
+      context.beginPath();
+      context.ellipse(ncx+engrad*1.14/Math.sqrt(3), cy-engrad*2/Math.sqrt(3), engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+      context.stroke();
+      context.beginPath();
+      context.ellipse(ncx-engrad*1.14/Math.sqrt(3), cy-engrad*2/Math.sqrt(3), engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+      context.stroke();
+      context.beginPath();
+      context.ellipse(ncx, cy, engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+      context.stroke();
+        
+        let kf = 2.4;
+        
+        let ecy = [cy,
+                  cy-fuelW/3*kf*1.14/Math.sqrt(3),
+                  cy+fuelW/3*kf*1.14/Math.sqrt(3),
+                  cy,
+                  cy+fuelW/3*kf*1.14/Math.sqrt(3),
+                  cy-fuelW/3*kf*1.14/Math.sqrt(3),
+                  cy];
+
+        let eLfrac = [nbk2L,
+                     nbk1L,
+                     nbk1L,
+                     nmidL,
+                     nfd1L,
+                     nfd1L,
+                     nfd2L];
+
+        for (i = 0; i < engineNo; i++) {
+
+          context.beginPath()
+          context.moveTo(engineBx,ecy[i]+fuelW*nRdtW*0.6*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]+fuelW*nRdEW*0.6*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]-fuelW*nRdEW*0.6*engrad)
+          context.lineTo(engineBx,ecy[i]-fuelW*nRdtW*0.6*engrad)
+          context.strokeStyle = '#ffffff'
+          context.lineWidth = 2;
+          context.stroke();
+          context.fillStyle = '#00508a'
+          context.fill()
+
+        }
+        
+      }else if (engineNo == 8){
+        engrad = 17;
+        context.beginPath();
+        context.ellipse(ncx, cy, 60, 60, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#757575';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy+engrad*2.5, engrad*0.85, engrad*0.85, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy-engrad*2.5, engrad*0.85, engrad*0.85, 1, 0, 2*Math.PI)
+        context.stroke();
+         context.beginPath();
+        context.ellipse(ncx+engrad*2.5, cy, engrad*0.85, engrad*0.85, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx-engrad*2.5, cy, engrad*0.85, engrad*0.85, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx-engrad*1.3/Math.sqrt(2), cy+engrad*1.3/Math.sqrt(2), engrad*0.85, engrad*0.85, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx-engrad*1.3/Math.sqrt(2), cy-engrad*1.3/Math.sqrt(2), engrad*0.85, engrad*0.85, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx+engrad*1.3/Math.sqrt(2), cy+engrad*1.3/Math.sqrt(2), engrad*0.85, engrad*0.85, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx+engrad*1.3/Math.sqrt(2), cy-engrad*1.3/Math.sqrt(2), engrad*0.85, engrad*0.85, 1, 0, 2*Math.PI)
+        context.stroke();
+        
+        let kf = 1/1.18;
+        
+        let ecy = [cy,
+                  cy-fuelW/3*kf*1.3/Math.sqrt(2),
+                  cy+fuelW/3*kf*1.3/Math.sqrt(2),
+                  cy+fuelW/3*kf*2.5,
+                  cy-fuelW/3*kf*2.5,
+                  cy-fuelW/3*kf*1.3/Math.sqrt(2),
+                  cy+fuelW/3*kf*1.3/Math.sqrt(2),
+                  cy];
+
+        let eLfrac = [nbk2L,
+                     nbk1L,
+                     nbk1L,
+                     nmidL,
+                     nmidL,
+                     nfd1L,
+                     nfd1L,
+                     nfd2L];
+
+        for (i = 0; i < engineNo; i++) {
+
+          context.beginPath()
+          context.moveTo(engineBx,ecy[i]+fuelW*nRdtW*0.85*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]+fuelW*nRdEW*0.85*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]-fuelW*nRdEW*0.85*engrad)
+          context.lineTo(engineBx,ecy[i]-fuelW*nRdtW*0.85*engrad)
+          context.strokeStyle = '#ffffff'
+          context.lineWidth = 2;
+          context.stroke();
+          context.fillStyle = '#00508a'
+          context.fill()
+
+        }
+        
+      }else if (engineNo == 9){
+        engrad = 16;
+        context.beginPath();
+        context.ellipse(ncx, cy, 60, 60, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#757575';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy+engrad*2.5, engrad*0.9, engrad*0.9, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy-engrad*2.5, engrad*0.9, engrad*0.9, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx+engrad*2.5, cy, engrad*0.9, engrad*0.9, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx-engrad*2.5, cy, engrad*0.9, engrad*0.9, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx-engrad*2.5/Math.sqrt(2), cy+engrad*2.5/Math.sqrt(2), engrad*0.9, engrad*0.9, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx-engrad*2.5/Math.sqrt(2), cy-engrad*2.5/Math.sqrt(2), engrad*0.9, engrad*0.9, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx+engrad*2.5/Math.sqrt(2), cy+engrad*2.5/Math.sqrt(2), engrad*0.9, engrad*0.9, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx+engrad*2.5/Math.sqrt(2), cy-engrad*2.5/Math.sqrt(2), engrad*0.9, engrad*0.9, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy, engrad*0.95, engrad*0.95, 1, 0, 2*Math.PI)
+        context.stroke();
+        
+        let kf = 1/1.28;
+        
+        let ecy = [cy,
+                  cy-fuelW/3*kf*2.5/Math.sqrt(2),
+                  cy+fuelW/3*kf*2.5/Math.sqrt(2),
+                  cy+fuelW/3*kf*2.5,
+                  cy,
+                  cy-fuelW/3*kf*2.5,
+                  cy-fuelW/3*kf*2.5/Math.sqrt(2),
+                  cy+fuelW/3*kf*2.5/Math.sqrt(2),
+                  cy];
+
+        let eLfrac = [nbk2L,
+                     nbk1L,
+                     nbk1L,
+                     nmidL,
+                     nmidL,
+                     nmidL,
+                     nfd1L,
+                     nfd1L,
+                     nfd2L];
+
+        for (i = 0; i < engineNo; i++) {
+
+          context.beginPath()
+          context.moveTo(engineBx,ecy[i]+fuelW*nRdtW*0.9*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]+fuelW*nRdEW*0.9*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]-fuelW*nRdEW*0.9*engrad)
+          context.lineTo(engineBx,ecy[i]-fuelW*nRdtW*0.9*engrad)
+          context.strokeStyle = '#ffffff'
+          context.lineWidth = 2;
+          context.stroke();
+          context.fillStyle = '#00508a'
+          context.fill()
+
+        }
+        
+    }
+    
+    
+     }
+ }
+ function drawDVmap(){//triggered when msg recieved
+                  //do other stuff
+                  
+                  var canvas = document.getElementById('DVMapCanvas');
+                  if (canvas.getContext)
+                   {
+                    var context = canvas.getContext('2d');
+                     
+                    var xsize = 450;
+                    var ysize = 500;
+                    canvas.style.width = xsize + "px";
+                    canvas.style.height = ysize + "px";
+
+                    // Set actual size in memory (scaled to account for extra pixel density).
+                    var scale = 4;//window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+                    canvas.width = Math.floor(xsize * scale);
+                    canvas.height = Math.floor(ysize * scale);
+                      
+
+                    // Normalize coordinate system to use css pixels.
+                    context.scale(scale, scale);
+                     
+                     
+                    // Reset the current path
+                    let cx = (canvas.width/scale)/2;
+                    let cy = (canvas.height/scale)/2;
+                    
+                    context.lineWidth = 1;
+                    context.clearRect(0, 0, canvas.width/scale, canvas.height/scale);
+                    context.beginPath();
+                    context.lineJoin = "round";
+                    context.moveTo(0,0);
+                    context.lineTo(canvas.width/scale,0);
+                    context.strokeStyle = '#00508a';
+                    context.stroke();
+                    ////
+                    context.beginPath();
+                    context.lineJoin = "round";
+                    context.moveTo(0,0);
+                    context.lineTo(0,canvas.height/scale);
+                    context.stroke();
+                    ////
+                    context.beginPath();
+                    context.lineJoin = "round";
+                    context.moveTo(canvas.width/scale,canvas.height/scale);
+                    context.lineTo(canvas.width/scale,0);
+                    context.stroke();
+                    ////
+                    context.beginPath();
+                    context.lineJoin = "round";
+                    context.moveTo(canvas.width/scale,canvas.height/scale);
+                    context.lineTo(0,canvas.height/scale);
+                    context.stroke();
+                    ////
+                    //
+                    let select = globals['select'];
+                    let dv = globals['dv'];
+                    let twr = globals['twr'];
+                    let XXX = NaN;
+                    
+                    function multvector(a,b){
+                        return a.map((e,i) => e * b[i]);
+                    }
+                    function divvector(a,b){
+                        return a.map((e,i) => e / b[i]);
+                    }
+                     
+                     
+                    // flags for enabling aero-braking?
+                    let aeroETH = globals['aeroETH'];
+                    let aeroMAR = globals['aeroMAR'];
+                    
+                    /*
+                    var
+                    if (aeroETH==1){}
+                    */
+                     
+                    let pdv = [
+                     //ETH,LEO,GTO,GEO,L45,EC3,LUO,LUN,MTR,MC3,DTR,DEI,PTR,PHO,LMO,MAR
+                      [XXX,9.8,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //ETH
+                      [9.8,XXX,2.5,3.8,4.1,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LEO
+                      [NaN,2.5,XXX,1.6,NaN,0.7,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //GTO
+                      [NaN,3.8,1.6,XXX,1.7,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //GEO
+                      [NaN,4.1,NaN,1.7,XXX,NaN,0.7,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //L45
+                      [NaN,NaN,0.7,NaN,NaN,XXX,0.7,NaN,0.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //EC3
+                      [NaN,NaN,1.6,NaN,0.7,0.7,XXX,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LUO
+                      [NaN,NaN,NaN,NaN,NaN,NaN,1.6,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LUN
+                      [NaN,NaN,NaN,NaN,NaN,0.6,NaN,NaN,XXX,0.9,NaN,NaN,NaN,NaN,NaN,NaN], //MTR
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,XXX,0.2,NaN,NaN,NaN,NaN,NaN], //MC3
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.2,XXX,0.7,0.3,NaN,NaN,NaN], //DTR
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.7,XXX,NaN,NaN,NaN,NaN], //DEI
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.3,NaN,XXX,0.5,0.9,NaN], //PTR
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.5,XXX,NaN,NaN], //PHO
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,NaN,XXX,4.1], //LMO
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,4.1,XXX], //MAR
+                      ];
+                    
+                    let p = [
+                      [63,32], //ETH
+                      [220,32], //LEO
+                      [300,55], //GTO
+                      [230,120], //GEO
+                      [160,140], //L45
+                      [300,140], //EC3
+                      [230,180], //LUO
+                      [150,250], //LUN
+                      [350,220], //MTR
+                      [350,280], //MC3
+                      [320,320], //DTR
+                      [260,320],
+                      [320,370],
+                      [260,370],
+                      [240,450],
+                      [100,450]
+                      ];
+                     
+                    /* // OBSOLUTE PSHORT CODE
+                    let pshort = [
+                            [1,NaN,NaN,NaN], //ETH 0
+                            [2,3,4,0], //LEO 1
+                            [5,3,6,1], //GTO 2
+                            [2,4,1,NaN], //GEO 3
+                            [6,3,1,NaN], //L45 4
+                            [8,2,6,NaN], //EC3 5
+                            [5,4,2,7], //LUO 6
+                            [6,NaN,NaN,NaN], //LUN 7
+                            [5,9,NaN,NaN], //MTR 8
+                            [10,8,NaN,NaN], //MC3 9
+                            [9,12,11,NaN], //DTR 10
+                            [10,NaN,NaN,NaN], //DEI 11
+                            [10,13,14,NaN], //PTR 12
+                            [12,NaN,NaN,NaN], //PHO 13
+                            [12,15,NaN,NaN], //LMO 14
+                            [14,NaN,NaN,NaN], //MAR 15
+                            ];
+                    */
+                   
+                   // pshort: sort rows to ensure shortest distances are traveled along first.
+                   var pdvrow
+                   var indices
+                   var pshort = new Array(p.length)
+                   for (i = 0; i < p.length; i++) {
+                    pdvrow = pdv[i].slice();
+                    indices = new Array(p.length);
+                    for (var j = 0; j < p.length; ++j) indices[j] = j;
+                    indices.sort(function(a,b){
+                        if( !isFinite(pdvrow[a]) && !isFinite(pdvrow[b]) ) {
+                            return 0;
+                        }
+                        if( !isFinite(pdvrow[a]) ) {
+                            return 1;
+                        }
+                        if( !isFinite(pdvrow[b]) ) {
+                            return -1;
+                        }
+                        return pdvrow[a] < pdvrow[b] ? -1 : pdvrow[a] > pdvrow[b] ? 1 : 0;
+                    });
+                    pshort[i] = multvector(indices,divvector(pdvrow.sort(),pdvrow.sort()));
+                   }
+                   //console.log(pshort)
+                     
+                     
+                    
+                     
+                     
+                    let pRad = 10.5;
+                     
+                     
+                    // points
+                    for (i = 0; i < p.length; i++) {
+                        //plot(p(i,1),p(i,2),'x')
+                        context.beginPath();
+                        context.ellipse(p[i][0],p[i][1], pRad, pRad, 1, 0, 2*Math.PI)
+                        context.strokeStyle = '#c0c0c0';
+                        context.lineWidth = 3;
+                        context.stroke();
+                    }
+                    
+                    // lines
+                    for (i = 0; i < pdv.length; i++) {
+                        for (j = 0; j < pdv[0].length; j++) {
+                            if (!isNaN(pdv[i][j])) {
+                              context.beginPath()
+                              context.moveTo(p[i][0],p[i][1])
+                              context.lineTo(p[j][0],p[j][1])
+                              context.strokeStyle = '#c0c0c0'
+                              context.lineWidth = 2;
+                              context.stroke();
+                            }
+                        }
+                    }
+                     
+
+                     
+                     var N
+                     let selectM = [select];
+                     let dvR = [dv];
+                     let RM = [];
+                     let iS = [NaN];
+                     let spdv = [];
+                     let xpdv = [];
+                     let xspdv = [];
+                     let cspdv = [];
+                     let sp = [];
+                     let RMg = [];
+                     let dvi = [];
+                     let selectx = [];
+                     let pvisits = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+                     let completecol = '#00508a';
+                     
+                     if (twr <= 1 || globals['VALIDFORPLUME'] == 0){
+                        context.font = "15px Baskerville";
+                        context.fillStyle = "red";
+                        if (globals['VALIDFORPLUME'] == 0){
+                        context.textAlign = "left";
+                        context.fillText("unviable engine",5, 85);
+                        context.fillText("or unphysical",5, 102);
+                        context.fillText("solution.",5, 119);
+                        }else{
+                        context.textAlign = "right";
+                        context.fillText("Thrust to Weight Ratio",(canvas.width/scale)-5, 85);
+                        context.fillText("insufficient for lift-off!",(canvas.width/scale)-5, 102);
+                        }
+                       
+                       context.beginPath();
+                       context.ellipse(p[select][0],p[select][1], pRad, pRad, 1, 0, 2*Math.PI)
+                       context.strokeStyle = '#c50000';
+                       context.lineWidth = 7;
+                       context.stroke();
+                     }else {
+                       
+                     while (dvR.length < pdv.length*pdv[0].length*2 && iS.length !=0){
+                       spdv = [];
+                       cspdv = [];
+                       xpdv = [];
+                       xspdv = [];
+                       iS = [];
+                       selectx = [];
+                       N = 0;
+                       
+                       for (k = 0; k < selectM.length; k++){
+                         selectx = selectM[k];
+                         dvi = dvR[k];
+                         
+                         for (f = 0; f < pdv[selectx].length; f++){
+                           spdv[f] = pdv[selectx][f]-dvi;
+                         }
+                         
+                         xspdv = pshort[selectx];
+
+                           for (i = 0; i < xspdv.length; i++){
+                             N = xspdv[i];
+                             if (spdv[N] <= 0){
+                                 
+                                 if (isNaN(pdv[N][selectx])){
+                                        completecol = '#6350f1';
+                                 }else{
+                                        completecol = '#00508a';
+                                 }
+                                 
+                               RMg = 0;
+                               for (g = 0; g < RM.length; g++){
+                                 if (RM[g] == selectx){
+                                   RMg = RMg+1;
+                                 }
+                               }
+                               if (RMg == 0){
+                                 context.beginPath()
+                                 context.moveTo(p[selectx][0],p[selectx][1])
+                                 context.lineTo(p[N][0],p[N][1])
+                                 context.strokeStyle = completecol;
+                                 context.setLineDash([0])
+                                 context.lineWidth = 2;
+                                 context.stroke();
+
+                                 context.beginPath();
+                                 context.ellipse(p[N][0],p[N][1], pRad, pRad, 1, 0, 2*Math.PI)
+                                 context.strokeStyle = completecol;
+                                 context.lineWidth = 5;
+                                 context.stroke();
+                               
+                                 pvisits[N] = pvisits[N]+1;
+                                 pdv[selectx][N] = NaN;
+                                 pshort[selectx][i] = NaN;
+
+                                 iS.push(N)
+                                 dvR.push(Math.abs(spdv[N]))
+                               }
+                               
+                             }else if (!isNaN(spdv[N]) && pvisits[N] < 1){
+                               //
+                               pdiv = 1-(spdv[N]/pdv[selectx][N]);
+                               //
+                               RMg = 0;
+                               for (g = 0; g < RM.length; g++){
+                                 if (RM[g] == selectx){
+                                   RMg = RMg+1;
+                                 }
+                               }
+                               if (RMg == 0){
+                                 let brdmgn = 2.5; //account for thickness
+                                 let nodeA = [p[selectx][0],p[selectx][1]];
+                                 let nodeB = [p[N][0],p[N][1]];
+                                 let nodeSep = [nodeB[0]-nodeA[0],nodeB[1]-nodeA[1]];
+                                 
+                                 let node_angle = Math.atan2(nodeSep[1],nodeSep[0]);
+                                 nodeA = [nodeA[0]+(pRad+brdmgn)*Math.cos(node_angle),nodeA[1]+(pRad+brdmgn)*Math.sin(node_angle)]
+                                 nodeB = [nodeB[0]+(pRad+brdmgn)*Math.cos(Math.PI+node_angle),nodeB[1]+(pRad+brdmgn)*Math.sin(Math.PI+node_angle)]
+                                 
+                                 nodeSep = [nodeB[0]-nodeA[0],nodeB[1]-nodeA[1]];
+                                 
+                                 context.beginPath()
+                                 context.moveTo(nodeA[0],nodeA[1])
+                                 context.lineTo(nodeA[0]+nodeSep[0]*pdiv,nodeA[1]+nodeSep[1]*pdiv)
+                                 
+                                 context.strokeStyle = '#00c0fa'
+                                 //context.setLineDash([3, 3])
+                                 context.lineWidth = 2;
+                                 context.stroke();
+                               }
+
+                             }
+                         }
+                       }
+                        RM.push(selectx);
+                        if (dvR.length < 2){
+                            dvR.push(0);
+                        }
+                        if (iS.length > 0){
+                          for (g = 0; g < iS.length; g++){
+                            selectM.push(iS[g]);
+                          }
+                        }
+                     } //end of while loop
+                       
+                       // highlight start point ring
+                       context.beginPath();
+                       context.ellipse(p[select][0],p[select][1], pRad, pRad, 1, 0, 2*Math.PI)
+                       context.strokeStyle = '#00908a';
+                       context.lineWidth = 5;
+                       context.stroke();
+                     }
+                     
+                       for (i = 0; i < p.length; i++){
+                       context.beginPath();
+                       context.ellipse(p[i][0],p[i][1], pRad, pRad, 1, 0, 2*Math.PI)
+                       context.fillStyle = '#ffffff';
+                       context.fill();
+                       }
+                     
+                       context.beginPath();
+                       context.ellipse(p[select][0],p[select][1], pRad/2.5, pRad/2.5, 1, 0, 2*Math.PI)
+                       context.fillStyle = '#00508a';
+                       context.fill();
+                     //console.log(pvisits)
+                     context.restore;
+                     }
+                 }
+      
+    </script>
+</body>
+
+</html>
+
