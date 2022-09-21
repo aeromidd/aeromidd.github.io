@@ -38,6 +38,12 @@
       </style>
    </head>
    <body>
+     <p style="position:absolute;top:640px;text-align:center;left:15px;width:865px;color:#757575;font:13px Helvetica">This is a visualisation of the cross-sectional profiles of 1,580+ aerofoils found in the <a href="https://m-selig.ae.illinois.edu/ads/coord_database.html">UIUC Airfoil Coordinates Database</a>, all relating to real lift-surfaces used by operational, experimental, and historical aircraft. In the visual above, the profiles are sorted by a close approximation of aerofoil thickness and overlayed. The raw data varies a lot in that there is little to no consistency in scale, proximity of leading-edge datapoints to the origin, rotation and so on, so each dataset had to be transformed for a more intuitive visual comparison. All transformations were made using MATLAB r2018a.
+<br>
+<br>
+There are a few weird shapes in there: rotor blade ends, cowls, primitive Wright Brother aerofoil shapes; but predominantly there is an obvious popularity in the conventional symmetric tear-drop shape.</p>
+     
+     
       <canvas id="BorderCanvas"></canvas>
       <script type="text/javascript">
          var canvas = document.getElementById('BorderCanvas');
