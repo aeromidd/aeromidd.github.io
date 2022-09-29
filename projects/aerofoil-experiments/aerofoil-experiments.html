@@ -115,6 +115,7 @@ There are a few weird shapes in there: rotor blade ends, cowls, primitive Wright
              
            var excList = [];
                      /*
+                     // some of these project out of the page.
                      ['NACA-1 COWL'],
                      ['NACA 16-006'],
                      ['NACA 1410 Airfoil'],
@@ -123,6 +124,7 @@ There are a few weird shapes in there: rotor blade ends, cowls, primitive Wright
                      ['NASA SC(2)-0402 AIRFOIL'],
                      ];
                      */
+              
            drawAllFoils();
             
            //List: clicking behaviour  
@@ -214,9 +216,7 @@ There are a few weird shapes in there: rotor blade ends, cowls, primitive Wright
            let cx = 15;
            let cy = 250;
            
-           //n = 1588
-           
-           let n = AFDATA.length;
+           let n = AFDATA.length; //1580ish
          
            //exclusion list:
            
@@ -279,8 +279,6 @@ There are a few weird shapes in there: rotor blade ends, cowls, primitive Wright
              if (AFDATA[i].filename == (selectedFN)){
                AFtitle.innerText = AFDATA[i].name;
                AFdesc.innerText = AFDATA[i].desc;
-               //console.log(AFDATA[i].name)
-               //console.log(AFDATA[i].desc)
              context.lineWidth = 2;
              context.beginPath();
              context.lineJoin = "round";
