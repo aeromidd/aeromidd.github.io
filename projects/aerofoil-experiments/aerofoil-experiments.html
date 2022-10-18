@@ -107,8 +107,9 @@ There are a few weird shapes in there: rotor blade ends, cowls, primitive Wright
       <canvas id="SelectedFoilCanvas" width="700px" height="500px"  style="position:absolute;top:15px;left:180px;border: 1px solid #00508a";></canvas>
       <script type="text/javascript">
          console.clear();
-          
-         let response_promise = fetch("https://raw.githubusercontent.com/aeromidd/vizdata/main/AIRFOILDATA.json");
+         
+         let response_promise = fetch("https://aeromidd.github.io/projects/aerofoil-experiments/AIRFOILDATA.json");
+         //let response_promise = fetch("https://raw.githubusercontent.com/aeromidd/vizdata/main/AIRFOILDATA.json");
            
            document.addEventListener("DOMContentLoaded", function() {
            response_promise.then(response => response.json().then(AFDATA => {
