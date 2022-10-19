@@ -119,6 +119,8 @@
      <input type="number" id="InputLon1" name="quantity" min="-179.999" max="180" step=".001" value = "0.000" style="position:absolute;left:320px;top:458px" onChange="drawFoW();">
      <input type="number" id="InputLat2" name="quantity" min="-90" max="89.999" step=".001" value = "0.000"  style="position:absolute;left:480px;top:458px" onChange="drawFoW();">
      <input type="number" id="InputLon2" name="quantity" min="-180" max="179.999" step=".001" value = "0.000" style="position:absolute;left:580px;top:458px" onChange="drawFoW();">
+     <button id="RandAP1" style="position:absolute;left:220px;top:540px;">Random Airport</button>
+     <button id="RandAP2" style="position:absolute;left:560px;top:540px;">Random Airport</button>
       
       <script type="text/javascript">
          console.clear();
@@ -268,7 +270,15 @@ FoWPreview.contentWindow.postMessage([sendTrips,visibility],FoWPreview.src)
         var APDD1Element = document.getElementById('APDD1');
              APDD1Element.onchange = SetAP1Data;
         var APDD2Element = document.getElementById('APDD2');
-             APDD2Element.onchange = SetAP2Data;  
+             APDD2Element.onchange = SetAP2Data;
+             
+             var RandAP1Element = document.getElementById('RandAP1');
+             RandAP1Element.onclick = function(){
+               APDD1Element.options[Math.floor(APDD1Element.options.length*Math.random())].selected='selected';SetAP1Data();                                                };
+             
+             var RandAP2Element = document.getElementById('RandAP2');
+             RandAP2Element.onclick = function(){
+               APDD2Element.options[Math.floor(APDD2Element.options.length*Math.random())].selected='selected';SetAP2Data();                                                };
 
              
         function SetAP1Data(){
