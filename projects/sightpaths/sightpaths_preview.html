@@ -22,7 +22,7 @@
     FoWIM.crossOrigin="anonymous";
     globals = {};
         ////comment the following out before inserting to site
-        /*
+        
         globals['trips'] = [
                     [51.5074, -0.1278, 37.9356, 23.9484,  1382000],
                     [21.5074, -90.1278, 37.9356, 123.9484,  22000],
@@ -30,15 +30,15 @@
                 ];
         globals['visibility'] = 3;
         drawFoWmap();
-        */
+        
         ////end
     window.onmessage = function(event){
             if (event.data) {
               globals['trips'] = event.data[0];
               globals['visibility'] = event.data[1];
             }
-		parent.postMessage("loadMyOrders","*");
-	    	parent.postMessage(globals,"*")
+            parent.postMessage("loadMyOrders","*");  //  `*` on any domain  
+      
             drawFoWmap();
         };
 	//window.onload = function(){
@@ -416,7 +416,6 @@
 			ctx.translate(-pt.x,-pt.y);
 			redraw();
 		}
-
 		var handleScroll = function(evt){
 			var delta = evt.wheelDelta ? evt.wheelDelta/40 : evt.detail ? -evt.detail : 0;
 			if (delta) zoom(delta);
@@ -490,8 +489,6 @@
 </body>
   
 </html>
-  
-  
   
   
   
