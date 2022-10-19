@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width">
+      <title>SIGHTPATHS_MAIN</title>
+      <script src=
+         "https://code.jquery.com/jquery-3.5.1.js"></script>
+      <style>
+         /* (A) SEARCH BOX */
+         #AFfilter1 {
+         box-sizing: border-box;
+         position:absolute;
+         top: 15px;
+         left: 15px;
+         height: 20px;
+         width: 164px;
+         margin-bottom: 0px;
+         padding: 0px;
+         }
+         #AFnamelist1 li {
+         padding: 0px;
+         border-bottom: 1px solid #e7e7e7;
+         }
+         #AFnamelist1 li.hide { display: none; }
+         nav ul{height:600px; width:164px;
+         list-style: none;
+         padding-left: 0;
+         padding-top: 0;}
+         nav ul{overflow:hidden; overflow-y:scroll;}
+        #AFfilter2 {
+         box-sizing: border-box;
+         position:absolute;
+         top: 15px;
+         left: 15px;
+         height: 20px;
+         width: 164px;
+         margin-bottom: 0px;
+         padding: 0px;
+         }
+         #AFnamelist2 li {
+         padding: 0px;
+         border-bottom: 1px solid #e7e7e7;
+         }
+         #AFnamelist2 li.hide { display: none; }
+         nav ul{height:600px; width:164px;
+         list-style: none;
+         padding-left: 0;
+         padding-top: 0;}
+         nav ul{overflow:hidden; overflow-y:scroll;}
+         .selected {
+         background: #189ACA;
+         color: #ffffff;
+         }
+         li {
+         cursor: pointer;
+         }
+      </style>
+   </head>
+   <body>
+     <p style="position:absolute;top:640px;text-align:center;left:15px;width:865px;color:#757575;font:13px Helvetica">PLACEHOLDER TEXT DESCRIPTION</p>
+     
+     
+      <canvas id="BorderCanvas"></canvas>
+      <script type="text/javascript">
+         var canvas = document.getElementById('BorderCanvas');
+         if (canvas.getContext) {
+           var context = canvas.getContext('2d');
+           var xsize = 880;
+           var ysize = 1425;
+           canvas.style.width = xsize + "px";
+           canvas.style.height = ysize + "px";
+           // Set actual size in memory (scaled to account for extra pixel density).
+           var scale = 1; //window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+           canvas.width = Math.floor(xsize * scale);
+           canvas.height = Math.floor(ysize * scale);
+           // Normalize coordinate system to use css pixels.
+           context.scale(scale, scale);
+           context.clearRect(0, 0, canvas.width / scale, canvas.height / scale);
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(0, 0);
+           context.lineTo(canvas.width / scale, 0);
+           context.strokeStyle = '#00508a';
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(0, 0);
+           context.lineTo(0, canvas.height / scale);
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(canvas.width / scale, canvas.height / scale);
+           context.lineTo(canvas.width / scale, 0);
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(canvas.width / scale, canvas.height / scale);
+           context.lineTo(0, canvas.height / scale);
+           context.stroke();
+           ////
+         }
+      </script>
+     
+     <iframe id="htmlSightpaths_Preview" src="https://aeromidd.github.io/projects/sightpaths/sightpaths_preview.html" title="Preview" crossOrigin="anonymous" style="position:absolute;left:15px;top:15px;height:500px;width:860px"></iframe>
+     
+      <input type="text" id="AFfilter1" style="position:absolute;left:15px;top:15px;" placeholder="Search..."/>
+      <nav>
+         <ul id="AFnamelist1" style="position:absolute;left:15px;top:23px;height:155px;font:12px Garamond;border: 1px solid #00508a">
+         </ul>
+      </nav>
+      <input type="text" id="AFfilter2" style="position:absolute;left:715px;top:15px;" placeholder="Search..."/>
+      <nav>
+         <ul id="AFnamelist2" style="position:absolute;left:715px;top:23px;height:155px;font:12px Garamond;border: 1px solid #00508a">
+         </ul>
+      </nav>
+     
+      
+      <script type="text/javascript">
+         console.clear();
+        
+        
+        
+        let FoWPreview = document.getElementById('htmlSightpaths_Preview')
+        
+        FoWPreview.onload = function(){
+             //console.log(FoWPreview)
+        
+        
+        
+             let fLat1 = 0;
+             let fLon1 = 0;
+             let fLat2 = 0;
+             let fLon2 = 0;
+             let fAlt = 30000;
+             
+	           var sendTrips
+             let flight = [];
+             flight[0] = [fLat1,fLon1,fLat2,fLon2,fAlt]
+             var sendTrip = flight[0];
+             sendTrips = [flight[0]];
+             
+             let visibility = 2;
+             console.log([sendTrips,visibility])
+FoWPreview.contentWindow.onload = function(sendTrips,visibility) {
+  postMessage([sendTrips,visibility])
+        }
+
+//contentWindow.postMessage([sendTrips,visibility])
+             console.log('finished sending')
+        }
+     
+      </script>
+   </body>
+</html>
