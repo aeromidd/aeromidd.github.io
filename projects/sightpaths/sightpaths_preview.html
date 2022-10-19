@@ -37,7 +37,8 @@
               globals['trips'] = event.data[0];
               globals['visibility'] = event.data[1];
             }
-
+		parent.postMessage("loadMyOrders","*");
+	    	parent.postMessage(globals,"*")
             drawFoWmap();
         };
 	//window.onload = function(){
