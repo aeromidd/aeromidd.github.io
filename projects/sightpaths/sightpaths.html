@@ -166,11 +166,11 @@ select2.appendChild(option2);
          // (B) ATTACH KEY UP LISTENER TO SEARCH BOX
          filter1.onkeyup = () => {
            // (B1) GET CURRENT SEARCH TERM
-           let search = filter1.value.toLowerCase();
+           let search = replaceUmlauts(filter1.value.toLowerCase());
          
            // (B2) LOOP THROUGH LIST ITEMS - ONLY SHOW THOSE THAT MATCH SEARCH
            for (let i of SAFlist1) {
-             let item = i.innerHTML.toLowerCase();
+             let item = replaceUmlauts(i.innerHTML.toLowerCase());
              if (item.indexOf(search) == -1) { i.classList.add("hide"); }
              else { i.classList.remove("hide"); }
            }
@@ -185,8 +185,8 @@ select2.appendChild(option2);
             }
            }
          
-         if (selX1 == -1){
-                  selX1 = 0;
+         if (selX1 <= 0){
+                  selX1 = 1;
          }
            //console.log(selX1)
 SAFlist1[selX1].selected = 'selected';
@@ -205,11 +205,11 @@ SAFlist1[selX1].selected = 'selected';
          // (B) ATTACH KEY UP LISTENER TO SEARCH BOX
          filter2.onkeyup = () => {
            // (B1) GET CURRENT SEARCH TERM
-           let search = filter2.value.toLowerCase();
+           let search = replaceUmlauts(filter2.value.toLowerCase());
          
            // (B2) LOOP THROUGH LIST ITEMS - ONLY SHOW THOSE THAT MATCH SEARCH
            for (let i of SAFlist2) {
-             let item = i.innerHTML.toLowerCase();
+             let item = replaceUmlauts(i.innerHTML.toLowerCase());
              if (item.indexOf(search) == -1) { i.classList.add("hide"); }
              else { i.classList.remove("hide"); }
            }
@@ -224,8 +224,8 @@ SAFlist1[selX1].selected = 'selected';
             }
            }
          
-         if (selX2 == -1){
-                  selX2 = 0;
+         if (selX2 <= 0){
+                  selX2 = 1;
          }
            //console.log(selX2)
 SAFlist2[selX2].selected = 'selected';
@@ -341,6 +341,81 @@ FoWPreview.contentWindow.postMessage([sendTrips,visibility],FoWPreview.src)
              
     }, 10);
      }
+        function replaceUmlauts(str) {
+  return str
+    .replace(/\u00df/g, 'ss')
+    .replace(/\u009a/g, 's')
+    .replace(/\u00e0/g, 'a')
+    .replace(/\u00e1/g, 'a')
+    .replace(/\u00e2/g, 'a')
+    .replace(/\u00e3/g, 'a')
+    .replace(/\u00e4/g, 'a')
+    .replace(/\u00e5/g, 'a')
+    .replace(/\u00e6/g, 'ae')
+    .replace(/\u00e7/g, 'c')
+    .replace(/\u00e8/g, 'e')
+    .replace(/\u00e9/g, 'e')
+    .replace(/\u00ea/g, 'e')
+    .replace(/\u00eb/g, 'e')
+    .replace(/\u00ec/g, 'i')
+    .replace(/\u00ed/g, 'i')
+    .replace(/\u00ee/g, 'i')
+    .replace(/\u00ef/g, 'i')
+    .replace(/\u00f1/g, 'n')
+    .replace(/\u00f2/g, 'o')
+    .replace(/\u00f3/g, 'o')
+    .replace(/\u00f4/g, 'o')
+    .replace(/\u00f5/g, 'o')
+    .replace(/\u00f6/g, 'o')
+    .replace(/\u00f8/g, 'o')
+    .replace(/\u00f9/g, 'u')
+    .replace(/\u00fa/g, 'u')
+    .replace(/\u00fb/g, 'u')
+    .replace(/\u00fc/g, 'u')
+    .replace(/\u00fd/g, 'y')
+    .replace(/\u00fe/g, 'p')
+    .replace(/\u00ff/g, 'y')
+    .replace(/\u0000/g, '?')
+    .replace(/\u009c/g, 'oe')
+    .replace(/\u009e/g, 'z')
+    .replace(/\u00f0/g, 'd')
+    .replace(/\u0101/g, 'a')
+    .replace(/\u0102/g, 'a')
+    .replace(/\u0103/g, 'a')
+    .replace(/\u0104/g, 'a')
+    .replace(/\u0105/g, 'a')
+    .replace(/\u0106/g, 'c')
+    .replace(/\u0107/g, 'c')
+    .replace(/\u0108/g, 'c')
+    .replace(/\u0109/g, 'c')
+    .replace(/\u010a/g, 'c')
+    .replace(/\u010b/g, 'c')
+    .replace(/\u010c/g, 'c')
+    .replace(/\u010d/g, 'c')
+    .replace(/\u010e/g, 'd')
+    .replace(/\u010f/g, 'd')
+    .replace(/\u0110/g, 'd')
+    .replace(/\u0111/g, 'd')
+    .replace(/\u0112/g, 'e')
+    .replace(/\u0113/g, 'e')
+    .replace(/\u0114/g, 'e')
+    .replace(/\u0115/g, 'e')
+    .replace(/\u0116/g, 'e')
+    .replace(/\u0117/g, 'e')
+    .replace(/\u0118/g, 'e')
+    .replace(/\u0119/g, 'e')
+    .replace(/\u011a/g, 'e')
+    .replace(/\u011b/g, 'e')
+    .replace(/\u011f/g, 'g')
+    .replace(/\u0131/g, 'i')
+    .replace(/\u0142/g, 'l')
+    
+          
+          
+    //.replace(/\u00c4/g, 'A')
+    //.replace(/\u00d6/g, 'O')
+    //.replace(/\u00dc/g, 'U');
+}
         
         
       </script>
