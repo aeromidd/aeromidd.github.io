@@ -105,16 +105,22 @@
          }
       </script>
      
-     <iframe id="htmlSightpaths_Preview" src="https://aeromidd.github.io/projects/sightpaths/sightpaths_preview.html" title="Preview" style="position:absolute;left:15px;top:15px;height:500px;width:860px"></iframe>
+     <iframe id="htmlSightpaths_Preview" src="https://aeromidd.github.io/projects/sightpaths/sightpaths_preview.html" title="Preview" style="position:absolute;left:32px;top:5px;height:420px;width:835px;    margin: none;
+    padding: none;
+    border: none;
+    line-height: 0;
+    float: left;">
+       
+     </iframe>
      
-      <input type="text" id="AFfilter1" style="position:absolute;left:15px;top:15px;" placeholder="Search..."/>
+      <input type="text" id="AFfilter1" style="position:absolute;left:15px;top:420px;" placeholder="SEARCH AIRPORTS..."/>
       <nav>
-         <ul id="AFnamelist1" style="position:absolute;left:15px;top:23px;height:155px;font:12px Garamond;border: 1px solid #00508a">
+         <ul id="AFnamelist1" style="position:absolute;left:15px;top:428px;height:155px;font:12px Garamond;border: 1px solid #00508a">
          </ul>
       </nav>
-      <input type="text" id="AFfilter2" style="position:absolute;left:715px;top:15px;" placeholder="Search..."/>
+      <input type="text" id="AFfilter2" style="position:absolute;left:715px;top:415px;" placeholder="SEARCH AIRPORTS..."/>
       <nav>
-         <ul id="AFnamelist2" style="position:absolute;left:715px;top:23px;height:155px;font:12px Garamond;border: 1px solid #00508a">
+         <ul id="AFnamelist2" style="position:absolute;left:715px;top:423px;height:155px;font:12px Garamond;border: 1px solid #00508a">
          </ul>
       </nav>
      
@@ -123,18 +129,171 @@
          console.clear();
         
         
+
+     
+     
+         
+         //let response_promise = fetch("https://aeromidd.github.io/projects/aerofoil-experiments/AIRFOILDATA.json");
         
-        let FoWPreview = document.getElementById('htmlSightpaths_Preview')
-        
-        FoWPreview.onload = function(){
-             //console.log(FoWPreview)
         
         
-        
-             let fLat1 = 0;
-             let fLon1 = 0;
-             let fLat2 = 0;
-             let fLon2 = 0;
+        let response_promise = fetch("https://aeromidd.github.io/projects/sightpaths/IATAairports.json");
+           
+           document.addEventListener("DOMContentLoaded", function() {
+           response_promise.then(response => response.json().then(AFDATA => {
+           //console.log(AFDATA.length)
+             /*
+             var newArray = AFDATA.filter(function (res) {
+  return res.name_full.includes('Malaga')
+});
+             //console.log(newArray)
+             */
+             
+             
+           var excList = [];
+                     /*
+                     // some of these project out of the page.
+                     ['NACA-1 COWL'],
+                     ['NACA 16-006'],
+                     ['NACA 1410 Airfoil'],
+                     ['NACA 1408 Airfoil'],
+                     ['NACA 1412 Airfoil'],
+                     ['NASA SC(2)-0402 AIRFOIL'],
+                     ];
+                     */
+              
+           //drawAllFoils();
+            
+           //List: clicking behaviour  
+             
+           //let AFNAMES = ["LOADING...", "Please wait."];    
+             //console.log(AFDATA.length)
+             //console.log('(should be 3944)')
+             var AFNAMES = new Array(AFDATA.length)
+              //AFNAMES = AFDATA[AFDATA.length-1].name_full;
+             for (i=0;i<AFDATA.length-1;i++){
+               AFNAMES[i] = AFDATA[i].name_full;
+             }
+             
+           let AFFILENAMES = AFDATA[AFDATA.length-1].name_full;
+             //console.log(AFDATA[AFDATA.length-1])
+             let list1 = document.getElementById("AFnamelist1");
+             
+           for (i = 0; i < AFNAMES.length-1; i++) {
+             let li = document.createElement("li");
+             li.innerText = AFNAMES[i];
+             li.AFFN = AFFILENAMES[i];
+             list1.appendChild(li);
+           }
+           AFnamelist1.onclick = function(event) {
+             if (event.target.tagName != "LI") return;
+               
+         
+             if (event.ctrlKey || event.metaKey) {
+               toggleSelect(event.target);
+             } else {
+               singleSelect(event.target);
+             }
+             drawSelectedFoil(event.target.AFFN);
+         
+           }
+           // prevent unneeded selection of list elements on clicks
+           AFnamelist1.onmousedown = function() {
+             return false;
+           };
+         
+           function toggleSelect(li) {
+             li.classList.toggle('selected');
+           }
+         
+           function singleSelect(li) {
+             let selected = AFnamelist1.querySelectorAll('.selected');
+             for(let elem of selected) {
+               elem.classList.remove('selected');
+             }
+             li.classList.add('selected');
+           }
+             //SEARCH FILTER:
+             
+             AFfilter1.oninput = function(event){
+         var filter1 = document.getElementById("AFfilter1"), // search box
+             SAFlist1 = document.querySelectorAll("#AFnamelist1 li"); // all list items
+         // (B) ATTACH KEY UP LISTENER TO SEARCH BOX
+         filter1.onkeyup = () => {
+           // (B1) GET CURRENT SEARCH TERM
+           let search = filter1.value.toLowerCase();
+         
+           // (B2) LOOP THROUGH LIST ITEMS - ONLY SHOW THOSE THAT MATCH SEARCH
+           for (let i of SAFlist1) {
+             let item = i.innerHTML.toLowerCase();
+             if (item.indexOf(search) == -1) { i.classList.add("hide"); }
+             else { i.classList.remove("hide"); }
+           }
+         }
+             };
+             /////////////////////////////
+             
+             let list2 = document.getElementById("AFnamelist2");
+             
+           for (i = 0; i < AFNAMES.length-1; i++) {
+             let li2 = document.createElement("li");
+             li2.innerText = AFNAMES[i];
+             li2.AFFN = AFFILENAMES[i];
+             list2.appendChild(li2);
+           }
+           AFnamelist2.onclick = function(event) {
+             if (event.target.tagName != "LI") return;
+               
+         
+             if (event.ctrlKey || event.metaKey) {
+               toggleSelect2(event.target);
+             } else {
+               singleSelect2(event.target);
+             }
+             drawSelectedFoil(event.target.AFFN);
+         
+           }
+           // prevent unneeded selection of list elements on clicks
+           AFnamelist2.onmousedown = function() {
+             return false;
+           };
+         
+           function toggleSelect2(li2) {
+             li2.classList.toggle('selected');
+           }
+         
+           function singleSelect2(li2) {
+             let selected = AFnamelist2.querySelectorAll('.selected');
+             for(let elem of selected) {
+               elem.classList.remove('selected');
+             }
+             li2.classList.add('selected');
+           }
+             //SEARCH FILTER:
+             
+             AFfilter2.oninput = function(event){
+         var filter2 = document.getElementById("AFfilter2"), // search box
+             SAFlist2 = document.querySelectorAll("#AFnamelist2 li"); // all list items
+         // (B) ATTACH KEY UP LISTENER TO SEARCH BOX
+         filter2.onkeyup = () => {
+           // (B1) GET CURRENT SEARCH TERM
+           let search = filter2.value.toLowerCase();
+         
+           // (B2) LOOP THROUGH LIST ITEMS - ONLY SHOW THOSE THAT MATCH SEARCH
+           for (let i of SAFlist2) {
+             let item = i.innerHTML.toLowerCase();
+             if (item.indexOf(search) == -1) { i.classList.add("hide"); }
+             else { i.classList.remove("hide"); }
+           }
+         }
+             };
+             
+             //$w("#htmlFoWmap").postMessage([sendTrips,visibility]);
+             
+             let fLat1 = 55;
+             let fLon1 = -0.5;
+             let fLat2 = 35;
+             let fLon2 = -78;
              let fAlt = 30000;
              
 	           var sendTrips
@@ -144,15 +303,21 @@
              sendTrips = [flight[0]];
              
              let visibility = 2;
-             console.log([sendTrips,visibility])
-FoWPreview.contentWindow.onload = function(sendTrips,visibility) {
-  postMessage([sendTrips,visibility])
-        }
-
-//contentWindow.postMessage([sendTrips,visibility])
+             
+             console.log('testing in 3 seconds...')
+    setTimeout(function () {
+               
+        console.log([sendTrips,visibility])
+             FoWPreview = document.getElementById('htmlSightpaths_Preview')
+             //console.log(FoWPreview)
+FoWPreview.contentWindow.postMessage([sendTrips,visibility],FoWPreview.src)
              console.log('finished sending')
-        }
-     
+             
+    }, 3000);
+             //////////////////////////////////////////////////////////////////////////////////////////
+            
+         }))}, false);
+           
       </script>
    </body>
 </html>
