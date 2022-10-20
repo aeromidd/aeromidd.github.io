@@ -103,6 +103,9 @@
        
      </iframe>
      
+     <canvas id="pointCanvas" onmousemove="draw(event)" onmouseleave="context.clearRect(0, 0, canvas.width, canvas.height);"
+          style="position:absolute; border:1px solid #00508a; left:40px; top:13px; width:818px; height:399px;"></canvas>
+     
       <input type="text" id="AFfilter1" style="position:absolute;left:215px;top:510px;" placeholder="SEARCH AIRPORTS..."/>
       <nav>
          <select id="APDD1" style="position:absolute;left:215px;top:480px;height:25px;width:200px;font:12px Garamond;border: 1px solid #00508a"
@@ -125,6 +128,105 @@
       <script type="text/javascript">
          console.clear();
         
+                var canvas = document.getElementById("pointCanvas");
+var context = canvas.getContext("2d");
+        // Set display size (css pixels).
+        var xsize = 818;
+        var ysize = 399;
+        canvas.style.width = xsize + "px";
+        canvas.style.height = ysize + "px";
+console.log("hi")
+        // Set actual size in memory (scaled to account for extra pixel density).
+        var scale = 2;//window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+        canvas.width = Math.floor(xsize * scale);
+        canvas.height = Math.floor(ysize * scale);
+        //var context = canvas.getContext('2d')
+
+        // Normalize coordinate system to use css pixels.
+        context.scale(scale, scale);
+        
+        
+function  getMousePos(canvas, evt) {
+  var rect = canvas.getBoundingClientRect(), // abs. size of element
+    scaleX = canvas.width / rect.width /scale,    // relationship bitmap vs. element for x
+    scaleY = canvas.height / rect.height /scale;  // relationship bitmap vs. element for y
+  var x = (evt.clientX - rect.left) * scaleX;
+  var y = (evt.clientY - rect.top) * scaleY;
+  
+    var cx = canvas.width/2/scale;
+  var cy = canvas.height/2/scale;
+  var realpos = [-180*(cx-x)/(canvas.width/2/scale),2.02+90*(cy-y)/(canvas.height/2/scale)]
+  return {
+    x: x,//(evt.clientX - rect.left) * scaleX,   // scale mouse coordinates after they have
+    y: y,//(evt.clientY - rect.top) * scaleY,     // been adjusted to be relative to element
+    lat: realpos[1].toFixed(3),
+    lon: realpos[0].toFixed(3)
+  }
+}
+
+
+function draw(evt) {
+  var pos = getMousePos(canvas, evt);
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  //context.fillStyle = "#ffff00";
+  //context.fillRect (pos.x-2, pos.y-2, 4, 4);
+  var chR = 10;
+  context.beginPath();
+  context.strokeStyle = "#ffff00";
+  context.moveTo(pos.x,pos.y);
+  context.lineTo(pos.x-chR,pos.y);
+  context.moveTo(pos.x,pos.y);
+  context.lineTo(pos.x+chR,pos.y);
+  context.moveTo(pos.x,pos.y);
+  context.lineTo(pos.x,pos.y-chR);
+  context.moveTo(pos.x,pos.y);
+  context.lineTo(pos.x,pos.y+chR);
+  context.stroke();
+  
+  //console.log(realpos)
+  //context.fontStyle = "#ff0000"
+  context.font = '10px serif';
+  context.textAlign = 'center';
+  context.fillStyle = "#ffff00";
+  context.fillText(pos.lat+"° N", pos.x, pos.y+chR*2.25);
+  context.fillText(pos.lon+"° E", pos.x, pos.y+chR*3.25);
+  
+// release memory
+//canvas.removeEventListener('mousedown')
+  
+}
+canvas.onmousedown = function (event) {
+    var pos1 = getMousePos(canvas, event);
+    InputLat1.value = parseFloat(pos1.lat);
+    InputLon1.value = parseFloat(pos1.lon);
+  
+    function onMouseMove(event) {
+      var pos2 = getMousePos(canvas, event);
+      InputLat2.value = parseFloat(pos2.lat);
+      InputLon2.value = parseFloat(pos2.lon);
+      context.beginPath();
+      context.moveTo(pos1.x,pos1.y);
+      context.lineTo(pos2.x,pos2.y);
+      context.strokeStyle = "#ffff00";
+      context.stroke();
+    }
+    
+    // (2) move on mousemove
+    canvas.addEventListener('mousemove', onMouseMove);
+    
+    // (3) drop , remove unneeded handlers
+    canvas.onmouseup = function() {
+      drawFoW();
+      canvas.removeEventListener('mousemove', onMouseMove);
+      canvas.onmouseup = null;
+      setTimeout(() => {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+        //draw(event);
+      }, 30);
+    };
+    
+  }
+
         
         
         
@@ -331,7 +433,7 @@ FoWPreview.contentWindow.postMessage([sendTrips,visibility],FoWPreview.src)
             
              //document.getElementById('htmlSightpaths_Preview').contentWindow.onReady = function() {
              console.log('sending flight...')
-    setTimeout(function () {
+    //setTimeout(function () {
                
         //console.log([sendTrips,visibility])
              FoWPreview = document.getElementById('htmlSightpaths_Preview')
@@ -339,7 +441,7 @@ FoWPreview.contentWindow.postMessage([sendTrips,visibility],FoWPreview.src)
 FoWPreview.contentWindow.postMessage([sendTrips,visibility],FoWPreview.src)
              console.log('SENT FLIGHT!')
              
-    }, 10);
+    //}, 10);
      }
         function replaceUmlauts(str) {
   return str
