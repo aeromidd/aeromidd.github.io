@@ -3,7 +3,7 @@
    <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width">
-      <title>SIGHTPATHS_MAIN</title>
+      <title>Sightpaths</title>
       <script src=
          "https://code.jquery.com/jquery-3.5.1.js"></script>
       <style>
@@ -152,10 +152,9 @@ function  getMousePos(canvas, evt) {
     scaleY = canvas.height / rect.height /scale;  // relationship bitmap vs. element for y
   var x = (evt.clientX - rect.left) * scaleX;
   var y = (evt.clientY - rect.top) * scaleY;
-  
-    var cx = canvas.width/2/scale;
-  var cy = canvas.height/2/scale;
-  var realpos = [-180*(cx-x)/(canvas.width/2/scale),2.02+90*(cy-y)/(canvas.height/2/scale)]
+  var cx = canvas.width/2/scale;
+  var cy = 203.978;//rect.height/scale;
+  var realpos = [-180*(cx-x)/(canvas.width/2/scale),88*(cy-y)/(canvas.height/2/scale)]
   return {
     x: x,//(evt.clientX - rect.left) * scaleX,   // scale mouse coordinates after they have
     y: y,//(evt.clientY - rect.top) * scaleY,     // been adjusted to be relative to element
@@ -190,6 +189,8 @@ function draw(evt) {
   context.fillStyle = "#ffff00";
   context.fillText(pos.lat+"° N", pos.x, pos.y+chR*2.25);
   context.fillText(pos.lon+"° E", pos.x, pos.y+chR*3.25);
+  //context.fillText(pos.lat+"° N", pos.x, pos.y-chR*3.25);
+  //context.fillText(pos.lon+"° E", pos.x, pos.y-chR*2.25);
   
 // release memory
 //canvas.removeEventListener('mousedown')
