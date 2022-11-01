@@ -122,8 +122,29 @@
      <input type="number" id="InputLon1" name="quantity" min="-179.999" max="180" step=".001" value = "0.000" style="position:absolute;left:320px;top:458px" onChange="drawFoW();">
      <input type="number" id="InputLat2" name="quantity" min="-90" max="89.999" step=".001" value = "0.000"  style="position:absolute;left:480px;top:458px" onChange="drawFoW();">
      <input type="number" id="InputLon2" name="quantity" min="-180" max="179.999" step=".001" value = "0.000" style="position:absolute;left:580px;top:458px" onChange="drawFoW();">
+     
+<input type="number" id = "InputAlt" min="2000" step="1000" max="6561680" value= "30000" style="position:absolute;left:415px;top:430px;" onChange="drawFoW();">
+     
+     <select style="position:absolute;left:490px;top:430px;width:17px;height:21px" onChange="InputAlt.value = this.value;drawFoW();">
+       <option value="1340000"> 1,340,000 ft (ISS)</option>
+       <option value="330000"> 330,000 ft (edge of space)</option>
+       <option value="100000"> 100,000 ft</option>
+       <option value="80000"> 80,000 ft</option>
+       <option value="60000"> 60,000 ft</option>
+       <option value="50000"> 50,000 ft</option>
+       <option value="40000"> 40,000 ft</option>
+       <option value="35000"> 35,000 ft (standard long-haul)</option>
+       <option value="30000" selected="true"> 30,000 ft</option>
+       <option value="25000"> 25,000 ft (standard short-haul)</option>
+       <option value="20000"> 20,000 ft</option>
+       <option value="15000"> 15,000 ft</option>
+       <option value="10000"> 10,000 ft</option>
+     </select>
+     
      <button id="RandAP1" style="position:absolute;left:220px;top:540px;">Random Airport</button>
      <button id="RandAP2" style="position:absolute;left:560px;top:540px;">Random Airport</button>
+     
+
       
       <script type="text/javascript">
          console.clear();
@@ -355,7 +376,7 @@ SAFlist2[selX2].selected = 'selected';
              var sendTrip = flight[0];
              sendTrips = [flight[0]];
              
-             let visibility = 2;
+             let visibility = 1;
             
              //document.getElementById('htmlSightpaths_Preview').contentWindow.onReady = function() {
              console.log('testing in a second...')
@@ -422,7 +443,7 @@ FoWPreview.contentWindow.postMessage([sendTrips,visibility],FoWPreview.src)
              let fLon1 = InputLon1.value;
              let fLat2 = InputLat2.value;
              let fLon2 = InputLon2.value;
-             let fAlt = 30000;
+             let fAlt = InputAlt.value;
              
 	           var sendTrips
              let flight = [];
@@ -430,10 +451,10 @@ FoWPreview.contentWindow.postMessage([sendTrips,visibility],FoWPreview.src)
              var sendTrip = flight[0];
              sendTrips = [flight[0]];
              
-             let visibility = 2;
+             let visibility = 1;
             
              //document.getElementById('htmlSightpaths_Preview').contentWindow.onReady = function() {
-             console.log('sending flight...')
+             //console.log('sending flight...')
     //setTimeout(function () {
                
         //console.log([sendTrips,visibility])
