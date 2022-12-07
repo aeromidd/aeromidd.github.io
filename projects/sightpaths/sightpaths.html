@@ -48,7 +48,8 @@
       </style>
    </head>
    <body>
-     <p style="position:absolute;top:640px;text-align:center;left:15px;width:865px;color:#757575;font:13px Helvetica">PLACEHOLDER TEXT DESCRIPTION</p>
+     <p id="RouteListTXTBOX" style="position:absolute;top:600px;text-align:center;left:15px;width:865px;color:#00508a;font:13px Courier New bold">FLIGHTLIST AREA</p>
+     <p style="position:absolute;top:680px;text-align:center;left:15px;width:865px;color:#757575;font:13px Helvetica">PLACEHOLDER TEXT DESCRIPTION</p>
      
      
       <canvas id="BorderCanvas"></canvas>
@@ -144,6 +145,8 @@
      <button id="RandAP1" style="position:absolute;left:220px;top:540px;">Random Airport</button>
      <button id="RandAP2" style="position:absolute;left:560px;top:540px;">Random Airport</button>
      
+     <button id="AddFlight" style="position:absolute;left:420px;top:540px;" onClick = "AddFlight_click()">Add This Flight</button>
+     <button id="RemoveFlight" style="position:absolute;left:420px;top:560px;" onClick = "RemoveFlight_click()">Remove Previous Flight</button>
 
       
       <script type="text/javascript">
@@ -540,7 +543,182 @@ FoWPreview.contentWindow.postMessage([sendTrips,visibility],FoWPreview.src)
     //.replace(/\u00d6/g, 'O')
     //.replace(/\u00dc/g, 'U');
 }
-        
+
+        function AddFlight_click(event) {
+	// This function was added from the Properties & Events panel. To learn more, visit http://wix.to/UcBnC-4
+	// Add your code for this event here:
+	let RL = RouteListTXTBOX.text;
+	var nFlights
+	let limReach = 0;
+    if (RL.length > 2210){
+    	nFlights = 33+1+(RL.length%66)/2;
+	}else{
+    	nFlights = 1+(RL.length%66)/2;
+    }
+
+	if (nFlights >= 32){
+		limReach = 1;
+	}
+	if (limReach == 0){
+		AddtoRouteList();
+	}
+	let RouteList = RouteListTXTBOX.text;
+	if (RouteList.length > 65){ 
+		$w("#SaveFlights").enable();
+		DrawFoW();
+		RefreshDLmap();
+	}else{
+		RouteListTXTBOX.text = '';
+	}
+	RL = RouteListTXTBOX.text;
+	var nFlights
+    if (RL.length > 2210){
+    	nFlights = 33+1+(RL.length%66)/2;
+	}else{
+    	nFlights = 1+(RL.length%66)/2;
+    }
+	if (nFlights >= 32){
+		$w("#AddFlight").disable();
+	}
+	if (RL.length >= 66){
+		let nFtxt = nFlights.toString();
+		$w("#nFlightsSaved").text = nFtxt.concat(' flightpaths recorded.');
+	}else{
+		$w("#nFlightsSaved").text = 'List empty.';
+	}
+}
+function RemoveFlight_click(event) {
+	// This function was added from the Properties & Events panel. To learn more, visit http://wix.to/UcBnC-4
+	// Add your code for this event here: 
+	let RouteList = RouteListTXTBOX.text;
+	//console.log(RouteList.length)
+	RouteList = RouteList.substr(0,RouteList.length-66);
+	RouteListTXTBOX.text = RouteList;
+	$w("#AddFlight").enable();
+	if (RouteList.length < 50){
+		$w("#SaveFlights").disable();
+	}
+	DrawFoW();
+	let RL = $w('#RouteList').text;
+	var nFlights
+    if (RL.length > 2210){
+    	nFlights = 33+1+(RL.length%66)/2;
+	}else{
+    	nFlights = 1+(RL.length%66)/2;
+    }
+	if (RL.length >= 66){
+		let nFtxt = nFlights.toString();
+		$w("#nFlightsSaved").text = nFtxt.concat(' flightpaths recorded.');
+	}else{
+		$w("#nFlightsSaved").text = 'List empty.';
+	}
+	RefreshDLmap();
+}
+
+function ClearFlights_click(event) {
+	// This function was added from the Properties & Events panel. To learn more, visit http://wix.to/UcBnC-4
+	// Add your code for this event here: 
+	let RouteList = '|';
+	RouteList = RouteList.substr(0,RouteList.length-1);
+	RouteListTXTBOX.text = RouteList;
+	$w("#AddFlight").enable();
+	$w("#SaveFlights").disable();
+	drawFoW();
+	$w("#nFlightsSaved").text = 'List empty.';
+	RefreshDLmap();
+}
+
+function SaveFlights_click(event) {
+	// This function was added from the Properties & Events panel. To learn more, visit http://wix.to/UcBnC-4
+	// Add your code for this event here:
+	let RL = RouteListTXTBOX.text;
+	var nFlights
+	let limReach = 0;
+    if (RL.length > 2210){
+    	nFlights = 33+1+(RL.length%66)/2;
+	}else{
+    	nFlights = 1+(RL.length%66)/2;
+    }
+
+	if (nFlights > 32){
+		limReach = 1;
+	}
+	//console.log('nFlights:')
+	//console.log(nFlights)
+	if (limReach == 0){
+		let flightTxt = RL;
+		var j
+		flightTxt = flightTxt.slice(11)
+		flightTxt = flightTxt.replace(/[^\d.𝐍𝐄ft-]/g, '');
+		let flightRows = flightTxt.split("ft");
+		let flight = [];
+		for (j = 0; j < nFlights; j++) {
+			var fll = flightRows[j].split("𝐄");
+			//console.log(fll)
+			var fLat1 = fll[0].split("𝐍")[0];
+			//console.log(fLat1)
+			var fLon1 = fll[0].split("𝐍")[1];
+			//console.log(fLon1)
+			var fLat2 = fll[1].split("𝐍")[0];
+			//console.log(fLat2)
+			var fLon2 = fll[1].split("𝐍")[1];
+			//console.log(fLon2)
+			var fAlt = fll[2];
+			//console.log(fAlt)
+			flight[j] = [fLat1,fLon1,fLat2,fLon2,fAlt];
+		}
+		let visibility = $w("#VisibilitySelect").value;
+		$w("#htmlFoWmapDLSIZE").postMessage([flight,visibility,1]);
+		let nFtxt = nFlights.toString();
+		$w("#nFlightsSaved").text = 'Generating HD map for '.concat(nFtxt,' recorded flightpaths - wait for download pop-up.');//nFtxt.concat(' flights saved to List.');
+	}else{
+		$w("#nFlightsSaved").text = 'Route List Limit Reached!';
+		RemoveFlight_click();
+	}
+}
+
+function AddtoRouteList(event) {
+	let firstEntry = 0;
+	let RouteList = $w('#RouteList').text;
+	if (RouteList.length < 10){
+		RouteList = RouteList.substr(0,RouteList.length-1);
+		firstEntry = 1;
+	}
+	$w('#airport1').selectedIndex = $w('#airport1').selectedIndex;
+	$w('#airport2').selectedIndex = $w('#airport2').selectedIndex;
+	let AP1 = $w('#airport1').value;
+	AP1 = AP1.substr(AP1.length - 5);
+	let AP2 = $w('#airport2').value;
+	AP2 = AP2.substr(AP2.length - 5);
+	//console.log(AP1)
+	//console.log(AP2)
+	let La1L = $w('#Latitude1').value.length;
+	let Lo1L = $w('#Longitude1').value.length;
+	let La2L = $w('#Latitude2').value.length;
+	let Lo2L = $w('#Longitude2').value.length;
+	let altL = $w('#AltitudeText').value.length;
+	let La1sp = '\xa0';
+	La1sp = La1sp.repeat(7-La1L);
+	let Lo1sp = '\xa0';
+	Lo1sp = Lo1sp.repeat(8-Lo1L);
+	let La2sp = '\xa0';
+	La2sp = La2sp.repeat(7-La2L);
+	let Lo2sp = '\xa0';
+	Lo2sp = Lo2sp.repeat(8-Lo2L);
+	let altsp = '\xa0';
+	altsp = altsp.repeat(8-altL);
+	
+	var firstNL
+	if (firstEntry == 1){
+		firstNL = '';
+	}else{
+		firstNL = '\r\n';
+	}
+
+	RouteList = RouteList.concat(firstNL,AP1,'⟶',AP2,La1sp,$w('#Latitude1').value,'𝐍 ',Lo1sp,$w('#Longitude1').value,'𝐄 ⟶ ',La2sp,$w('#Latitude2').value,'𝐍 ',Lo2sp,$w('#Longitude2').value,'𝐄',altsp,'(',$w('#AltitudeText').value,'ft)');
+	RouteListTXTBOX.text = RouteList;
+}
+//*/
         
       </script>
    </body>
