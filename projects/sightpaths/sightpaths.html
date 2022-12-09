@@ -555,46 +555,56 @@ function AddFlight_click(event) {
 	var nFlights
   //console.log(RouteListTXTBOX.value)
 	let limReach = 0;
+  N = getFlights();
+  nFlights = N.nFlights;
+  /*
     if (RL.length > 2210){
     	nFlights = 33+1+(RL.length%66)/2;
 	}else{
     	nFlights = 1+(RL.length%66)/2;
     }
+    */
 
 	if (nFlights >= 32){
 		limReach = 1;
+		AddFlight.disabled = true;
 	}
 	if (limReach == 0){
 		AddtoRouteList();
+    AddFlight.disabled = false;
 	}
 	let RouteList = RouteListTXTBOX.value;
   console.log(RouteListTXTBOX.value)
-	if (RouteList.length > 65){ 
-		//$w("#SaveFlights").enable();
+  /*
+	if (nFlights > 0){ 
+		SaveFlights.disabled = false;
 		drawFoW();
 		//RefreshDLmap();
 	}else{
 		RouteListTXTBOX.value = '';
 	}
 	RL = RouteListTXTBOX.value;
+  */
+  /*
 	var nFlights
     if (RL.length > 2210){
     	nFlights = 33+1+(RL.length%66);
 	}else{
     	nFlights = 1+(RL.length%66);
     }
-	if (nFlights >= 32){
-		AddFlight.disabled = true;
-  }else{
-    AddFlight.disabled = false;  
-	}
-	if (RL.length >= 66){
+    */
+	//if (RL.length >= 66){
+  N = getFlights();
+  nFlights = N.nFlights;
+  console.log(nFlights)
+  if (nFlights > 0){
 		let nFtxt = nFlights.toString();
 		nFlightsSaved.innerHTML = nFtxt.concat(' flightpaths recorded.');
 	}else{
 		nFlightsSaved.innerHTML = 'List empty.';
 	}
 }
+        
 function RemoveFlight_click(event) {
 	// This function was added from the Properties & Events panel. To learn more, visit http://wix.to/UcBnC-4
 	// Add your code for this event here: 
@@ -690,10 +700,17 @@ function SaveFlights_click(event) {
 function AddtoRouteList(event) {
 	let firstEntry = 0;
 	let RouteList = RouteListTXTBOX.value;
+  let N = getFlights();
+  var nFlights = N.nFlights;
+  if (nFlights == 0){
+    firstEntry = 1;
+  }
+  /*
 	if (RouteList.length < 10){
 		RouteList = RouteList.substr(0,RouteList.length-1);
 		firstEntry = 1;
 	}
+  */
 	//$w('#airport1').selectedIndex = $w('#airport1').selectedIndex;
 	//$w('#airport2').selectedIndex = $w('#airport2').selectedIndex;
   var AP1
@@ -744,9 +761,16 @@ function AddtoRouteList(event) {
 
 function getFlights(){
   let nFlightsRaw =  RouteListTXTBOX.value;
-let lines = nFlightsRaw.split(/\r|\r\n|\n/);
-let nFlights = lines.length;
-}        
+  var lines = nFlightsRaw.split(/\r|\r\n|\n/);
+  var nFlights = lines.length;
+  if (nFlights == 1 && lines[0].length == 0){
+    nFlights = 0;
+  }
+  return {
+    'nFlights': nFlights,
+    'lines': lines
+  };
+}
       </script>
    </body>
 </html>
