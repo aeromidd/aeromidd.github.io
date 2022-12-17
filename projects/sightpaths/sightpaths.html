@@ -106,6 +106,14 @@
        
      </iframe>
      
+     <iframe id="htmlSightpaths_DLSize" src="https://aeromidd.github.io/projects/sightpaths/sightpaths_HDrender.html" title="HD Render" style="position:absolute;left:32px;top:905px;height:420px;width:835px;    margin: none;
+    padding: none;
+    border: none;
+    line-height: 0;
+    float: left;">
+       
+     </iframe>
+     
      <canvas id="pointCanvas" onmousemove="draw(event)" onmouseleave="context.clearRect(0, 0, canvas.width, canvas.height);"
           style="position:absolute; border:1px solid #00508a; left:40px; top:13px; width:818px; height:399px;"></canvas>
      
@@ -557,13 +565,6 @@ function AddFlight_click(event) {
 	let limReach = 0;
   N = getFlights();
   nFlights = N.nFlights;
-  /*
-    if (RL.length > 2210){
-    	nFlights = 33+1+(RL.length%66)/2;
-	}else{
-    	nFlights = 1+(RL.length%66)/2;
-    }
-    */
 
 	if (nFlights >= 32){
 		limReach = 1;
@@ -575,25 +576,6 @@ function AddFlight_click(event) {
 	}
 	let RouteList = RouteListTXTBOX.value;
   console.log(RouteListTXTBOX.value)
-  /*
-	if (nFlights > 0){ 
-		SaveFlights.disabled = false;
-		drawFoW();
-		//RefreshDLmap();
-	}else{
-		RouteListTXTBOX.value = '';
-	}
-	RL = RouteListTXTBOX.value;
-  */
-  /*
-	var nFlights
-    if (RL.length > 2210){
-    	nFlights = 33+1+(RL.length%66);
-	}else{
-    	nFlights = 1+(RL.length%66);
-    }
-    */
-	//if (RL.length >= 66){
   N = getFlights();
   nFlights = N.nFlights;
   console.log(nFlights)
@@ -606,34 +588,19 @@ function AddFlight_click(event) {
 }
         
 function RemoveFlight_click(event) {
-	// This function was added from the Properties & Events panel. To learn more, visit http://wix.to/UcBnC-4
-	// Add your code for this event here: 
-	let RouteList = RouteListTXTBOX.value;
-	//console.log(RouteList.length)
-	RouteList = RouteList.substr(0,RouteList.length-66);
-	RouteListTXTBOX.value = RouteList;
-	AddFlight.disabled = false;
-	if (RouteList.length < 50){
-		SaveFlights.disabled = true;
-	}
-	drawFoW();
-  
-	let RL = RouteListTXTBOX.value;
-  
-  /*
-    if (RL.length > 2210){
-    	nFlights = 33+1+(RL.length%66);
-	}else{
-    	nFlights = 1+(RL.length%66);
+	N = getFlights();
+  let nFlights = N.nFlights;
+  let lines = N.lines;
+  lines.splice(lines.length-1,1,"")
+  let RouteListTemp = '';
+  for (i = 0; i < lines.length-1; i++){
+    if (i == 0) {
+      RouteListTemp = lines[i].toString();
+    } else {
+      RouteListTemp = RouteListTemp + '\r\n' + lines[i].toString();
     }
-    */
-	if (RL.length >= 66){
-		let nFtxt = nFlights.toString();
-		nFlightsSaved.innerHTML = nFtxt.concat(' flightpaths recorded.');
-	}else{
-		nFlightsSaved.innerHTML = 'List empty.';
-	}
-	//RefreshDLmap();
+  }
+  RouteListTXTBOX.value = RouteListTemp;
 }
 
 function ClearFlights_click(event) {
@@ -652,14 +619,10 @@ function SaveFlights_click(event) {
 	// This function was added from the Properties & Events panel. To learn more, visit http://wix.to/UcBnC-4
 	// Add your code for this event here:
 	let RL = RouteListTXTBOX.value;
-	var nFlights
+  N = getFlights();
+  let nFlights = N.nFlights;
+  let lines = N.lines;
 	let limReach = 0;
-    if (RL.length > 2210){
-    	nFlights = 33+1+(RL.length%66)/2;
-	}else{
-    	nFlights = 1+(RL.length%66)/2;
-    }
-
 	if (nFlights > 32){
 		limReach = 1;
 	}
@@ -688,7 +651,10 @@ function SaveFlights_click(event) {
 			flight[j] = [fLat1,fLon1,fLat2,fLon2,fAlt];
 		}
 		let visibility = [1];
-		htmlFoWmapDLSIZE.postMessage([flight,visibility,1]);
+		//htmlSightpaths_DLSize.postMessage([flight,visibility,1]);
+                 FoW_HDrender = document.getElementById('htmlSightpaths_DLSize')
+             //console.log(FoWPreview)
+FoW_HDrender.contentWindow.postMessage([flight,visibility],htmlSightpaths_DLSize.src);
 		let nFtxt = nFlights.toString();
 		nFlightsSaved.innerHTML = 'Generating HD map for '.concat(nFtxt,' recorded flightpaths - wait for download pop-up.');//nFtxt.concat(' flights saved to List.');
 	}else{
