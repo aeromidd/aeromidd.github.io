@@ -106,9 +106,9 @@
        
      </iframe>
      
-     <iframe id="htmlSightpaths_DLSize" src="https://aeromidd.github.io/projects/sightpaths/sightpaths_HDrender.html" title="HD Render" style="position:absolute;left:32px;top:905px;height:420px;width:835px;    margin: none;
+     <iframe id="htmlSightpaths_DLSize" src="https://aeromidd.github.io/projects/sightpaths/sightpaths_HDrender.html" title="HD Render" style="position:absolute;left:320px;top:905px;height:1px;width:1px; margin: none;
     padding: none;
-    border: none;
+    border: 1px solid red;
     line-height: 0;
     float: left;">
        
@@ -467,7 +467,44 @@ FoWPreview.contentWindow.postMessage([sendTrips,visibility],FoWPreview.src)
              sendTrips = [flight[0]];
              
              let visibility = 1;
-            
+          
+          let RL = RouteListTXTBOX.value;
+          N = getFlights();
+          let nFlights = N.nFlights;
+          let lines = N.lines;
+          let limReach = 0;
+          if (nFlights > 32 || nFlights == 0){
+            limReach = 1;
+          }
+          //console.log('nFlights:')
+          //console.log(nFlights)
+          if (limReach == 0){
+            let flightTxt = RL;
+            var j
+            flightTxt = flightTxt.slice(11)
+            flightTxt = flightTxt.replace(/[^\d.𝐍𝐄ft-]/g, '');
+            let flightRows = flightTxt.split("ft");
+            let flight = [];
+            for (j = 0; j < nFlights; j++) {
+              var fll = flightRows[j].split("𝐄");
+              //console.log(fll)
+              var LfLat1 = fll[0].split("𝐍")[0];
+              //console.log(fLat1)
+              var LfLon1 = fll[0].split("𝐍")[1];
+              //console.log(fLon1)
+              var LfLat2 = fll[1].split("𝐍")[0];
+              //console.log(fLat2)
+              var LfLon2 = fll[1].split("𝐍")[1];
+              //console.log(fLon2)
+              var LfAlt = fll[2];
+              //console.log(fAlt)
+              flight[j] = [LfLat1,LfLon1,LfLat2,LfLon2,LfAlt];
+            }
+			flight.unshift(sendTrip);
+			sendTrips = flight;
+		}else{
+		sendTrips = [sendTrip];
+          }
              //document.getElementById('htmlSightpaths_Preview').contentWindow.onReady = function() {
              //console.log('sending flight...')
     //setTimeout(function () {
@@ -654,7 +691,7 @@ function SaveFlights_click(event) {
 		//htmlSightpaths_DLSize.postMessage([flight,visibility,1]);
                  FoW_HDrender = document.getElementById('htmlSightpaths_DLSize')
              //console.log(FoWPreview)
-FoW_HDrender.contentWindow.postMessage([flight,visibility],htmlSightpaths_DLSize.src);
+FoW_HDrender.contentWindow.postMessage([flight,visibility,1],htmlSightpaths_DLSize.src);
 		let nFtxt = nFlights.toString();
 		nFlightsSaved.innerHTML = 'Generating HD map for '.concat(nFtxt,' recorded flightpaths - wait for download pop-up.');//nFtxt.concat(' flights saved to List.');
 	}else{
