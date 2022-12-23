@@ -48,12 +48,19 @@
       </style>
    </head>
    <body>
-     <p style="position:absolute;top:700px;text-align:center;left:15px;width:865px;color:#757575;font:13px Helvetica">PLACEHOLDER TEXT DESCRIPTION</p>
-     <p id="nFlightsSaved" style="position:absolute;top:600px;left:550px;width:200px;color:#757575;font:13px Helvetica">TEST</p>
-     <label for="RouteListTXTBOX" style="position:absolute;top:630px;text-align:center;left:15px;width:865px;color:#00508a;font:13px Courier New">FLIGHTLIST:</label>
+     <label for="RouteListTXTBOX" style="position:absolute;top:630px;text-align:center;left:15px;width:865px;color:#00508a;font:13px Courier New">FLIGHT LIST:</label>
   <textarea id="RouteListTXTBOX" style="position:absolute;top:650px;text-align:center;left:15px;width:865px;color:#00508a;font:13px Courier New" name="RouteListTXTBOX" value="" readonly></textarea>
-     
-     
+     <p id="DescTXT" style="position:absolute;top:700px;text-align:center;left:15px;width:865px;color:#757575;font:13px Helvetica">PLACEHOLDER TEXT DESCRIPTION</p>
+     <p id="nFlightsSaved" style="position:absolute;top:600px;left:550px;width:200px;color:#757575;font:13px Helvetica">List Empty.</p>
+     <script>
+function ScrollRouteList() {
+  RouteListTXTBOX.style.height = 0;
+  RouteListTXTBOX.style.height = (RouteListTXTBOX.scrollHeight) + "px";
+  DescTXT.style.top = parseFloat(RouteListTXTBOX.style.top)+parseFloat(RouteListTXTBOX.style.height)+26+"px";
+  console.log(RouteListTXTBOX.style.top)
+}
+       
+     </script>
       <canvas id="BorderCanvas"></canvas>
       <script type="text/javascript">
          var canvas = document.getElementById('BorderCanvas');
@@ -152,15 +159,14 @@
        <option value="10000"> 10,000 ft</option>
      </select>
      
-     <button id="RandAP1" style="position:absolute;left:220px;top:540px;">Random Airport</button>
+     <button id="RandAP1" style="position:absolute;left:120px;top:540px;">Random Airport</button>
      <button id="RandAP2" style="position:absolute;left:560px;top:540px;">Random Airport</button>
      
-     <button id="AddFlight" style="position:absolute;left:420px;top:540px;" onClick = "AddFlight_click()">Add This Flight</button>
-     <button id="RemoveFlight" style="position:absolute;left:420px;top:560px;" onClick = "RemoveFlight_click()">Remove Previous Flight</button>
-     <button id="SaveFlights" style="position:absolute;left:420px;top:580px;" onClick = "SaveFlights_click()">Save Flights</button>
-     <button id="ClearFlights" style="position:absolute;left:420px;top:600px;" onClick = "ClearFlights_click()">Clear Flights</button>
+     <button id="AddFlight" style="position:absolute;left:420px;top:540px;" onClick = "AddFlight_click()">Add Flight</button>
+     <button id="RemoveFlight" style="position:absolute;left:420px;top:560px;" onClick = "RemoveFlight_click()">Undo Add</button>
+     <button id="ClearFlights" style="position:absolute;left:420px;top:600px;" onClick = "ClearFlights_click()">Clear All</button>
+     <button id="SaveFlights" style="position:absolute;left:420px;top:580px;" onClick = "SaveFlights_click()">Download HD Map of Listed Flights</button>
 
-      
       <script type="text/javascript">
          console.clear();
         
@@ -392,7 +398,8 @@ SAFlist2[selX2].selected = 'selected';
              sendTrips = [flight[0]];
              
              let visibility = 1;
-            
+             SaveFlights.disabled = true;
+
              //document.getElementById('htmlSightpaths_Preview').contentWindow.onReady = function() {
              console.log('testing in a second...')
     setTimeout(function () {
@@ -419,21 +426,16 @@ FoWPreview.contentWindow.postMessage([sendTrips,visibility],FoWPreview.src)
              RandAP2Element.onclick = function(){
                APDD2Element.options[Math.floor(APDD2Element.options.length*Math.random())].selected='selected';SetAP2Data();                                                };
 
-             
         function SetAP1Data(){
             var e = document.getElementById("APDD1")
             var ORIGINtext = e.options[e.selectedIndex].text;
              var ORIGIN = AFDATA.filter(function (res) {
   return res.name_full == ORIGINtext;
 });
-             console.log(ORIGIN[0])
-             //then send to coord input boxes. these, upon change, will send to the map.
           document.getElementById("InputLat1").value = parseFloat(ORIGIN[0].latitude_deg.replace("'",''));
  document.getElementById("InputLon1").value = parseFloat(ORIGIN[0].longitude_deg.replace("'",''));
           drawFoW();
         }
-             
-             
              
         function SetAP2Data(){
             var e = document.getElementById("APDD2")
@@ -441,16 +443,11 @@ FoWPreview.contentWindow.postMessage([sendTrips,visibility],FoWPreview.src)
              var DEST = AFDATA.filter(function (res) {
   return res.name_full == DESTtext;
 });
-             //console.log(DEST[0].name_full)
-             //then send to coord input boxes. these, upon change, will send to the map. 
           document.getElementById("InputLat2").value = parseFloat(DEST[0].latitude_deg.replace("'",''));
  document.getElementById("InputLon2").value = parseFloat(DEST[0].longitude_deg.replace("'",''));
           drawFoW();
         } 
      
-     
-             
-             //END OF APDATA PROMISE
          }))}, false);
            
         function drawFoW(){
@@ -476,8 +473,6 @@ FoWPreview.contentWindow.postMessage([sendTrips,visibility],FoWPreview.src)
           if (nFlights > 32 || nFlights == 0){
             limReach = 1;
           }
-          //console.log('nFlights:')
-          //console.log(nFlights)
           if (limReach == 0){
             let flightTxt = RL;
             var j
@@ -487,17 +482,11 @@ FoWPreview.contentWindow.postMessage([sendTrips,visibility],FoWPreview.src)
             let flight = [];
             for (j = 0; j < nFlights; j++) {
               var fll = flightRows[j].split("𝐄");
-              //console.log(fll)
               var LfLat1 = fll[0].split("𝐍")[0];
-              //console.log(fLat1)
               var LfLon1 = fll[0].split("𝐍")[1];
-              //console.log(fLon1)
               var LfLat2 = fll[1].split("𝐍")[0];
-              //console.log(fLat2)
               var LfLon2 = fll[1].split("𝐍")[1];
-              //console.log(fLon2)
               var LfAlt = fll[2];
-              //console.log(fAlt)
               flight[j] = [LfLat1,LfLon1,LfLat2,LfLon2,LfAlt];
             }
 			flight.unshift(sendTrip);
@@ -505,17 +494,12 @@ FoWPreview.contentWindow.postMessage([sendTrips,visibility],FoWPreview.src)
 		}else{
 		sendTrips = [sendTrip];
           }
-             //document.getElementById('htmlSightpaths_Preview').contentWindow.onReady = function() {
-             //console.log('sending flight...')
-    //setTimeout(function () {
                
-        //console.log([sendTrips,visibility])
              FoWPreview = document.getElementById('htmlSightpaths_Preview')
              //console.log(FoWPreview)
 FoWPreview.contentWindow.postMessage([sendTrips,visibility],FoWPreview.src)
              console.log('SENT FLIGHT!')
              
-    //}, 10);
      }
         function replaceUmlauts(str) {
   return str
@@ -586,19 +570,11 @@ FoWPreview.contentWindow.postMessage([sendTrips,visibility],FoWPreview.src)
     .replace(/\u0131/g, 'i')
     .replace(/\u0142/g, 'l')
     
-          
-          
-    //.replace(/\u00c4/g, 'A')
-    //.replace(/\u00d6/g, 'O')
-    //.replace(/\u00dc/g, 'U');
 }
 
 function AddFlight_click(event) {
-	// This function was added from the Properties & Events panel. To learn more, visit http://wix.to/UcBnC-4
-	// Add your code for this event here:
 	let RL = RouteListTXTBOX.value;
 	var nFlights
-  //console.log(RouteListTXTBOX.value)
 	let limReach = 0;
   N = getFlights();
   nFlights = N.nFlights;
@@ -609,19 +585,25 @@ function AddFlight_click(event) {
 	}
 	if (limReach == 0){
 		AddtoRouteList();
-    AddFlight.disabled = false;
+    SaveFlights.disabled = false;
+    if (nFlights == 32-1){
+      AddFlight.disabled = true;
+    }else{
+      AddFlight.disabled = false;
+    }
 	}
 	let RouteList = RouteListTXTBOX.value;
-  console.log(RouteListTXTBOX.value)
+  //console.log(RouteListTXTBOX.value)
   N = getFlights();
   nFlights = N.nFlights;
-  console.log(nFlights)
+  //console.log(nFlights)
   if (nFlights > 0){
 		let nFtxt = nFlights.toString();
 		nFlightsSaved.innerHTML = nFtxt.concat(' flightpaths recorded.');
 	}else{
 		nFlightsSaved.innerHTML = 'List empty.';
 	}
+  ScrollRouteList();
 }
         
 function RemoveFlight_click(event) {
@@ -638,23 +620,33 @@ function RemoveFlight_click(event) {
     }
   }
   RouteListTXTBOX.value = RouteListTemp;
+  N = getFlights();
+  nFlights = N.nFlights;
+  //console.log(nFlights)
+  if (nFlights > 0){
+		let nFtxt = nFlights.toString();
+		nFlightsSaved.innerHTML = nFtxt.concat(' flightpaths recorded.');
+	SaveFlights.disabled = false;
+	}else{
+		nFlightsSaved.innerHTML = 'List empty.';
+	SaveFlights.disabled = true;
+	}
+	AddFlight.disabled = false;
+  ScrollRouteList();
 }
 
 function ClearFlights_click(event) {
-	// This function was added from the Properties & Events panel. To learn more, visit http://wix.to/UcBnC-4
-	// Add your code for this event here: 
 	let RouteList = '|';
 	RouteList = RouteList.substr(0,RouteList.length-1);
 	RouteListTXTBOX.value = RouteList;
 	AddFlight.disabled = false;
-	SaveFlights.disable = true;
+	SaveFlights.disabled = true;
 	drawFoW();
 	nFlightsSaved.innerHTML = 'List empty.';
-	//RefreshDLmap();
+  ScrollRouteList();
 }
 function SaveFlights_click(event) {
-	// This function was added from the Properties & Events panel. To learn more, visit http://wix.to/UcBnC-4
-	// Add your code for this event here:
+  
 	let RL = RouteListTXTBOX.value;
   N = getFlights();
   let nFlights = N.nFlights;
@@ -663,8 +655,6 @@ function SaveFlights_click(event) {
 	if (nFlights > 32){
 		limReach = 1;
 	}
-	//console.log('nFlights:')
-	//console.log(nFlights)
 	if (limReach == 0){
 		let flightTxt = RL;
 		var j
@@ -674,26 +664,21 @@ function SaveFlights_click(event) {
 		let flight = [];
 		for (j = 0; j < nFlights; j++) {
 			var fll = flightRows[j].split("𝐄");
-			//console.log(fll)
 			var fLat1 = fll[0].split("𝐍")[0];
-			//console.log(fLat1)
 			var fLon1 = fll[0].split("𝐍")[1];
-			//console.log(fLon1)
 			var fLat2 = fll[1].split("𝐍")[0];
-			//console.log(fLat2)
 			var fLon2 = fll[1].split("𝐍")[1];
-			//console.log(fLon2)
 			var fAlt = fll[2];
-			//console.log(fAlt)
 			flight[j] = [fLat1,fLon1,fLat2,fLon2,fAlt];
 		}
 		let visibility = [1];
-		//htmlSightpaths_DLSize.postMessage([flight,visibility,1]);
+    
                  FoW_HDrender = document.getElementById('htmlSightpaths_DLSize')
-             //console.log(FoWPreview)
+    
 FoW_HDrender.contentWindow.postMessage([flight,visibility,1],htmlSightpaths_DLSize.src);
 		let nFtxt = nFlights.toString();
-		nFlightsSaved.innerHTML = 'Generating HD map for '.concat(nFtxt,' recorded flightpaths - wait for download pop-up.');//nFtxt.concat(' flights saved to List.');
+		nFlightsSaved.innerHTML = 'Generating HD map for '.concat(nFtxt,' recorded flightpaths - wait for download pop-up.');
+    
 	}else{
 		nFlightsSaved.innerHTML = 'Route List Limit Reached!';
 		RemoveFlight_click();
@@ -708,14 +693,6 @@ function AddtoRouteList(event) {
   if (nFlights == 0){
     firstEntry = 1;
   }
-  /*
-	if (RouteList.length < 10){
-		RouteList = RouteList.substr(0,RouteList.length-1);
-		firstEntry = 1;
-	}
-  */
-	//$w('#airport1').selectedIndex = $w('#airport1').selectedIndex;
-	//$w('#airport2').selectedIndex = $w('#airport2').selectedIndex;
   var AP1
   var AP2
   if (APDD1.selectedIndex == 0){
@@ -729,15 +706,11 @@ function AddtoRouteList(event) {
   }else{
     AP2 = APDD2[APDD2.selectedIndex].text;
   }
-	//let AP2 = APDD2[APDD2.selectedIndex].text;
 	AP2 = AP2.substr(AP2.length - 5);
-	//console.log(APDD1.selected)
-	//console.log(AP2)
 	let La1L = InputLat1.value.length;
 	let Lo1L = InputLon1.value.length;
 	let La2L = InputLat2.value.length;
 	let Lo2L = InputLon2.value.length;
-  //console.log(Lo2L)
 	let altL = InputAlt.value.length;
 	let La1sp = '\xa0';
 	La1sp = La1sp.repeat(7-La1L);
@@ -760,7 +733,6 @@ function AddtoRouteList(event) {
 	RouteList = RouteList.concat(firstNL,AP1,'⟶',AP2,La1sp,InputLat1.value,'𝐍 ',Lo1sp,InputLon1.value,'𝐄 ⟶ ',La2sp,InputLat2.value,'𝐍 ',Lo2sp,InputLon2.value,'𝐄',altsp,'(',InputAlt.value,'ft)');
 	RouteListTXTBOX.value = RouteList;
 }
-//*/
 
 function getFlights(){
   let nFlightsRaw =  RouteListTXTBOX.value;
