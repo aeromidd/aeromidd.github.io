@@ -13,7 +13,7 @@
 <script type="text/javascript">
 globals = {};
 ////comment the following out before inserting to site
-/*
+
 globals['HMData'] = [
                     [2,4,0],
                     [2,4,0],
@@ -22,11 +22,16 @@ globals['HMData'] = [
                     [1,2,0],
                     [1,3,0],
                     [1,10,0],
+                    [3,4,0],
                     [2,2,0],
                     [2,2,0],
+                    [2,2,0],
+                    [1,2,0],
+                    [1,3,0],
+                    [2,5,0],
                     ];
 drawHMGraphs();  
-*/
+
 ////end
 window.onmessage = function(event){
     if (event.data) {
@@ -347,7 +352,7 @@ function drawHMGraphs(){//triggered when msg recieved
        for (m = 0; m < BGCoordsX.length; m++) {
           BGshape[m] = {x:BGCoordsX[m],y:BGCoordsY[m]};
        }
-     console.log(BGshape)
+     //console.log(BGshape)
      
      drawAxes();
      
