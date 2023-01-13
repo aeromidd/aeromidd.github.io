@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>HMGraphs</title>
+<script type="text/javascript">
+</script>
+</head>
+<body>
+<canvas id="HMCanvas"></canvas>  
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript">
+globals = {};
+////comment the following out before inserting to site
+
+globals['HMData'] = [
+                    [2,4,0],
+                    [2,4,0],
+                    [2,4,0],
+                    [1,4,0],
+                    [2,6,0],
+                    [2,2,0],
+                    [2,15,0],
+                    [1,2,0],
+                    [14,14,0],
+                    [12,14,0],
+                    [1,13,0],
+                    [2,2,0],
+                    [2,2,0],
+                    ];
+drawHMGraphs();  
+
+////end
+window.onmessage = function(event){
+    if (event.data) {
+          globals['HMData'] = event.data[0];
+    }
+    
+    drawHMGraphs();
+};
+
+function drawHMGraphs(){//triggered when msg recieved 
+  //console.log(DT);
+  //do other stuff
+  console.clear();
+  var canvas = document.getElementById('HMCanvas');
+    
+    // Set display size (css pixels).
+    var xsize = 800;
+    var ysize = 250;
+    canvas.style.width = xsize + "px";
+    canvas.style.height = ysize + "px";
+
+    // Set actual size in memory (scaled to account for extra pixel density).
+    var scale = 2;//window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+    canvas.width = Math.floor(xsize * scale);
+    canvas.height = Math.floor(ysize * scale);
+  var context = canvas.getContext('2d')
+
+    // Normalize coordinate system to use css pixels.
+    context.scale(scale, scale);
+    //console.log('scale')
+    //console.log(scale)
+  
+  if (canvas.getContext)
+   {
+    var context = canvas.getContext('2d');
+     function reOffset(){
+        var BB=canvas.getBoundingClientRect();
+        offsetX=BB.left;
+        offsetY=BB.top;        
+    }
+     
+    var offsetX,offsetY;
+    reOffset();
+    window.onscroll=function(e){ reOffset(); }
+    window.onresize=function(e){ reOffset(); }
+    
+    // Reset the current path
+    let cx = (1/scale)*canvas.width/10; // /10 //maybe divide by scale?
+    let cy1 = (1/scale)*canvas.height*0.77;// *0.77 //maybe divide by scale?
+    let ux = 65/1.5;
+    let uy = 180;
+     
+    let HMData = globals['HMData'];
+    let HMDlength = HMData.length;
+    
+    function drawAxes(){ 
+      
+     context.fillStyle='#00508a';
+     context.globalAlpha=1;
+    context.lineWidth = 1;
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    /*
+    //
+    ////
+    context.beginPath();
+    context.lineJoin = "round";
+    context.moveTo(0,0);
+    context.lineTo(canvas.width,0);
+    context.strokeStyle = '#00508a';
+    context.stroke();
+     context.closePath();
+    ////
+    context.beginPath(); 
+    context.lineJoin = "round";
+    context.moveTo(0,0);
+    context.lineTo(0,canvas.height);
+    context.stroke();
+     context.closePath();
+    ////
+    context.beginPath(); 
+    context.lineJoin = "round";
+    context.moveTo(canvas.width,canvas.height);
+    context.lineTo(canvas.width,0);
+    context.stroke();
+     context.closePath();
+    ////
+    context.beginPath(); 
+    context.lineJoin = "round";
+    context.moveTo(canvas.width,canvas.height);
+    context.lineTo(0,canvas.height);
+    context.stroke();
+     context.closePath();
+    ////
+    //
+    */
+     
+    context.beginPath();
+    context.moveTo(cx,cy1)
+    context.lineTo(cx+15.5*ux,cy1)
+    context.strokeStyle = '#757575';
+    context.stroke();
+     context.closePath();
+     
+    for (i = 1; i <= 15; i++) {
+      context.beginPath();
+      context.moveTo(cx+i*ux,cy1)
+      context.lineTo(cx+i*ux,cy1+0.05*uy)
+      context.strokeStyle = '#757575';
+      context.stroke();
+      context.font = "14px Garamond";
+      context.fillStyle = '#757575';
+      context.textAlign = "center";
+      context.fillText(i, cx+i*ux, cy1+0.15*uy);
+    }
+    context.fillText("+", cx+(i)*ux-48/1.5, cy1+0.15*uy);
+     context.closePath();
+      
+    for (i = 0; i <= 15; i=i+2.5/1.5) {
+      context.beginPath();
+      context.moveTo(cx-0.1*ux,cy1-(i/10)*uy)
+      context.lineTo(cx,cy1-(i/10)*uy)
+      context.strokeStyle = '#757575';
+      context.stroke();
+      context.font = "14px Garamond";
+      context.fillStyle = '#757575';
+      context.textAlign = "end";
+      if (i%2.5==0){
+        context.fillText((i*10).toString().concat(' %'), cx-0.2*ux, cy1-(i/10)*uy+5);
+      }
+    }
+      
+      context.beginPath();
+     context.moveTo(cx,cy1-uy)
+     context.lineTo(cx,cy1)
+     context.stroke();
+     context.closePath();
+      
+      context.save();
+      context.rotate(-Math.PI/2);
+      context.textAlign = "center";
+      context.font = "18px Garamond";
+      context.fillStyle='#757575';
+      context.fillText("Responses", -uy*0.59,ux*0.35);//cx-1.5*ux, cy1-0.5*uy+5);
+      context.restore();
+      context.font = "18px Garamond";
+      context.textAlign = "center";
+      context.fillText("Number of Items", cx+(4.65*1.5)*ux, cy1+.285*uy);
+      
+      
+      
+      context.beginPath();
+      context.moveTo(cx-1.1*1.5*ux, cy1+.265*uy-0.2*1.5*ux)
+      context.lineTo(cx-1.1*1.5*ux, cy1+.265*uy-0.45*1.5*ux)
+      context.lineTo(cx-1.1*1.5*ux+.25*1.5*ux, cy1+.265*uy-0.45*1.5*ux)
+      context.lineTo(cx-1.1*1.5*ux+.25*1.5*ux, cy1+.265*uy-0.2*1.5*ux)
+      context.closePath();
+      context.stroke();
+      context.fillStyle='#189aca';
+      context.fill();
+      context.textAlign = "start";
+      context.font = "14px Garamond";
+      context.fillStyle='#757575';
+      context.fillText("Exact Value", cx-.75*1.5*ux, cy1+.265*uy-0.25*1.5*ux);
+      
+      context.beginPath();
+      context.moveTo(cx-1.1*1.5*ux, cy1+.265*uy+0.1*1.5*ux)
+      context.lineTo(cx-1.1*1.5*ux, cy1+.265*uy-0.15*1.5*ux)
+      context.lineTo(cx-1.1*1.5*ux+.25*1.5*ux, cy1+.265*uy-0.15*1.5*ux)
+      context.lineTo(cx-1.1*1.5*ux+.25*1.5*ux, cy1+.265*uy+0.1*1.5*ux)
+      context.closePath();
+      context.stroke();
+      context.fillStyle='#00508a';
+      context.fill();
+      context.textAlign = "start";
+      context.font = "14px Garamond";
+      context.fillStyle='#757575';
+      context.fillText("Range of Values", cx-.75*1.5*ux, cy1+.265*uy+0.05*1.5*ux);
+    
+      
+      context.font = "14px Garamond";
+      context.textAlign = "center";
+      context.fillStyle='#a9a9a9';
+      context.fillText("(mouse-over for more info)", cx+9.4*1.5*ux, cy1+.265*uy+0.05*1.5*ux);
+      
+     context.font = "14px Garamond";
+     context.textAlign = "center";
+     context.fillStyle='#a9a9a9';
+     context.fillText("Total Responses: ".concat(HMDlength.toString()), cx+9.7*1.5*ux, 0.065*uy);
+   }
+     //
+     
+     let HMDataCi = [];
+     for (k = 0; k < HMData.length; k++){
+       if (HMData[k][0] != 0 && HMData[k][1] != 0 && HMData[k][2] == 0){
+           HMDataCi.push([HMData[k][0],HMData[k][1]]);
+       }
+     }
+     console.log("HMDataCi:")
+     console.log(HMDataCi)
+     
+     let HMDataC = GetUniqueRows(HMDataCi);
+     GetUniqueRows(HMDataC);
+     console.log("HMDataC:")
+     console.log(HMDataC)
+     
+     let Ccount = new Array(HMDataC.length).fill(0);
+     for (k = 0; k < HMDataC.length; k++) {
+       for (m = 0; m < HMData.length; m++)
+         if (HMDataC[k][0] == HMData[m][0] && HMDataC[k][1] == HMData[m][1]){
+           Ccount[k]++;
+         }
+     }
+     console.log("Ccount:")
+     console.log(Ccount);
+     
+     var Crange = [];
+     for (k = 0; k < HMDataC.length; k++) {
+       Crange[k] = HMDataC[k][1]-HMDataC[k][0];
+     }
+     
+     sortWithIndices(Crange);
+     f = Crange.sortIndices;
+     f.reverse();
+     //console.log(f)
+     var HMDataCS = [];
+     for (k = 0; k < f.length; k++){
+       HMDataCS[k] = HMDataC[f[k]];
+     }
+     let CcountS = [];
+     for (k = 0; k < f.length; k++){
+       CcountS[k] = Ccount[f[k]];
+     }
+     console.log(CcountS)
+     
+     let  yHC = 1/(HMData.length);
+     
+     let P = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+     let CoordsX = [];
+     let CoordsY = [];
+     let OLF = 0.12;
+     for (k = 0; k < HMDataCS.length; k++) {
+       let Gmin = HMDataCS[k][0];
+       let Gmax = HMDataCS[k][1];
+       let Grange = Gmax-Gmin;
+       let Gcount = CcountS[k];
+       
+       //yH = yHfactorC/((HMData.length));
+       CoordsX[k] = [];
+       CoordsY[k] = [];
+       CoordsX[k].push([cx+(Gmin-OLF)*ux]);
+       CoordsY[k].push([cy1-Gcount*yHC*uy-P[Gmin]*yHC*uy]);
+       CoordsX[k].push([cx+(Gmin)*ux]);
+       CoordsY[k].push([cy1-Gcount*yHC*uy-P[Gmin]*yHC*uy]);
+       CoordsX[k].push([cx+(Gmin+OLF)*ux]);
+       CoordsY[k].push([cy1-Gcount*yHC*uy-P[Gmin]*yHC*uy]);
+       for (i = 1; i < Grange; i++) {
+         CoordsX[k].push([cx+(Gmin+i-OLF)*ux])
+         CoordsY[k].push([cy1-Gcount*yHC*uy-P[Gmin+i]*yHC*uy])
+         CoordsX[k].push([cx+(Gmin+i)*ux])
+         CoordsY[k].push([cy1-Gcount*yHC*uy-P[Gmin+i]*yHC*uy])
+         CoordsX[k].push([cx+(Gmin+i+OLF)*ux])
+         CoordsY[k].push([cy1-Gcount*yHC*uy-P[Gmin+i]*yHC*uy])
+       }
+       CoordsX[k].push([cx+(Gmax-OLF)*ux]);
+       CoordsY[k].push([cy1-Gcount*yHC*uy-P[Gmax]*yHC*uy]);
+       CoordsX[k].push([cx+(Gmax)*ux]);
+       CoordsY[k].push([cy1-Gcount*yHC*uy-P[Gmax]*yHC*uy]);
+       CoordsX[k].push([cx+(Gmax+OLF)*ux]);
+       CoordsY[k].push([cy1-Gcount*yHC*uy-P[Gmax]*yHC*uy]);
+       for (i = 0; i <= Grange; i++) {
+         CoordsX[k].push([cx+(Gmax-i+OLF)*ux])
+         CoordsY[k].push([cy1-P[Gmax-i]*yHC*uy])
+         CoordsX[k].push([cx+(Gmax-i-OLF)*ux])
+         CoordsY[k].push([cy1-P[Gmax-i]*yHC*uy])
+       }
+       
+       for (i = 0; i <= Grange; i++) {
+          P[Gmin+i] = P[Gmin+i]+Gcount;
+       }
+     }
+     
+     console.log("P:")
+     console.log(P)
+     let BGpadding = 0.05;
+     let BGmin = 0;
+     let BGmax = P.length-1;
+       let BGCoordsX = [];
+       let BGCoordsY = [];
+       BGCoordsX.push([cx+(BGmin+1-OLF)*ux-1*BGpadding*yHC*uy]);
+       BGCoordsY.push([cy1-0*yHC*uy-0*yHC*uy]);
+       BGCoordsX.push([cx+(BGmin+1-OLF)*ux-1*BGpadding*yHC*uy]);
+       BGCoordsY.push([cy1-P[1]*yHC*uy-BGpadding*yHC*uy]);
+       for (i = 1; i < (BGmax-BGmin); i++) {
+         BGCoordsX.push([cx+(BGmin+i-OLF)*ux])
+         BGCoordsY.push([cy1-P[i]*yHC*uy-BGpadding*yHC*uy])
+         BGCoordsX.push([cx+(BGmin+i)*ux])
+         BGCoordsY.push([cy1-P[i]*yHC*uy-BGpadding*yHC*uy])
+         BGCoordsX.push([cx+(BGmin+i+OLF)*ux])
+         BGCoordsY.push([cy1-P[i]*yHC*uy-BGpadding*yHC*uy])
+       }
+       BGCoordsX.push([cx+(BGmax-OLF)*ux]);
+       BGCoordsY.push([cy1-P[P.length-1]*yHC*uy-BGpadding*yHC*uy]);
+       BGCoordsX.push([cx+(BGmax)*ux]);
+       BGCoordsY.push([cy1-P[P.length-1]*yHC*uy-BGpadding*yHC*uy]);
+       BGCoordsX.push([cx+(BGmax+OLF)*ux+1*BGpadding*yHC*uy]);
+       BGCoordsY.push([cy1-P[P.length-1]*yHC*uy-BGpadding*yHC*uy]);
+       BGCoordsX.push([cx+(BGmax+OLF)*ux+1*BGpadding*yHC*uy]);
+       BGCoordsY.push([cy1-0*yHC*uy-0*yHC*uy]);
+       /*
+       for (i = 0; i <= Grange; i++) {
+         BGCoordsX.push([cx+(Gmax-i+OLF)*ux])
+         BGCoordsY.push([cy1-P[Gmax-i]*yHC*uy])
+         BGCoordsX.push([cx+(Gmax-i-OLF)*ux])
+         BGCoordsY.push([cy1-P[Gmax-i]*yHC*uy])
+       }
+       */
+       var BGshape = [];
+       for (m = 0; m < BGCoordsX.length; m++) {
+          BGshape[m] = {x:BGCoordsX[m],y:BGCoordsY[m]};
+       }
+     console.log(BGshape)
+     
+     drawAxes();
+     
+     var Cshapes=[];
+     var CshColour = [];
+     var CshText = [];
+     var PcntCcountS = [];
+     for (k = 0; k < HMDataCS.length; k++) {
+        var shk = [];
+        var tipStr = [];
+        for (m = 0; m < CoordsX[k].length; m++) {
+          shk[m] = {x:CoordsX[k][m],y:CoordsY[k][m]};
+        }
+        PcntCcountS = (100*CcountS[k]/HMData.length);
+        Cshapes[k] = shk;
+        let HMDataCSmax = HMDataCS[k][1].toString();
+        if (HMDataCS[k][1] >= 15){
+          HMDataCSmax = "15+";
+        }
+        if ((HMDataCS[k][1]==HMDataCS[k][0]) && HMDataCS[k][0] != 0 && HMDataCS[k][0] != 15){
+          CshColour[k] = '#189aca';
+          CshText[k] = {tip: "[Exactly: ".concat(HMDataCS[k][0].toString(),"], ",CcountS[k].toString()," responses (",PcntCcountS.toFixed(1),"% of total)")}
+        }else if (HMDataCS[k][0] == 15){
+          CshColour[k] = '#00508a';
+          CshText[k] = {tip: "[".concat(HMDataCS[k][0].toString(),"+], ",CcountS[k].toString()," responses (",PcntCcountS.toFixed(1),"% of total)")}
+        }else{
+          CshColour[k] = '#00508a';
+          CshText[k] = {tip: "[Range: ".concat(HMDataCS[k][0].toString(),"-",HMDataCSmax,"], ",CcountS[k].toString()," responses (",PcntCcountS.toFixed(1),"% of total)")}
+        }
+     }
+
+     
+     context.globalAlpha=1;
+     
+     defineshape(BGshape);
+     context.fillStyle = '#e6e6e6';
+     context.fill();
+     context.beginPath();
+    context.moveTo(cx,cy1)
+    context.lineTo(cx+15.5*ux,cy1)
+    context.strokeStyle = '#757575';
+    context.stroke();
+     context.closePath();
+     for(var k=0;k<Cshapes.length;k++){
+        defineshape(Cshapes[k]);
+        context.fillStyle=CshColour[k];
+        context.fill();
+     }
+     
+     $("#HMCanvas").mousemove(function(e){handleMouseMove(e);});
+     
+     function defineshape(s){
+          context.beginPath();
+          context.moveTo(s[0].x,s[0].y);
+          for(var i=1;i<s.length;i++){
+              context.lineTo(s[i].x,s[i].y);
+          }
+          context.strokeStyle = '#e6e6e6';//'#ffffff';
+          context.stroke();
+          context.closePath();
+       
+     }
+     
+     var cw=canvas.width;
+     var ch=canvas.height;
+     
+     function handleMouseMove(e){
+        // tell the browser we're handling this event
+        e.preventDefault();
+        e.stopPropagation();
+        // mouse position
+        mouseX=parseInt(e.clientX*scale-offsetX);
+        mouseY=parseInt(e.clientY*scale-offsetY);
+        // test if mouse is inside any shape(s)
+        // and redraw different alpha based on hovering
+       context.clearRect(0,0,cw,ch);
+       context.globalAlpha=1.00;
+       context.textAlign = "start";
+       drawAxes();
+       defineshape(BGshape);
+       context.fillStyle = '#e6e6e6';
+       context.fill();
+       context.beginPath();
+       context.moveTo(cx,cy1)
+       context.lineTo(cx+15.5*ux,cy1)
+       context.strokeStyle = '#757575';
+       context.stroke();
+       context.closePath();
+       let bgspc ='\u2588';
+        for(var i=0;i<Cshapes.length;i++){
+          let midT = Math.floor((Cshapes[i].length-1)/2);
+            defineshape(Cshapes[i]);
+            context.globalAlpha=1.00;
+            if(context.isPointInPath(mouseX,mouseY)){
+                context.fillStyle='#ffc65c';
+                context.fill();
+            }else{
+                context.fillStyle=CshColour[i];
+                context.globalAlpha=1;
+                context.fill();
+            }
+        }
+       
+       for(var i=0;i<Cshapes.length;i++){
+         let midT = Math.floor((Cshapes[i].length-1)/2);
+         defineshape(Cshapes[i]);
+            if(context.isPointInPath(mouseX,mouseY)){
+                context.textAlign = "start";
+                context.font = "18px Garamond";
+                context.fillStyle = CshColour[i];
+                context.fillText(bgspc.repeat(4+CshText[i].tip.length/2), mouseX/scale+5, mouseY/scale-5);
+                context.fillStyle = '#ffc65c';
+                context.fillText(CshText[i].tip, mouseX/scale+5, mouseY/scale-5);
+                context.textAlign = "start";
+            }
+       }
+      }
+     
+     function sortWithIndices(toSort) {
+      for (var i = 0; i < toSort.length; i++) {
+        toSort[i] = [toSort[i], i];
+      }
+      toSort.sort(function(left, right) {
+        return left[0] < right[0] ? -1 : 1;
+      });
+      toSort.sortIndices = [];
+      for (var j = 0; j < toSort.length; j++) {
+        toSort.sortIndices.push(toSort[j][1]);
+        toSort[j] = toSort[j][0];
+      }
+      return toSort;
+    }
+     
+     function GetUniqueRows(items){
+       for (var i=0; i<items.length; i++) {
+          var listI = items[i];
+          loopJ: for (var j=0; j<items.length; j++) {
+          var listJ = items[j];
+          if (listI === listJ)
+          { continue loopJ} ; //Ignore itself
+          for (var k=listJ.length; k>=0; k--) {
+              if (listJ[k] !== listI[k]) { continue loopJ};
+          }
+          // At this point, their values are equal.
+          items.splice(j, 1);
+          }
+       } 
+       return items;
+     }
+    function onlyUnique(value, index, self) {
+      return self.indexOf(value) === index;
+    }
+ 	}
+ }
+
+</script> 
+</body>
+</html>
