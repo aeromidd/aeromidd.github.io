@@ -9,7 +9,7 @@
 <body>
 <canvas id="HMCanvas"></canvas>  
 <div class="slidecontainer">
-  <input type="range" min="5" max="99" step="1" value="15" class="slider" id="GraphDomainSlider" style="position:absolute;top:260px;width:150px;left:312px;">
+  <input type="range" min="5" max="99" step="1" value="15" class="slider" id="GraphDomainSlider" style="position:absolute;top:280px;width:150px;left:312px;">
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript">
@@ -84,7 +84,7 @@ function drawHMGraphs(HMData){//triggered when msg recieved
     
     // Set display size (css pixels).
     var xsize = 800;
-    var ysize = 250;
+    var ysize = 280;
     canvas.style.width = xsize + "px";
     canvas.style.height = ysize + "px";
 
@@ -197,6 +197,16 @@ function drawHMGraphs(HMData){//triggered when msg recieved
       context.lineTo(cx,cy1-(i/10)*uy)
       context.strokeStyle = '#757575';
       context.stroke();
+      //
+      context.beginPath();
+      context.moveTo(cx-0.1*65,cy1-(i/10)*uy)
+      context.lineTo(cx+ux*(GDS+0.5),cy1-(i/10)*uy)
+      context.setLineDash([5,5]);
+      context.strokeStyle = '#e6e6e6';
+      context.stroke();
+      context.setLineDash([]);
+      context.strokeStyle = '#757575';
+      //
       context.font = "14px Garamond";
       context.fillStyle = '#757575';
       context.textAlign = "end";
@@ -449,7 +459,7 @@ function drawHMGraphs(HMData){//triggered when msg recieved
      context.globalAlpha=1.00;
      
      defineshape(BGshape);
-     context.fillStyle = '#e6e6e6';
+     context.fillStyle = '#d8d8d8';
      context.fill();
      context.beginPath();
     context.moveTo(cx,cy1)
@@ -471,7 +481,7 @@ function drawHMGraphs(HMData){//triggered when msg recieved
           for(var i=1;i<s.length;i++){
               context.lineTo(s[i].x,s[i].y);
           }
-          context.strokeStyle = '#e6e6e6';//'#ffffff';
+          context.strokeStyle = '#d8d8d8';//'#ffffff';
           context.stroke();
           context.closePath();
        
@@ -494,7 +504,7 @@ function drawHMGraphs(HMData){//triggered when msg recieved
        context.textAlign = "start";
        drawAxes();
        defineshape(BGshape);
-       context.fillStyle = '#e6e6e6';
+       context.fillStyle = '#d8d8d8';
        context.fill();
        context.beginPath();
        context.moveTo(cx,cy1)
@@ -521,12 +531,12 @@ function drawHMGraphs(HMData){//triggered when msg recieved
          let midT = Math.floor((Cshapes[i].length-1)/2);
          defineshape(Cshapes[i]);
             if(context.isPointInPath(mouseX,mouseY)){
-                context.textAlign = "start";
-                context.font = "18px Garamond";
+                context.textAlign = "end";
+                context.font = "14px Courier New";
                 context.fillStyle = CshColour[i];
-                context.fillText(bgspc.repeat(4+CshText[i].tip.length/2), mouseX/scale+5, mouseY/scale-5);
+                context.fillText(bgspc.repeat(CshText[i].tip.length), (canvas.width-55)/scale, 55/scale); //bgspc.repeat(4+CshText[i].tip.length/2),mouseX/scale+5, mouseY/scale-5
                 context.fillStyle = '#ffc65c';
-                context.fillText(CshText[i].tip, mouseX/scale+5, mouseY/scale-5);
+                context.fillText(CshText[i].tip, (canvas.width-55)/scale, 55/scale);//mouseX/scale+5, mouseY/scale-5
                 context.textAlign = "start";
             }
        }
@@ -566,6 +576,7 @@ function drawHMGraphs(HMData){//triggered when msg recieved
     function onlyUnique(value, index, self) {
       return self.indexOf(value) === index;
     }
+    
  	}
  }
              
