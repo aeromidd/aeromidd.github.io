@@ -5,7 +5,7 @@
       <meta name="viewport" content="width=device-width"> 
      
       <title>"How Many?" Survey Results</title>
-     <iframe id="htmlHMResults" src="https://aeromidd.com/projects/how-many/how-many-graph-couple.html" title="Preview" style="position:absolute;left:32px;top:50px;height:300px;width:800px;    margin: none;
+     <iframe id="htmlHMResults" src="https://aeromidd.com/projects/how-many/how-many-graph-couple.html" scrolling='no' title="Preview" style="position:absolute;left:48px;top:50px;height:300px;width:800px;    margin: none;
     padding: none;
     border: 0px solid #00508a;
     line-height: 0;
@@ -15,28 +15,28 @@
          "https://code.jquery.com/jquery-3.5.1.js"></script>
      </head>
   <body>
-    <select style="position:absolute;left:490px;top:20px;width:110px;height:21px;font:16px Garamond;color: #189ACA" onChange="htmlHMResults.src = this.value;">
+    <select style="position:absolute;left:520px;top:20px;width:120px;height:21px;font:16px Garamond;color: #189ACA" onChange="htmlHMResults.src = this.value;">
        <option value="https://aeromidd.com/projects/how-many/how-many-graph-couple.html"> a "COUPLE"</option>
        <option value="https://aeromidd.com/projects/how-many/how-many-graph-few.html"> a "FEW"</option>
        <option value="https://aeromidd.com/projects/how-many/how-many-graph-several.html"> "SEVERAL"</option>
      </select>
-    <p style="position:absolute;left:165px;top:6.2px;color:#00508a"> What number of items in a group do you consider:
+    <p style="position:absolute;left:195px;top:6.2px;color:#00508a"> What number of items in a group do you consider:
     </p>
-    <p style="position:absolute;left:605px;top:6.2px;color:#00508a;">?
+    <p style="position:absolute;left:645px;top:6.2px;color:#00508a;">?
     </p>
-    <p style="position:absolute;top:400px;color:#757575;">
-      What is this graph?
+    <p style="position:absolute;top:400px;left:20px;width:840px;text-align:center;font:16px Garamond;color:#757575;">
+      <b>What is this graph?</b>
 
 <br><br>
 
-This chart is my own attempt to present a sort of histogram displaying responses to the "how many is a couple/few/several" questions - but instead of just a basic bar chart, this also illustrates the popularity of specific ranges of values or specific exact values.
+This is an attempt to present a sort of histogram displaying responses to the "how many is a couple/few/several" questions - but instead of just a basic bar chart, this also illustrates the popularity of specific ranges of values or specific exact values.
 
 <br><br>
       
-      How do I read it?
+      <b>How do I read it?</b>
       <br><br>
 
-If, say, the height of the bars at number 2 totals to 80%, this would mean that the number 2 was present in 80% of all responses to the question, whether that be as an exact value answer OR within a range answer. But the breakdown of stacked blocks under that column will give a more in-depth view of whether most of that 80% of respondents made their answer the exact value of '2', or a range at '2-X'. The range responses get grouped into unique blocks and may lie on top of each other to overlap across different heights at other integer values, making it look a bit like a stack of pancakes flopped on top of each other.
+If, say, the height of the bars at number 3 totals to 60%, this would mean that the number 3 was present in 60% of all responses to the question, whether that be as an exact value answer OR within a range answer. But the breakdown of stacked blocks under that column will give a more in-depth view of whether most of that 60% of respondents made their answer the exact value of '3', or a range such as '2-4'. The range responses are grouped into unique blocks and may overlap across different heights at other integer values, making it look a bit like a stack of pancakes flopped on top of each other.
 
 <br><br>
 
@@ -44,14 +44,57 @@ To my (limited) knowledge, I'm not aware of such a type of graph already exists.
 
 <br><br>
       
-I'd love to christen it "the Pancake Graph" but unfortunately that's already the name of a different kind of plot.
+I'd love to christen it "the Pancake Graph" but unfortunately that's already the name of <a href="https://en.wikipedia.org/wiki/Pancake_graph">a different kind of plot</a>.
       
       <br><br>
-      Where did this data come from?
+      <b>Data Source</b>
       <br><br>
-      I made a survey form available HERE and posted it to the reddit forum r/SampleSize which is great for this sort of stuff.
+      I made a survey form available <a href="https://aeromidd.wixsite.com/aeromidd/how-many">here</a> and posted it to the reddit forum <a href="https://reddit.com/r/SampleSize" target="_blank" rel="noopener noreferrer">
+      r/SampleSize </a> which is great for this sort of stuff.
       
     </p>
+    <canvas id="BorderCanvas"></canvas>
+      <script type="text/javascript">
+         var canvas = document.getElementById('BorderCanvas');
+         if (canvas.getContext) {
+           var context = canvas.getContext('2d');
+           var xsize = 880;
+           var ysize = 1425;
+           canvas.style.width = xsize + "px";
+           canvas.style.height = ysize + "px";
+           // Set actual size in memory (scaled to account for extra pixel density).
+           var scale = 2; //window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+           canvas.width = Math.floor(xsize * scale);
+           canvas.height = Math.floor(ysize * scale);
+           // Normalize coordinate system to use css pixels.
+           context.scale(scale, scale);
+           context.clearRect(0, 0, canvas.width / scale, canvas.height / scale);
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(0, 0);
+           context.lineTo(canvas.width / scale, 0);
+           context.strokeStyle = '#00508a';
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(0, 0);
+           context.lineTo(0, canvas.height / scale);
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(canvas.width / scale, canvas.height / scale);
+           context.lineTo(canvas.width / scale, 0);
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(canvas.width / scale, canvas.height / scale);
+           context.lineTo(0, canvas.height / scale);
+           context.stroke();
+           ////
+         }
+      </script>
   </body>
 </html>
-
