@@ -16,11 +16,6 @@ iframe {
     display: block;
 }
       </style>
-      <title id="PAGETITLE"></title>
-     <script>
-       let ThisProjectContentURL="https://aeromidd.com/projects/aerofoil-catalogue/aerofoil-catalogue.html";
-       PAGETITLE.innerText ="Aerofoil Catalogue";
-     </script>
 </head>
 <body>
   <div style="overflow: hidden;">
@@ -93,8 +88,6 @@ iframe {
   
   <script>
     console.clear()
-    let D = new Date().getFullYear();
-    CRtext.innerText = "© Michael Middleton " + D.toString();
     
     htmlProjectContent.src = ThisProjectContentURL;
     latest_button.src = latest_button.value.split('|')[1];
@@ -116,14 +109,14 @@ iframe {
     interactive_button.src = interactive_button.value.split('|')[1];
     interactive_button.src = interactive_button.value.split('|')[0];
     
-    CRtext.innerText = 'ready to fetch PRJData'
+    CRtext.innerText = 'Fetching PRJData...'
   var PRJData
  let response_promise = fetch("https://aeromidd.com/PRJLIST.json");
            //document.addEventListener("DOMContentLoaded", function() {
            response_promise.then(response => response.json().then(RESDATA => {
   var PRJData = [...RESDATA];
   
-    CRtext.innerText = 'fetched PRJData';
+    CRtext.innerText = 'fetched PRJData. Determining Project Relative Paths...';
   let currentURL = document.URL;
     CRtext.innerText = 'doc URL = '+currentURL;
   var ProjectInList = false;
@@ -165,7 +158,7 @@ iframe {
       prev_button.style.cursor = "default";
       prev_button.style.border = "2px solid #c7c7c7";
   }
-  if (ProjectPosition == '' || ProjectPosition > 0){
+  if (ProjectPosition != '' || ProjectPosition > 0){
         first_button.onclick = function(){ window.location.replace('https://aeromidd.com' + PRJData[0].url)}
   }else{
       first_button.src = first_button.value.split('|')[2];
@@ -175,6 +168,9 @@ iframe {
       first_button.style.border = "2px solid #c7c7c7";
   }
     CRtext.innerText = 'completed loading page nav functions';
+             
+    let D = new Date().getFullYear();
+    CRtext.innerText = "© Michael Middleton " + D.toString();
              
              
   }));//}, false);
