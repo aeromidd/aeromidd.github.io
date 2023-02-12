@@ -116,7 +116,10 @@ iframe {
            response_promise.then(response => response.json().then(RESDATA => {
   var PRJData = [...RESDATA];
   
+  PAGETITLE.innerText = PAGETITLE.innerText+' hi';
   let currentURL = document.URL;
+  
+  PAGETITLE.innerText = PAGETITLE.innerText+currentURL;
   var ProjectInList = false;
   var ProjectPosition = '';
   for (j=0;j<PRJData.length;j++){
