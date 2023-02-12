@@ -16,6 +16,11 @@ iframe {
     display: block;
 }
       </style>
+      <title id="PAGETITLE"></title>
+     <script>
+       let ThisProjectContentURL="https://aeromidd.com/projects/aerofoil-catalogue/aerofoil-catalogue.html";
+       PAGETITLE.innerText ="Aerofoil Catalogue";
+     </script>
 </head>
 <body>
   <div style="overflow: hidden;">
@@ -87,6 +92,7 @@ iframe {
   </div>
   
   <script>
+    console.clear()
     let D = new Date().getFullYear();
     CRtext.innerText = "© Michael Middleton " + D.toString();
     
@@ -112,8 +118,8 @@ iframe {
     
     CRtext.innerText = 'ready to fetch PRJData'
   var PRJData
- let response_promise = fetch("https://aeromidd.github.io/PRJLIST.json");
-           document.addEventListener("DOMContentLoaded", function() {
+ let response_promise = fetch("https://aeromidd.com/PRJLIST.json");
+           //document.addEventListener("DOMContentLoaded", function() {
            response_promise.then(response => response.json().then(RESDATA => {
   var PRJData = [...RESDATA];
   
@@ -171,7 +177,7 @@ iframe {
     CRtext.innerText = 'completed loading page nav functions';
              
              
-  }))}, false);
+  }));//}, false);
     
     
   </script>
