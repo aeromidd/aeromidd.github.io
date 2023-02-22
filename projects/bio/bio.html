@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width">
+      <title>BIO</title>
+      
+      <style>
+         
+      </style>
+   </head>
+   <body>
+      <p style="position:absolute;top:140px;text-align:center;width:865px;color:#757575;font-family: Helvetica; font-size: 14px;">
+I’m an engineer from the UK,
+<br>
+working predominantly on control & simulation
+<br>
+projects for the aviation and marine sectors.
+<br>
+​
+<br>
+I have a keen interest in graphic design and data visualization,
+<br>
+pursuing these as a hobby and also sometimes for commissioned work.
+<br>
+​
+<br>
+In my free time, I particularly enjoy making infographics, maps and diagrams to convey
+<br>
+information with accuracy, coherence, entertainment, and visual appeal.
+<br>
+​
+<br>
+I also do the occasional comic doodle and very amateur vexillography (flag design),
+<br>
+and have coded up a few interesting (in my opinion!) interactive projects you can fiddle about with.
+<br>
+​
+<br>
+This site is a something of a portfolio for all of these things.
+     </p>
+     <p style="position:absolute;top:567px;text-align:left;left:202.5px;width:865px;color:#757575;font-family: Helvetica; font-size: 14px;"> Other websites I enjoy
+     </p>
+     <p style="position:absolute;top:10px;text-align:left;left:280px;width:865px;color:#d5d5d5;font-family: Courier New; font-size: 365px;"> {
+     </p>
+     <p style="position:absolute;top:10px;text-align:left;left:295px;width:865px;color:#ffffff;font-family: Courier New; font-size: 365px;"> {
+     </p>
+     <p style="position:absolute;top:440px;text-align:left;left:432.5px;width:865px;color:#757575;font-family: Helvetica; font-size: 14px;">
+<br>       
+       <a href="https://philogb.github.io/page/myriahedral/#">The Myriahedral Project</a>
+<br>
+​
+<br>
+       <a href="http://mkweb.bcgsc.ca/">Martin Krzywinski</a>
+<br>
+​
+<br>
+       <a href="https://thetruesize.com/">The True Size</a>
+<br>
+​
+<br>
+       <a href="https://shademap.app/#64.87927,-18.7207,7z,1627620697779t">Shade Map</a>
+<br>
+​
+<br>
+       <a href="https://xkcd.com">xkcd (of course)</a>
+<br>
+​
+<br>
+       <a href="https://www.rachelmiddleton.co.uk/">My Sister's Illustrations</a>
+<br>
+​
+<br>
+       <a href="https://www.themusiclab.org/quizzes/td">Harvard Tone-Deafness Test</a>
+<br>
+​
+<br>
+       <a href="https://www.reddit.com/user/aeromidd/m/maps_and_data_fun">My Multireddit (maps, data visuals, vexillology)</a>
+     </p>
+      <canvas id="BorderCanvas"></canvas>
+      <script type="text/javascript">
+         var canvas = document.getElementById('BorderCanvas');
+         if (canvas.getContext) {
+           var context = canvas.getContext('2d');
+           var xsize = 880;
+           var ysize = 1425;
+           canvas.style.width = xsize + "px";
+           canvas.style.height = ysize + "px";
+           // Set actual size in memory (scaled to account for extra pixel density).
+           var scale = 2; //window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+           canvas.width = Math.floor(xsize * scale);
+           canvas.height = Math.floor(ysize * scale);
+           // Normalize coordinate system to use css pixels.
+           context.scale(scale, scale);
+           context.clearRect(0, 0, canvas.width / scale, canvas.height / scale);
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(0, 0);
+           context.lineTo(canvas.width / scale, 0);
+           context.strokeStyle = '#00508a';
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(0, 0);
+           context.lineTo(0, canvas.height / scale);
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(canvas.width / scale, canvas.height / scale);
+           context.lineTo(canvas.width / scale, 0);
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(canvas.width / scale, canvas.height / scale);
+           context.lineTo(0, canvas.height / scale);
+           context.stroke();
+           ////
+         }
+      </script>
+      
+      <script type="text/javascript">
+         
+           
+      </script>
+   </body>
+</html>
