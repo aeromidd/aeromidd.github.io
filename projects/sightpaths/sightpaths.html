@@ -7,6 +7,45 @@
       <script src=
          "https://code.jquery.com/jquery-3.5.1.js"></script>
       <style>
+           input{
+      -webkit-appearance: none;
+      appearance: none;
+      position: absolute;
+      height: 20px;
+      width: 113px;
+      font-family: Courier New, serif;
+      font-size: 16px;
+      font-weight: bold;
+      color: #189aca;
+      text-align: right;
+      background-color: #ffffff;
+      border: 1px solid #00508a;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      -khtml-border-radius: 5px;
+      border-radius: 5px;
+      border-collapse: separate;
+      transform: translateZ(0);
+    }
+        select{
+      -webkit-appearance: none;
+      appearance: none;
+      position: absolute;
+      height: 20px;
+      width: 113px;
+      font-family: Garamond;
+      font-size: 14px;
+      font-weight: bold;
+      color: #00508a;
+      background-color: #ffffff;
+      border: 1px solid #00508a;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      -khtml-border-radius: 5px;
+      border-radius: 5px;
+      border-collapse: separate;
+      transform: translateZ(0);
+    }
          /* (A) SEARCH BOX */
          #AFfilter1 {
          box-sizing: border-box;
@@ -113,7 +152,7 @@ function ScrollRouteList() {
        
      </iframe>
      
-     <iframe id="htmlSightpaths_DLSize" src="https://aeromidd.com/projects/sightpaths/sightpaths_HDrender.html" title="HD Render" style="position:absolute;left:320px;top:905px;height:1px;width:1px; margin: none;
+     <iframe id="htmlSightpaths_DLSize" src="https://aeromidd.com/projects/sightpaths/sightpaths_HDrender.html" title="HD Render" style="position:absolute;left:320px;top:905px;height:0px;width:0px; margin: none;
     padding: none;
     border: 1px solid red;
     line-height: 0;
@@ -124,20 +163,37 @@ function ScrollRouteList() {
      <canvas id="pointCanvas" onmousemove="draw(event)" onmouseleave="context.clearRect(0, 0, canvas.width, canvas.height);"
           style="position:absolute; border:1px solid #00508a; left:40px; top:13px; width:818px; height:399px;"></canvas>
      
-      <input type="text" id="AFfilter1" style="position:absolute;left:215px;top:510px;" placeholder="SEARCH AIRPORTS..."/>
+      <input type="text" id="AFfilter1" style="position:absolute;left:140px;top:510px;width:200px" placeholder="SEARCH AIRPORTS..."/>
       <nav>
-         <select id="APDD1" style="position:absolute;left:215px;top:480px;height:25px;width:200px;font:12px Garamond;border: 1px solid #00508a"
+         <select id="APDD1" style="position:absolute;left:40px;top:480px;height:25px;width:300px;"
                  onChange="//SetAP1Data();"><option value="" disabled selected>Origin</option>
          </select>
       </nav>
-      <input type="text" id="AFfilter2" style="position:absolute;left:515px;top:510px;" placeholder="SEARCH AIRPORTS..."/>
+      <input type="text" id="AFfilter2" style="position:absolute;left:560px;top:510px;width:200px" placeholder="SEARCH AIRPORTS..."/>
       <nav>
-         <select id="APDD2" style="position:absolute;left:480px;top:480px;height:25px;width:200px;font:12px Garamond;border: 1px solid #00508a"
+         <select id="APDD2" style="position:absolute;left:560px;top:480px;height:25px;width:300px;"
                  onChange="//SetAP2Data();"><option value="" disabled selected>Destination</option>
          </select>
       </nav>
-     <input type="number" id="InputLat1" name="quantity" min="-89.999" max="90" step=".001" value = "0.000" style="position:absolute;left:220px;top:458px" onChange="drawFoW();">
-     <input type="number" id="InputLon1" name="quantity" min="-179.999" max="180" step=".001" value = "0.000" style="position:absolute;left:320px;top:458px" onChange="drawFoW();">
+     <input type="number" id="InputLat1" name="quantity" min="-89.999" max="90" step=".001" value = "0.000" style="position:absolute;left:150px;top:458px;font-family: Courier New;
+      -webkit-appearance: none;
+      appearance: none;
+      position: absolute;
+      height: 18px;
+      width: 85px;
+      font-family: Courier New, serif;
+      font-size: 16px;
+      font-weight: bold;
+      color: #189aca;
+      background-color: #ffffff;
+      border: 1px solid #00508a;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      -khtml-border-radius: 5px;
+      border-radius: 5px;
+      border-collapse: separate;
+      transform: translateZ(0);" onChange="drawFoW();">
+     <input type="number" id="InputLon1" name="quantity" min="-179.999" max="180" step=".001" value = "0.000" style="position:absolute;left:257px;width:75px;top:458px" onChange="drawFoW();">
      <input type="number" id="InputLat2" name="quantity" min="-90" max="89.999" step=".001" value = "0.000"  style="position:absolute;left:480px;top:458px" onChange="drawFoW();">
      <input type="number" id="InputLon2" name="quantity" min="-180" max="179.999" step=".001" value = "0.000" style="position:absolute;left:580px;top:458px" onChange="drawFoW();">
      
@@ -159,8 +215,8 @@ function ScrollRouteList() {
        <option value="10000"> 10,000 ft</option>
      </select>
      
-     <button id="RandAP1" style="position:absolute;left:120px;top:540px;">Random Airport</button>
-     <button id="RandAP2" style="position:absolute;left:560px;top:540px;">Random Airport</button>
+     <button id="RandAP1" style="position:absolute;left:270px;top:535px;width:70px;">Random Airport</button>
+     <button id="RandAP2" style="position:absolute;left:560px;top:535px;width:70px;">Random Airport</button>
      
      <button id="AddFlight" style="position:absolute;left:420px;top:540px;" onClick = "AddFlight_click()">Add Flight</button>
      <button id="RemoveFlight" style="position:absolute;left:420px;top:560px;" onClick = "RemoveFlight_click()">Undo Add</button>
@@ -169,7 +225,7 @@ function ScrollRouteList() {
 
       <script type="text/javascript">
          console.clear();
-        
+        const MAXFLIGHTS = 35;
                 var canvas = document.getElementById("pointCanvas");
 var context = canvas.getContext("2d");
         // Set display size (css pixels).
@@ -468,7 +524,7 @@ FoWPreview.contentWindow.postMessage([sendTrips,visibility],FoWPreview.src)
           let nFlights = N.nFlights;
           let lines = N.lines;
           let limReach = 0;
-          if (nFlights > 32 || nFlights == 0){
+          if (nFlights > MAXFLIGHTS || nFlights == 0){
             limReach = 1;
           }
           if (limReach == 0){
@@ -577,14 +633,14 @@ function AddFlight_click(event) {
   N = getFlights();
   nFlights = N.nFlights;
 
-	if (nFlights >= 32){
+	if (nFlights >= MAXFLIGHTS){
 		limReach = 1;
 		AddFlight.disabled = true;
 	}
 	if (limReach == 0){
 		AddtoRouteList();
     SaveFlights.disabled = false;
-    if (nFlights == 32-1){
+    if (nFlights == MAXFLIGHTS-1){
       AddFlight.disabled = true;
     }else{
       AddFlight.disabled = false;
@@ -650,7 +706,7 @@ function SaveFlights_click(event) {
   let nFlights = N.nFlights;
   let lines = N.lines;
 	let limReach = 0;
-	if (nFlights > 32){
+	if (nFlights > MAXFLIGHTS){
 		limReach = 1;
 	}
 	if (limReach == 0){
