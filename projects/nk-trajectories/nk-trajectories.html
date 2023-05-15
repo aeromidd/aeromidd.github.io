@@ -275,7 +275,7 @@
          </form>
       </div>
       <canvas id="LaunchGraphCanvas" width="700px" height="150px"
-         style="position:absolute;top:650px;left:70px;border: 1px solid #ff508a";></canvas>
+         style="position:absolute;top:650px;left:70px;border: 1px solid #00508a";></canvas>
       <script type="text/javascript">
          /*
          <video width="100px" height="100px" controls>
@@ -461,7 +461,7 @@
          canvas.style.height = ysize + "px";
          
          // Set actual size in memory (scaled to account for extra pixel density).
-         var scale = 2;//window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+         var scale = 4;//window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
          canvas.width = Math.floor(xsize * scale);
          canvas.height = Math.floor(ysize * scale);
          
@@ -476,6 +476,10 @@
          let xmin = 7;
          let xmax = 693;
          let xrange = xmax-xmin;
+           
+         let ymax = 10;
+         let ymin = 130;
+         let yrange = ymax-ymin;
            
              context.beginPath();
          context.moveTo(xmin,140);
@@ -499,10 +503,10 @@
          let SRBMcheck = SRBMCheck.checked;
          let SLVcheck  = SLVCheck.checked;
            
-           let nd = Math.floor((dateSlider.max % 1)*12)+Math.floor(dateSlider.max-dateSlider.min)*12;
-           console.log(nd)
+         let nd = Math.floor((dateSlider.max % 1)*12)+Math.floor(dateSlider.max-dateSlider.min)*12;
+           //console.log(nd)
          context.lineWidth = 1;
-         context.strokeStyle = 'rgb('+math.multiply([0,.6,1],255)+')';
+         context.strokeStyle = 'rgb('+math.multiply([0,0,0],255)+')';
            
            for(i=0;i<nd;i=i+12){
              context.beginPath();
@@ -511,23 +515,312 @@
              context.stroke();
              context.closePath();
            }
-           
+           let cs_all = new Array(nd).fill(0);
            let cs_SLV = new Array(nd).fill(0);
            let cs_SRBM = new Array(nd).fill(0);
            let cs_MRBM = new Array(nd).fill(0);
            let cs_IRBM = new Array(nd).fill(0);
            let cs_ICBM = new Array(nd).fill(0);
-           let csld = [[cs_SLV],[cs_SRBM],[cs_MRBM],[cs_IRBM],[cs_ICBM]];
+           let ns_all = new Array(nd).fill(0);
+           let ns_SLV = new Array(nd).fill(0);
+           let ns_SRBM = new Array(nd).fill(0);
+           let ns_MRBM = new Array(nd).fill(0);
+           let ns_IRBM = new Array(nd).fill(0);
+           let ns_ICBM = new Array(nd).fill(0);
+           
            //[0,0,1,0,1984,4,9,1,3,NaN,]
            //[150,650,2,0,2014,3,26,1,48,NaN,]
            
+           // precalc normal and cumulative sums over dates(months)
            for(i=0;i<nd;i++){
+             if (i>0){
+               cs_SLV[i] = cs_SLV[i-1];
+               cs_SRBM[i] = cs_SRBM[i-1];
+               cs_MRBM[i] = cs_MRBM[i-1];
+               cs_IRBM[i] = cs_IRBM[i-1];
+               cs_ICBM[i] = cs_ICBM[i-1];
+               cs_all[i] = cs_all[i-1];
+             }
              for(j=0;j<ldata.length;j++){
-               if ((ldata[j][4]*12+ldata[j][5])==i){
-               //if (ldata[j][2]==0){
-                 csld[ldata[j][2]][i]++;
+               if ((ldata[j][4]*12+ldata[j][5])==i+12*1984){
+                 if (ldata[j][2]==0){
+                   cs_SLV[i]++;
+                   ns_SLV[i]++;
+                 }
+                 if (ldata[j][2]==1){
+                   cs_SRBM[i]++;
+                   ns_SRBM[i]++;
+                 }
+                 if (ldata[j][2]==2){
+                   cs_MRBM[i]++;
+                   ns_MRBM[i]++;
+                 }
+                 if (ldata[j][2]==3){
+                   cs_IRBM[i]++;
+                   ns_IRBM[i]++;
+                 }
+                 if (ldata[j][2]==4){
+                   cs_ICBM[i]++;
+                   ns_ICBM[i]++;
+                 }
+                 cs_all[i]++;
+                 ns_all[i]++;
                }
              }
+           }
+           let csld = [[cs_SLV],
+                       [cs_SRBM],
+                       [cs_MRBM],
+                       [cs_IRBM],
+                       [cs_ICBM]];
+           
+           let totalSLV = SLVcheck*cs_SLV[nd-1];
+           let totalSRBM = SRBMcheck*cs_SRBM[nd-1];
+           let totalMRBM = MRBMcheck*cs_MRBM[nd-1];
+           let totalIRBM = IRBMcheck*cs_IRBM[nd-1];
+           let totalICBM = ICBMcheck*cs_ICBM[nd-1];
+           var totalShown
+             if (cumulativeCheck==true){
+               totalShown = totalSLV+totalSRBM+totalMRBM+totalIRBM+totalICBM;
+             }else{
+               totalShown = 15;
+             }
+           
+           //console.log(totalShown)
+           context.lineWidth = 0.1;
+         context.strokeStyle = 'rgb('+math.multiply([0,0,0],255)+')';
+           // ICBM
+           if (ICBMcheck==true){
+           context.beginPath();
+           context.moveTo(xmin+0*xrange/nd,ymin)
+           for (i=0;i<nd;i++){
+             if (cumulativeCheck==true){
+             if (i > 0){
+               context.lineTo(xmin+(i-1)*xrange/nd,ymin+
+                              (
+                              ICBMcheck*cs_ICBM[i]+
+                              IRBMcheck*cs_IRBM[i]+
+                              MRBMcheck*cs_MRBM[i]+
+                              SRBMcheck*cs_SRBM[i]+
+                              SLVcheck*cs_SLV[i]
+                              )
+                               *yrange/totalShown)
+             }
+             context.lineTo(xmin+i*xrange/nd,ymin+
+                              (
+                              ICBMcheck*cs_ICBM[i]+
+                              IRBMcheck*cs_IRBM[i]+
+                              MRBMcheck*cs_MRBM[i]+
+                              SRBMcheck*cs_SRBM[i]+
+                              SLVcheck*cs_SLV[i]
+                              )
+                              *yrange/totalShown)
+             }else{
+             if (i > 0){
+               context.lineTo(xmin+(i-1)*xrange/nd,ymin+
+                              (
+                              ICBMcheck*ns_ICBM[i]+
+                              IRBMcheck*ns_IRBM[i]+
+                              MRBMcheck*ns_MRBM[i]+
+                              SRBMcheck*ns_SRBM[i]+
+                              SLVcheck*ns_SLV[i]
+                              )
+                               *yrange/totalShown)
+             }
+             context.lineTo(xmin+i*xrange/nd,ymin+
+                              (
+                              ICBMcheck*ns_ICBM[i]+
+                              IRBMcheck*ns_IRBM[i]+
+                              MRBMcheck*ns_MRBM[i]+
+                              SRBMcheck*ns_SRBM[i]+
+                              SLVcheck*ns_SLV[i]
+                              )
+                              *yrange/totalShown)
+             }
+           }
+           context.lineTo(xmax,ymin)
+           context.lineTo(xmin,ymin)
+           //context.stroke();
+           context.closePath();
+           context.fillStyle = 'rgb('+math.multiply([.75,0,.75],255)+')';
+           context.fill();
+           }
+           // IRBM
+           if (IRBMcheck==true){
+           context.beginPath();
+           context.moveTo(xmin+0*xrange/nd,ymin)
+           for (i=0;i<nd;i++){
+             if (cumulativeCheck==true){
+             if (i > 0){
+               context.lineTo(xmin+(i-1)*xrange/nd,ymin+
+                              (
+                              IRBMcheck*cs_IRBM[i]+
+                              MRBMcheck*cs_MRBM[i]+
+                              SRBMcheck*cs_SRBM[i]+
+                              SLVcheck*cs_SLV[i]
+                              )
+                               *yrange/totalShown)
+             }
+             context.lineTo(xmin+i*xrange/nd,ymin+
+                              (
+                              IRBMcheck*cs_IRBM[i]+
+                              MRBMcheck*cs_MRBM[i]+
+                              SRBMcheck*cs_SRBM[i]+
+                              SLVcheck*cs_SLV[i]
+                              )
+                              *yrange/totalShown)
+             }else{
+             if (i > 0){
+               context.lineTo(xmin+(i-1)*xrange/nd,ymin+
+                              (
+                              IRBMcheck*ns_IRBM[i]+
+                              MRBMcheck*ns_MRBM[i]+
+                              SRBMcheck*ns_SRBM[i]+
+                              SLVcheck*ns_SLV[i]
+                              )
+                               *yrange/totalShown)
+             }
+             context.lineTo(xmin+i*xrange/nd,ymin+
+                              (
+                              IRBMcheck*ns_IRBM[i]+
+                              MRBMcheck*ns_MRBM[i]+
+                              SRBMcheck*ns_SRBM[i]+
+                              SLVcheck*ns_SLV[i]
+                              )
+                              *yrange/totalShown)
+             }
+           }
+           context.lineTo(xmax,ymin)
+           context.lineTo(xmin,ymin)
+           //context.stroke();
+           context.closePath();
+           context.fillStyle = 'rgb('+math.multiply([1,.2,0],255)+')';
+           context.fill();
+           }
+           // MRBM
+           if (MRBMcheck==true){
+           context.beginPath();
+           context.moveTo(xmin+0*xrange/nd,ymin)
+           for (i=0;i<nd;i++){
+             if (cumulativeCheck==true){
+             if (i > 0){
+               context.lineTo(xmin+(i-1)*xrange/nd,ymin+
+                              (
+                              MRBMcheck*cs_MRBM[i]+
+                              SRBMcheck*cs_SRBM[i]+
+                              SLVcheck*cs_SLV[i]
+                              )
+                               *yrange/totalShown)
+             }
+             context.lineTo(xmin+i*xrange/nd,ymin+
+                              (
+                              MRBMcheck*cs_MRBM[i]+
+                              SRBMcheck*cs_SRBM[i]+
+                              SLVcheck*cs_SLV[i]
+                              )
+                              *yrange/totalShown)
+             }else{
+             if (i > 0){
+               context.lineTo(xmin+(i-1)*xrange/nd,ymin+
+                              (
+                              MRBMcheck*ns_MRBM[i]+
+                              SRBMcheck*ns_SRBM[i]+
+                              SLVcheck*ns_SLV[i]
+                              )
+                               *yrange/totalShown)
+             }
+             context.lineTo(xmin+i*xrange/nd,ymin+
+                              (
+                              MRBMcheck*ns_MRBM[i]+
+                              SRBMcheck*ns_SRBM[i]+
+                              SLVcheck*ns_SLV[i]
+                              )
+                              *yrange/totalShown)
+             }
+           }
+           context.lineTo(xmax,ymin)
+           context.lineTo(xmin,ymin)
+           //context.stroke();
+           context.closePath();
+           context.fillStyle = 'rgb('+math.multiply([1,.6,0],255)+')';
+           context.fill();
+           }
+           // SRBM
+           if (SRBMcheck==true){
+           context.beginPath();
+           context.moveTo(xmin+0*xrange/nd,ymin)
+           for (i=0;i<nd;i++){
+             if (cumulativeCheck==true){
+             if (i > 0){
+               context.lineTo(xmin+(i-1)*xrange/nd,ymin+
+                              (
+                              SRBMcheck*cs_SRBM[i]+
+                              SLVcheck*cs_SLV[i]
+                              )
+                               *yrange/totalShown)
+             }
+             context.lineTo(xmin+i*xrange/nd,ymin+
+                              (
+                              SRBMcheck*cs_SRBM[i]+
+                              SLVcheck*cs_SLV[i]
+                              )
+                              *yrange/totalShown)
+             }else{
+             if (i > 0){
+               context.lineTo(xmin+(i-1)*xrange/nd,ymin+
+                              (
+                              SRBMcheck*ns_SRBM[i]+
+                              SLVcheck*ns_SLV[i]
+                              )
+                               *yrange/totalShown)
+             }
+             context.lineTo(xmin+i*xrange/nd,ymin+
+                              (
+                              SRBMcheck*ns_SRBM[i]+
+                              SLVcheck*ns_SLV[i]
+                              )
+                              *yrange/totalShown)
+             }
+           }
+           context.lineTo(xmax,ymin)
+           context.lineTo(xmin,ymin)
+           //context.stroke();
+           context.closePath();
+           context.fillStyle = 'rgb('+math.multiply([.2,.7,.4],255)+')';
+           context.fill();
+           }
+           // SLV
+           if (SLVcheck==true){
+           context.beginPath();
+           context.moveTo(xmin+0*xrange/nd,ymin)
+           for (i=0;i<nd;i++){
+             if (cumulativeCheck==true){
+             if (i > 0){
+               context.lineTo(xmin+(i-1)*xrange/nd,ymin+
+                              (SLVcheck*cs_SLV[i])
+                               *yrange/totalShown)
+             }
+             context.lineTo(xmin+i*xrange/nd,ymin+
+                              (SLVcheck*cs_SLV[i])
+                              *yrange/totalShown)
+             }else{
+             if (i > 0){
+               context.lineTo(xmin+(i-1)*xrange/nd,ymin+
+                              (SLVcheck*ns_SLV[i])
+                               *yrange/totalShown)
+             }
+             context.lineTo(xmin+i*xrange/nd,ymin+
+                              (SLVcheck*ns_SLV[i])
+                              *yrange/totalShown)
+               
+             }
+           }
+           context.lineTo(xmax,ymin)
+           context.lineTo(xmin,ymin)
+           //context.stroke();
+           context.closePath();
+           context.fillStyle = 'rgb('+math.multiply([.7,.7,.7],255)+')';
+           context.fill();
            }
          }
          
@@ -643,9 +936,11 @@
          function CumulativeLaunchesChangeFunction(val){
          let cumval = val;//-val+100;
          DrawTrajectories();
+         SetupLaunchesGraph(launchdata);
          }
          function VehicleChangeFunction(){
          DrawTrajectories();
+         SetupLaunchesGraph(launchdata);
          }
          
          
