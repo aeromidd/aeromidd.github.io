@@ -102,7 +102,10 @@
       </script>
       <canvas id="TrajCanvas" width="600px" height="600px"
          style="position:absolute;top:20px;left:70px;border: 1px solid #00508a";></canvas>
-      <div class="slidecontainer">
+      <canvas id="LaunchGraphCanvas" width="700px" height="150px"
+         style="position:absolute;top:637px;left:70px;border: 1px solid #00508a";>
+     </canvas>
+     <div class="slidecontainer">
          <form>
             <input id="zoomSlider" class="slider" type="range" name="zoomSlider" min="0" max="900" step="1" value="321" style="writing-mode: bt-lr; /* IE */
                -webkit-appearance: slider-vertical; /* Chromium */
@@ -274,16 +277,7 @@
             <input type="checkbox" id="Brazil" checked= true onchange="VehicleChangeFunction();" style=" position:absolute; left:775px; top:558px;">
          </form>
       </div>
-      <canvas id="LaunchGraphCanvas" width="700px" height="150px"
-         style="position:absolute;top:650px;left:70px;border: 1px solid #00508a";></canvas>
       <script type="text/javascript">
-         /*
-         <video width="100px" height="100px" controls>
-         <source src="https://video.wixstatic.com/video/fd208e_4386a36f54eb41b6955070aa26ff9f0c/1080p/mp4/file.mp4" type="video/mp4">
-         Your browser does not support HTML video.
-         
-         </video>
-         */
          console.clear();
          
          //update the date
@@ -470,8 +464,6 @@
          
          context.clearRect(0, 0, canvas.width/scale, canvas.height/scale);
          
-         canvas.style.top = "670px";
-         //canvas.style.left = "50px";
          
          let xmin = 7;
          let xmax = 693;
@@ -568,11 +560,6 @@
                }
              }
            }
-           let csld = [[cs_SLV],
-                       [cs_SRBM],
-                       [cs_MRBM],
-                       [cs_IRBM],
-                       [cs_ICBM]];
            
            let totalSLV = SLVcheck*cs_SLV[nd-1];
            let totalSRBM = SRBMcheck*cs_SRBM[nd-1];
@@ -583,10 +570,16 @@
              if (cumulativeCheck==true){
                totalShown = totalSLV+totalSRBM+totalMRBM+totalIRBM+totalICBM;
              }else{
-               totalShown = 15;
+               totalShown = Math.max(...sumArrays(
+                                                  math.multiply(SLVcheck,ns_SLV),
+                                                  math.multiply(SRBMcheck,ns_SRBM),
+                                                  math.multiply(MRBMcheck,ns_MRBM),
+                                                  math.multiply(IRBMcheck,ns_IRBM),
+                                                  math.multiply(ICBMcheck,ns_ICBM),
+                                     ));
              }
            
-           //console.log(totalShown)
+           console.log(totalShown)
            context.lineWidth = 0.1;
          context.strokeStyle = 'rgb('+math.multiply([0,0,0],255)+')';
            // ICBM
@@ -1429,7 +1422,11 @@
          newData[fitCount - 1] = data[data.length - 1]; // for new allocation
          return newData;
          };
-         
+         function sumArrays(...arrays) {
+  const n = arrays.reduce((max, xs) => Math.max(max, xs.length), 0);
+  const result = Array.from({ length: n });
+  return result.map((_, i) => arrays.map(xs => xs[i] || 0).reduce((sum, x) => sum + x, 0));
+}
       </script>
    </body>
 </html>
