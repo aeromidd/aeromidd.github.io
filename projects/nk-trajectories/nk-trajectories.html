@@ -105,6 +105,9 @@
       <canvas id="LaunchGraphCanvas" width="700px" height="150px"
          style="position:absolute;top:637px;left:70px;border: 1px solid #00508a";>
      </canvas>
+      <canvas id="LaunchGraphDateCanvas" width="700px" height="150px"
+         style="position:absolute;top:637px;left:70px;border: 1px solid #00508a";>
+     </canvas>
      <div class="slidecontainer">
          <form>
             <input id="zoomSlider" class="slider" type="range" name="zoomSlider" min="0" max="900" step="1" value="321" style="writing-mode: bt-lr; /* IE */
@@ -127,8 +130,8 @@
                top: 620px;
                left: 68px;
                width: 704px;" oninput="this.form.dateInputY.value=Math.floor(this.value);this.form.dateInputM.value=1+Math.round(12*(this.value)%Math.floor(this.value)); DateChangeFunction(this.value);" />
-            <input id="dateInputY" class="sliderInput" type="number" name="dateInputY" style="top:640px;left:400px;" min="1984" max="1" value="0" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.dateSlider.value=this.value;DateChangeFunction(this.value);"/>
-            <input id="dateInputM" class="sliderInput" type="number" name="dateInputM" style="top:640px;left:450px;" min="1" max="12" value="13" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.dateSlider.value=this.value;DateChangeFunction(this.value);"/>
+            <input id="dateInputY" class="sliderInput" type="number" name="dateInputY" style="top:640px;left:400px;visibility:hidden" min="1984" max="1" value="0" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.dateSlider.value=this.value;DateChangeFunction(this.value);"/>
+            <input id="dateInputM" class="sliderInput" type="number" name="dateInputM" style="top:640px;left:450px;visibility:hidden" min="1" max="12" value="13" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.dateSlider.value=this.value;DateChangeFunction(this.value);"/>
          </form>
       </div>
       <div>
@@ -293,15 +296,9 @@
          dateInputM.max = mm;
          dateInputY.value = yyyy;
          dateInputY.max = yyyy;
-         dateSlider.value = yyyy+mm/12;
-         dateSlider.max = yyyy+mm/12;
-         
-         /*
-         <input id="dateSlider" class="slider" type="range" name="dateSlider" min="1984" max="2022.5833333333333333333333" step="0.0833333333333333333333" value="2022.5833333333333333333333" style="position:absolute;
-         top: 620px;
-         left: 68px;
-         width: 704px;" oninput="this.form.dateInputY.value=Math.floor(this.value);this.form.dateInputM.value=1+Math.round(12*(this.value)%Math.floor(this.value)); DateChangeFunction(this.value);" />
-         */
+         dateSlider.value = yyyy+(mm)/12;
+         dateSlider.max = yyyy+(mm)/12;
+         //console.log(mm)
          HypRangeCheck.checked = false;
          
          //Initial Conditions
@@ -444,7 +441,71 @@
          
          //CumulativeLaunchesGraph
          SetupLaunchesGraph(launchdata);
+         SetupLaunchDateGraph();
+        
+        
+        
+        function SetupLaunchDateGraph(){
+          var canvas = document.getElementById('LaunchGraphDateCanvas');
+         var context = canvas.getContext('2d');
          
+         var xsize = 700;
+         var ysize = 150;
+         canvas.style.width = xsize + "px";
+         canvas.style.height = ysize + "px";
+         
+         // Set actual size in memory (scaled to account for extra pixel density).
+         var scale = 4;//window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+         canvas.width = Math.floor(xsize * scale);
+         canvas.height = Math.floor(ysize * scale);
+         
+         // Normalize coordinate system to use css pixels.
+         context.scale(scale, scale);
+         
+         context.clearRect(0, 0, canvas.width/scale, canvas.height/scale);
+         let dateSelectY = Number(dateInputY.value);
+         let dateSelectM = Number(dateInputM.value);
+         
+         
+         let xmin = 7;
+         let xmax = 693;
+         let xrange = xmax-xmin;
+           
+         let ymax = 10;
+         let ymin = 130;
+         let yrange = ymax-ymin;
+          
+         let MonthList = ['zeromonth',
+                             'January',
+                             'February',
+                             'March',
+                             'April',
+                             'May',
+                             'June',
+                             'July',
+                             'August',
+                             'September',
+                             'October',
+                             'November',
+                             'December'
+                             ]
+             context.textAlign = "center";
+             context.font = "bold "+15+"px Helvetica";
+             context.fillStyle = '#757575';
+             context.fillText(dateSelectY,canvas.width/2/scale,20);
+             context.font = "bold "+12+"px Helvetica";
+             context.fillText(MonthList[dateSelectM],canvas.width/2/scale,32); 
+          let DN = (dateSelectY+dateSelectM/12-dateSlider.min)/(dateSlider.max-dateSlider.min);
+          //let nd = Math.floor((dateSlider.max % 1)*12)+Math.floor(dateSlider.max-dateSlider.min)*12;
+          context.beginPath();
+          context.moveTo(xmin+(DN)*xrange,0)
+          context.lineTo(xmin+(DN)*xrange,800)
+          context.strokeStyle = '#757575';
+          context.stroke();
+          
+        }
+        
+          
          function SetupLaunchesGraph(ldata){
          var canvas = document.getElementById('LaunchGraphCanvas');
          var context = canvas.getContext('2d');
@@ -579,7 +640,7 @@
                                      ));
              }
            
-           console.log(totalShown)
+           //console.log(totalShown)
            context.lineWidth = 0.1;
          context.strokeStyle = 'rgb('+math.multiply([0,0,0],255)+')';
            // ICBM
@@ -925,6 +986,7 @@
          function DateChangeFunction(val){
          let dateval = val;//-val+100;
          DrawTrajectories();
+         SetupLaunchDateGraph();
          }
          function CumulativeLaunchesChangeFunction(val){
          let cumval = val;//-val+100;
@@ -1347,6 +1409,29 @@
            context.closePath();
          /*
            */
+            let MonthList = ['zeromonth',
+                             'January',
+                             'February',
+                             'March',
+                             'April',
+                             'May',
+                             'June',
+                             'July',
+                             'August',
+                             'September',
+                             'October',
+                             'November',
+                             'December'
+                             ]
+             context.textAlign = "left";
+             context.font = "bold "+15+"px Helvetica";
+             context.fillStyle = '#757575';
+             context.fillText(dateSelectY,10,17.5);
+             context.font = "bold "+12+"px Helvetica";
+             context.fillText(MonthList[dateSelectM],10,32); 
+             //context.fillText(dateSelectY,cx,cy); //ER*LMRbot*zoom
+           
+           
          //Plot Trajectories
          for (i = 0; i < xt.length; i++) {
            var PlotValid = false;
