@@ -89,7 +89,7 @@ iframe {
   <script>
     console.clear()
     
-    //htmlProjectContent.src = ThisProjectContentURL;
+    htmlProjectContent.src = ThisProjectContentURL;
     latest_button.src = latest_button.value.split('|')[1];
     latest_button.src = latest_button.value.split('|')[0];
     next_button.src = next_button.value.split('|')[1];
@@ -169,7 +169,8 @@ iframe {
   }
              
     rand_button.onclick = function(){
-    var X = Math.round(Math.random()*LatestProjectPosition); window.location.replace('https://aeromidd.com' + PRJData[X].url)
+      var X = Math.round(Math.random()*LatestProjectPosition); 
+      window.location.replace('https://aeromidd.com' + PRJData[X].url)
     }
              
     CRtext.innerText = 'completed loading page nav functions';
