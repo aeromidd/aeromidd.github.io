@@ -89,7 +89,7 @@ iframe {
   <script>
     console.clear()
     
-    htmlProjectContent.src = ThisProjectContentURL;
+    //htmlProjectContent.src = ThisProjectContentURL;
     latest_button.src = latest_button.value.split('|')[1];
     latest_button.src = latest_button.value.split('|')[0];
     next_button.src = next_button.value.split('|')[1];
@@ -128,7 +128,7 @@ iframe {
     }
   }
   let LatestProjectPosition = PRJData.length-1;
-  console.log(currentURL);
+  //console.log(currentURL);
   CRtext.innerText = 'ProjectPosition='+ProjectPosition.toString()+', currentURL='+currentURL;
              
   if (ProjectPosition < LatestProjectPosition){
@@ -167,6 +167,11 @@ iframe {
       first_button.style.cursor = "default";
       first_button.style.border = "2px solid #c7c7c7";
   }
+             
+    rand_button.onclick = function(){
+    var X = Math.round(Math.random()*LatestProjectPosition); window.location.replace('https://aeromidd.com' + PRJData[X].url)
+    }
+             
     CRtext.innerText = 'completed loading page nav functions';
              
     let D = new Date().getFullYear();
