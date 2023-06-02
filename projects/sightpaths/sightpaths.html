@@ -11,8 +11,6 @@
       -webkit-appearance: none;
       appearance: none;
       position: absolute;
-      height: 20px;
-      width: 113px;
       font-family: Courier New, serif;
       font-size: 16px;
       font-weight: bold;
@@ -31,8 +29,6 @@
       -webkit-appearance: none;
       appearance: none;
       position: absolute;
-      height: 20px;
-      width: 113px;
       font-family: Garamond;
       font-size: 14px;
       font-weight: bold;
@@ -50,29 +46,36 @@
          #AFfilter1 {
          box-sizing: border-box;
          position:absolute;
-         top: 15px;
-         left: 15px;
-         height: 20px;
-         width: 164px;
+         top: 510px;
+         left: 140px;
+         height: 25px;
+         width: 200px;
          margin-bottom: 0px;
          padding: 0px;
+         font-family: "Garamond";
+         text-align: center;
+         }
+        #AFfilter2 {
+         box-sizing: border-box;
+         position:absolute;
+         top: 510px;
+         left: 560px;
+         height: 25px;
+         width: 200px;
+         margin-bottom: 0px;
+         padding: 0px;
+         font-family: "Garamond";
+         text-align: center;
          }
          #APDD1 option {
+         text-align:center;
          padding: 0px;
          border-bottom: 1px solid #e7e7e7;
          }
          #APDD1 option.hide { display: none; }}
-        #AFfilter2 {
-         box-sizing: border-box;
-         position:absolute;
-         top: 15px;
-         left: 15px;
-         height: 20px;
-         width: 164px;
-         margin-bottom: 0px;
-         padding: 0px;
-         }
+        
          #APDD2 option {
+         text-align:center;
          padding: 0px;
          border-bottom: 1px solid #e7e7e7;
          }
@@ -163,43 +166,26 @@ function ScrollRouteList() {
      <canvas id="pointCanvas" onmousemove="draw(event)" onmouseleave="context.clearRect(0, 0, canvas.width, canvas.height);"
           style="position:absolute; border:1px solid #00508a; left:40px; top:13px; width:818px; height:399px;"></canvas>
      
-      <input type="text" id="AFfilter1" style="position:absolute;left:140px;top:510px;width:200px" placeholder="SEARCH AIRPORTS..."/>
+      <input type="text" id="AFfilter1" placeholder="Search Airports"/>
       <nav>
-         <select id="APDD1" style="position:absolute;left:40px;top:480px;height:25px;width:300px;"
+         <select id="APDD1" style="position:absolute;left:40px;top:480px;height:25px;width:300px"
                  onChange="//SetAP1Data();"><option value="" disabled selected>Origin</option>
          </select>
       </nav>
-      <input type="text" id="AFfilter2" style="position:absolute;left:560px;top:510px;width:200px" placeholder="SEARCH AIRPORTS..."/>
+      <input type="text" id="AFfilter2" placeholder="Search Airports"/>
       <nav>
-         <select id="APDD2" style="position:absolute;left:560px;top:480px;height:25px;width:300px;"
+         <select id="APDD2" style="position:absolute;left:560px;top:480px;height:25px;width:300px;text-align:center;"
                  onChange="//SetAP2Data();"><option value="" disabled selected>Destination</option>
          </select>
       </nav>
-     <input type="number" id="InputLat1" name="quantity" min="-89.999" max="90" step=".001" value = "0.000" style="position:absolute;left:150px;top:458px;font-family: Courier New;
-      -webkit-appearance: none;
-      appearance: none;
-      position: absolute;
-      height: 18px;
-      width: 85px;
-      font-family: Courier New, serif;
-      font-size: 16px;
-      font-weight: bold;
-      color: #189aca;
-      background-color: #ffffff;
-      border: 1px solid #00508a;
-      -webkit-border-radius: 5px;
-      -moz-border-radius: 5px;
-      -khtml-border-radius: 5px;
-      border-radius: 5px;
-      border-collapse: separate;
-      transform: translateZ(0);" onChange="drawFoW();">
-     <input type="number" id="InputLon1" name="quantity" min="-179.999" max="180" step=".001" value = "0.000" style="position:absolute;left:257px;width:75px;top:458px" onChange="drawFoW();">
-     <input type="number" id="InputLat2" name="quantity" min="-90" max="89.999" step=".001" value = "0.000"  style="position:absolute;left:480px;top:458px" onChange="drawFoW();">
-     <input type="number" id="InputLon2" name="quantity" min="-180" max="179.999" step=".001" value = "0.000" style="position:absolute;left:580px;top:458px" onChange="drawFoW();">
+     <input type="number" id="InputLat1" name="quantity" min="-89.999" max="90" step=".001" value = "0.000" style="position:absolute;left:104px;width:110px;top:451px;height:20px;text-align:center" onChange="drawFoW();">
+     <input type="number" id="InputLon1" name="quantity" min="-179.999" max="180" step=".001" value = "0.000" style="position:absolute;left:225px;width:110px;top:451px;height:20px;text-align:center" onChange="drawFoW();">
+     <input type="number" id="InputLat2" name="quantity" min="-90" max="89.999" step=".001" value = "0.000"  style="position:absolute;left:560px;width:110px;top:451px;height:20px;text-align:center" onChange="drawFoW();">
+     <input type="number" id="InputLon2" name="quantity" min="-180" max="179.999" step=".001" value = "0.000" style="position:absolute;left:680px;width:110px;top:451px;height:20px;text-align:center" onChange="drawFoW();">
      
-<input type="number" id = "InputAlt" min="2000" step="1000" max="6561680" value= "30000" style="position:absolute;left:415px;top:430px;" onChange="drawFoW();">
+<input type="number" id = "InputAlt" min="2000" step="1000" max="6561680" value= "30000" style="position:absolute;left:400px;top:420px;height:25px;width:85px" onChange="drawFoW();">
      
-     <select style="position:absolute;left:490px;top:430px;width:17px;height:21px" onChange="InputAlt.value = this.value;drawFoW();">
+     <select style="position:absolute;left:490px;top:420px;width:15px;height:30px" onChange="InputAlt.value = this.value;drawFoW();">
        <option value="1340000"> 1,340,000 ft (ISS)</option>
        <option value="330000"> 330,000 ft (edge of space)</option>
        <option value="100000"> 100,000 ft</option>
@@ -215,13 +201,15 @@ function ScrollRouteList() {
        <option value="10000"> 10,000 ft</option>
      </select>
      
-     <button id="RandAP1" style="position:absolute;left:270px;top:535px;width:70px;">Random Airport</button>
-     <button id="RandAP2" style="position:absolute;left:560px;top:535px;width:70px;">Random Airport</button>
+     <button id="RandAP1" style="position:absolute;left:40px;top:510px;width:95px;height:25px;">Random</button>
+     <button id="RandAP2" style="position:absolute;left:765px;top:510px;width:95px;height:25px;">Random</button>
+     <button id="RandCoords1" style="position:absolute;left:40px;top:450px;width:60px;height:25px;padding:0">Random</button>
+     <button id="RandCoords2" style="position:absolute;left:800px;top:450px;width:60px;height:25px;padding:0">Random</button>
      
-     <button id="AddFlight" style="position:absolute;left:420px;top:540px;" onClick = "AddFlight_click()">Add Flight</button>
-     <button id="RemoveFlight" style="position:absolute;left:420px;top:560px;" onClick = "RemoveFlight_click()">Undo Add</button>
-     <button id="ClearFlights" style="position:absolute;left:420px;top:600px;" onClick = "ClearFlights_click()">Clear All</button>
-     <button id="SaveFlights" style="position:absolute;left:420px;top:580px;" onClick = "SaveFlights_click()">Download HD Map of Listed Flights</button>
+     <button id="AddFlight" style="position:absolute;left:415px;top:540px;" onClick = "AddFlight_click()">Add Flight</button>
+     <button id="RemoveFlight" style="position:absolute;left:415px;top:560px;" onClick = "RemoveFlight_click()">Undo Add</button>
+     <button id="ClearFlights" style="position:absolute;left:415px;top:600px;" onClick = "ClearFlights_click()">Clear All</button>
+     <button id="SaveFlights" style="position:absolute;left:415px;top:580px;" onClick = "SaveFlights_click()">Download HD Map of Listed Flights</button>
 
       <script type="text/javascript">
          console.clear();
