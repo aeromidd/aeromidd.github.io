@@ -177,9 +177,9 @@
               }else{
                 fR = 1;
               }
-              
-              R1 = fR*(R+R*(midLat)*(Math.PI/180)*Math.pow(Math.tan(midLat*(Math.PI/180)),1))/(Math.pow(2.47,.5)*2.47**Math.sqrt(2));
-              R2 = fR*R/(Math.pow(2.47,.5)*2.47**Math.sqrt(2));
+              BFAC = 1.47;//2.47;
+              R1 = fR*(R+R*(midLat)*(Math.PI/180)*Math.pow(Math.tan(midLat*(Math.PI/180)),1))/(Math.pow(BFAC,.5)*BFAC**Math.sqrt(2));
+              R2 = fR*R/(Math.pow(BFAC,.5)*BFAC**Math.sqrt(2));
               
               if (visibility == 3){
                   RefillCirc(ctx,cx+midLong*cx/180,cy-midLat*cy/90,Math.abs(R1),Math.abs(R2),1);
