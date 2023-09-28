@@ -90,8 +90,8 @@
       </style>
    </head>
    <body>
-     <label for="RouteListTXTBOX" style="position:absolute;top:630px;text-align:center;left:15px;width:865px;color:#00508a;font:13px Courier New">FLIGHT LIST:</label>
-  <textarea id="RouteListTXTBOX" style="position:absolute;top:650px;text-align:center;left:15px;width:865px;color:#00508a;font:13px Courier New" name="RouteListTXTBOX" value="" readonly></textarea>
+     <label for="RouteListTXTBOX" style="position:absolute;top:645px;text-align:center;left:22.5px;width:865px;color:#00508a;font:13px Courier New">FLIGHT LIST:</label>
+  <textarea id="RouteListTXTBOX" style="position:absolute;top:660px;text-align:center;left:12.5px;width:865px;color:#00508a;font:13px Courier New" name="RouteListTXTBOX" value="" readonly></textarea>
      <p id="DescTXT" style="position:absolute;top:700px;text-align:center;left:15px;width:865px;color:#757575;font:13px Helvetica">PLACEHOLDER TEXT DESCRIPTION</p>
      <p id="nFlightsSaved" style="position:absolute;top:600px;left:550px;width:200px;color:#757575;font:13px Helvetica">List Empty.</p>
      <script>
@@ -155,9 +155,9 @@ function ScrollRouteList() {
        
      </iframe>
      
-     <iframe id="htmlSightpaths_DLSize" src="https://aeromidd.com/projects/sightpaths/sightpaths_HDrender.html" title="HD Render" style="position:absolute;left:320px;top:905px;height:0px;width:0px; margin: none;
+     <iframe id="htmlSightpaths_DLSize" src="https://aeromidd.com/projects/sightpaths/sightpaths_HDrender.html" title="HD Render" style="position:absolute;left:497px;top:650px;height:0px;width:0px; margin: none;
     padding: none;
-    border: 1px solid red;
+    border: 1px solid #00508a;
     line-height: 0;
     float: left;">
        
@@ -206,10 +206,10 @@ function ScrollRouteList() {
      <button id="RandCoords1" style="position:absolute;left:40px;top:450px;width:60px;height:25px;padding:0">Random</button>
      <button id="RandCoords2" style="position:absolute;left:800px;top:450px;width:60px;height:25px;padding:0">Random</button>
      
-     <button id="AddFlight" style="position:absolute;left:415px;top:540px;" onClick = "AddFlight_click()">Add Flight</button>
-     <button id="RemoveFlight" style="position:absolute;left:415px;top:560px;" onClick = "RemoveFlight_click()">Undo Add</button>
-     <button id="ClearFlights" style="position:absolute;left:415px;top:600px;" onClick = "ClearFlights_click()">Clear All</button>
-     <button id="SaveFlights" style="position:absolute;left:415px;top:580px;" onClick = "SaveFlights_click()">Download HD Map of Listed Flights</button>
+     <button id="AddFlight" style="position:absolute;left:400px;top:540px;width:100px;height:30px;" onClick = "AddFlight_click()">Add Flight</button>
+     <button id="RemoveFlight" style="position:absolute;left:372.5px;top:575px;width:75px;height:20px;" onClick = "RemoveFlight_click()">Undo Add</button>
+     <button id="ClearFlights" style="position:absolute;left:452.5px;top:575px;width:75px;height:20px;" onClick = "ClearFlights_click()">Clear All</button>
+     <button id="SaveFlights" style="position:absolute;left:372.5px;top:600px;width:155px;height:40px;" onClick = "SaveFlights_click()">Download HD Map of Listed Flights</button>
 
       <script type="text/javascript">
          console.clear();
@@ -645,6 +645,8 @@ function AddFlight_click(event) {
 	}else{
 		nFlightsSaved.innerHTML = 'List empty.';
 	}
+  
+  drawFoW();
   ScrollRouteList();
 }
         
@@ -674,6 +676,7 @@ function RemoveFlight_click(event) {
 	SaveFlights.disabled = true;
 	}
 	AddFlight.disabled = false;
+	drawFoW();
   ScrollRouteList();
 }
 
