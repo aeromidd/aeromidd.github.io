@@ -141,6 +141,8 @@
             
             h = journeyAlt*0.3048; //m
             R = Math.sqrt(2*6371e3*h+Math.pow(h,2))/1000; //km
+              MaxR = 6371;
+              R = Math.min(MaxR,R);
             //console.log(R)
             //R = 92;///(Math.pow(2.47,0.5)*2.47);
           
@@ -159,8 +161,10 @@
                 fR = 1;
               }
               
-              R1 = fR*(R+R*(midLat)*(Math.PI/180)*Math.pow(Math.tan(midLat*(Math.PI/180)),1))/(Math.pow(2.47,.5)*2.47**Math.sqrt(2));
-              R2 = fR*R/(Math.pow(2.47,.5)*2.47**Math.sqrt(2));
+              BFAC = 2.47;//2.47;
+              
+              R1 = fR*(R+R*(midLat)*(Math.PI/180)*Math.pow(Math.tan(midLat*(Math.PI/180)),1))/(Math.pow(BFAC,.5)*BFAC**Math.sqrt(2));
+              R2 = fR*R/(Math.pow(BFAC,.5)*BFAC**Math.sqrt(2));
               
               if (visibility == 3){
                   RefillCirc(ctx,cx+midLong*cx/180,cy-midLat*cy/90,Math.abs(R1),Math.abs(R2),1);
@@ -398,10 +402,3 @@ function downloadImage(data, filename = 'untitled.jpeg') {
 </body>
   
 </html>
-  
-  
-  
-  
-  
-  
-  
