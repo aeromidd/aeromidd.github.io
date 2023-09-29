@@ -28,7 +28,7 @@
                     [21.5074, -90.1278, 37.9356, 123.9484,  22000],
                     [28.5074, -0.1278, 37.9356, -23.9484,  22000],
                 ];
-        globals['visibility'] = 3;
+        globals['visibility'] = 1;
         drawFoWmap();
         
         ////end
@@ -159,6 +159,8 @@
             
             h = journeyAlt*0.3048; //m
             R = Math.sqrt(2*6371e3*h+Math.pow(h,2))/1000; //km
+              MaxR = 6371;
+              R = Math.min(MaxR,R);
             //console.log(R)
             //R = 92;///(Math.pow(2.47,0.5)*2.47);
           
@@ -178,6 +180,7 @@
                 fR = 1;
               }
               BFAC = 2.47;//2.47;
+              
               R1 = fR*(R+R*(midLat)*(Math.PI/180)*Math.pow(Math.tan(midLat*(Math.PI/180)),1))/(Math.pow(BFAC,.5)*BFAC**Math.sqrt(2));
               R2 = fR*R/(Math.pow(BFAC,.5)*BFAC**Math.sqrt(2));
               
@@ -489,8 +492,3 @@
 </body>
   
 </html>
-  
-  
-  
-  
-  
