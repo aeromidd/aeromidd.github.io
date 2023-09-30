@@ -25,7 +25,7 @@
         ////comment the following out before inserting to site
         
         globals['trips'] = [
-                    [51.5074, -0.1278, 37.9356, 23.9484,  100382000],
+                    [51.5074, -0.1278, 37.9356, 23.9484,  1382000],
                     [21.5074, -90.1278, 37.9356, 123.9484,  22000],
                     [28.5074, -0.1278, 37.9356, -23.9484,  22000],
                 ];
@@ -437,10 +437,11 @@
       var img = new Image();
       img.src = FinishedCanvas.toDataURL();
       var CalcCanvas = document.querySelector('#CalcCanvas');
+      CalcCanvasScale = 0.25;
       //CalcCanvas.top = img.height;
-      CalcCanvas.width = img.width/8;
-      CalcCanvas.height = img.height/8;
-      CalcCanvas.getContext('2d').drawImage(img, 0, 0, img.width/8, img.height/8);
+      CalcCanvas.width = img.width*CalcCanvasScale;
+      CalcCanvas.height = img.height*CalcCanvasScale;
+      CalcCanvas.getContext('2d').drawImage(img, 0, 0, img.width*CalcCanvasScale, img.height*CalcCanvasScale);
       //document.body.appendChild(img);
     //var currentPixelData = FinishedCanvas.getContext('2d').getImageData(0, 0, 1, 1).data;
     //var dataURL = canvas.toDataURL("image/jpeg", 1.0);
@@ -450,6 +451,7 @@
 //setTimeout(function() {
 colorCounter = 0;
 blackCounter = 0;
+Re = 6371;
 let rgbapixel = [0,0,0,0];
 totaltxt = "";
     for (i=0;i<=CalcCanvas.width;i++)
@@ -463,9 +465,9 @@ totaltxt = "";
         rgbapixel[1] = Array.from(PixelData)[1];
         rgbapixel[2] = Array.from(PixelData)[2];
         if (rgbapixel[0] == 0 && rgbapixel[1] == 0 && rgbapixel[2] == 0){
-          blackCounter++; 
+          blackCounter = blackCounter+1*2*Math.PI*Re*Math.abs(Math.cos((90-j/180)*Math.PI/180)); 
         }else{
-          colorCounter++;
+          colorCounter = colorCounter+1*2*Math.PI*Re*Math.abs(Math.cos((90-j/180)*Math.PI/180));
         }
           
         //if(JSON.stringify(PixelData)==JSON.stringify(currentPixelData))
@@ -475,7 +477,7 @@ totaltxt = "";
       console.log(Array.from(PixelData))
       console.log(colorCounter)
       console.log(blackCounter)
-      console.log(100*colorCounter/blackCounter)
+      console.log(100*colorCounter/(colorCounter+blackCounter))
       console.log(CalcCanvas.width)
       console.log(CalcCanvas.height)
 //console.log("Chosed Color specification:" + "<br> R : " + currentPixelData[0] + "  G: " + currentPixelData[1] + " B: " + currentPixelData[2] + " Alpha : " +currentPixelData[3] + "<br>Image size: " + canvas.width + "x" + canvas.height + "<br>Total Repeat: " + colorCounter + "<br> Portion: " + colorCounter/(canvas.width*canvas.height)*100 + "%");
@@ -554,8 +556,3 @@ totaltxt = "";
 </body>
   
 </html>
-  
-  
-  
-  
-  
