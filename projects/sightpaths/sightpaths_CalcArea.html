@@ -30,7 +30,15 @@
                     [28.5074, -0.1278, 37.9356, -23.9484,  22000],
                 ];
         globals['visibility'] = 1;
-        drawFoWmap();
+        //drawFoWmap();
+        //TotalSeenCoverage = calcCoverage();
+    const secondFunction = async () => {
+      await drawFoWmap();
+      const TotalSeenCoverage = calcCoverage(globals['trips'].length);
+      }
+    
+        secondFunction();
+        
         
         ////end
     window.onmessage = function(event){
@@ -41,7 +49,66 @@
             parent.postMessage("loadMyOrders","*");  //  `*` on any domain  
       
             drawFoWmap();
+            calcCoverage();
+            
         };
+    
+    function calcCoverage(nF){
+      
+    var TotalSeenCoverage = 0;
+      
+    var FinishedCanvas = document.querySelector('#myCanvas');
+    //console.log('hi')
+    FinishedCanvas.crossOrigin="anonymous";
+      
+      var img = new Image();
+      img.src = FinishedCanvas.toDataURL();
+      //function WaitForCalculableImage(){
+      
+      img.onload = function(){
+        
+      var CalcCanvas = document.querySelector('#CalcCanvas');
+      CalcCanvasScale = 0.25;
+      //CalcCanvas.top = img.height;
+      CalcCanvas.width = img.width*CalcCanvasScale;
+      CalcCanvas.height = img.height*CalcCanvasScale;
+      CalcCanvas.getContext('2d').drawImage(img, 0, 0, img.width*CalcCanvasScale, img.height*CalcCanvasScale);
+        colorCounter = 0;
+        blackCounter = 0;
+        Re = 6371;
+        let rgbapixel = [0,0,0,0];
+        totaltxt = "";
+        for (i=0;i<=CalcCanvas.width;i++)
+        {
+            for (j=0;j<=CalcCanvas.height;j++)
+            {
+            var PixelData = CalcCanvas.getContext('2d').getImageData(i, j, 1, 1,{ colorSpace: "srgb" }).data;
+            rgbapixel[0] = Array.from(PixelData)[0];
+            rgbapixel[1] = Array.from(PixelData)[1];
+            rgbapixel[2] = Array.from(PixelData)[2];
+            if (rgbapixel[0] == 0 && rgbapixel[1] == 0 && rgbapixel[2] == 0){
+              blackCounter = blackCounter+1*2*Math.PI*Re*Math.abs(Math.cos((90-j/180)*Math.PI/180)); 
+            }else{
+              colorCounter = colorCounter+1*2*Math.PI*Re*Math.abs(Math.cos((90-j/180)*Math.PI/180));
+            }
+            }
+        };
+          TotalSeenCoverage = 100*colorCounter/(colorCounter+blackCounter);
+      //console.log(TotalSeenCoverage)
+                
+      var ctx = FinishedCanvas.getContext('2d');
+      ctx.font = "100px serif";
+      ctx.fillStyle = "#ffff00";
+      ctx.fillText("Based on these  " + nF.toString() + "  flightpaths, I have seen (or been in view of) a maximum of:  " + TotalSeenCoverage.toFixed(3)+"%  of the Earth's surface.", 50, 3850);
+      ctx.font = "65px serif";
+      ctx.fillText("This is of course assuming perfect visibility without clouds or haze, and assuming you could look out of both sides of the aircraft for the full duration of every flight. A more conservative figure would probably be about a tenth or less of this crude estimate. But we can dream!",50,3950)
+      
+      }
+      
+    }
+    
+    
+    
 	//window.onload = function(){
     function drawFoWmap(){
 		var ctx = canvas.getContext('2d');
@@ -354,14 +421,14 @@
                    ctx.beginPath();
                    ctx.moveTo(cx+startLong*cx/180,cy-startLat*cy/90);
                    ctx.lineTo(cx+midLong*cx/180,cy-midLat*cy/90);
-                   console.log('start of the line')
+                   //console.log('start of the line')
                   }else if (i > gcdLength-1){
                    ctx.lineTo(cx+endLong*cx/180,cy-endLat*cy/90);
                    ctx.strokeStyle = '#189aca';
                    ctx.lineWidth = 2/ctx.getTransform().a;
                    ctx.stroke();
                    ctx.closePath();
-                   console.log('end of the line')
+                   //console.log('end of the line')
                   }else{
                     if (180-Math.abs(midLong)<2){
                         [midLatprev,midLongprev,gcdprev] = gcpt(f-1,startLat, startLong, endLat, endLong);
@@ -428,63 +495,9 @@
 		canvas.addEventListener('DOMMouseScroll',handleScroll,false);
 		canvas.addEventListener('mousewheel',handleScroll,false);
         */
-      
-      
-    var FinishedCanvas = document.querySelector('#myCanvas');
-    //console.log('hi')
-    FinishedCanvas.crossOrigin="anonymous";
-      
-      var img = new Image();
-      img.src = FinishedCanvas.toDataURL();
-      var CalcCanvas = document.querySelector('#CalcCanvas');
-      CalcCanvasScale = 0.25;
-      //CalcCanvas.top = img.height;
-      CalcCanvas.width = img.width*CalcCanvasScale;
-      CalcCanvas.height = img.height*CalcCanvasScale;
-      CalcCanvas.getContext('2d').drawImage(img, 0, 0, img.width*CalcCanvasScale, img.height*CalcCanvasScale);
-      //document.body.appendChild(img);
-    //var currentPixelData = FinishedCanvas.getContext('2d').getImageData(0, 0, 1, 1).data;
-    //var dataURL = canvas.toDataURL("image/jpeg", 1.0);
-// show the color information in box
-//document.getElementById('colorstat').innerHTML = "Chosed Color specification:" + "<br> R : " + currentPixelData[0] + "  G: " + currentPixelData[1] + " B: " + currentPixelData[2] + " Alpha : " +currentPixelData[3] + "<br>Image size: " + img.width + "x" + img.height + "<br>Waiting ...";
-// Start counting the occurance of the color in all pixels (Could take time)
-//setTimeout(function() {
-colorCounter = 0;
-blackCounter = 0;
-Re = 6371;
-let rgbapixel = [0,0,0,0];
-totaltxt = "";
-    for (i=0;i<=CalcCanvas.width;i++)
-    {
-        for (j=0;j<=CalcCanvas.height;j++)
-        {
-        var PixelData = CalcCanvas.getContext('2d').getImageData(i, j, 1, 1,{ colorSpace: "srgb" }).data;
-        //var PixelData = img.getImageData(j, i, 1, 1,{ colorSpace: "srgb" }).data;
-
-        rgbapixel[0] = Array.from(PixelData)[0];
-        rgbapixel[1] = Array.from(PixelData)[1];
-        rgbapixel[2] = Array.from(PixelData)[2];
-        if (rgbapixel[0] == 0 && rgbapixel[1] == 0 && rgbapixel[2] == 0){
-          blackCounter = blackCounter+1*2*Math.PI*Re*Math.abs(Math.cos((90-j/180)*Math.PI/180)); 
-        }else{
-          colorCounter = colorCounter+1*2*Math.PI*Re*Math.abs(Math.cos((90-j/180)*Math.PI/180));
-        }
-          
-        //if(JSON.stringify(PixelData)==JSON.stringify(currentPixelData))
-        //{colorCounter += 1;}
-        }
-    };
-      console.log(Array.from(PixelData))
-      console.log(colorCounter)
-      console.log(blackCounter)
-      console.log(100*colorCounter/(colorCounter+blackCounter))
-      console.log(CalcCanvas.width)
-      console.log(CalcCanvas.height)
-//console.log("Chosed Color specification:" + "<br> R : " + currentPixelData[0] + "  G: " + currentPixelData[1] + " B: " + currentPixelData[2] + " Alpha : " +currentPixelData[3] + "<br>Image size: " + canvas.width + "x" + canvas.height + "<br>Total Repeat: " + colorCounter + "<br> Portion: " + colorCounter/(canvas.width*canvas.height)*100 + "%");
-//}, 200);
-      
 	};
-	
+    
+    
 	// Adds ctx.getTransform() - returns an SVGMatrix
 	// Adds ctx.transformedPoint(x,y) - returns an SVGPoint
 	function trackTransforms(ctx){
