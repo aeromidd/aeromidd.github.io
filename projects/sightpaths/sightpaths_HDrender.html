@@ -10,6 +10,7 @@
 </head>
 <body>
   <canvas id=myCanvas width=8192 height=4096 crossorigin="anonymous">
+  <canvas id=CalcCanvas crossorigin="anonymous"></canvas>
   <script type="text/javascript" crossorigin="anonymous">
     //820 400
     //8192 4196
@@ -23,11 +24,12 @@
     FoWIM.crossOrigin="anonymous";
     globals = {};
         ////comment the following out before inserting to site
-        /*
-        //globals['trips'] = [
-                    [51.5074, -0.1278, 37.9356, 23.9484,  22000],
+        
+        globals['trips'] = [
+                    [51.5074, -0.1278, 37.9356, 23.9484,  1382000],
                 ];
-        //globals['visibility'] = 1;
+        globals['visibility'] = 1;
+        globals['downloadTrigger'] = 1;
         //drawFoWmap();
 	const sequencingFunction = async () => {
       await drawFoWmap();
@@ -35,7 +37,7 @@
       }
     
         sequencingFunction();
-        */
+        
         ////end
     window.onmessage = function(event){
             if (event.data) {
@@ -69,7 +71,7 @@
       img.onload = function(){
         
       var CalcCanvas = document.querySelector('#CalcCanvas');
-      CalcCanvasScale = 0.25;
+      CalcCanvasScale = 0.5;
       //CalcCanvas.top = img.height;
       CalcCanvas.width = img.width*CalcCanvasScale;
       CalcCanvas.height = img.height*CalcCanvasScale;
