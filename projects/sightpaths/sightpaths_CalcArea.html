@@ -30,14 +30,15 @@
                     [28.5074, -0.1278, 37.9356, -23.9484,  22000],
                 ];
         globals['visibility'] = 1;
+        globals['downloadTrigger'] = 1;
         //drawFoWmap();
         //TotalSeenCoverage = calcCoverage();
-    const secondFunction = async () => {
+    const sequencingFunction = async () => {
       await drawFoWmap();
-      const TotalSeenCoverage = calcCoverage(globals['trips'].length);
+      const TotalSeenCoverage = calcCoverage(globals['trips'].length,globals['downloadTrigger']);
       }
     
-        secondFunction();
+        sequencingFunction();
         
         
         ////end
@@ -53,7 +54,7 @@
             
         };
     
-    function calcCoverage(nF){
+    function calcCoverage(nF,downloadTrigger){
       
     var TotalSeenCoverage = 0;
       
@@ -102,6 +103,22 @@
       ctx.fillText("Based on these  " + nF.toString() + "  flightpaths, I have seen (or been in view of) a maximum of:  " + TotalSeenCoverage.toFixed(3)+"%  of the Earth's surface.", 50, 3850);
       ctx.font = "65px serif";
       ctx.fillText("This is of course assuming perfect visibility without clouds or haze, and assuming you could look out of both sides of the aircraft for the full duration of every flight. A more conservative figure would probably be about a tenth or less of this crude estimate. But we can dream!",50,3950)
+        
+        
+        if (downloadTrigger == 1){
+    FinishedCanvas.crossOrigin="anonymous";
+    var dataURL = FinishedCanvas.toDataURL("image/jpeg", 1.0);
+  
+    downloadImage(dataURL, 'MapofAllLinesofSight.jpeg');
+          
+	};
+        function downloadImage(data, filename = 'untitled.jpeg') {
+    var a = document.createElement('a');
+    a.href = data;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+}
       
       }
       
@@ -569,3 +586,8 @@
 </body>
   
 </html>
+  
+  
+  
+  
+  
