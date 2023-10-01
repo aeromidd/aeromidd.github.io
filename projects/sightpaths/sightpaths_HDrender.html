@@ -28,7 +28,13 @@
                     [51.5074, -0.1278, 37.9356, 23.9484,  22000],
                 ];
         //globals['visibility'] = 1;
-        drawFoWmap();
+        //drawFoWmap();
+	const sequencingFunction = async () => {
+      await drawFoWmap();
+      const TotalSeenCoverage = calcCoverage(globals['trips'].length,globals['downloadTrigger']);
+      }
+    
+        sequencingFunction();
         */
         ////end
     window.onmessage = function(event){
@@ -38,8 +44,85 @@
               globals['downloadTrigger'] = event.data[2];
             }
 
-            drawFoWmap();
+            //drawFoWmap();
+	    const sequencingFunction = async () => {
+      	    await drawFoWmap();
+            const TotalSeenCoverage = calcCoverage(globals['trips'].length,globals['downloadTrigger']);
+      	    }
+    
+            sequencingFunction();
+	    
         };
+
+	  function calcCoverage(nF,downloadTrigger){
+      
+    var TotalSeenCoverage = 0;
+      
+    var FinishedCanvas = document.querySelector('#myCanvas');
+    //console.log('hi')
+    FinishedCanvas.crossOrigin="anonymous";
+      
+      var img = new Image();
+      img.src = FinishedCanvas.toDataURL();
+      //function WaitForCalculableImage(){
+      
+      img.onload = function(){
+        
+      var CalcCanvas = document.querySelector('#CalcCanvas');
+      CalcCanvasScale = 0.25;
+      //CalcCanvas.top = img.height;
+      CalcCanvas.width = img.width*CalcCanvasScale;
+      CalcCanvas.height = img.height*CalcCanvasScale;
+      CalcCanvas.getContext('2d').drawImage(img, 0, 0, img.width*CalcCanvasScale, img.height*CalcCanvasScale);
+        colorCounter = 0;
+        blackCounter = 0;
+        Re = 6371;
+        let rgbapixel = [0,0,0,0];
+        totaltxt = "";
+        for (i=0;i<=CalcCanvas.width;i++)
+        {
+            for (j=0;j<=CalcCanvas.height;j++)
+            {
+            var PixelData = CalcCanvas.getContext('2d').getImageData(i, j, 1, 1,{ colorSpace: "srgb" }).data;
+            rgbapixel[0] = Array.from(PixelData)[0];
+            rgbapixel[1] = Array.from(PixelData)[1];
+            rgbapixel[2] = Array.from(PixelData)[2];
+            if (rgbapixel[0] == 0 && rgbapixel[1] == 0 && rgbapixel[2] == 0){
+              blackCounter = blackCounter+1*2*Math.PI*Re*Math.abs(Math.cos((90-j/180)*Math.PI/180)); 
+            }else{
+              colorCounter = colorCounter+1*2*Math.PI*Re*Math.abs(Math.cos((90-j/180)*Math.PI/180));
+            }
+            }
+        };
+          TotalSeenCoverage = 100*colorCounter/(colorCounter+blackCounter);
+      //console.log(TotalSeenCoverage)
+                
+      var ctx = FinishedCanvas.getContext('2d');
+      ctx.font = "100px serif";
+      ctx.fillStyle = "#ffff00";
+      ctx.fillText("Based on these  " + nF.toString() + "  flightpaths, I have seen (or been in view of) a maximum of:  " + TotalSeenCoverage.toFixed(3)+"%  of the Earth's surface.", 50, 3850);
+      ctx.font = "65px serif";
+      ctx.fillText("This is of course assuming perfect visibility without clouds or haze, and assuming you could look out of both sides of the aircraft for the full duration of every flight. A more conservative figure would probably be about a tenth or less of this crude estimate. But we can dream!",50,3950)
+        
+        
+        if (downloadTrigger == 1){
+    FinishedCanvas.crossOrigin="anonymous";
+    var dataURL = FinishedCanvas.toDataURL("image/jpeg", 1.0);
+  
+    downloadImage(dataURL, 'MapofAllLinesofSight.jpeg');
+          
+	};
+        function downloadImage(data, filename = 'untitled.jpeg') {
+    var a = document.createElement('a');
+    a.href = data;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+}
+      
+      }
+      
+    }
 	//window.onload = function(){
     function drawFoWmap(){
 		var ctx = canvas.getContext('2d');
@@ -311,7 +394,8 @@
           }
 		}
 		redraw();
-      
+
+	/*
         downloadTrigger = globals['downloadTrigger'];
         if (downloadTrigger == 1){
           canvas.crossOrigin="anonymous";
@@ -319,6 +403,7 @@
 
           downloadImage(dataURL, 'MapofAllLinesofSight.jpeg');
         }
+	*/
 	};
 	
 	// Adds ctx.getTransform() - returns an SVGMatrix
@@ -379,6 +464,7 @@
 		}
 	}
        // Convert canvas to image
+	  /*
 document.getElementById('btn-download').addEventListener("click", function(e) {
     
     var canvas = document.querySelector('#myCanvas');
@@ -388,7 +474,7 @@ document.getElementById('btn-download').addEventListener("click", function(e) {
   
     downloadImage(dataURL, 'MapofAllLinesofSight.jpeg');
 });
-
+*/
 // Save | Download image
 function downloadImage(data, filename = 'untitled.jpeg') {
     var a = document.createElement('a');
