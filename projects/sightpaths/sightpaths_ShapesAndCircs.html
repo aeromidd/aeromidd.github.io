@@ -26,7 +26,7 @@
         ////comment the following out before inserting to site
         
         globals['trips'] = [
-                    [37.9356, 80.9484, +37.9356, -80.9484,  100382000],
+                    [77.9356, 80.9484, -77.9356, 80.9484,  30000],
                     //[51.5074, -0.1278, 37.9356, 23.9484,  1382000],
                     //[21.5074, -90.1278, 37.9356, 123.9484,  22000],
                     //[28.5074, -0.1278, 37.9356, -23.9484,  22000],
@@ -166,13 +166,14 @@
               R = Math.min(MaxR,R);
             //console.log(R)
             //R = 92;///(Math.pow(2.47,0.5)*2.47);
-          
+           
             gcdi = gcdist(startLat,startLong,endLat,endLong);
             //console.log(50*gcdi/1000000)
             gcdLength = 22*(gcdi/1000000)/Math.pow(visibility,1.1);
             if (j == 0){
     var rshp = [];
-            gcdptslength = 50;
+            let RshF = 1/6;
+            gcdptslength = Math.ceil(gcdLength);
             for (i = 0; i < gcdptslength; i++) {
               f = i/(gcdptslength);
               [midLat,midLong,gcd] = gcpt(f,startLat, startLong, endLat, endLong);
@@ -204,7 +205,7 @@
         ang = Math.atan2((midLatNext-midLatPrev),(midLongNext-midLongPrev));
               }
     
-    rshp.push([cx+midLong*cx/180+ R1*Math.cos(ang+Math.PI/2),cy-midLat*cy/90- R2*Math.sin(ang+Math.PI/2)]);
+    rshp.push([cx+midLong*cx/180+ R1*RshF*Math.cos(ang+Math.PI/2),cy-midLat*cy/90- R2*RshF*Math.sin(ang+Math.PI/2)]);
               
               if (visibility == 3){
                   RefillCirc(ctx,cx+midLong*cx/180,cy-midLat*cy/90,Math.abs(R1),Math.abs(R2),1);
@@ -220,7 +221,7 @@
                 if (showClouds == 1){
                   RefillCirc(ctx,cx+midLong*cx/180,cy-midLat*cy/90,Math.abs(R1)/3,Math.abs(R2)/3,.2);
                 }
-                  RefillCirc(ctx,cx+midLong*cx/180,cy-midLat*cy/90,Math.abs(R1)/6,Math.abs(R2)/6,1);
+                  //RefillCirc(ctx,cx+midLong*cx/180,cy-midLat*cy/90,Math.abs(R1)/6,Math.abs(R2)/6,1);
 
             
               }
@@ -231,7 +232,7 @@
             }
             //th = ang+pi/2:-pi/10:ang-pi/2;
             for (c = 0;c<thEnd.length;c++){
-    rshp.push([cx+midLong*cx/180+ R1*Math.cos(thEnd[c]),cy-midLat*cy/90- R2*Math.sin(thEnd[c])]);
+    rshp.push([cx+midLong*cx/180+ R1*RshF*Math.cos(thEnd[c]),cy-midLat*cy/90- R2*RshF*Math.sin(thEnd[c])]);
             }
               
               
@@ -266,7 +267,7 @@
         ang = Math.atan2((midLatPrev-midLatNext),(midLongPrev-midLongNext));
               }
     
-    rshp.push([cx+midLong*cx/180+ R1*Math.cos(ang+Math.PI/2),cy-midLat*cy/90- R2*Math.sin(ang+Math.PI/2)]);
+    rshp.push([cx+midLong*cx/180+ R1*RshF*Math.cos(ang+Math.PI/2),cy-midLat*cy/90- R2*RshF*Math.sin(ang+Math.PI/2)]);
             }
               
             let thStt = [];
@@ -275,7 +276,7 @@
             }
             //th = ang+pi/2:-pi/10:ang-pi/2;
             for (c = thStt.length-1;c>=0;c--){
-    rshp.push([cx+midLong*cx/180+ R1*Math.cos(thStt[c]),cy-midLat*cy/90- R2*Math.sin(thStt[c])]);
+    rshp.push([cx+midLong*cx/180+ R1*RshF*Math.cos(thStt[c]),cy-midLat*cy/90- R2*RshF*Math.sin(thStt[c])]);
             }
               
               
@@ -296,7 +297,7 @@
             ctx.closePath();
           //console.log(ang*180/Math.PI)
               ctx.clip();
-              //ctx.drawImage(wIM,0,0);
+              ctx.drawImage(satIM,0,0);
               ctx.restorex();
             }
             //RefillCirc(ctx,cx+startLong*cx/180,cy-startLat*cy/90,R);
