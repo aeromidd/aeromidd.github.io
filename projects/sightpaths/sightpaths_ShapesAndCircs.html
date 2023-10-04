@@ -29,7 +29,7 @@
         globals['trips'] = [
           [37.9356, 85, 37.9356, -160.9484,  38000],
           //[37.9356, -160.9484, 37.9356, 85.0, 1382000],
-          [51.5074, -0.1278, 37.9356, 23.9484,  1382000],
+          [51.5074, -0.1278, 37.9356, 23.9484,  100382000],
           [-21.5074, -176.2484, -37.9356, -20.1278,  22000],
           //[28.5074, -5.1278, 37.9356, -73.9484,  22000],
         ];
@@ -250,10 +250,10 @@
                 // (for inner band)
                 //console.log(mLat.length)
                 
-                let RshFMAT = [1/6,1/5,1/3];
+                let RshFMAT = [1/6,1/3,1/1.5];
                 let RshA =    [1.0,0.2,0.1];
-                let LongWobbleMAT = [0.03,0.03,0.03];
-                let LatWobbleMAT = [0.03,0.03,0.03];
+                let LongWobbleMAT = [0.5,0.5,0.5];
+                let LatWobbleMAT = [0.5,0.5,0.5];
                 for (rr = 0;rr < RshFMAT.length;rr++){
                 for (ii = 0; ii < mLong.length; ii++) {
                   var rshp = [];
@@ -283,7 +283,7 @@
                       ang = Math.atan2((midLatNext - midLatPrev), (midLongNext - midLongPrev));
                     }
 
-                    rshp.push([cx + (midLong+(Math.random()-.5)*LongWobble*R1*RshF) * cx / 180 + R1 * RshF * Math.cos(ang + Math.PI / 2), cy - (midLat+(Math.random()-.5)*LatWobble*R2*RshF) * cy / 90 - R2 * RshF * Math.sin(ang + Math.PI / 2)]);
+                    rshp.push([cx + (midLong) * cx / 180 + R1 *(1+(Math.random()-.5)*LongWobble)* RshF * Math.cos(ang + Math.PI / 2), cy - (midLat) * cy / 90 - R2*(1+(Math.random()-.5)*LatWobble) * RshF * Math.sin(ang + Math.PI / 2)]);
                     rshpLL.push([midLong, midLat]);
                   }
                   //console.log('fwd')
@@ -293,11 +293,11 @@
                   //end trajectory semi-ellipse
                   //console.log(Math.min(Math.round(gcdptslength), i + 1))
                   thEnd = [];
-                  for (t = ang+Math.PI/2; t > ang - Math.PI / 2; t = t - Math.PI / 20) {
+                  for (t = ang+Math.PI/2; t > ang - Math.PI / 2; t = t - Math.PI / 40) {
                     thEnd.push(t);
                   }
                   for (c = 0; c < thEnd.length; c++) {
-                    rshp.push([cx + (midLong+(Math.random()-.5)*LongWobble*R1*RshF) * cx / 180 + R1 * RshF * Math.cos(thEnd[c]), cy - (midLat+(Math.random()-.5)*LatWobble*R2*RshF) * cy / 90 - R2 * RshF * Math.sin(thEnd[c])]);
+                    rshp.push([cx + (midLong) * cx / 180 + R1*(1+(Math.random()-.5)*LongWobble) * RshF * Math.cos(thEnd[c]), cy - (midLat) * cy / 90 - R2*(1+(Math.random()-.5)*LatWobble) * RshF * Math.sin(thEnd[c])]);
                     rshpLL.push([midLong, midLat]);
                   }
                   //console.log('endtraj')
@@ -326,7 +326,7 @@
                       ang = Math.atan2((midLatPrev - midLatNext), (midLongPrev - midLongNext));
                     }
 
-                    rshp.push([cx + (midLong+(Math.random()-.5)*LongWobble*R1*RshF) * cx / 180 + R1 * RshF * Math.cos(ang + Math.PI / 2), cy - (midLat+(Math.random()-.5)*LatWobble*R2*RshF) * cy / 90 - R2 * RshF * Math.sin(ang + Math.PI / 2)]);
+                    rshp.push([cx + (midLong) * cx / 180 + R1*(1+(Math.random()-.5)*LongWobble) * RshF * Math.cos(ang + Math.PI / 2), cy - (midLat) * cy / 90 - R2*(1+(Math.random()-.5)*LatWobble) * RshF * Math.sin(ang + Math.PI / 2)]);
                     rshpLL.push([midLong, midLat]);
                   }
                   //console.log('rev')
@@ -334,11 +334,11 @@
 
                   //beginning trajectory semi-ellipse
                   thStt = [];
-                  for (t = ang - Math.PI / 2; t < ang + Math.PI / 2; t = t + Math.PI / 20) {
+                  for (t = ang - Math.PI / 2; t < ang + Math.PI / 2; t = t + Math.PI / 40) {
                     thStt.push(t);
                   }
                   for (c = thStt.length - 1; c >= 0; c--) {
-                    rshp.push([cx + (midLong+(Math.random()-.5)*LongWobble*R1*RshF) * cx / 180 + R1 * RshF * Math.cos(thStt[c]), cy - (midLat+(Math.random()-.5)*LatWobble*R2*RshF) * cy / 90 - R2 * RshF * Math.sin(thStt[c])]);
+                    rshp.push([cx + (midLong) * cx / 180 + R1*(1+(Math.random()-.5)*LongWobble) * RshF * Math.cos(thStt[c]), cy - (midLat) * cy / 90 - R2*(1+(Math.random()-.5)*LatWobble) * RshF * Math.sin(thStt[c])]);
                     rshpLL.push([midLong, midLat]);
                   }
                   //console.log('starttraj')
