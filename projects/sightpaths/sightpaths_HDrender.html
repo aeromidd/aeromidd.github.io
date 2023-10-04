@@ -27,18 +27,19 @@
         /*
         globals['trips'] = [
                     [51.5074, -0.1278, 37.9356, 23.9484,  1382000],
+                    [51.5074, -0.1278, 51.4545, -2.5879,  38000],
                 ];
         globals['visibility'] = 1;
-        globals['downloadTrigger'] = 1;
+        globals['downloadTrigger'] = 0;
         //drawFoWmap();
 	const sequencingFunction = async () => {
       await drawFoWmap();
-      const TotalSeenCoverage = calcCoverage(globals['trips'].length,globals['downloadTrigger']);
-      
+      const TotalSeenCoverage = calcCoverage(globals['trips'],gcdiMAT,globals['downloadTrigger']);
+    
       }
     
         sequencingFunction();
-	*/
+	//*/
         
         ////end
     window.onmessage = function(event){
@@ -51,14 +52,32 @@
             //drawFoWmap();
 	    const sequencingFunction = async () => {
       	    await drawFoWmap();
-            const TotalSeenCoverage = calcCoverage(globals['trips'].length,globals['downloadTrigger']);
+      const TotalSeenCoverage = calcCoverage(globals['trips'],gcdiMAT,globals['downloadTrigger']);
       	    }
     
             sequencingFunction();
 	    
         };
 
-	  function calcCoverage(nF,downloadTrigger){
+	  function calcCoverage(FL,gcdiMAT,downloadTrigger){
+    
+    var nF = FL.length;
+    var gcdiVals = [];
+      for (i=0;i<nF;i++){
+        gcdiVals[i] = gcdiMAT[i];
+      }
+    var TotalDist = 0.001*gcdiMAT.reduce((a, b) => a + b, 0)
+    var AvgDist = TotalDist/nF;
+    var MaxDist = 0.001*Math.max(gcdiVals);
+    var MinDist = 0.001*Math.min(gcdiVals);
+    var Alts = [];
+    for (i=0;i<nF;i++){
+      Alts.push(FL[i][4]);
+    }
+    var TotalAlt = Alts.reduce((a,b)=>a+b,0);
+    var AvgAlt = TotalAlt/nF;
+    var MaxAlt = Math.max(Alts);
+    var MinAlt = Math.min(Alts);
       
     var TotalSeenCoverage = 0;
       
@@ -107,6 +126,8 @@
       ctx.fillText("Based on these  " + nF.toString() + "  flightpaths, I have seen (or been in view of) a maximum of:  " + TotalSeenCoverage.toFixed(3)+"%  of the Earth's surface.", 50, 3850);
       ctx.font = "65px serif";
       ctx.fillText("This is of course assuming perfect visibility without clouds or haze, and assuming you could look out of both sides of the aircraft for the full duration of every flight. A more conservative figure would probably be about a tenth or less of this crude estimate. But we can dream!",50,3950)
+      ctx.font = "65px serif";
+      ctx.fillText("Flight stats -->  Total distance travelled: " + TotalDist.toFixed(2) + "km.  Max Distance: " + MaxDist.toFixed(2) + "km.  Avg Distance: "+ AvgDist.toFixed(2) + "km.  Min Distance: " + MinDist.toFixed(2) + "km.  Max Altitude: " + MaxAlt.toFixed(0) + "ft.  Avg Altitude: " + AvgAlt.toFixed(0) + "ft.  Min Altitude: " + MinAlt.toFixed(0) + "ft.", 50, 4050);
         
         
         if (downloadTrigger == 1){
@@ -217,6 +238,7 @@
         //ctx.fillRect(0,0,cx*2,cy*2);//p1.x,p1.y,p2.x-p1.x,p2.y-p1.y);//0,0,canvas.width,canvas.height);
         ctx.drawImage(FoWIM, 0,0,cx*2,cy*2);
         ctx.globalAlpha = 1;
+        const gcdiMAT = [];
         for (j = 0; j < trips.length; j++) {
           
             trip = trips[j];
@@ -234,44 +256,208 @@
             //R = 92;///(Math.pow(2.47,0.5)*2.47);
           
             gcdi = gcdist(startLat,startLong,endLat,endLong);
+            gcdiMAT.push(gcdi);
             //console.log(50*gcdi/1000000)
             gcdLength = 22*(gcdi/1000000)/Math.pow(visibility,1.1);
-            for (i = 0; i < gcdLength; i++) {
-              f = i/(gcdLength);
-              [midLat,midLong,gcd] = gcpt(f,startLat, startLong, endLat, endLong);
-              
-              if (i < 2){
-                fR = (i+1)/3;
-              }else if (i > gcdLength-2){
-                fR = (gcdLength-i+1)/3;
-              }else{
-                fR = 1;
-              }
-              
-              BFAC = 2.47;//2.47;
-              
-              R1 = fR*(R+R*(midLat)*(Math.PI/180)*Math.pow(Math.tan(midLat*(Math.PI/180)),1))/(Math.pow(BFAC,.5)*BFAC**Math.sqrt(2));
-              R2 = fR*R/(Math.pow(BFAC,.5)*BFAC**Math.sqrt(2));
-              
-              if (visibility == 3){
-                  RefillCirc(ctx,cx+midLong*cx/180,cy-midLat*cy/90,Math.abs(R1),Math.abs(R2),1);
-              }else if (visibility == 2) {
-                if (showTM == 1){
-                  RefillCirc(ctx,cx+midLong*cx/180,cy-midLat*cy/90,Math.abs(R1),Math.abs(R2),.1);
-                }
-                RefillCirc(ctx,cx+midLong*cx/180,cy-midLat*cy/90,Math.abs(R1)/3,Math.abs(R2)/3,1);
-              }else if (visibility == 1) {
-                if (showTM == 1){
-                  RefillCirc(ctx,cx+midLong*cx/180,cy-midLat*cy/90,Math.abs(R1),Math.abs(R2),.02);
-                }
-                if (showClouds == 1){
-                  RefillCirc(ctx,cx+midLong*cx/180,cy-midLat*cy/90,Math.abs(R1)/3,Math.abs(R2)/3,.2);
-                }
-                  RefillCirc(ctx,cx+midLong*cx/180,cy-midLat*cy/90,Math.abs(R1)/6,Math.abs(R2)/6,1);
+            if (j >= 0) {
 
-            
+                gcdptslength = gcdLength; //Math.ceil(gcdLength);
+
+                // PER-TRAJECTORY-POINT PERIMETER ELLIPSES
+                //(for outer band(s))
+                for (i = 0; i < gcdptslength; i++) {
+                  f = i / (gcdptslength);
+                  [midLat, midLong, gcd] = gcpt(f, startLat, startLong, endLat, endLong);
+                  ff = Math.min(i + 1, gcdptslength) / gcdptslength;
+                  [midLatNext, midLongNext, gcdf] = gcpt(ff, startLat, startLong, endLat, endLong);
+                  fb = (Math.max(0, i - 1)) / gcdptslength;
+                  [midLatPrev, midLongPrev, gcdb] = gcpt(fb, startLat, startLong, endLat, endLong);
+
+                  let RX = Lat2Radius(midLat, R);
+                  R1 = RX['R1'];
+                  R2 = RX['R2'];
+
+                  if (visibility == 3) {
+                    RefillCirc(ctx, cx + midLong * cx / 180, cy - midLat * cy / 90, Math.abs(R1), Math.abs(R2), 1);
+                  } else if (visibility == 2) {
+                    if (showTM == 1) {
+                      RefillCirc(ctx, cx + midLong * cx / 180, cy - midLat * cy / 90, Math.abs(R1), Math.abs(R2), .1);
+                    }
+                    RefillCirc(ctx, cx + midLong * cx / 180, cy - midLat * cy / 90, Math.abs(R1) / 3, Math.abs(R2) / 3, 1);
+                  } else if (visibility == 1) {
+                    if (showTM == 1) {
+                      RefillCirc(ctx, cx + midLong * cx / 180, cy - midLat * cy / 90, Math.abs(R1), Math.abs(R2), .01); //0.02
+                    }
+                    if (showClouds == 1) {
+                      //RefillCirc(ctx,cx+midLong*cx/180,cy-midLat*cy/90,Math.abs(R1)/3,Math.abs(R2)/3,.2);
+                    }
+                    //OLD INNER BAND ELLIPSES: //RefillCirc(ctx,cx+midLong*cx/180,cy-midLat*cy/90,Math.abs(R1)/6,Math.abs(R2)/6,1);
+
+
+                  }
+                }
+
+                var shiftupLong = [];
+                var mLong = new Array(new Array());
+                var mLat = [];
+                var IDLcross = false;
+                for (i = 0; i < gcdptslength; i++) {
+                  f = i / (Math.round(gcdptslength-1));
+                  [mLat[i], mLong[0][i], gcd] = gcpt(f, startLat, startLong, endLat, endLong);
+                  if (Math.abs(mLong[0][i]-mLong[0][i-1])>90){
+                    IDLcross = true;
+                  }
+                }
+                mLong[1] = [...mLong[0]];
+                mLong[2] = [...mLong[0]];
+                if (IDLcross == true){
+                for (i = 0; i < mLong[0].length; i++) {
+                  shiftupLong[i] = mLong[0][i] + 180;
+                  if (shiftupLong[i] < 180) {
+                    mLong[0][i] = mLong[0][i] + 360;
+                  }
+                  /*
+                  shiftdnLong[i] = mLong[1][i]-180;
+                  if (shiftdnLong[i]>-180){
+                    mLong[1][i] = mLong[1][i]-180;
+                  }
+                  */
+                }
+                mLong[1] = mLong[0].map(n => n - 360)
+                mLong[2] = mLong[0].map(n => n + 360)
               }
-            }
+                
+                /*
+                console.log('----')
+                console.log(mLong[0][0])
+                console.log(mLong[0][mLong[0].length - 1])
+                console.log(mLong[1][0])
+                console.log(mLong[1][mLong[1].length - 1])
+                console.log('----')
+                //*/
+
+                // CONTIGUOUS RADIAL SHAPE 
+                // (for inner band)
+                //console.log(mLat.length)
+                
+                let RshFMAT = [1/6,1/3,1/1.5];
+                let RshA =    [1.0,0.2,0.1];
+                let LongWobbleMAT = [0.5,0.3,0.3];
+                let LatWobbleMAT = [0.5,0.3,0.3];
+                for (rr = 0;rr < RshFMAT.length;rr++){
+                for (ii = 0; ii < mLong.length; ii++) {
+                  var rshp = [];
+                  var rshpLL = [];
+                  var RshF = RshFMAT[rr];//1 / 6;
+                  var LongWobble = LongWobbleMAT[rr];
+                  var LatWobble = LatWobbleMAT[rr];
+                  // forward trajectory side
+                  for (i = 0; i < Math.round(gcdptslength); i++) {
+                    midLat = mLat[i];
+                    midLong = mLong[ii][i];
+                    midLatNext = mLat[Math.min(Math.round(gcdptslength-1), i + 1)];
+                    midLongNext = mLong[ii][Math.min(Math.round(gcdptslength-1), i + 1)];
+                    midLatPrev = mLat[Math.max(0, i - 1)];
+                    midLongPrev = mLong[ii][Math.max(0, i - 1)];
+
+                    let RX = Lat2Radius(midLat, R);
+                    R1 = RX['R1'];
+                    R2 = RX['R2'];
+
+                    var ang = 0;
+                    if (i / Math.round(gcdptslength-1) >= 1) {
+                      ang = Math.atan2((midLat - midLatPrev), (midLong - midLongPrev));
+                    } else if (i == 0) {
+                      ang = Math.atan2((midLatNext - midLat), (midLongNext - midLong));
+                    } else {
+                      ang = Math.atan2((midLatNext - midLatPrev), (midLongNext - midLongPrev));
+                    }
+
+                    rshp.push([cx + (midLong) * cx / 180 + R1 *(1+(Math.random()-.5)*LongWobble)* RshF * Math.cos(ang + Math.PI / 2), cy - (midLat) * cy / 90 - R2*(1+(Math.random()-.5)*LatWobble) * RshF * Math.sin(ang + Math.PI / 2)]);
+                    rshpLL.push([midLong, midLat]);
+                  }
+                  //console.log('fwd')
+                  //console.log(rshp.length)
+                  //console.log(Math.round(gcdptslength))
+
+                  //end trajectory semi-ellipse
+                  //console.log(Math.min(Math.round(gcdptslength), i + 1))
+                  thEnd = [];
+                  for (t = ang+Math.PI/2; t > ang - Math.PI / 2; t = t - Math.PI / 40) {
+                    thEnd.push(t);
+                  }
+                  for (c = 0; c < thEnd.length; c++) {
+                    rshp.push([cx + (midLong) * cx / 180 + R1*(1+(Math.random()-.5)*LongWobble) * RshF * Math.cos(thEnd[c]), cy - (midLat) * cy / 90 - R2*(1+(Math.random()-.5)*LatWobble) * RshF * Math.sin(thEnd[c])]);
+                    rshpLL.push([midLong, midLat]);
+                  }
+                  //console.log('endtraj')
+                  //console.log(rshp.length)
+                  //console.log(thEnd[0])
+                  //reverse trajectory side
+                  //flipsigan = 0;
+                  for (i = Math.round(gcdptslength-1); i > 0; i--) {
+                    midLat = mLat[i];
+                    midLong = mLong[ii][i];
+                    midLatNext = mLat[Math.min(Math.round(gcdptslength-1), i + 1)];
+                    midLongNext = mLong[ii][Math.min(Math.round(gcdptslength-1), i + 1)];
+                    midLatPrev = mLat[Math.max(0, i - 1)];
+                    midLongPrev = mLong[ii][Math.max(0, i - 1)];
+
+                    let RX = Lat2Radius(midLat, R);
+                    R1 = RX['R1'];
+                    R2 = RX['R2'];
+
+                    ang = 0;
+                    if (i / Math.round(gcdptslength-1) >= 1) {
+                      ang = Math.atan2((midLatPrev - midLat), (midLongPrev - midLong));
+                    } else if (i == 0) {
+                      ang = Math.atan2((midLat - midLatNext), (midLong - midLongNext));
+                    } else {
+                      ang = Math.atan2((midLatPrev - midLatNext), (midLongPrev - midLongNext));
+                    }
+
+                    rshp.push([cx + (midLong) * cx / 180 + R1*(1+(Math.random()-.5)*LongWobble) * RshF * Math.cos(ang + Math.PI / 2), cy - (midLat) * cy / 90 - R2*(1+(Math.random()-.5)*LatWobble) * RshF * Math.sin(ang + Math.PI / 2)]);
+                    rshpLL.push([midLong, midLat]);
+                  }
+                  //console.log('rev')
+                  //console.log(rshp.length)
+
+                  //beginning trajectory semi-ellipse
+                  thStt = [];
+                  for (t = ang - Math.PI / 2; t < ang + Math.PI / 2; t = t + Math.PI / 40) {
+                    thStt.push(t);
+                  }
+                  for (c = thStt.length - 1; c >= 0; c--) {
+                    rshp.push([cx + (midLong) * cx / 180 + R1*(1+(Math.random()-.5)*LongWobble) * RshF * Math.cos(thStt[c]), cy - (midLat) * cy / 90 - R2*(1+(Math.random()-.5)*LatWobble) * RshF * Math.sin(thStt[c])]);
+                    rshpLL.push([midLong, midLat]);
+                  }
+                  //console.log('starttraj')
+                  //console.log(rshp.length)
+
+
+                  //xc = cx+rshp[0][0]*cx/180;
+                  //yc = cy-rshp[0][1]*cy/90;
+                  ctx.globalAlpha = RshA[rr];
+                  ctx.save();
+                  ctx.translate(0, 0);
+                  ctx.beginPath();
+                  ctx.moveTo(rshp[0][0], rshp[0][1]);
+                  for (i = 0; i < rshp.length; i++) {
+                    //
+                    ctx.lineTo(rshp[i][0], rshp[i][1]);
+                  }
+                  ctx.strokeStyle = '#ff0000';
+                  ctx.lineWidth = 10;
+                  //ctx.stroke();
+                  ctx.closePath();
+                  //console.log(ang*180/Math.PI)
+                  ctx.clip();
+                  ctx.drawImage(satIM, 0, 0);
+                  ctx.restorex();
+                  ctx.globalAlpha = 1;
+                }
+                }
+              }
             
             //RefillCirc(ctx,cx+startLong*cx/180,cy-startLat*cy/90,R);
             //RefillCirc(ctx,cx+endLong*cx/180,cy-endLat*cy/90,R);
@@ -396,9 +582,10 @@
             //*/
             
           }
+      return gcdiMAT;
 		}
-		redraw();
-
+		return gcdiMAT = redraw();
+    
 	/*
         downloadTrigger = globals['downloadTrigger'];
         if (downloadTrigger == 1){
@@ -409,7 +596,17 @@
         }
 	*/
 	};
-	
+	function Lat2Radius(midLat, R) {
+          fR = 1;
+          BFAC = 2.47; //2.47;
+
+          R1 = fR * (R + R * (midLat) * (Math.PI / 180) * Math.pow(Math.tan(midLat * (Math.PI / 180)), 1)) / (Math.pow(BFAC, .5) * BFAC ** Math.sqrt(2));
+          R2 = fR * R / (Math.pow(BFAC, .5) * BFAC ** Math.sqrt(2));
+          return {
+            R1: R1,
+            R2: R2
+          };
+        }
 	// Adds ctx.getTransform() - returns an SVGMatrix
 	// Adds ctx.transformedPoint(x,y) - returns an SVGPoint
 	function trackTransforms(ctx){
