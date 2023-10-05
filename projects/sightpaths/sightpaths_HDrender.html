@@ -132,17 +132,42 @@
         
         if (downloadTrigger == 1){
     FinishedCanvas.crossOrigin="anonymous";
-    var dataURL = FinishedCanvas.toDataURL("image/jpeg", 1.0);
+    var dataURL = FinishedCanvas.toDataURL("image/png", 1.0);
   
-    downloadImage(dataURL, 'MapofAllLinesofSight.jpeg');
+    downloadImage(dataURL, 'MapofAllLinesofSight.png');
           
 	};
-        function downloadImage(data, filename = 'untitled.jpeg') {
+        function downloadImage(data, filename = 'untitled.png') {
+          /*
     var a = document.createElement('a');
     a.href = data;
     a.download = filename;
     document.body.appendChild(a);
     a.click();
+          //*/
+          const base64ImageData = data;
+const contentType = 'image/png';
+
+const byteCharacters = atob(base64ImageData.substr(`data:${contentType};base64,`.length));
+const byteArrays = [];
+
+for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
+    const slice = byteCharacters.slice(offset, offset + 1024);
+
+    const byteNumbers = new Array(slice.length);
+    for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+
+    byteArrays.push(byteArray);
+}
+const blob = new Blob(byteArrays, {type: contentType});
+const blobUrl = URL.createObjectURL(blob);
+
+window.open(blobUrl, '_blank');
+          //
 }
       function numberWithCommas(x) {
     var parts = x.toString().split(".");
