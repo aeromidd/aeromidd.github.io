@@ -1,390 +1,558 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>Sightpaths_Preview</title>
-</head>
-<body>
-  <canvas id=myCanvas crossorigin="anonymous">
-  <script type="text/javascript" crossorigin="anonymous">
-    //820 400
-    //8192 4196
-	var canvas = document.getElementsByTagName('canvas')[0];
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Sightpaths_Preview</title>
+  </head>
 
-	var satIM = new Image;
-    var FoWIM = new Image;
-    satIM.src = 'https://aeromidd.com/projects/sightpaths/SeenWorldPlateCarree_8k.jpeg';
-	    //'https://static.wixstatic.com/media/fd208e_7b22411278e24b4ba23f31c047c37119~mv2.jpeg';
-	FoWIM.src = 'https://aeromidd.com/projects/sightpaths/DarkWorldPlateCarree_8k.png';
-	    //'https://static.wixstatic.com/media/fd208e_44ca1c84891a47e694c0109f3ae6e10a~mv2.png'
-    satIM.crossOrigin="anonymous";
-    FoWIM.crossOrigin="anonymous";
-    globals = {};
+  <body>
+    <canvas id=myCanvas crossorigin="anonymous">
+      <script type="text/javascript" crossorigin="anonymous">
+        //820 400
+        //8192 4196
+        var canvas = document.getElementsByTagName('canvas')[0];
+
+        var satIM = new Image;
+        var FoWIM = new Image;
+        var wIM = new Image;
+        satIM.src = 'https://aeromidd.com/projects/sightpaths/SeenWorldPlateCarree_8k.jpeg';
+        wIM.src = 'https://aeromidd.com/projects/sightpaths/WhiteWorldPlateCarree_8k.png';
+        //'https://static.wixstatic.com/media/fd208e_7b22411278e24b4ba23f31c047c37119~mv2.jpeg';
+        FoWIM.src = 'https://aeromidd.com/projects/sightpaths/DarkWorldPlateCarree_8k.png';
+        //'https://static.wixstatic.com/media/fd208e_44ca1c84891a47e694c0109f3ae6e10a~mv2.png'
+        satIM.crossOrigin = "anonymous";
+        FoWIM.crossOrigin = "anonymous";
+        globals = {};
         ////comment the following out before inserting to site
-        
+
         globals['trips'] = [
-                    [51.5074, -0.1278, 37.9356, 23.9484,  1382000],
-                    [21.5074, -90.1278, 37.9356, 123.9484,  22000],
-                    [28.5074, -0.1278, 37.9356, -23.9484,  22000],
-                ];
-        globals['visibility'] = 1;
+          [37.9356, 85, 37.9356, -160.9484,  38000],
+          //[37.9356, -160.9484, 37.9356, 85.0, 1382000],
+          [51.5074, -0.1278, 37.9356, 23.9484,  100382000],
+          [-21.5074, -176.2484, -37.9356, -20.1278,  22000],
+          //[28.5074, -5.1278, 37.9356, -73.9484,  22000],
+        ];
+        globals['visibility'] = 1; //1
         drawFoWmap();
-        
+
         ////end
-    window.onmessage = function(event){
-            if (event.data) {
-              globals['trips'] = event.data[0];
-              globals['visibility'] = event.data[1];
-            }
-            parent.postMessage("loadMyOrders","*");  //  `*` on any domain  
-      
-            drawFoWmap();
+        window.onmessage = function(event) {
+          if (event.data) {
+            globals['trips'] = event.data[0];
+            globals['visibility'] = event.data[1];
+          }
+          parent.postMessage("loadMyOrders", "*"); //  `*` on any domain  
+
+          drawFoWmap();
         };
-	//window.onload = function(){
-    function drawFoWmap(){
-		var ctx = canvas.getContext('2d');
-        
-        // Set display size (css pixels).
-        var xsize = 820;
-        var ysize = 400;
-        canvas.style.width = xsize + "px";
-        canvas.style.height = ysize + "px";
+        //window.onload = function(){
+        function drawFoWmap() {
+          console.clear();
+          var ctx = canvas.getContext('2d');
 
-        // Set actual size in memory (scaled to account for extra pixel density).
-        var scale = 2;//window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
-        canvas.width = Math.floor(xsize * scale);
-        canvas.height = Math.floor(ysize * scale);
-        //var context = canvas.getContext('2d')
+          // Set display size (css pixels).
+          var xsize = 820;
+          var ysize = 400;
+          canvas.style.width = xsize + "px";
+          canvas.style.height = ysize + "px";
 
-        // Normalize coordinate system to use css pixels.
-        ctx.scale(scale, scale);
-        
-        
-		trackTransforms(ctx);
-      
-        //coordinate system
-        //16,200 x 8,100 JPEG (28.7 MB) OR 8,192 x 4,096 JPEG (8.3 MB)
-        
-        let trips = globals['trips'];
-        
-        cx = 8192/2;
-        cy = 4096/2;
-        
-        
-        visibility = globals['visibility'];//3;
-        visLayers = 1;
-      
-        if (visLayers == 1 && visibility < 3){
-          showTM = 1;
-          showClouds = 1;
-        }else{
-          showTM = 0;
-          showClouds = 0;
-        }
-      
-        zoomReset = .2;
-        zoomMax = 5;
-        ctx.setTransform(zoomReset, 0, 0, zoomReset, 0, 0);
-        redraw();
-        
-        function gcdist(startLat,startLong,endLat,endLong){
-          const eR = 6371e3; // metres
-          const phi1 = startLat * Math.PI/180; // φ, λ in radians
-          const phi2 = endLat * Math.PI/180;
-          const deltaphi = (endLat-startLat) * Math.PI/180;
-          const deltalam = (endLong-startLong) * Math.PI/180;
-          const a = Math.sin(deltaphi/2) * Math.sin(deltaphi/2) +
-                    Math.cos(phi1) * Math.cos(phi2) *
-                    Math.sin(deltalam/2) * Math.sin(deltalam/2);
-          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-          const gcd = eR * c; // in metres
-          return gcd;
-        }
-        
-        function gcpt(f,startLat,startLong,endLat,endLong){
-          gcd = gcdist(startLat,startLong,endLat,endLong);
-          const eR = 6371e3; // metres
-          const phi1 = startLat * Math.PI/180; // φ in radians
-          const phi2 = endLat * Math.PI/180;
-          const lam1 = startLong * Math.PI/180; // λ in radians
-          const lam2 = endLong * Math.PI/180;
-          const delta = gcd/eR;
-          const a = Math.sin((1-f)*delta)/Math.sin(delta);
-          const b = Math.sin(f*delta)/Math.sin(delta);
-          const x = a*Math.cos(phi1)*Math.cos(lam1)+b*Math.cos(phi2)*Math.cos(lam2);
-          const y = a*Math.cos(phi1)*Math.sin(lam1)+b*Math.cos(phi2)*Math.sin(lam2);
-          const z = a*Math.sin(phi1)+b*Math.sin(phi2);
-          const phif = Math.atan2(z,Math.sqrt(Math.pow(x,2)+Math.pow(y,2)));
-          const lamf = Math.atan2(y,x);
-          return [phif*180/Math.PI,lamf*180/Math.PI,gcd] //back to degrees
-        }
-        
-        //redraw
-		function redraw(){
-			// Clear the entire canvas
-			var p1 = ctx.transformedPoint(0,0);
-			var p2 = ctx.transformedPoint(canvas.width,canvas.height);
-			ctx.clearRect(p1.x,p1.y,p2.x-p1.x,p2.y-p1.y);
-          
-            
+          // Set actual size in memory (scaled to account for extra pixel density).
+          var scale = 2; //window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+          canvas.width = Math.floor(xsize * scale);
+          canvas.height = Math.floor(ysize * scale);
+          //var context = canvas.getContext('2d')
+
+          // Normalize coordinate system to use css pixels.
+          ctx.scale(scale, scale);
+
+
+          trackTransforms(ctx);
+
+          //coordinate system
+          //16,200 x 8,100 JPEG (28.7 MB) OR 8,192 x 4,096 JPEG (8.3 MB)
+
+          let trips = globals['trips'];
+
+          cx = 8192 / 2;
+          cy = 4096 / 2;
+
+
+          visibility = globals['visibility']; //3;
+          visLayers = 1;
+
+          if (visLayers == 1 && visibility < 3) {
+            showTM = 1;
+            showClouds = 1;
+          } else {
+            showTM = 0;
+            showClouds = 0;
+          }
+
+          zoomReset = .2;
+          zoomMax = 5;
+          ctx.setTransform(zoomReset, 0, 0, zoomReset, 0, 0);
+          redraw();
+
+          function gcdist(startLat, startLong, endLat, endLong) {
+            const eR = 6371e3; // metres
+            const phi1 = startLat * Math.PI / 180; // φ, λ in radians
+            const phi2 = endLat * Math.PI / 180;
+            const deltaphi = (endLat - startLat) * Math.PI / 180;
+            const deltalam = (endLong - startLong) * Math.PI / 180;
+            const a = Math.sin(deltaphi / 2) * Math.sin(deltaphi / 2) +
+              Math.cos(phi1) * Math.cos(phi2) *
+              Math.sin(deltalam / 2) * Math.sin(deltalam / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            const gcd = eR * c; // in metres
+            return gcd;
+          }
+
+          function gcpt(f, startLat, startLong, endLat, endLong) {
+            gcd = gcdist(startLat, startLong, endLat, endLong);
+            const eR = 6371e3; // metres
+            const phi1 = startLat * Math.PI / 180; // φ in radians
+            const phi2 = endLat * Math.PI / 180;
+            const lam1 = startLong * Math.PI / 180; // λ in radians
+            const lam2 = endLong * Math.PI / 180;
+            const delta = gcd / eR;
+            const a = Math.sin((1 - f) * delta) / Math.sin(delta);
+            const b = Math.sin(f * delta) / Math.sin(delta);
+            const x = a * Math.cos(phi1) * Math.cos(lam1) + b * Math.cos(phi2) * Math.cos(lam2);
+            const y = a * Math.cos(phi1) * Math.sin(lam1) + b * Math.cos(phi2) * Math.sin(lam2);
+            const z = a * Math.sin(phi1) + b * Math.sin(phi2);
+            const phif = Math.atan2(z, Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
+            const lamf = Math.atan2(y, x);
+            return [phif * 180 / Math.PI, lamf * 180 / Math.PI, gcd] //back to degrees
+          }
+
+          //redraw
+          function redraw() {
+            // Clear the entire canvas
+            var p1 = ctx.transformedPoint(0, 0);
+            var p2 = ctx.transformedPoint(canvas.width, canvas.height);
+            ctx.clearRect(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y);
+
+
             //console.log(ctx.getTransform().a)
-			// Alternatively:
-			// ctx.save();
-			// ctx.setTransform(1,0,0,1,0,0);
-			// ctx.clearRect(0,0,canvas.width,canvas.height);
-			// ctx.restore();
-			if (ctx.getTransform().a < zoomReset){
+            // Alternatively:
+            // ctx.save();
+            // ctx.setTransform(1,0,0,1,0,0);
+            // ctx.clearRect(0,0,canvas.width,canvas.height);
+            // ctx.restore();
+            if (ctx.getTransform().a < zoomReset) {
               ctx.setTransform(zoomReset, 0, 0, zoomReset, 0, 0);
-            }else if (ctx.getTransform().a >= zoomMax){
+            } else if (ctx.getTransform().a >= zoomMax) {
               ctx.setTransform(zoomMax, 0, 0, zoomMax, 0, 0);
-              ctx.translate(p1.x,p1.y);
+              ctx.translate(p1.x, p1.y);
             }
-          
-          
-        ctx.save();
-        ctx.globalAlpha = 1;
-        //ctx.fillStyle= '#252525'; //'#00508a';
-        //ctx.fillRect(0,0,cx*2,cy*2);//p1.x,p1.y,p2.x-p1.x,p2.y-p1.y);//0,0,canvas.width,canvas.height);
-        ctx.drawImage(FoWIM, 0,0,cx*2,cy*2);
-        ctx.globalAlpha = 1;
-        for (j = 0; j < trips.length; j++) {
-          
-        trip = trips[j];
-        startLong = trip[1];
-        startLat = trip[0];
-        endLong = trip[3];
-        endLat = trip[2];
-        journeyAlt = trip[4];
-            
-            h = journeyAlt*0.3048; //m
-            R = Math.sqrt(2*6371e3*h+Math.pow(h,2))/1000; //km
-              MaxR = 6371;
-              R = Math.min(MaxR,R);
-            //console.log(R)
-            //R = 92;///(Math.pow(2.47,0.5)*2.47);
-          
-            gcdi = gcdist(startLat,startLong,endLat,endLong);
-            //console.log(50*gcdi/1000000)
-            gcdLength = 22*(gcdi/1000000)/Math.pow(visibility,1.1);
-            if (j == 0){
-            for (i = 0; i < gcdLength; i++) {
-              f = i/(gcdLength);
-              [midLat,midLong,gcd] = gcpt(f,startLat, startLong, endLat, endLong);
-              
-              if (i < 2){
-                fR = (i+1)/3;
-              }else if (i > gcdLength-2){
-                fR = (gcdLength-i+1)/3;
-              }else{
-                fR = 1;
-              }
-              BFAC = 2.47;//2.47;
-              
-              R1 = fR*(R+R*(midLat)*(Math.PI/180)*Math.pow(Math.tan(midLat*(Math.PI/180)),1))/(Math.pow(BFAC,.5)*BFAC**Math.sqrt(2));
-              R2 = fR*R/(Math.pow(BFAC,.5)*BFAC**Math.sqrt(2));
-              
-              if (visibility == 3){
-                  RefillCirc(ctx,cx+midLong*cx/180,cy-midLat*cy/90,Math.abs(R1),Math.abs(R2),1);
-              }else if (visibility == 2) {
-                if (showTM == 1){
-                  RefillCirc(ctx,cx+midLong*cx/180,cy-midLat*cy/90,Math.abs(R1),Math.abs(R2),.1);
-                }
-                RefillCirc(ctx,cx+midLong*cx/180,cy-midLat*cy/90,Math.abs(R1)/3,Math.abs(R2)/3,1);
-              }else if (visibility == 1) {
-                if (showTM == 1){
-                  RefillCirc(ctx,cx+midLong*cx/180,cy-midLat*cy/90,Math.abs(R1),Math.abs(R2),.02);
-                }
-                if (showClouds == 1){
-                  RefillCirc(ctx,cx+midLong*cx/180,cy-midLat*cy/90,Math.abs(R1)/3,Math.abs(R2)/3,.2);
-                }
-                  RefillCirc(ctx,cx+midLong*cx/180,cy-midLat*cy/90,Math.abs(R1)/6,Math.abs(R2)/6,1);
 
-            
-              }
-            }
-            }
-            //RefillCirc(ctx,cx+startLong*cx/180,cy-startLat*cy/90,R);
-            //RefillCirc(ctx,cx+endLong*cx/180,cy-endLat*cy/90,R);
-          
-            //knockoutAndRefill(ctx,50,100,200,600,600,100);
-          
-			//ctx.drawImage(satIM,0,0);
-          
-            
-          
-          function RefillCirc(ctx,xc,yc,R1,R2,A){
-            ctx.globalAlpha = A;
-			ctx.save();
-			ctx.translate(0,0);
-            ctx.beginPath();
-            ctx.moveTo(xc,yc);
-            ctx.ellipse(xc, yc, R1, R2, 2 * Math.PI, 0, 2 * Math.PI);
-            ctx.closePath();
-            ctx.clip();
-            ctx.drawImage(satIM,0,0);
-            ctx.restorex();
-            ctx.globalAlpha = 1;
-            
-            if (xc+R1 > cx*2){
-              ctx.globalAlpha = A;
-              ctx.save();
-              ctx.translate(0,0);
-              ctx.beginPath();
-              ctx.moveTo(xc-cx*2,yc);
-              ctx.ellipse(xc-cx*2, yc, R1, R2, 2 * Math.PI, 0, 2 * Math.PI);
-              ctx.closePath();
-              ctx.clip();
-              ctx.drawImage(satIM,0,0);
-              ctx.restorex();
-              ctx.globalAlpha = 1;
-            }
-            if (xc-R1 < 0){
-              ctx.globalAlpha = A;
-              ctx.save();
-              ctx.translate(0,0);
-              ctx.beginPath();
-              ctx.moveTo(xc+cx*2,yc);
-              ctx.ellipse(xc+cx*2, yc, R1, R2, 2 * Math.PI, 0, 2 * Math.PI);
-              ctx.closePath();
-              ctx.clip();
-              ctx.drawImage(satIM,0,0);
-              ctx.restorex();
-              ctx.globalAlpha = 1;
-            }
-            if (yc+R2 > cy*2){
-              ctx.globalAlpha = A;
-              ctx.save();
-              ctx.translate(0,0);
-              ctx.beginPath();
-              ctx.moveTo(xc+cx,yc+cy);
-              ctx.ellipse(xc+cx, cy*2+2*cy*(1-yc/(cy*2)), R1, R2, 2 * Math.PI, 0, 2 * Math.PI);
-              ctx.moveTo(xc-cx,yc+cy);
-              ctx.ellipse(xc-cx, cy*2+2*cy*(1-yc/(cy*2)), R1, R2, 2 * Math.PI, 0, 2 * Math.PI);
-              ctx.closePath();
-              ctx.clip();
-              ctx.drawImage(satIM,0,0);
-              ctx.restorex();
-              ctx.globalAlpha = 1;
-            }
-            if (yc-R2 < 0){
-              ctx.globalAlpha = A;
-              ctx.save();
-              ctx.translate(0,0);
-              ctx.beginPath();
-              ctx.moveTo(xc+cx,yc);
-              ctx.ellipse(xc+cx, 0-2*cy*(yc/(cy*2)), R1, R2, 2 * Math.PI, 0, 2 * Math.PI);
-              ctx.moveTo(xc-cx,yc);
-              ctx.ellipse(xc-cx, 0-2*cy*(yc/(cy*2)), R1, R2, 2 * Math.PI, 0, 2 * Math.PI);
-              ctx.closePath();
-              ctx.clip();
-              ctx.drawImage(satIM,0,0);
-              ctx.restorex();
-              ctx.globalAlpha = 1;
-            }
-          }
-          function knockoutAndRefill(ctx,x0,y0,x1,y1,x2,y2){
-            
-			ctx.save();
-			ctx.translate(0,0);
-            ctx.beginPath();
-            ctx.moveTo(x0,y0);
-            ctx.lineTo(x1,y1);
-            ctx.lineTo(x2,y2);
-            ctx.closePath();
-            ctx.clip();
-            ctx.drawImage(satIM,0,0);
-            ctx.restorex();
-          }
-        }
-          
-            ctx.restorex();
-          for (j = 0; j < trips.length; j++) {
-          
-        trip = trips[j];
-        startLong = trip[1];
-        startLat = trip[0];
-        endLong = trip[3];
-        endLat = trip[2];
-        journeyAlt = trip[4];
-            if (j == 0){
-            ///*
+
             ctx.save();
-            ctx.translate(0,0);
-			ctx.beginPath();
-			ctx.arc(cx+startLong*cx/180,cy-startLat*cy/90,4.2/ctx.getTransform().a,0,Math.PI*2);
-            ctx.fillStyle = 'yellow';
-            ctx.fill();
-			//ctx.stroke();
-            ctx.closePath();
-            
-            ctx.translate(0,0);
-			ctx.beginPath();
-			ctx.arc(cx+endLong*cx/180,cy-endLat*cy/90,4.2/ctx.getTransform().a,0,Math.PI*2);
-            ctx.fillStyle = 'yellow';
-            ctx.fill();
-			//ctx.stroke();
-            ctx.closePath();
-            //*/
-            }else{
-              ctx.save();
-              ctx.translate(0,0);
-              ctx.beginPath();
-              ctx.arc(cx+startLong*cx/180,cy-startLat*cy/90,3.5/ctx.getTransform().a,0,Math.PI*2);
-              ctx.fillStyle = '#189aca';
-              ctx.fill();
-              ctx.closePath();
+            ctx.globalAlpha = 1;
+            //ctx.fillStyle= '#252525'; //'#00508a';
+            //ctx.fillRect(0,0,cx*2,cy*2);//p1.x,p1.y,p2.x-p1.x,p2.y-p1.y);//0,0,canvas.width,canvas.height);
+            ctx.drawImage(FoWIM, 0, 0, cx * 2, cy * 2);
+            ctx.globalAlpha = 1;
+            for (j = 0; j < trips.length; j++) {
 
-              ctx.translate(0,0);
-              ctx.beginPath();
-              ctx.arc(cx+endLong*cx/180,cy-endLat*cy/90,3.5/ctx.getTransform().a,0,Math.PI*2);
-              ctx.fillStyle = '#189aca';
-              ctx.fill();
-              ctx.closePath();
-              gcdi = gcdist(startLat,startLong,endLat,endLong);
-              //console.log(50*gcdi/1000000)
-              gcdLength = 22*(gcdi/1000000)/Math.pow(visibility,1.1);
-              for (i = 0; i < gcdLength; i++) {
-                f = i/(gcdLength);
-                [midLat,midLong,gcd] = gcpt(f,startLat, startLong, endLat, endLong);
-                //console.log(f)
-                // draw saved routes
-                  if (i == 0){
-                   ctx.beginPath();
-                   ctx.moveTo(cx+startLong*cx/180,cy-startLat*cy/90);
-                   ctx.lineTo(cx+midLong*cx/180,cy-midLat*cy/90);
-                   console.log('start of the line')
-                  }else if (i > gcdLength-1){
-                   ctx.lineTo(cx+endLong*cx/180,cy-endLat*cy/90);
-                   ctx.strokeStyle = '#189aca';
-                   ctx.lineWidth = 2/ctx.getTransform().a;
-                   ctx.stroke();
-                   ctx.closePath();
-                   console.log('end of the line')
-                  }else{
-                    if (180-Math.abs(midLong)<2){
-                        [midLatprev,midLongprev,gcdprev] = gcpt(f-1,startLat, startLong, endLat, endLong);
-                        if (Math.sign(midLong)!=Math.sign(midLongprev)){
-                           ctx.strokeStyle = '#189aca';
-                           ctx.lineWidth = 2/ctx.getTransform().a;
-                           ctx.stroke();
-                           ctx.closePath();
-                           ctx.beginPath();
-                           ctx.moveTo(cx+midLong*cx/180,cy-midLat*cy/90);
-                        }else{
-                           ctx.lineTo(cx+midLong*cx/180,cy-midLat*cy/90);
-                        }
-                    }else{
-                       ctx.lineTo(cx+midLong*cx/180,cy-midLat*cy/90);
+              trip = trips[j];
+              startLong = trip[1];
+              startLat = trip[0];
+              endLong = trip[3];
+              endLat = trip[2];
+              journeyAlt = trip[4];
+
+              h = journeyAlt * 0.3048; //m
+              R = Math.sqrt(2 * 6371e3 * h + Math.pow(h, 2)) / 1000; //km
+              MaxR = 6371;
+              R = Math.min(MaxR, R);
+              gcdi = gcdist(startLat, startLong, endLat, endLong);
+              gcdLength = 22 * (gcdi / 1000000) / Math.pow(visibility, 1.1);
+              if (j >=0) {
+
+                gcdptslength = gcdLength; //Math.ceil(gcdLength);
+
+                // PER-TRAJECTORY-POINT PERIMETER ELLIPSES
+                //(for outer band(s))
+                for (i = 0; i < gcdptslength; i++) {
+                  f = i / (gcdptslength);
+                  [midLat, midLong, gcd] = gcpt(f, startLat, startLong, endLat, endLong);
+                  ff = Math.min(i + 1, gcdptslength) / gcdptslength;
+                  [midLatNext, midLongNext, gcdf] = gcpt(ff, startLat, startLong, endLat, endLong);
+                  fb = (Math.max(0, i - 1)) / gcdptslength;
+                  [midLatPrev, midLongPrev, gcdb] = gcpt(fb, startLat, startLong, endLat, endLong);
+
+                  let RX = Lat2Radius(midLat, R);
+                  R1 = RX['R1'];
+                  R2 = RX['R2'];
+
+                  if (visibility == 3) {
+                    RefillCirc(ctx, cx + midLong * cx / 180, cy - midLat * cy / 90, Math.abs(R1), Math.abs(R2), 1);
+                  } else if (visibility == 2) {
+                    if (showTM == 1) {
+                      RefillCirc(ctx, cx + midLong * cx / 180, cy - midLat * cy / 90, Math.abs(R1), Math.abs(R2), .1);
+                    }
+                    RefillCirc(ctx, cx + midLong * cx / 180, cy - midLat * cy / 90, Math.abs(R1) / 3, Math.abs(R2) / 3, 1);
+                  } else if (visibility == 1) {
+                    if (showTM == 1) {
+                      RefillCirc(ctx, cx + midLong * cx / 180, cy - midLat * cy / 90, Math.abs(R1), Math.abs(R2), .01); //0.02
+                    }
+                    if (showClouds == 1) {
+                      //RefillCirc(ctx,cx+midLong*cx/180,cy-midLat*cy/90,Math.abs(R1)/3,Math.abs(R2)/3,.2);
+                    }
+                    //OLD INNER BAND ELLIPSES: //RefillCirc(ctx,cx+midLong*cx/180,cy-midLat*cy/90,Math.abs(R1)/6,Math.abs(R2)/6,1);
+
+
+                  }
+                }
+
+                var shiftupLong = [];
+                var mLong = new Array(new Array());
+                var mLat = [];
+                var IDLcross = false;
+                for (i = 0; i < gcdptslength; i++) {
+                  f = i / (Math.round(gcdptslength-1));
+                  [mLat[i], mLong[0][i], gcd] = gcpt(f, startLat, startLong, endLat, endLong);
+                  if (Math.abs(mLong[0][i]-mLong[0][i-1])>90){
+                    IDLcross = true;
+                  }
+                }
+                mLong[1] = [...mLong[0]];
+                mLong[2] = [...mLong[0]];
+                if (IDLcross == true){
+                for (i = 0; i < mLong[0].length; i++) {
+                  shiftupLong[i] = mLong[0][i] + 180;
+                  if (shiftupLong[i] < 180) {
+                    mLong[0][i] = mLong[0][i] + 360;
+                  }
+                  /*
+                  shiftdnLong[i] = mLong[1][i]-180;
+                  if (shiftdnLong[i]>-180){
+                    mLong[1][i] = mLong[1][i]-180;
+                  }
+                  */
+                }
+                mLong[1] = mLong[0].map(n => n - 360)
+                mLong[2] = mLong[0].map(n => n + 360)
+              }
+                
+                /*
+                console.log('----')
+                console.log(mLong[0][0])
+                console.log(mLong[0][mLong[0].length - 1])
+                console.log(mLong[1][0])
+                console.log(mLong[1][mLong[1].length - 1])
+                console.log('----')
+                //*/
+
+                // CONTIGUOUS RADIAL SHAPE 
+                // (for inner band)
+                //console.log(mLat.length)
+                
+                let RshFMAT = [1/6,1/3,1/1.5];
+                let RshA =    [1.0,0.2,0.1];
+                let LongWobbleMAT = [0.5,0.5,0.5];
+                let LatWobbleMAT = [0.5,0.5,0.5];
+                for (rr = 0;rr < RshFMAT.length;rr++){
+                for (ii = 0; ii < mLong.length; ii++) {
+                  var rshp = [];
+                  var rshpLL = [];
+                  var RshF = RshFMAT[rr];//1 / 6;
+                  var LongWobble = LongWobbleMAT[rr];
+                  var LatWobble = LatWobbleMAT[rr];
+                  // forward trajectory side
+                  for (i = 0; i < Math.round(gcdptslength); i++) {
+                    midLat = mLat[i];
+                    midLong = mLong[ii][i];
+                    midLatNext = mLat[Math.min(Math.round(gcdptslength-1), i + 1)];
+                    midLongNext = mLong[ii][Math.min(Math.round(gcdptslength-1), i + 1)];
+                    midLatPrev = mLat[Math.max(0, i - 1)];
+                    midLongPrev = mLong[ii][Math.max(0, i - 1)];
+
+                    let RX = Lat2Radius(midLat, R);
+                    R1 = RX['R1'];
+                    R2 = RX['R2'];
+
+                    var ang = 0;
+                    if (i / Math.round(gcdptslength-1) >= 1) {
+                      ang = Math.atan2((midLat - midLatPrev), (midLong - midLongPrev));
+                    } else if (i == 0) {
+                      ang = Math.atan2((midLatNext - midLat), (midLongNext - midLong));
+                    } else {
+                      ang = Math.atan2((midLatNext - midLatPrev), (midLongNext - midLongPrev));
+                    }
+
+                    rshp.push([cx + (midLong) * cx / 180 + R1 *(1+(Math.random()-.5)*LongWobble)* RshF * Math.cos(ang + Math.PI / 2), cy - (midLat) * cy / 90 - R2*(1+(Math.random()-.5)*LatWobble) * RshF * Math.sin(ang + Math.PI / 2)]);
+                    rshpLL.push([midLong, midLat]);
+                  }
+                  //console.log('fwd')
+                  //console.log(rshp.length)
+                  //console.log(Math.round(gcdptslength))
+
+                  //end trajectory semi-ellipse
+                  //console.log(Math.min(Math.round(gcdptslength), i + 1))
+                  thEnd = [];
+                  for (t = ang+Math.PI/2; t > ang - Math.PI / 2; t = t - Math.PI / 40) {
+                    thEnd.push(t);
+                  }
+                  for (c = 0; c < thEnd.length; c++) {
+                    rshp.push([cx + (midLong) * cx / 180 + R1*(1+(Math.random()-.5)*LongWobble) * RshF * Math.cos(thEnd[c]), cy - (midLat) * cy / 90 - R2*(1+(Math.random()-.5)*LatWobble) * RshF * Math.sin(thEnd[c])]);
+                    rshpLL.push([midLong, midLat]);
+                  }
+                  //console.log('endtraj')
+                  //console.log(rshp.length)
+                  //console.log(thEnd[0])
+                  //reverse trajectory side
+                  //flipsigan = 0;
+                  for (i = Math.round(gcdptslength-1); i > 0; i--) {
+                    midLat = mLat[i];
+                    midLong = mLong[ii][i];
+                    midLatNext = mLat[Math.min(Math.round(gcdptslength-1), i + 1)];
+                    midLongNext = mLong[ii][Math.min(Math.round(gcdptslength-1), i + 1)];
+                    midLatPrev = mLat[Math.max(0, i - 1)];
+                    midLongPrev = mLong[ii][Math.max(0, i - 1)];
+
+                    let RX = Lat2Radius(midLat, R);
+                    R1 = RX['R1'];
+                    R2 = RX['R2'];
+
+                    ang = 0;
+                    if (i / Math.round(gcdptslength-1) >= 1) {
+                      ang = Math.atan2((midLatPrev - midLat), (midLongPrev - midLong));
+                    } else if (i == 0) {
+                      ang = Math.atan2((midLat - midLatNext), (midLong - midLongNext));
+                    } else {
+                      ang = Math.atan2((midLatPrev - midLatNext), (midLongPrev - midLongNext));
+                    }
+
+                    rshp.push([cx + (midLong) * cx / 180 + R1*(1+(Math.random()-.5)*LongWobble) * RshF * Math.cos(ang + Math.PI / 2), cy - (midLat) * cy / 90 - R2*(1+(Math.random()-.5)*LatWobble) * RshF * Math.sin(ang + Math.PI / 2)]);
+                    rshpLL.push([midLong, midLat]);
+                  }
+                  //console.log('rev')
+                  //console.log(rshp.length)
+
+                  //beginning trajectory semi-ellipse
+                  thStt = [];
+                  for (t = ang - Math.PI / 2; t < ang + Math.PI / 2; t = t + Math.PI / 40) {
+                    thStt.push(t);
+                  }
+                  for (c = thStt.length - 1; c >= 0; c--) {
+                    rshp.push([cx + (midLong) * cx / 180 + R1*(1+(Math.random()-.5)*LongWobble) * RshF * Math.cos(thStt[c]), cy - (midLat) * cy / 90 - R2*(1+(Math.random()-.5)*LatWobble) * RshF * Math.sin(thStt[c])]);
+                    rshpLL.push([midLong, midLat]);
+                  }
+                  //console.log('starttraj')
+                  //console.log(rshp.length)
+
+
+                  //xc = cx+rshp[0][0]*cx/180;
+                  //yc = cy-rshp[0][1]*cy/90;
+                  ctx.globalAlpha = RshA[rr];
+                  ctx.save();
+                  ctx.translate(0, 0);
+                  ctx.beginPath();
+                  ctx.moveTo(rshp[0][0], rshp[0][1]);
+                  for (i = 0; i < rshp.length; i++) {
+                    //
+                    ctx.lineTo(rshp[i][0], rshp[i][1]);
+                  }
+                  ctx.strokeStyle = '#ff0000';
+                  ctx.lineWidth = 10;
+                  //ctx.stroke();
+                  ctx.closePath();
+                  //console.log(ang*180/Math.PI)
+                  ctx.clip();
+                  ctx.drawImage(satIM, 0, 0);
+                  ctx.restorex();
+                  ctx.globalAlpha = 1;
+                }
+                }
+              }
+
+
+
+              //RefillCirc(ctx,cx+startLong*cx/180,cy-startLat*cy/90,R);
+              //RefillCirc(ctx,cx+endLong*cx/180,cy-endLat*cy/90,R);
+
+              //knockoutAndRefill(ctx,50,100,200,600,600,100);
+
+              //ctx.drawImage(satIM,0,0);
+
+
+
+              function RefillCirc(ctx, xc, yc, R1, R2, A) {
+                ctx.globalAlpha = A;
+                ctx.save();
+                ctx.translate(0, 0);
+                ctx.beginPath();
+                ctx.moveTo(xc, yc);
+                ctx.ellipse(xc, yc, R1, R2, 2 * Math.PI, 0, 2 * Math.PI);
+                ctx.closePath();
+                ctx.clip();
+                ctx.drawImage(satIM, 0, 0);
+                ctx.restorex();
+                ctx.globalAlpha = 1;
+
+                if (xc + R1 > cx * 2) {
+                  ctx.globalAlpha = A;
+                  ctx.save();
+                  ctx.translate(0, 0);
+                  ctx.beginPath();
+                  ctx.moveTo(xc - cx * 2, yc);
+                  ctx.ellipse(xc - cx * 2, yc, R1, R2, 2 * Math.PI, 0, 2 * Math.PI);
+                  ctx.closePath();
+                  ctx.clip();
+                  ctx.drawImage(satIM, 0, 0);
+                  ctx.restorex();
+                  ctx.globalAlpha = 1;
+                }
+                if (xc - R1 < 0) {
+                  ctx.globalAlpha = A;
+                  ctx.save();
+                  ctx.translate(0, 0);
+                  ctx.beginPath();
+                  ctx.moveTo(xc + cx * 2, yc);
+                  ctx.ellipse(xc + cx * 2, yc, R1, R2, 2 * Math.PI, 0, 2 * Math.PI);
+                  ctx.closePath();
+                  ctx.clip();
+                  ctx.drawImage(satIM, 0, 0);
+                  ctx.restorex();
+                  ctx.globalAlpha = 1;
+                }
+                if (yc + R2 > cy * 2) {
+                  ctx.globalAlpha = A;
+                  ctx.save();
+                  ctx.translate(0, 0);
+                  ctx.beginPath();
+                  ctx.moveTo(xc + cx, yc + cy);
+                  ctx.ellipse(xc + cx, cy * 2 + 2 * cy * (1 - yc / (cy * 2)), R1, R2, 2 * Math.PI, 0, 2 * Math.PI);
+                  ctx.moveTo(xc - cx, yc + cy);
+                  ctx.ellipse(xc - cx, cy * 2 + 2 * cy * (1 - yc / (cy * 2)), R1, R2, 2 * Math.PI, 0, 2 * Math.PI);
+                  ctx.closePath();
+                  ctx.clip();
+                  ctx.drawImage(satIM, 0, 0);
+                  ctx.restorex();
+                  ctx.globalAlpha = 1;
+                }
+                if (yc - R2 < 0) {
+                  ctx.globalAlpha = A;
+                  ctx.save();
+                  ctx.translate(0, 0);
+                  ctx.beginPath();
+                  ctx.moveTo(xc + cx, yc);
+                  ctx.ellipse(xc + cx, 0 - 2 * cy * (yc / (cy * 2)), R1, R2, 2 * Math.PI, 0, 2 * Math.PI);
+                  ctx.moveTo(xc - cx, yc);
+                  ctx.ellipse(xc - cx, 0 - 2 * cy * (yc / (cy * 2)), R1, R2, 2 * Math.PI, 0, 2 * Math.PI);
+                  ctx.closePath();
+                  ctx.clip();
+                  ctx.drawImage(satIM, 0, 0);
+                  ctx.restorex();
+                  ctx.globalAlpha = 1;
+                }
+              }
+
+              function knockoutAndRefill(ctx, x0, y0, x1, y1, x2, y2) {
+
+                ctx.save();
+                ctx.translate(0, 0);
+                ctx.beginPath();
+                ctx.moveTo(x0, y0);
+                ctx.lineTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.closePath();
+                ctx.clip();
+                ctx.drawImage(satIM, 0, 0);
+                ctx.restorex();
+              }
+            }
+
+            ctx.restorex();
+            for (j = 0; j < trips.length; j++) {
+
+              trip = trips[j];
+              startLong = trip[1];
+              startLat = trip[0];
+              endLong = trip[3];
+              endLat = trip[2];
+              journeyAlt = trip[4];
+              if (j == 0) {
+                ///*
+                ctx.save();
+                ctx.translate(0, 0);
+                ctx.beginPath();
+                ctx.arc(cx + startLong * cx / 180, cy - startLat * cy / 90, 4.2 / ctx.getTransform().a, 0, Math.PI * 2);
+                ctx.fillStyle = 'yellow';
+                ctx.fill();
+                //ctx.stroke();
+                ctx.closePath();
+
+                ctx.translate(0, 0);
+                ctx.beginPath();
+                ctx.arc(cx + endLong * cx / 180, cy - endLat * cy / 90, 4.2 / ctx.getTransform().a, 0, Math.PI * 2);
+                ctx.fillStyle = 'yellow';
+                ctx.fill();
+                //ctx.stroke();
+                ctx.closePath();
+                //*/
+              } else {
+                ctx.save();
+                ctx.translate(0, 0);
+                ctx.beginPath();
+                ctx.arc(cx + startLong * cx / 180, cy - startLat * cy / 90, 3.5 / ctx.getTransform().a, 0, Math.PI * 2);
+                ctx.fillStyle = '#189aca';
+                ctx.fill();
+                ctx.closePath();
+
+                ctx.translate(0, 0);
+                ctx.beginPath();
+                ctx.arc(cx + endLong * cx / 180, cy - endLat * cy / 90, 3.5 / ctx.getTransform().a, 0, Math.PI * 2);
+                ctx.fillStyle = '#189aca';
+                ctx.fill();
+                ctx.closePath();
+                gcdi = gcdist(startLat, startLong, endLat, endLong);
+                //console.log(50*gcdi/1000000)
+                gcdLength = 22 * (gcdi / 1000000) / Math.pow(visibility, 1.1);
+                for (i = 0; i < gcdLength; i++) {
+                  f = i / (gcdLength);
+                  [midLat, midLong, gcd] = gcpt(f, startLat, startLong, endLat, endLong);
+                  //console.log(f)
+                  // draw saved routes
+                  if (i == 0) {
+                    ctx.beginPath();
+                    ctx.moveTo(cx + startLong * cx / 180, cy - startLat * cy / 90);
+                    ctx.lineTo(cx + midLong * cx / 180, cy - midLat * cy / 90);
+                    console.log('start of the line')
+                  } else if (i > gcdLength - 1) {
+                    ctx.lineTo(cx + endLong * cx / 180, cy - endLat * cy / 90);
+                    ctx.strokeStyle = '#189aca';
+                    ctx.lineWidth = 2 / ctx.getTransform().a;
+                    ctx.stroke();
+                    ctx.closePath();
+                    console.log('end of the line')
+                  } else {
+                    if (180 - Math.abs(midLong) < 2) {
+                      [midLatprev, midLongprev, gcdprev] = gcpt(f - 1, startLat, startLong, endLat, endLong);
+                      if (Math.sign(midLong) != Math.sign(midLongprev)) {
+                        ctx.strokeStyle = '#189aca';
+                        ctx.lineWidth = 2 / ctx.getTransform().a;
+                        ctx.stroke();
+                        ctx.closePath();
+                        ctx.beginPath();
+                        ctx.moveTo(cx + midLong * cx / 180, cy - midLat * cy / 90);
+                      } else {
+                        ctx.lineTo(cx + midLong * cx / 180, cy - midLat * cy / 90);
+                      }
+                    } else {
+                      ctx.lineTo(cx + midLong * cx / 180, cy - midLat * cy / 90);
                     }
                   }
-              
+
+                }
               }
             }
           }
-		}
-		redraw();
-		/*
+          redraw();
+          /*
 		var lastX=canvas.width/2, lastY=canvas.height/2;
 		var dragStart,dragged;
 		canvas.addEventListener('mousedown',function(evt){
@@ -409,8 +577,8 @@
 			if (!dragged) zoom(evt.shiftKey ? -1 : 1 );
 		},false);
         */
-		var scaleFactor = 1.05; //1.05
-        /*
+          var scaleFactor = 1.05; //1.05
+          /*
 		var zoom = function(clicks){
 			var pt = ctx.transformedPoint(lastX,lastY);
 			ctx.translate(pt.x,pt.y);
@@ -427,68 +595,89 @@
 		canvas.addEventListener('DOMMouseScroll',handleScroll,false);
 		canvas.addEventListener('mousewheel',handleScroll,false);
         */
-	};
-	
-	// Adds ctx.getTransform() - returns an SVGMatrix
-	// Adds ctx.transformedPoint(x,y) - returns an SVGPoint
-	function trackTransforms(ctx){
-		var svg = document.createElementNS("http://www.w3.org/2000/svg",'svg');
-		var xform = svg.createSVGMatrix();
-		ctx.getTransform = function(){ return xform; };
-		
-		var savedTransforms = [];
-		var save = ctx.save;
-		ctx.save = function(){
-			savedTransforms.push(xform.translate(0,0));
-			return save.call(ctx);
-		};
-		var restorex = ctx.restore;
-		ctx.restorex = function(){
-			xform = savedTransforms.pop();
-			return restorex.call(ctx);
-		};
+        };
 
-		var scale = ctx.scale;
-		ctx.scale = function(sx,sy){
-			xform = xform.scaleNonUniform(sx,sy);
-			return scale.call(ctx,sx,sy);
-		};
-		var rotate = ctx.rotate;
-		ctx.rotate = function(radians){
-			xform = xform.rotate(radians*180/Math.PI);
-			return rotate.call(ctx,radians);
-		};
-		var translate = ctx.translate;
-		ctx.translate = function(dx,dy){
-			xform = xform.translate(dx,dy);
-			return translate.call(ctx,dx,dy);
-		};
-		var transform = ctx.transform;
-		ctx.transform = function(a,b,c,d,e,f){
-			var m2 = svg.createSVGMatrix();
-			m2.a=a; m2.b=b; m2.c=c; m2.d=d; m2.e=e; m2.f=f;
-			xform = xform.multiply(m2);
-			return transform.call(ctx,a,b,c,d,e,f);
-		};
-		var setTransform = ctx.setTransform;
-		ctx.setTransform = function(a,b,c,d,e,f){
-			xform.a = a;
-			xform.b = b;
-			xform.c = c;
-			xform.d = d;
-			xform.e = e;
-			xform.f = f;
-			return setTransform.call(ctx,a,b,c,d,e,f);
-		};
-		var pt  = svg.createSVGPoint();
-		ctx.transformedPoint = function(x,y){
-			pt.x=x; pt.y=y;
-			return pt.matrixTransform(xform.inverse());
-		}
-	}
-       
-  </script>
-  
-</body>
-  
+        function Lat2Radius(midLat, R) {
+          fR = 1;
+          BFAC = 2.47; //2.47;
+
+          R1 = fR * (R + R * (midLat) * (Math.PI / 180) * Math.pow(Math.tan(midLat * (Math.PI / 180)), 1)) / (Math.pow(BFAC, .5) * BFAC ** Math.sqrt(2));
+          R2 = fR * R / (Math.pow(BFAC, .5) * BFAC ** Math.sqrt(2));
+          return {
+            R1: R1,
+            R2: R2
+          };
+        }
+
+
+        // Adds ctx.getTransform() - returns an SVGMatrix
+        // Adds ctx.transformedPoint(x,y) - returns an SVGPoint
+        function trackTransforms(ctx) {
+          var svg = document.createElementNS("http://www.w3.org/2000/svg", 'svg');
+          var xform = svg.createSVGMatrix();
+          ctx.getTransform = function() {
+            return xform;
+          };
+
+          var savedTransforms = [];
+          var save = ctx.save;
+          ctx.save = function() {
+            savedTransforms.push(xform.translate(0, 0));
+            return save.call(ctx);
+          };
+          var restorex = ctx.restore;
+          ctx.restorex = function() {
+            xform = savedTransforms.pop();
+            return restorex.call(ctx);
+          };
+
+          var scale = ctx.scale;
+          ctx.scale = function(sx, sy) {
+            xform = xform.scaleNonUniform(sx, sy);
+            return scale.call(ctx, sx, sy);
+          };
+          var rotate = ctx.rotate;
+          ctx.rotate = function(radians) {
+            xform = xform.rotate(radians * 180 / Math.PI);
+            return rotate.call(ctx, radians);
+          };
+          var translate = ctx.translate;
+          ctx.translate = function(dx, dy) {
+            xform = xform.translate(dx, dy);
+            return translate.call(ctx, dx, dy);
+          };
+          var transform = ctx.transform;
+          ctx.transform = function(a, b, c, d, e, f) {
+            var m2 = svg.createSVGMatrix();
+            m2.a = a;
+            m2.b = b;
+            m2.c = c;
+            m2.d = d;
+            m2.e = e;
+            m2.f = f;
+            xform = xform.multiply(m2);
+            return transform.call(ctx, a, b, c, d, e, f);
+          };
+          var setTransform = ctx.setTransform;
+          ctx.setTransform = function(a, b, c, d, e, f) {
+            xform.a = a;
+            xform.b = b;
+            xform.c = c;
+            xform.d = d;
+            xform.e = e;
+            xform.f = f;
+            return setTransform.call(ctx, a, b, c, d, e, f);
+          };
+          var pt = svg.createSVGPoint();
+          ctx.transformedPoint = function(x, y) {
+            pt.x = x;
+            pt.y = y;
+            return pt.matrixTransform(xform.inverse());
+          }
+        }
+
+      </script>
+
+  </body>
+
 </html>
