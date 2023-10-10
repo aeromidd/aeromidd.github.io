@@ -47,7 +47,7 @@ iframe {
   align-content: center; text-align:center; padding:10px; line-height: 25px;
   flex-direction: column;font-family:Baskerville;color:#00508a;font-size:1.5rem"></div>
     
-    <script>ProjectTitleArea.innerText=PAGETITLE.innerText;
+    <script>ProjectTitleArea.innerText='';
     </script>
 
   <input id="latest_button" type="image" value="https://aeromidd.github.io/misc/LatestButton1Wtxt.png|https://aeromidd.github.io/misc/LatestButton1.png|https://aeromidd.github.io/misc/LatestButton1WtxtDisabled.png" style="position:relative;left:-448px;top:-1652px; margin:0 auto; display:block; width:97.5px;height:25px;border:2px solid #00508a;border-radius: 5px;" src="" alt="Latest" onmouseover="this.src=this.value.split('|')[1];" onmouseout="this.src=this.value.split('|')[0];"/>
@@ -129,7 +129,19 @@ iframe {
       ProjectTitle = PRJData[j].name;
     }
   }
-  ProjectTitleArea.innerText = ProjectTitle;
+  if (ProjectInList == true){
+    ProjectTitleArea.innerText = ProjectTitle;
+  }else if (currentURL == '/about'){
+    ProjectTitleArea.innerText = 'About';
+  }else if (currentURL == '/categories/aerospace'){
+    ProjectTitleArea.innerText = 'Category: Aerospace Projects';
+  }else if (currentURL == '/categories/data-visuals'){
+    ProjectTitleArea.innerText = 'Category: Data Visuals';
+  }else if (currentURL == '/categories/graphics'){
+    ProjectTitleArea.innerText = 'Category: Graphic Design';
+  }else if (currentURL == '/categories/interactive'){
+    ProjectTitleArea.innerText = 'Category: Interactive Projects';
+  }
   let LatestProjectPosition = PRJData.length-1;
   //console.log(currentURL);
   CRtext.innerText = 'ProjectPosition='+ProjectPosition.toString()+', currentURL='+currentURL;
