@@ -121,12 +121,15 @@ iframe {
     CRtext.innerText = 'doc URL = '+currentURL;
   var ProjectInList = false;
   var ProjectPosition = '';
+  var ProjectTitle = '<placeholder>';
   for (j=0;j<PRJData.length;j++){
     if (PRJData[j].url == currentURL.replace('https://aeromidd.com','')){
       ProjectInList = true;
       ProjectPosition = j;
+      ProjectTitle = PRJData[j].name;
     }
   }
+  ProjectTitleArea.innerText = ProjectTitle;
   let LatestProjectPosition = PRJData.length-1;
   //console.log(currentURL);
   CRtext.innerText = 'ProjectPosition='+ProjectPosition.toString()+', currentURL='+currentURL;
