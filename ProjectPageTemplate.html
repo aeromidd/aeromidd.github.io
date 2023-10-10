@@ -119,11 +119,12 @@ iframe {
     CRtext.innerText = 'fetched PRJData. Determining Project Relative Paths...';
   let currentURL = document.URL;
     CRtext.innerText = 'doc URL = '+currentURL;
+  let currentURLsuffix = currentURL.replace('https://aeromidd.com','');
   var ProjectInList = false;
   var ProjectPosition = '';
-  var ProjectTitle = '<placeholder>';
+  var ProjectTitle = '';
   for (j=0;j<PRJData.length;j++){
-    if (PRJData[j].url == currentURL.replace('https://aeromidd.com','')){
+    if (PRJData[j].url == currentURLsuffix){
       ProjectInList = true;
       ProjectPosition = j;
       ProjectTitle = PRJData[j].name;
@@ -131,16 +132,18 @@ iframe {
   }
   if (ProjectInList == true){
     ProjectTitleArea.innerText = ProjectTitle;
-  }else if (currentURL == '/about'){
+  }else if (currentURLsuffix == '/about'){
     ProjectTitleArea.innerText = 'About';
-  }else if (currentURL == '/categories/aerospace'){
+  }else if (currentURLsuffix == '/categories/aerospace'){
     ProjectTitleArea.innerText = 'Category: Aerospace Projects';
-  }else if (currentURL == '/categories/data-visuals'){
+  }else if (currentURLsuffix == '/categories/data-visuals'){
     ProjectTitleArea.innerText = 'Category: Data Visuals';
-  }else if (currentURL == '/categories/graphics'){
+  }else if (currentURLsuffix == '/categories/graphics'){
     ProjectTitleArea.innerText = 'Category: Graphic Design';
-  }else if (currentURL == '/categories/interactive'){
+  }else if (currentURLsuffix == '/categories/interactive'){
     ProjectTitleArea.innerText = 'Category: Interactive Projects';
+  }else
+    ProjectTitleArea.innerText = currentURLsuffix;
   }
   let LatestProjectPosition = PRJData.length-1;
   //console.log(currentURL);
