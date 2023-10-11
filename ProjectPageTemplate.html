@@ -134,13 +134,13 @@ iframe {
     ProjectTitleArea.innerText = ProjectTitle;
   }else if (currentURLsuffix == '/about'){
     ProjectTitleArea.innerText = 'About';
-  }else if (currentURLsuffix == '/categories/aerospace'){
+  }else if (currentURLsuffix == '/aerospace'){
     ProjectTitleArea.innerText = 'Category: Aerospace Projects';
-  }else if (currentURLsuffix == '/categories/data-visuals'){
+  }else if (currentURLsuffix == '/data-visuals'){
     ProjectTitleArea.innerText = 'Category: Data Visuals';
-  }else if (currentURLsuffix == '/categories/graphics'){
+  }else if (currentURLsuffix == '/graphics'){
     ProjectTitleArea.innerText = 'Category: Graphic Design';
-  }else if (currentURLsuffix == '/categories/interactive'){
+  }else if (currentURLsuffix == '/interactive'){
     ProjectTitleArea.innerText = 'Category: Interactive Projects';
   }else{
     ProjectTitleArea.innerText = currentURLsuffix;
@@ -176,7 +176,7 @@ iframe {
       prev_button.style.cursor = "default";
       prev_button.style.border = "2px solid #c7c7c7";
   }
-  if (ProjectPosition != '' || ProjectPosition > 0){
+  if (ProjectInList == false || (ProjectInList == true && ProjectPosition > 0)){
         first_button.onclick = function(){ window.location.replace('https://aeromidd.com' + PRJData[0].url)}
   }else{
       first_button.src = first_button.value.split('|')[2];
