@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width">
+      <title>CATEGORY:AEROSPACE</title>
+      <style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.header {
+  text-align: center;
+  padding: 32px;
+}
+
+.row {
+  display: -ms-flexbox; /* IE 10 */
+  display: flex;
+  -ms-flex-wrap: wrap; /* IE 10 */
+  flex-wrap: wrap;
+  padding: 0 4px;
+}
+
+/* Create two equal columns that sits next to each other */
+.column {
+  -ms-flex: 50%; /* IE 10 */
+  flex: 50%;
+  padding: 0 4px;
+}
+
+.column img {
+  margin-top: 12px;
+  vertical-align: middle;
+}
+
+/* Style the buttons */
+.btn {
+  border: none;
+  outline: none;
+  padding: 10px 16px;
+  background-color: #f1f1f1;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.btn:hover {
+  background-color: #ddd;
+}
+
+.btn.active {
+  background-color: #666;
+  color: white;
+}
+</style>
+   </head>
+   <body>
+     <img id="categorypic" src="https://aeromidd.github.io/misc/AerothumbKtxt.png" alt="alternatetext" style="position:absolute;left:15px; top:15px;width:150px;">
+     <img id="dcyimg" src="https://aeromidd.github.io/misc/Empty.png" style="position:absolute;left:10px;top:10px;width:875px;height:1420px;" </img>
+     <p style="position:absolute;top:10px;text-align:center;left:12px;width:865px;color:#757575;font:13px Helvetica">Aeronautics & space related projects (and some cheeky marine things)</p>
+     
+     
+      <canvas id="BorderCanvas"></canvas>
+      <script type="text/javascript">
+         var canvas = document.getElementById('BorderCanvas');
+         if (canvas.getContext) {
+           var context = canvas.getContext('2d');
+           var xsize = 880;
+           var ysize = 1425;
+           canvas.style.width = xsize + "px";
+           canvas.style.height = ysize + "px";
+           // Set actual size in memory (scaled to account for extra pixel density).
+           var scale = 2; //window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+           canvas.width = Math.floor(xsize * scale);
+           canvas.height = Math.floor(ysize * scale);
+           // Normalize coordinate system to use css pixels.
+           context.scale(scale, scale);
+           context.clearRect(0, 0, canvas.width / scale, canvas.height / scale);
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(0, 0);
+           context.lineTo(canvas.width / scale, 0);
+           context.strokeStyle = '#00508a';
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(0, 0);
+           context.lineTo(0, canvas.height / scale);
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(canvas.width / scale, canvas.height / scale);
+           context.lineTo(canvas.width / scale, 0);
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(canvas.width / scale, canvas.height / scale);
+           context.lineTo(0, canvas.height / scale);
+           context.stroke();
+           ////
+         }
+      </script>
+      
+      <script type="text/javascript">
+         
+           
+      </script>
+
+<!-- picture Grid -->
+<div class="row" style='position:absolute;left:112px;top:200px;width:665px;'> 
+  <div class="column">
+    <img src="https://aeromidd.github.io/misc/AerothumbKtxt.png" style="width:150px">
+  </div>
+  <div class="column">
+    <img src="https://aeromidd.github.io/misc/AerothumbW.png" style="width:150px">
+  </div>
+  <div class="column">
+    <img src="https://aeromidd.github.io/misc/AerothumbKtxt.png" style="width:150px">
+  </div>
+  <div class="column">
+    <img src="https://aeromidd.github.io/misc/AerothumbKtxt.png" style="width:150px">
+  </div>
+  <div class="column">
+    <img src="https://aeromidd.github.io/misc/AerothumbKtxt.png" style="width:150px">
+  </div>
+  <div class="column">
+    <img src="https://aeromidd.github.io/misc/AerothumbW.png" style="width:150px">
+  </div>
+  <div class="column">
+    <img src="https://aeromidd.github.io/misc/AerothumbKtxt.png" style="width:150px">
+  </div>
+  <div class="column">
+    <img src="https://aeromidd.github.io/misc/AerothumbW.png" style="width:150px">
+  </div>
+</div>
+
+<script>
+// Get the elements with class="column"
+var elements = document.getElementsByClassName("column");
+
+// Declare a loop variable
+var i;
+
+// Full-width images
+function one() {
+    for (i = 0; i < elements.length; i++) {
+    elements[i].style.msFlex = "100%";  // IE10
+    elements[i].style.flex = "100%";
+  }
+}
+
+// Two images side by side
+function two() {
+  for (i = 0; i < elements.length; i++) {
+    elements[i].style.msFlex = "50%";  // IE10
+    elements[i].style.flex = "50%";
+  }
+}
+// Two images side by side
+function three() {
+  for (i = 0; i < elements.length; i++) {
+    elements[i].style.msFlex = "33.3333%";  // IE10
+    elements[i].style.flex = "33.3333%";
+  }
+}
+// Four images side by side
+function four() {
+  for (i = 0; i < elements.length; i++) {
+    elements[i].style.msFlex = "25%";  // IE10
+    elements[i].style.flex = "25%";
+  }
+}
+numColumns(4);
+function numColumns(n) {
+  console.log((100/n).toString()+"%")
+  for (i = 0; i < elements.length; i++) {
+    elements[i].style.msFlex = (100/n).toString()+"%";  // IE10
+    elements[i].style.flex = (100/n).toString()+"%";
+  }
+}
+</script>
+   </body>
+</html>
