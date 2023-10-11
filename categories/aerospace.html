@@ -5,58 +5,35 @@
       <meta name="viewport" content="width=device-width">
       <title>CATEGORY:AEROSPACE</title>
       <style>
+
 * {
   box-sizing: border-box;
+  /*border: 1px solid blue;*/
 }
 
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-.header {
-  text-align: center;
-  padding: 32px;
-}
 
 .row {
   display: -ms-flexbox; /* IE 10 */
   display: flex;
   -ms-flex-wrap: wrap; /* IE 10 */
   flex-wrap: wrap;
-  padding: 0 4px;
+  padding: 0 0px;
 }
 
 /* Create two equal columns that sits next to each other */
 .column {
-  -ms-flex: 50%; /* IE 10 */
-  flex: 50%;
-  padding: 0 4px;
+  -ms-flex: 25%; /* IE 10 */
+  flex: 25%;
+  padding: 0 0px;
+  text-align: center;
 }
 
 .column img {
-  margin-top: 12px;
+  margin-top: 6px;
+  margin-bottom: 6px;
   vertical-align: middle;
 }
 
-/* Style the buttons */
-.btn {
-  border: none;
-  outline: none;
-  padding: 10px 16px;
-  background-color: #f1f1f1;
-  cursor: pointer;
-  font-size: 18px;
-}
-
-.btn:hover {
-  background-color: #ddd;
-}
-
-.btn.active {
-  background-color: #666;
-  color: white;
-}
 </style>
    </head>
    <body>
@@ -114,73 +91,54 @@ body {
            
       </script>
 
-<!-- picture Grid -->
-<div class="row" style='position:absolute;left:112px;top:200px;width:665px;'> 
-  <div class="column">
-    <img src="https://aeromidd.github.io/misc/AerothumbKtxt.png" style="width:150px">
-  </div>
-  <div class="column">
-    <img src="https://aeromidd.github.io/misc/AerothumbW.png" style="width:150px">
-  </div>
-  <div class="column">
-    <img src="https://aeromidd.github.io/misc/AerothumbKtxt.png" style="width:150px">
-  </div>
-  <div class="column">
-    <img src="https://aeromidd.github.io/misc/AerothumbKtxt.png" style="width:150px">
-  </div>
-  <div class="column">
-    <img src="https://aeromidd.github.io/misc/AerothumbKtxt.png" style="width:150px">
-  </div>
-  <div class="column">
-    <img src="https://aeromidd.github.io/misc/AerothumbW.png" style="width:150px">
-  </div>
-  <div class="column">
-    <img src="https://aeromidd.github.io/misc/AerothumbKtxt.png" style="width:150px">
-  </div>
-  <div class="column">
-    <img src="https://aeromidd.github.io/misc/AerothumbW.png" style="width:150px">
-  </div>
-</div>
 
 <script>
-// Get the elements with class="column"
+console.clear();
+//console.log('hi')
+
+
+let nProj =5;
+let nCol = 4;
+  
+var iDiv = document.createElement('div');
+iDiv.id = 'picGrid';
+iDiv.style.position = 'absolute';
+iDiv.style.left = '112px';
+iDiv.style.top = '200px';
+iDiv.style.width = '665px';
+iDiv.className = 'row';
+document.getElementsByTagName('body')[0].appendChild(iDiv);
+
+// Now create and append to iDiv
+var j;
+for (j = 0; j < nProj; j++) {
+  var innerDiv = document.createElement('div');
+  var imagething = document.createElement('img');
+  imagething.src = 'https://aeromidd.github.io/misc/AerothumbKtxt.png';
+  imagething.style.width = '150px';
+  innerDiv.className = 'column';
+  innerDiv.appendChild(imagething);
+  iDiv.appendChild(innerDiv);
+}
+//add padding columns.
+if (nProj > 4 && nProj%4 !=0){
+  var nPadCols = 4-nProj%4;
+  for (var g = 0;g<nPadCols;g++){
+    var innerDiv = document.createElement('div');
+    var imagething = document.createElement('img');
+    imagething.src = 'https://aeromidd.github.io/misc/AerothumbW.png';
+    imagething.style.width = '150px';
+    innerDiv.className = 'column';
+    innerDiv.appendChild(imagething);
+    iDiv.appendChild(innerDiv);
+  }
+}
+  
 var elements = document.getElementsByClassName("column");
-
-// Declare a loop variable
 var i;
-
-// Full-width images
-function one() {
-    for (i = 0; i < elements.length; i++) {
-    elements[i].style.msFlex = "100%";  // IE10
-    elements[i].style.flex = "100%";
-  }
-}
-
-// Two images side by side
-function two() {
-  for (i = 0; i < elements.length; i++) {
-    elements[i].style.msFlex = "50%";  // IE10
-    elements[i].style.flex = "50%";
-  }
-}
-// Two images side by side
-function three() {
-  for (i = 0; i < elements.length; i++) {
-    elements[i].style.msFlex = "33.3333%";  // IE10
-    elements[i].style.flex = "33.3333%";
-  }
-}
-// Four images side by side
-function four() {
-  for (i = 0; i < elements.length; i++) {
-    elements[i].style.msFlex = "25%";  // IE10
-    elements[i].style.flex = "25%";
-  }
-}
-numColumns(4);
+numColumns(nCol);
 function numColumns(n) {
-  console.log((100/n).toString()+"%")
+  //console.log((100/n).toString()+"%")
   for (i = 0; i < elements.length; i++) {
     elements[i].style.msFlex = (100/n).toString()+"%";  // IE10
     elements[i].style.flex = (100/n).toString()+"%";
