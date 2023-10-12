@@ -20,26 +20,25 @@
   padding: 0 0px;
 }
 
-/* Create two equal columns that sits next to each other */
 .column {
   -ms-flex: 25%; /* IE 10 */
   flex: 25%;
   padding: 0 0px;
   text-align: center;
+  display: inline-block;
 }
 
-.column img {
+.column div {
   margin-top: 6px;
   margin-bottom: 6px;
+  margin-left: 6px;
+  margin-right: 6px;
   vertical-align: middle;
+  text-align: center;
+  display: inline-block;
+  float:center;
 }
-/* Centered text */
-.centeredText {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
+        
 </style>
    </head>
    <body>
@@ -132,44 +131,54 @@ document.getElementsByTagName('body')[0].appendChild(iDiv);
 var j;
 for (j = nProj-1; j >= 0; j--) {
   var innerDiv = document.createElement('div');
-  var imagething = document.createElement('img');
-  imagething.src = 'https://aeromidd.github.io' + '/projects/' + CatPRJData[j].url.substring(3) + '/' +CatPRJData[j].url.substring(3) + '-thumb.png';
-  imagething.value = imagething.src+'|'+ 'https://aeromidd.github.io/misc/AerothumbW.png';//'https://aeromidd.github.io/misc/mouseover-catprj-thumb.png';
-  imagething.onmouseover=function(){this.src=this.value.split('|')[1];};
-  imagething.onmouseout=function(){this.src=this.value.split('|')[0];};
-  imagething.style.width = '150px';
-  imagething.style.border = '2px solid #00508a';
-  imagething.style.borderRadius = '5px';
   
   var imagetextDiv = document.createElement('div');
-  imagetextDiv.class = "centeredText";
-  var imagetextContent = document.createTextNode("<YOUR_CONTENT>");
-  imagetextDiv.appendChild(imagetextContent);
-  imagetextDiv.innerHTML = CatPRJData[j].name;
-  imagething.appendChild(imagetextDiv)
+  //imagetextDiv.class = "div";
   /*
-  imagething.mouseenter = function () {
-        $(this).fadeOut(500, function(){
-            $(this).attr('src', $(this).data('hover'));
-            $(this).fadeIn(500);
-        });
-  imagething.mouseleave = function () {
-        $(this).fadeOut(500, function(){
-            $(this).attr('src', $(this).data('original'));
-            $(this).fadeIn(500);
-        });
-        */
+  var imagetextContent = document.createTextNode(' ');
+  imagetextContent.class = 'columnDivText';
+  */
+  var imagetextContent = document.createElement('div')
+  imagetextContent.innerHTML = ' ';
+  imagetextContent.style.height = '134px';
+  imagetextContent.style.width = '134px';
+  imagetextContent.style.color = '#00508a';
+  imagetextContent.style.fontSize = '12';
+  //imagetextContent.style.marginTop = '6px';
+  //imagetextContent.style.marginBottom = '6px';
+  //imagetextContent.style.marginLeft = '6px';
+  imagetextContent.style.display = 'flex';
+  imagetextContent.style.alignItems = 'center';
+  imagetextContent.style.justifyContent = 'center';
+  imagetextContent.verticalAlign= 'middle';
+  imagetextContent.textAlign= 'center';
+  imagetextDiv.appendChild(imagetextContent);
+  imagetextDiv.style.cursor = 'pointer';
+  imagetextDiv.style.height = '150px';
+  imagetextDiv.style.width = '150px';
+  imagetextDiv.style.border = '2px solid #00508a';
+  imagetextDiv.style.borderRadius = '5px';
+  imagetextDiv.titlename = CatPRJData[j].name;
+  //console.log(imagetextDiv.childNodes[0].nodeValue)
+  imagetextDiv.urlDestination = CatPRJData[j].url;
+  imagetextDiv.bcgImages = 'https://aeromidd.github.io' + '/projects/' + CatPRJData[j].url.substring(3) + '/' +CatPRJData[j].url.substring(3) + '-thumb.png'+'|'+ 'https://aeromidd.github.io/misc/mouseover-catprj-thumb.png';
+  imagetextDiv.style.backgroundImage = 'url('+imagetextDiv.bcgImages.split('|')[0]+')';
+  imagetextDiv.onmouseover=function(){this.style.backgroundImage='url('+this.bcgImages.split('|')[0]+')';this.childNodes[0].childNodes[0].nodeValue=this.titlename;this.style.backgroundBlendMode = 'overlay';this.style.backgroundColor = "rgba(255, 255, 255, 0.8)";};
+  imagetextDiv.onmouseout=function(){this.style.backgroundImage='url('+this.bcgImages.split('|')[0]+')';this.childNodes[0].childNodes[0].nodeValue='';this.style.backgroundBlendMode = 'overlay';this.style.backgroundColor = "rgba(255, 255, 255, 0.0)";};
+  imagetextDiv.style.backgroundSize = "150px 150px"
+  imagetextDiv.onclick = function(){ window.location.replace('https://aeromidd.com' + this.urlDestination)}
+  innerDiv.appendChild(imagetextDiv);
   innerDiv.className = 'column';
-  innerDiv.appendChild(imagething);
   iDiv.appendChild(innerDiv);
 }
+             
 //add padding columns.
 if (nProj > 4 && nProj%4 !=0){
   var nPadCols = 4-nProj%4;
   for (var g = 0;g<nPadCols;g++){
     var innerDiv = document.createElement('div');
     var imagething = document.createElement('img');
-    imagething.src = 'https://aeromidd.github.io/misc/AerothumbW.png';
+    imagething.src = 'https://aeromidd.github.io/misc/Empty.png';
     imagething.style.width = '150px';
     innerDiv.className = 'column';
     innerDiv.appendChild(imagething);
