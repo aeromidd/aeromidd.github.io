@@ -33,7 +33,13 @@
   margin-bottom: 6px;
   vertical-align: middle;
 }
-
+/* Centered text */
+.centeredText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 </style>
    </head>
    <body>
@@ -95,9 +101,22 @@
 <script>
 console.clear();
 //console.log('hi')
-
-
-let nProj =5;
+let response_promise = fetch("https://aeromidd.com/PRJLIST.json");
+           //document.addEventListener("DOMContentLoaded", function() {
+           response_promise.then(response => response.json().then(RESDATA => {
+  var PRJData = [...RESDATA];
+  var TargetCategory = 'a';
+  var CatPRJData = [];
+  let CatPRJnum = 0;
+  var i = 0;
+  for (i = 0; i<PRJData.length;i++){
+      if (PRJData[i].cat.includes(TargetCategory)){
+        CatPRJData.push(PRJData[i]);
+        CatPRJnum++;
+      }
+  }          
+             
+let nProj =CatPRJnum;
 let nCol = 4;
   
 var iDiv = document.createElement('div');
@@ -111,11 +130,35 @@ document.getElementsByTagName('body')[0].appendChild(iDiv);
 
 // Now create and append to iDiv
 var j;
-for (j = 0; j < nProj; j++) {
+for (j = nProj-1; j >= 0; j--) {
   var innerDiv = document.createElement('div');
   var imagething = document.createElement('img');
-  imagething.src = 'https://aeromidd.github.io/misc/AerothumbKtxt.png';
+  imagething.src = 'https://aeromidd.github.io' + '/projects/' + CatPRJData[j].url.substring(3) + '/' +CatPRJData[j].url.substring(3) + '-thumb.png';
+  imagething.value = imagething.src+'|'+ 'https://aeromidd.github.io/misc/AerothumbW.png';//'https://aeromidd.github.io/misc/mouseover-catprj-thumb.png';
+  imagething.onmouseover=function(){this.src=this.value.split('|')[1];};
+  imagething.onmouseout=function(){this.src=this.value.split('|')[0];};
   imagething.style.width = '150px';
+  imagething.style.border = '2px solid #00508a';
+  imagething.style.borderRadius = '5px';
+  
+  var imagetextDiv = document.createElement('div');
+  imagetextDiv.class = "centeredText";
+  var imagetextContent = document.createTextNode("<YOUR_CONTENT>");
+  imagetextDiv.appendChild(imagetextContent);
+  imagetextDiv.innerHTML = CatPRJData[j].name;
+  imagething.appendChild(imagetextDiv)
+  /*
+  imagething.mouseenter = function () {
+        $(this).fadeOut(500, function(){
+            $(this).attr('src', $(this).data('hover'));
+            $(this).fadeIn(500);
+        });
+  imagething.mouseleave = function () {
+        $(this).fadeOut(500, function(){
+            $(this).attr('src', $(this).data('original'));
+            $(this).fadeIn(500);
+        });
+        */
   innerDiv.className = 'column';
   innerDiv.appendChild(imagething);
   iDiv.appendChild(innerDiv);
@@ -144,6 +187,8 @@ function numColumns(n) {
     elements[i].style.flex = (100/n).toString()+"%";
   }
 }
+             
+           }));
 </script>
    </body>
 </html>
