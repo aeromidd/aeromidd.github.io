@@ -150,7 +150,7 @@ iframe {
   CRtext.innerText = 'ProjectPosition='+ProjectPosition.toString()+', currentURL='+currentURL;
              
   if (ProjectPosition < LatestProjectPosition){
-        latest_button.onclick = function(){ window.location.replace('https://aeromidd.com' + PRJData[LatestProjectPosition].url)}
+        latest_button.onclick = function(){ window.top.location.assign('https://aeromidd.com' + PRJData[LatestProjectPosition].url)}
   }else{
       latest_button.src = latest_button.value.split('|')[2];
       latest_button.onmouseover = "";
@@ -159,7 +159,7 @@ iframe {
       latest_button.style.border = "2px solid #c7c7c7";
   }
   if (ProjectInList == true && ProjectPosition < LatestProjectPosition){
-        next_button.onclick = function(){ window.location.replace('https://aeromidd.com' + PRJData[ProjectPosition+1].url)}
+        next_button.onclick = function(){ window.top.location.assign('https://aeromidd.com' + PRJData[ProjectPosition+1].url)}
   }else{
       next_button.src = next_button.value.split('|')[2];
       next_button.onmouseover = "";
@@ -168,7 +168,7 @@ iframe {
       next_button.style.border = "2px solid #c7c7c7";
   }
   if (ProjectInList == true && ProjectPosition > 0){
-      prev_button.onclick = function(){ window.location.replace('https://aeromidd.com' + PRJData[ProjectPosition-1].url)}
+      prev_button.onclick = function(){ window.top.location.assign('https://aeromidd.com' + PRJData[ProjectPosition-1].url)}
   }else{
       prev_button.src = prev_button.value.split('|')[2];
       prev_button.onmouseover = "";
@@ -177,7 +177,7 @@ iframe {
       prev_button.style.border = "2px solid #c7c7c7";
   }
   if (ProjectInList == false || (ProjectInList == true && ProjectPosition > 0)){
-        first_button.onclick = function(){ window.location.replace('https://aeromidd.com' + PRJData[0].url)}
+        first_button.onclick = function(){ window.top.location.assign('https://aeromidd.com' + PRJData[0].url)}
   }else{
       first_button.src = first_button.value.split('|')[2];
       first_button.onmouseover = "";
@@ -185,14 +185,14 @@ iframe {
       first_button.style.cursor = "default";
       first_button.style.border = "2px solid #c7c7c7";
   }
-    aerospace_button.onclick = function(){ window.location.replace('https://aeromidd.com/c/aerospace')}
-    dataviz_button.onclick = function(){ window.location.replace('https://aeromidd.com/c/data-visuals')}
-    graphics_button.onclick = function(){ window.location.replace('https://aeromidd.com/c/graphics')}
-    interactive_button.onclick = function(){ window.location.replace('https://aeromidd.com/c/interactive')}
+    aerospace_button.onclick = function(){ window.top.location.assign('https://aeromidd.com/c/aerospace')}
+    dataviz_button.onclick = function(){ window.top.location.assign('https://aeromidd.com/c/data-visuals')}
+    graphics_button.onclick = function(){ window.top.location.assign('https://aeromidd.com/c/graphics')}
+    interactive_button.onclick = function(){ window.top.location.assign('https://aeromidd.com/c/interactive')}
              
     rand_button.onclick = function(){
       var X = Math.round(Math.random()*LatestProjectPosition); 
-      window.location.replace('https://aeromidd.com' + PRJData[X].url)
+      window.top.location.assign('https://aeromidd.com' + PRJData[X].url)
     }
              
     CRtext.innerText = 'completed loading page nav functions';
