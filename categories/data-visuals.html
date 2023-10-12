@@ -166,7 +166,7 @@ for (j = nProj-1; j >= 0; j--) {
   imagetextDiv.onmouseover=function(){this.style.backgroundImage='url('+this.bcgImages.split('|')[0]+')';this.childNodes[0].childNodes[0].nodeValue=this.titlename;this.style.backgroundBlendMode = 'overlay';this.style.backgroundColor = "rgba(255, 255, 255, 0.8)";};
   imagetextDiv.onmouseout=function(){this.style.backgroundImage='url('+this.bcgImages.split('|')[0]+')';this.childNodes[0].childNodes[0].nodeValue='';this.style.backgroundBlendMode = 'overlay';this.style.backgroundColor = "rgba(255, 255, 255, 0.0)";};
   imagetextDiv.style.backgroundSize = "150px 150px"
-  imagetextDiv.onclick = function(){ window.location.assign('https://aeromidd.com' + this.urlDestination)}
+  imagetextDiv.onclick = function(){ window.top.location.assign('https://aeromidd.com' + this.urlDestination)}
   innerDiv.appendChild(imagetextDiv);
   innerDiv.className = 'column';
   iDiv.appendChild(innerDiv);
