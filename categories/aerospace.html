@@ -42,9 +42,9 @@
 </style>
    </head>
    <body>
-     <img id="categorypic" src="https://aeromidd.github.io/misc/AerothumbKtxt.png" alt="alternatetext" style="position:absolute;left:15px; top:15px;width:150px;">
+     <img id="categorypic" src="https://aeromidd.github.io/misc/AerothumbKtxt.png" alt="alternatetext" style="position:absolute;left:396px; top:20px;width:97.5px;border:2px solid #189aca;border-radius:5px">
      <img id="dcyimg" src="https://aeromidd.github.io/misc/Empty.png" style="position:absolute;left:10px;top:10px;width:875px;height:1420px;" </img>
-     <p style="position:absolute;top:10px;text-align:center;left:12px;width:865px;color:#757575;font:13px Helvetica">Aeronautics & space related projects (and some cheeky marine things)</p>
+     <p style="position:absolute;top:115px;text-align:center;left:12px;width:865px;color:#757575;font:13px Helvetica">Aeronautics, space, and marine projects. <br> Essentially: stuff I've made that's directly related to my engineering training and interests.</p>
      
      
       <canvas id="BorderCanvas"></canvas>
@@ -114,7 +114,7 @@ let response_promise = fetch("https://aeromidd.com/PRJLIST.json");
         CatPRJnum++;
       }
   }          
-             
+
 let nProj =CatPRJnum;
 let nCol = 4;
   
@@ -144,9 +144,6 @@ for (j = nProj-1; j >= 0; j--) {
   imagetextContent.style.width = '134px';
   imagetextContent.style.color = '#00508a';
   imagetextContent.style.fontSize = '12';
-  //imagetextContent.style.marginTop = '6px';
-  //imagetextContent.style.marginBottom = '6px';
-  //imagetextContent.style.marginLeft = '6px';
   imagetextContent.style.display = 'flex';
   imagetextContent.style.alignItems = 'center';
   imagetextContent.style.justifyContent = 'center';
@@ -157,7 +154,7 @@ for (j = nProj-1; j >= 0; j--) {
   imagetextDiv.style.height = '150px';
   imagetextDiv.style.width = '150px';
   imagetextDiv.style.border = '2px solid #00508a';
-  imagetextDiv.style.borderRadius = '5px';
+  imagetextDiv.style.borderRadius = '7.5px';
   imagetextDiv.titlename = CatPRJData[j].name;
   //console.log(imagetextDiv.childNodes[0].nodeValue)
   imagetextDiv.urlDestination = CatPRJData[j].url;
