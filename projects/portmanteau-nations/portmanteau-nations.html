@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
-  <title>JS Bin</title>
+  <title>PORTMANTEAU NATIONS</title>
   <script src=
          "https://code.jquery.com/jquery-3.5.1.js">
   </script>
@@ -18,20 +18,23 @@
              
              
              
-             let x = Math.round(Math.random()*194);//0->194
-             let y = Math.round(Math.random()*194);//0->194
-             //let x = ;
-             //let y = x;
+             //let x = Math.round(Math.random()*194);//0->194
+             //let y = Math.round(Math.random()*194);//0->194
+             //let x = 146; 
+             //let y = 183;  
              
              CombineCountryNames(x,y);
+             
+             
+             
              
              function CombineCountryNames(x,y){
              let vowels = ['a','e','i','o','u','y'];
              let consonants = ['b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','z'];
              
              
-             console.log(PMC[x].name + ' + ' + PMC[y].name)
-             
+             //console.log(PMC[x].name + ' + ' + PMC[y].name)
+               
              var N = [];
              var pp = [];
              var prefix = [];
@@ -51,55 +54,71 @@
              Front = prefix[x];
              Back = suffix[y];
                
-             console.log('1: ' + Front+' --- '+Back)
-             //var f
-             //f = g.splice(1,1);
-             //console.log(g.slice(0,-1))
-             //console.log(Front.slice(1))
+             
+             var Fullname
+             if (x == y){
+               
+               Fullname = N[x];
+               
+             }else{
              
              if (prefix[x][prefix[x].length-1] == suffix[y][2]){
                if (prefix[x][prefix[x].length-2] == suffix[y][1]){
                  if (prefix[x].length > 2){
                    if (prefix[x][prefix[x].length-3] == suffix[y][0]){
                      Front = Front.slice(0,-3);
+                     
+                     //console.log('1')
                    }
                  }else{
                    Front = Front.slice(0,-2);
+                   //console.log('2')
                  }
                }else{
-                 //Front = Front.slice(0,-1);
+                 Front = Front.slice(0,-1);
+                   //console.log('2.5')
                }
              }else if (prefix[x][prefix[x].length-1] == suffix[y][0]){
                Back = Back.slice(1);
+               //console.log('3')
                
              }else if (prefix[x][prefix[x].length-2] == suffix[y][0] && prefix[x][prefix[x].length-1]==suffix[y][1]){
                Front = Front.slice(0,-2);
+               //console.log('4')
                
              }else if (vowels.includes(prefix[x][prefix[x].length-1]) && vowels.includes(suffix[y][0])){
                if (syllables[x] == 1){
                  Back = Back.slice(1);
+                 //console.log('5a')
                }else{
                  Front = Front.slice(0,-1);
+                 //console.log('5b')
                }
+               
                if (vowels.includes(Front[Front.length-1]) && vowels.includes(Back[0])){
                  if (Front.length >= Back.length){
                    Front = Front.slice(0,-1);
+                   //console.log('5c')
                  }else{
                    Back = Back.slice(1);
+                   //console.log('5d')
                  }
                }
                
              }else if (prefix[x][prefix[x].length-1]=='r' && consonants.includes(prefix[x][prefix[x].length-2]) && consonants.includes(suffix[y][0])){
                Front = Front.slice(0,-1);
+               //console.log('6')
                
              }else if (prefix[x][prefix[x].length-1]=='d' && consonants.includes(suffix[y][0])){
                Front = Front.slice(0,-1);
+               //console.log('7')
                
              }else if (suffix[y][0]=='h' && vowels.includes(suffix[y][1]) && vowels.includes(prefix[x][prefix[x].length-1])){
                Front = Front.slice(0,-1);
+               //console.log('8')
              }
                
-             console.log('2: ' + Front+' --- '+Back)
+             //console.log('2: ' + Front+' --- '+Back)
              var Cpp;
              if (pp[x] != 0){
                if (pp[y] != 0){
@@ -132,12 +151,12 @@
              Css = Css.replaceAll('-','_')
              }
              
-             var Fullname;
-             
              Fullname = Cpp+'_'+Front+Back+'_'+Css;
              Fullname = Fullname.replaceAll(' ','');
              Fullname = Fullname.replaceAll('_',' ');
              
+             }
+               
              console.log(Fullname)
              
              
