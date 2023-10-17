@@ -7,8 +7,166 @@
   <script src=
          "https://code.jquery.com/jquery-3.5.1.js">
   </script>
+        <style>
+          textarea{
+      -webkit-appearance: none;
+      appearance: none;
+      position: absolute;
+      font-family: Garamond;
+      font-weight: bold;
+      font-size: 22px;
+      color: #00508a;
+      background-color: #ffffff;
+      border: 1px solid #00508a;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      -khtml-border-radius: 5px;
+      border-radius: 5px;
+      border-collapse: separate;
+      transform: translateZ(0);
+          }
+           input{
+      -webkit-appearance: none;
+      appearance: none;
+      position: absolute;
+      font-family: Courier New, serif;
+      font-size: 14px;
+      font-weight: bold;
+      color: #189aca;
+      text-align: right;
+      background-color: #ffffff;
+      border: 1px solid #00508a;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      -khtml-border-radius: 5px;
+      border-radius: 5px;
+      border-collapse: separate;
+      transform: translateZ(0);
+    }
+        select{
+      -webkit-appearance: none;
+      appearance: none;
+      position: absolute;
+      font-family: Garamond;
+      font-size: 18px;
+      font-weight: bold;
+      color: #00508a;
+      background-color: #ffffff;
+      border: 1px solid #00508a;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      -khtml-border-radius: 5px;
+      border-radius: 5px;
+      border-collapse: separate;
+      transform: translateZ(0);
+    }
+         /* (A) SEARCH BOX */
+         #AFfilter1 {
+         box-sizing: border-box;
+         position:absolute;
+         top: 165px;
+         left: 140px;
+         height: 25px;
+         width: 200px;
+         margin-bottom: 0px;
+         padding: 0px;
+         font-family: "Garamond";
+         text-align: center;
+         }
+        #AFfilter2 {
+         box-sizing: border-box;
+         position:absolute;
+         top: 165px;
+         left: 560px;
+         height: 25px;
+         width: 200px;
+         margin-bottom: 0px;
+         padding: 0px;
+         font-family: "Garamond";
+         text-align: center;
+         }
+         #APDD1 option {
+         text-align:right;
+         margin-right: 2px;
+         border-bottom: 1px solid #e7e7e7;
+         }
+         #APDD1 option.hide { display: none; }}
+        
+         #APDD2 option {
+         text-align:left;
+         margin-left: 2px;
+         border-bottom: 1px solid #e7e7e7;
+         }
+         #APDD2 option.hide { display: none; 
+         
+         nav select{height:600px; width:164px;
+         list-style: none;
+         padding-left: 0;
+         padding-top: 0;}
+         nav select{overflow:hidden; overflow-y:scroll;}
+        
+      </style>
 </head>
 <body>
+  </script>
+      <canvas id="BorderCanvas"></canvas>
+      <script type="text/javascript">
+         var canvas = document.getElementById('BorderCanvas');
+         if (canvas.getContext) {
+           var context = canvas.getContext('2d');
+           var xsize = 880;
+           var ysize = 1425;
+           canvas.style.width = xsize + "px";
+           canvas.style.height = ysize + "px";
+           // Set actual size in memory (scaled to account for extra pixel density).
+           var scale = 2; //window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+           canvas.width = Math.floor(xsize * scale);
+           canvas.height = Math.floor(ysize * scale);
+           // Normalize coordinate system to use css pixels.
+           context.scale(scale, scale);
+           context.clearRect(0, 0, canvas.width / scale, canvas.height / scale);
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(0, 0);
+           context.lineTo(canvas.width / scale, 0);
+           context.strokeStyle = '#00508a';
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(0, 0);
+           context.lineTo(0, canvas.height / scale);
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(canvas.width / scale, canvas.height / scale);
+           context.lineTo(canvas.width / scale, 0);
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(canvas.width / scale, canvas.height / scale);
+           context.lineTo(0, canvas.height / scale);
+           context.stroke();
+           ////
+         }
+      </script>
+      <input type="text" id="AFfilter1" placeholder="Search" style=""/>
+      <nav>
+         <select id="APDD1" style="position:absolute;left:40px;top:120px;height:40px;width:350px;text-align:right;"
+                 onChange="//SetAP1Data();"><option value="" disabled selected>Country #1</option>
+         </select>
+      </nav>
+      <input type="text" id="AFfilter2" placeholder="Search"/>
+      <nav>
+         <select id="APDD2" style="position:absolute;left:510px;top:120px;height:40px;width:350px;text-align:left;"
+                 onChange="//SetAP2Data();"><option value="" disabled selected>Country #2</option>
+         </select>
+      </nav>
+  <button id="RandAP1" style="position:absolute;left:40px;top:165px;width:95px;height:25px;">Random</button>
+     <button id="RandAP2" style="position:absolute;left:765px;top:165px;width:95px;height:25px;">Random</button>
+  <textarea id="ResultTXTBOX" style="position:absolute;top:200px;text-align:center;left:40px;width:814px;height:40px;" name="RouteListTXTBOX" value="" readonly>Result</textarea>
 <script>
   console.clear();
    let response_promise = fetch("https://aeromidd.com/projects/portmanteau-nations/PMC2.json");
@@ -16,25 +174,166 @@
            document.addEventListener("DOMContentLoaded", function() {
            response_promise.then(response => response.json().then(PMC => {
              
+             for (i = 0; i < PMC.length-1; i++) {
+             
+             var option1 = document.createElement("option");
+option1.text = PMC[i].name;
+option1.value = "myvalue";//MAYBE UTILIZE THIS
+var select1 = document.getElementById("APDD1");
+select1.appendChild(option1);
+             
+             var option2 = document.createElement("option");
+option2.text = PMC[i].name;
+option2.value = "myvalue";//MAYBE UTILIZE THIS
+var select2 = document.getElementById("APDD2");
+select2.appendChild(option2);
+           }
+           /////////////////////////
+//A SEARCH FILTER:
+             AFfilter1.oninput = function(event){
+         var filter1 = document.getElementById("AFfilter1"), // search box
+             //SAFlist1 = document.querySelectorAll("#AFnamelist1 li"); // all list items
+             SAFlist1 = document.querySelectorAll("#APDD1 option"); // all list items
+             
+         // (B) ATTACH KEY UP LISTENER TO SEARCH BOX
+         filter1.onkeyup = () => {
+           // (B1) GET CURRENT SEARCH TERM
+           let search = replaceUmlauts(filter1.value.toLowerCase());
+         
+           // (B2) LOOP THROUGH LIST ITEMS - ONLY SHOW THOSE THAT MATCH SEARCH
+           for (let i of SAFlist1) {
+             let item = replaceUmlauts(i.innerHTML.toLowerCase());
+             if (item.indexOf(search) == -1) { i.classList.add("hide"); }
+             else { i.classList.remove("hide"); }
+           }
+           //for (let i of SAFlist1){
+             //console.log(i)
+            //i.selected = 'selected';
+           //}
+           var selX1 = -1
+           for (i = 0; i < SAFlist1.length-1; i++){
+            if (SAFlist1[i].classList[0] !=("hide") && selX1 < 0) {
+                 selX1 = i;
+            }
+           }
+         
+         if (selX1 <= 0){
+                  selX1 = 1;
+         }
+           //console.log(selX1)
+SAFlist1[selX1].selected = 'selected';
+               //console.log(SAFlist1[selX1].innerHTML)
+           SetAP1Data();
+         }
+        };
+             /////////////////////////////
+             
+//B SEARCH FILTER:
+             AFfilter2.oninput = function(event){
+         var filter2 = document.getElementById("AFfilter2"), // search box
+             //SAFlist1 = document.querySelectorAll("#AFnamelist1 li"); // all list items
+             SAFlist2 = document.querySelectorAll("#APDD2 option"); // all list items
+             
+         // (B) ATTACH KEY UP LISTENER TO SEARCH BOX
+         filter2.onkeyup = () => {
+           // (B1) GET CURRENT SEARCH TERM
+           let search = replaceUmlauts(filter2.value.toLowerCase());
+         
+           // (B2) LOOP THROUGH LIST ITEMS - ONLY SHOW THOSE THAT MATCH SEARCH
+           for (let i of SAFlist2) {
+             let item = replaceUmlauts(i.innerHTML.toLowerCase());
+             if (item.indexOf(search) == -1) { i.classList.add("hide"); }
+             else { i.classList.remove("hide"); }
+           }
+           //for (let i of SAFlist1){
+             //console.log(i)
+            //i.selected = 'selected';
+           //}
+           var selX2 = -1
+           for (i = 0; i < SAFlist2.length-1; i++){
+            if (SAFlist2[i].classList[0] !=("hide") && selX2 < 0) {
+                 selX2 = i;
+            }
+           }
+         
+         if (selX2 <= 0){
+                  selX2 = 1;
+         }
+           //console.log(selX2)
+SAFlist2[selX2].selected = 'selected';
+               //console.log(SAFlist2[selX2].innerHTML)
+           SetAP2Data();
+         }
+        };
+        
+              var APDD1Element = document.getElementById('APDD1');
+             APDD1Element.onchange = SetAP1Data;
+        var APDD2Element = document.getElementById('APDD2');
+             APDD2Element.onchange = SetAP2Data;
+             
+             var RandAP1Element = document.getElementById('RandAP1');
+             RandAP1Element.onclick = function(){
+               //AFfilter1.value = '';
+               //AFfilter1.oninput('');
+               //SetAP1Data();
+               APDD1Element.options[Math.ceil(APDD1Element.options.length*Math.random())-1].selected='selected';SetAP1Data();                                                };
+             
+             var RandAP2Element = document.getElementById('RandAP2');
+             RandAP2Element.onclick = function(){
+               //AFfilter2.value = '';
+               //AFfilter2.oninput('');
+               //SetAP2Data();
+               APDD2Element.options[Math.ceil(APDD2Element.options.length*Math.random())-1].selected='selected';SetAP2Data();                                                };
+
+        function SetAP1Data(){
+            var e = document.getElementById("APDD1")
+            var ORIGINtext = e.options[e.selectedIndex].text;
+             var ORIGIN = PMC.filter(function (res) {
+  return res.name_full == ORIGINtext;
+});
+         
+          CombineCountryNames();
+        }
+             
+        function SetAP2Data(){
+            var e = document.getElementById("APDD2")
+            var DESTtext = e.options[e.selectedIndex].text;
+             var DEST = PMC.filter(function (res) {
+  return res.name_full == DESTtext;
+});
+         
+          CombineCountryNames();
+        } 
              
              
-             //let x = Math.round(Math.random()*194);//0->194
-             //let y = Math.round(Math.random()*194);//0->194
-             //let x = 146; 
-             //let y = 183;  
              
-             CombineCountryNames(x,y);
+             
+             CombineCountryNames();
              
              
              
              
-             function CombineCountryNames(x,y){
+             function CombineCountryNames(){
+             console.clear()
              let vowels = ['a','e','i','o','u','y'];
              let consonants = ['b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','z'];
              
              
              //console.log(PMC[x].name + ' + ' + PMC[y].name)
+               var a = document.getElementById("APDD1");
+               var b = document.getElementById("APDD2");
+            var xname = a.options[a.selectedIndex].text;
+            var yname = b.options[b.selectedIndex].text;
+               console.log(a.options[a.selectedIndex].text)
+               console.log(b.options[b.selectedIndex].text)
+             //let x = Math.round(Math.random()*194);//0->194
+             //let y = Math.round(Math.random()*194);//0->194
+             //let x = 146; 
+             //let y = 183;  
+             
                
+             var x;
+             var y;
              var N = [];
              var pp = [];
              var prefix = [];
@@ -48,6 +347,12 @@
                suffix.push(PMC[i].suffix);
                ss.push(PMC[i].ss);
                syllables.push(PMC[i].syllables);
+               if (PMC[i].name == xname){
+                 x = i;
+               }
+               if (PMC[i].name == yname){
+                 y = i;
+               }
              }
              var Front;
              var Back;
@@ -156,7 +461,12 @@
              Fullname = Fullname.replaceAll('_',' ');
              
              }
-               
+               var R = document.getElementById("ResultTXTBOX");
+               if (Fullname == void(0)){
+                 R.innerHTML = 'Result';
+               }else{
+               R.innerHTML = Fullname;
+               }
              console.log(Fullname)
              
              
@@ -167,6 +477,77 @@
              
              
            }))}, false);
+  
+  function replaceUmlauts(str) {
+  return str
+    .replace(/\u00df/g, 'ss')
+    .replace(/\u009a/g, 's')
+    .replace(/\u00e0/g, 'a')
+    .replace(/\u00e1/g, 'a')
+    .replace(/\u00e2/g, 'a')
+    .replace(/\u00e3/g, 'a')
+    .replace(/\u00e4/g, 'a')
+    .replace(/\u00e5/g, 'a')
+    .replace(/\u00e6/g, 'ae')
+    .replace(/\u00e7/g, 'c')
+    .replace(/\u00e8/g, 'e')
+    .replace(/\u00e9/g, 'e')
+    .replace(/\u00ea/g, 'e')
+    .replace(/\u00eb/g, 'e')
+    .replace(/\u00ec/g, 'i')
+    .replace(/\u00ed/g, 'i')
+    .replace(/\u00ee/g, 'i')
+    .replace(/\u00ef/g, 'i')
+    .replace(/\u00f1/g, 'n')
+    .replace(/\u00f2/g, 'o')
+    .replace(/\u00f3/g, 'o')
+    .replace(/\u00f4/g, 'o')
+    .replace(/\u00f5/g, 'o')
+    .replace(/\u00f6/g, 'o')
+    .replace(/\u00f8/g, 'o')
+    .replace(/\u00f9/g, 'u')
+    .replace(/\u00fa/g, 'u')
+    .replace(/\u00fb/g, 'u')
+    .replace(/\u00fc/g, 'u')
+    .replace(/\u00fd/g, 'y')
+    .replace(/\u00fe/g, 'p')
+    .replace(/\u00ff/g, 'y')
+    .replace(/\u0000/g, '?')
+    .replace(/\u009c/g, 'oe')
+    .replace(/\u009e/g, 'z')
+    .replace(/\u00f0/g, 'd')
+    .replace(/\u0101/g, 'a')
+    .replace(/\u0102/g, 'a')
+    .replace(/\u0103/g, 'a')
+    .replace(/\u0104/g, 'a')
+    .replace(/\u0105/g, 'a')
+    .replace(/\u0106/g, 'c')
+    .replace(/\u0107/g, 'c')
+    .replace(/\u0108/g, 'c')
+    .replace(/\u0109/g, 'c')
+    .replace(/\u010a/g, 'c')
+    .replace(/\u010b/g, 'c')
+    .replace(/\u010c/g, 'c')
+    .replace(/\u010d/g, 'c')
+    .replace(/\u010e/g, 'd')
+    .replace(/\u010f/g, 'd')
+    .replace(/\u0110/g, 'd')
+    .replace(/\u0111/g, 'd')
+    .replace(/\u0112/g, 'e')
+    .replace(/\u0113/g, 'e')
+    .replace(/\u0114/g, 'e')
+    .replace(/\u0115/g, 'e')
+    .replace(/\u0116/g, 'e')
+    .replace(/\u0117/g, 'e')
+    .replace(/\u0118/g, 'e')
+    .replace(/\u0119/g, 'e')
+    .replace(/\u011a/g, 'e')
+    .replace(/\u011b/g, 'e')
+    .replace(/\u011f/g, 'g')
+    .replace(/\u0131/g, 'i')
+    .replace(/\u0142/g, 'l')
+    
+}
   
 </script>
 </body>
