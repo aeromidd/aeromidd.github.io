@@ -65,7 +65,7 @@
          box-sizing: border-box;
          position:absolute;
          top: 165px;
-         left: 140px;
+         left: 130px;
          height: 25px;
          width: 200px;
          margin-bottom: 0px;
@@ -77,7 +77,7 @@
          box-sizing: border-box;
          position:absolute;
          top: 165px;
-         left: 560px;
+         left: 570px;
          height: 25px;
          width: 200px;
          margin-bottom: 0px;
@@ -152,21 +152,31 @@
            ////
          }
       </script>
+  
+  <div style="border: 0px solid red;position:absolute;top:83px;left:400px;width:100px;height:50px;text-align:center;font-family: Garamond;font-weight:bold;font-size:36px;color: #00508a;">
+  <p> + </p>
+  </div>
+  <div style="border: 0px solid blue;position:absolute;top:140px;left:400px;width:100px;height:50px;text-align:center;font-family: Garamond;font-size:25px;color: #00508a;">
+  <p> = </p>
+  </div>
       <input type="text" id="AFfilter1" placeholder="Search" style=""/>
       <nav>
-         <select id="APDD1" style="position:absolute;left:40px;top:120px;height:40px;width:350px;text-align:right;"
+         <select id="APDD1" style="position:absolute;left:40px;top:120px;height:40px;width:375px;text-align:right;padding-right: 10px;"
                  onChange="//SetAP1Data();"><option value="" disabled selected>Country #1</option>
          </select>
       </nav>
       <input type="text" id="AFfilter2" placeholder="Search"/>
       <nav>
-         <select id="APDD2" style="position:absolute;left:510px;top:120px;height:40px;width:350px;text-align:left;"
+         <select id="APDD2" style="position:absolute;left:485px;top:120px;height:40px;width:375px;text-align:left;padding-left: 10px;"
                  onChange="//SetAP2Data();"><option value="" disabled selected>Country #2</option>
          </select>
       </nav>
-  <button id="RandAP1" style="position:absolute;left:40px;top:165px;width:95px;height:25px;">Random</button>
-     <button id="RandAP2" style="position:absolute;left:765px;top:165px;width:95px;height:25px;">Random</button>
-  <textarea id="ResultTXTBOX" style="position:absolute;top:200px;text-align:center;left:40px;width:814px;height:40px;" name="RouteListTXTBOX" value="" readonly>Result</textarea>
+  <button id="RandAP1" style="position:absolute;left:180px;top:90px;width:95px;height:25px;">Random</button>
+     <button id="RandAP2" style="position:absolute;left:620px;top:90px;width:95px;height:25px;">Random</button>
+  <textarea id="ResultTXTBOX" style="position:absolute;top:200px;text-align:center;left:40px;width:814px;height:30px;" name="RouteListTXTBOX" value="" readonly>Result</textarea>
+  <button id="RandAll" style="position:absolute;left:375.5px;top:245px;width:150px;height:25px;">Random Combination</button>
+  <button id="SwitchCountries" style="position:absolute;left:415px;top:90px;width:70px;height:25px;font-size:16px;padding: 0px;
+   margin: 0px;">⇄</button>
 <script>
   console.clear();
    let response_promise = fetch("https://aeromidd.com/projects/portmanteau-nations/PMC2.json");
@@ -190,8 +200,11 @@ select2.appendChild(option2);
            }
            /////////////////////////
 //A SEARCH FILTER:
-             AFfilter1.oninput = function(event){
-         var filter1 = document.getElementById("AFfilter1"), // search box
+        AFfilter1.oninput = function(event){
+         searchFilter1Trigger();
+        };
+        function searchFilter1Trigger(){
+          var filter1 = document.getElementById("AFfilter1"), // search box
              //SAFlist1 = document.querySelectorAll("#AFnamelist1 li"); // all list items
              SAFlist1 = document.querySelectorAll("#APDD1 option"); // all list items
              
@@ -225,12 +238,15 @@ SAFlist1[selX1].selected = 'selected';
                //console.log(SAFlist1[selX1].innerHTML)
            SetAP1Data();
          }
-        };
+        }
              /////////////////////////////
              
 //B SEARCH FILTER:
              AFfilter2.oninput = function(event){
-         var filter2 = document.getElementById("AFfilter2"), // search box
+         searchFilter2Trigger();
+        };
+        function searchFilter2Trigger(){
+          var filter2 = document.getElementById("AFfilter2"), // search box
              //SAFlist1 = document.querySelectorAll("#AFnamelist1 li"); // all list items
              SAFlist2 = document.querySelectorAll("#APDD2 option"); // all list items
              
@@ -264,7 +280,7 @@ SAFlist2[selX2].selected = 'selected';
                //console.log(SAFlist2[selX2].innerHTML)
            SetAP2Data();
          }
-        };
+        }
         
               var APDD1Element = document.getElementById('APDD1');
              APDD1Element.onchange = SetAP1Data;
@@ -273,17 +289,46 @@ SAFlist2[selX2].selected = 'selected';
              
              var RandAP1Element = document.getElementById('RandAP1');
              RandAP1Element.onclick = function(){
-               //AFfilter1.value = '';
-               //AFfilter1.oninput('');
-               //SetAP1Data();
+               
+               var filter1 = document.getElementById("AFfilter1")
+               filter1.value = "";
+               searchFilter1Trigger();
+
                APDD1Element.options[Math.ceil(APDD1Element.options.length*Math.random())-1].selected='selected';SetAP1Data();                                                };
              
              var RandAP2Element = document.getElementById('RandAP2');
              RandAP2Element.onclick = function(){
-               //AFfilter2.value = '';
-               //AFfilter2.oninput('');
-               //SetAP2Data();
+               var filter2 = document.getElementById("AFfilter2")
+               filter2.value = "";
+               searchFilter2Trigger();
+               
+               
                APDD2Element.options[Math.ceil(APDD2Element.options.length*Math.random())-1].selected='selected';SetAP2Data();                                                };
+   APDD2Element.options[Math.ceil(APDD2Element.options.length*Math.random())-1].selected='selected'; APDD1Element.options[Math.ceil(APDD1Element.options.length*Math.random())-1].selected='selected';SetAP1Data();  SetAP2Data(); 
+             var RandAllElement = document.getElementById('RandAll');
+             RandAllElement.onclick = function(){
+
+               var filter1 = document.getElementById("AFfilter1")
+               filter1.value = "";
+               searchFilter1Trigger();
+               
+               var filter2 = document.getElementById("AFfilter2")
+               filter2.value = "";
+               searchFilter2Trigger();
+               APDD1Element.options[Math.ceil(APDD1Element.options.length*Math.random())-1].selected='selected';APDD2Element.options[Math.ceil(APDD2Element.options.length*Math.random())-1].selected='selected';SetAP2Data();SetAP1Data();
+             };
+             var SwitchElement = document.getElementById('SwitchCountries');
+             SwitchElement.onclick = function(){
+               var sI1 = APDD1Element.selectedIndex;
+               var sI2 = APDD2Element.selectedIndex;
+               APDD1Element.options[sI2].selected = 'selected';
+               APDD2Element.options[sI1].selected = 'selected';
+               SetAP1Data();
+               SetAP2Data();
+ /*              APDD1Element.options[Math.ceil(APDD1Element.options.length*Math.random())-1].selected='selected';APDD2Element.options[Math.ceil(APDD2Element.options.length*Math.random())-1].selected='selected';SetAP2Data();SetAP1Data();
+ */
+             };
+             
 
         function SetAP1Data(){
             var e = document.getElementById("APDD1")
@@ -314,7 +359,7 @@ SAFlist2[selX2].selected = 'selected';
              
              
              function CombineCountryNames(){
-             console.clear()
+             //console.clear()
              let vowels = ['a','e','i','o','u','y'];
              let consonants = ['b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','z'];
              
