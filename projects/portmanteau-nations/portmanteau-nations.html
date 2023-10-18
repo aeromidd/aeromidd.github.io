@@ -184,7 +184,7 @@
            document.addEventListener("DOMContentLoaded", function() {
            response_promise.then(response => response.json().then(PMC => {
              
-             for (i = 0; i < PMC.length-1; i++) {
+             for (i = 0; i < PMC.length; i++) {
              
              var option1 = document.createElement("option");
 option1.text = PMC[i].name;
