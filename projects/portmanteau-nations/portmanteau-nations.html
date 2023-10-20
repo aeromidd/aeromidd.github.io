@@ -177,6 +177,34 @@
   <button id="RandAll" style="position:absolute;left:375.5px;top:245px;width:150px;height:25px;">Random Combination</button>
   <button id="SwitchCountries" style="position:absolute;left:415px;top:90px;width:70px;height:25px;font-size:16px;padding: 0px;
    margin: 0px;">⇄</button>
+  
+  <div style="position:absolute;top:280px;text-align:center;left:40px;width:814px;height:500px;color:#757575;font:13px Helvetica;border:2px solid red">
+    <p>
+      I built a generator for combining the prefixes and suffixes of 195 nations. Pick two countries from the dropdown lists, or randomize one or both fields to produce a portmanteau of their names slammed together!
+<br>
+​
+<br>
+To make this work, I made a dataset of every country and define their 'prefixes' and 'suffixes', the number of syllables in their prefixes/suffixes, as well as their qualifiers/titles (e.g. "The Republic Of", "North", "Islands", "and the Grenadines").
+      I established several rules for omitting extra letters once any given prefix-suffix pair has been compared:
+      <li>
+      If any of the last up to 3 letters in the prefix match the first up to 3 letters in the prefix in reverse order, omit the duplicates.
+<li>
+If the last prefix letter and first suffix letter are both vowels, omit the prefix letter (or suffix if the prefix has only 1 syllable).
+<li>
+If the last prefix letter is 'r' and is preceded by a consonant, and the first suffix letter is also a consonant, omit the 'r'.
+<li>
+If the last prefix letter is 'd' and the first suffix letter is a consonant, omit the 'd'.
+<li>
+If the first suffix letter is 'h' and followed by a vowel, and the last prefix letter is also a vowel, omit the prefix letter.
+
+<br>
+<br>
+Obviously these rules are only arbitrary after a point as pronounceability is a fluid science, and country names don't have official 'prefixes' and 'suffixes' - and they're all in English here anyway!.
+  <br>
+  As a result, there are a lot of names generated here that could probably do with some tweaking, or perhaps have some much better sounding alternatives - but my result set includes close to 40,000 possible combinations (I've probably barely read 2% (800) after computing them all) - so I hope you'll forgive me for not going back through for edits.
+    </p>
+  </div>
+  
 <script>
   console.clear();
    let response_promise = fetch("https://aeromidd.com/projects/portmanteau-nations/PMC2.json");
