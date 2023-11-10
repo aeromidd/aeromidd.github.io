@@ -169,7 +169,7 @@
               R = Math.min(MaxR, R);
               gcdi = gcdist(startLat, startLong, endLat, endLong);
               gcdLength = 22 * (gcdi / 1000000) / Math.pow(visibility, 1.1);
-              if (j >=0) {
+              if (j < 1) {
 
                 gcdptslength = gcdLength; //Math.ceil(gcdLength);
 
