@@ -47,12 +47,16 @@ iframe {
     michael middleton
   </h2>
     </div>
-    
-  <input id="latest_button" type="image" value="https://aeromidd.github.io/misc/LatestButton1Wtxt.png|https://aeromidd.github.io/misc/LatestButton1.png|https://aeromidd.github.io/misc/LatestButton1WtxtDisabled.png" style="position:relative;left:195px;top:201px; margin:0 auto; display:block; width:120px;height:30px;border:2px solid #00508a;border-radius: 10px;" src="" alt="Latest" onmouseover="this.src=this.value.split('|')[1];" onmouseout="this.src=this.value.split('|')[0];"/>
+  <input id="allprojects_button" type="image" value="https://aeromidd.github.io/misc/allprojectssmallWtxt.png|https://aeromidd.github.io/misc/allprojectssmallK.png" style="position:relative;left:65px;top:201px; margin:0 auto; display:block; width:120px;height:30px;border:2px solid #00508a;border-radius: 10px;" src="" alt="Latest" onmouseover="this.src=this.value.split('|')[1];" onmouseout="this.src=this.value.split('|')[0];"/>
 
   <script>
   </script>
-    <h2 id="CRtext" style="position:relative;top:295px;font-weight:normal;font-size: 0.85rem;font-family:Verdana;color:#c7c7c7;text-align:center;">
+    
+  <input id="latest_button" type="image" value="https://aeromidd.github.io/misc/LatestButton1Wtxt.png|https://aeromidd.github.io/misc/LatestButton1.png|https://aeromidd.github.io/misc/LatestButton1WtxtDisabled.png" style="position:relative;left:195px;top:167px; margin:0 auto; display:block; width:120px;height:30px;border:2px solid #00508a;border-radius: 10px;" src="" alt="Latest" onmouseover="this.src=this.value.split('|')[1];" onmouseout="this.src=this.value.split('|')[0];"/>
+
+  <script>
+  </script>
+    <h2 id="CRtext" style="position:relative;top:245px;font-weight:normal;font-size: 0.85rem;font-family:Verdana;color:#c7c7c7;text-align:center;">
     © Michael Middleton ____
   </h2>
     <script>
@@ -65,6 +69,8 @@ iframe {
     latest_button.src = latest_button.value.split('|')[1];
     latest_button.src = latest_button.value.split('|')[0];
     
+    allprojects_button.src = allprojects_button.value.split('|')[1];
+    allprojects_button.src = allprojects_button.value.split('|')[0];
     aerospace_button.src = aerospace_button.value.split('|')[1];
     aerospace_button.src = aerospace_button.value.split('|')[0];
     dataviz_button.src = dataviz_button.value.split('|')[1];
@@ -105,7 +111,7 @@ iframe {
       latest_button.style.cursor = "default";
       latest_button.style.border = "2px solid #c7c7c7";
   }
-  
+    allprojects_button.onclick = function(){ window.top.location.assign('https://aeromidd.com/c/all-projects')};
     aerospace_button.onclick = function(){ window.top.location.assign('https://aeromidd.com/c/aerospace')};
     dataviz_button.onclick = function(){ window.top.location.assign('https://aeromidd.com/c/data-visuals')};
     graphics_button.onclick = function(){ window.top.location.assign('https://aeromidd.com/c/graphics')};
