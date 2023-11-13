@@ -24,7 +24,7 @@ S = fix/unfix seastate | 0-9 = set seastate
     const SimStepsPerFrame = 1; //1000
     const FrameDelayMillis = 10; //10
     const FrictionHalfLifeSeconds = 0.1;//1.5
-    const SubMass = 0.5;
+    const SubMass = 50e3;
     const SpringRestLength = 0.25;
     const SpringConst = 100.0;
 
@@ -79,6 +79,8 @@ S = fix/unfix seastate | 0-9 = set seastate
             this.ssFZ.fill(0);
             this.ssMY = new Array(500);
             this.ssMY.fill(0);
+          
+            this.surfaced = false;
 
             // velocity vector
             this.vx = 0.0;
@@ -141,10 +143,11 @@ S = fix/unfix seastate | 0-9 = set seastate
                     // F = ma, therefore a = dv/dt = F/m.
                     // dv = dt * F/m
                     let xdi = [];
+                    var SM = !b.surfaced;
                     //zd q z tht
                     xdi[0] = 0;
-                    xdi[1] = (-0.0584)*b.xi[1]+(-3.0671)*b.xi[2]+(-0.2633)*b.xi[4]  + (0.0092)*b.ui[1]+(-0.337)*b.ui[2]+(1.001e-05)*b.ui[3]+(-1.18e-07)*b.ui[4];
-                    xdi[2] = (0.0051)*b.xi[1]+(-0.3767)*b.xi[2]+(0.0114)*b.xi[4]  + (0.0736)*b.ui[1]+(-0.0698)*b.ui[2]+(-1.18e-07)*b.ui[3]+(5.767e-08)*b.ui[4];
+                    xdi[1] = (-0.0584)*b.xi[1]+(-3.0671)*b.xi[2]+(-0.2633)*b.xi[4]  + (0.0092)*SM*b.ui[1]+(-0.337)*SM*b.ui[2]+(1.001e-05)*b.ui[3]+(-1.18e-07)*b.ui[4];
+                    xdi[2] = (0.0051)*b.xi[1]+(-0.3767)*b.xi[2]+(0.0114)*b.xi[4]  + (0.0736)*SM*b.ui[1]+(-0.0698)*SM*b.ui[2]+(-1.18e-07)*b.ui[3]+(5.767e-08)*b.ui[4];
                     xdi[3] = (1)*b.xi[1];
                     xdi[4] = (1)*b.xi[2];
                     //let dvx = dt * b.fx/b.mass;
@@ -299,6 +302,16 @@ S = fix/unfix seastate | 0-9 = set seastate
                   b.ui[3] = b.ssFZ[Math.ceil(b.ssFZ.length/2)]*(1/seaDist);
                   b.ui[4] = b.ssMY[Math.ceil(b.ssMY.length/2)]*(1/seaDist);
                   
+                  //console.log(b.xi[3])
+                  if (b.xi[3] < 0){
+                    //if (b.surfaced == false){
+                      b.ui[3] = b.ui[3]+9.81*1e3;
+                      b.ui[4] = b.ui[4]-9.81*1e4;
+                      b.surfaced = true;
+                    //}
+                  }else{
+                    b.surfaced = false;
+                  }
                   
                     // Update the sub's speed. Apply friction to gradually reduce energy.
                     //b.vx = (friction * b.vx) + dvx;
@@ -775,6 +788,3 @@ S = fix/unfix seastate | 0-9 = set seastate
 </script> 
 </body>
 </html>
-
-
-
