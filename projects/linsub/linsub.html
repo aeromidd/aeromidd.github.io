@@ -13,7 +13,7 @@ B = engage autopilot | I = reset integrators
 <br>
 P/L = steady pitch setpoint | O = reset steady pitch
 <br>
-S = fix/unfix seastate | 0-9 = set seastate
+S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
 <br>
 <canvas id="SimCanvas" tabindex='0'></canvas>  
 
@@ -143,11 +143,11 @@ S = fix/unfix seastate | 0-9 = set seastate
                     // F = ma, therefore a = dv/dt = F/m.
                     // dv = dt * F/m
                     let xdi = [];
-                    var SM = !b.surfaced;
+                    var Dived = !b.surfaced;
                     //zd q z tht
                     xdi[0] = 0;
-                    xdi[1] = (-0.0584)*b.xi[1]+(-3.0671)*b.xi[2]+(-0.2633)*b.xi[4]  + (0.0092)*SM*b.ui[1]+(-0.337)*SM*b.ui[2]+(1.001e-05)*b.ui[3]+(-1.18e-07)*b.ui[4];
-                    xdi[2] = (0.0051)*b.xi[1]+(-0.3767)*b.xi[2]+(0.0114)*b.xi[4]  + (0.0736)*SM*b.ui[1]+(-0.0698)*SM*b.ui[2]+(-1.18e-07)*b.ui[3]+(5.767e-08)*b.ui[4];
+                    xdi[1] = (-0.0584)*b.xi[1]+(-3.0671)*b.xi[2]+(-0.2633)*b.xi[4]  + (0.0092)*Dived*b.ui[1]+(-0.337)*Dived*b.ui[2]+(1.001e-05)*b.ui[3]+(-1.18e-07)*b.ui[4];
+                    xdi[2] = (0.0051)*b.xi[1]+(-0.3767)*b.xi[2]+(0.0114)*b.xi[4]  + (0.0736)*Dived*b.ui[1]+(-0.0698)*Dived*b.ui[2]+(-1.18e-07)*b.ui[3]+(5.767e-08)*b.ui[4];
                     xdi[3] = (1)*b.xi[1];
                     xdi[4] = (1)*b.xi[2];
                     //let dvx = dt * b.fx/b.mass;
@@ -253,8 +253,8 @@ S = fix/unfix seastate | 0-9 = set seastate
                     }
                   }
                   
-                  let ssFZmag = (20000/4)*b.SeaState;
-                  let ssMYmag = (1000000/4)*b.SeaState;
+                  let ssFZmag = (20000/6)*b.SeaState;
+                  let ssMYmag = (1000000/6)*b.SeaState;
                   
                   var periodegInc
                   periodegInc = b.periodegInc+2*(Math.random()-0.5)/1;
@@ -302,15 +302,34 @@ S = fix/unfix seastate | 0-9 = set seastate
                   b.ui[3] = b.ssFZ[Math.ceil(b.ssFZ.length/2)]*(1/seaDist);
                   b.ui[4] = b.ssMY[Math.ceil(b.ssMY.length/2)]*(1/seaDist);
                   
+                  if (b.xi[4] > 45*Math.PI/180){
+                    b.xi[4] = 45*Math.PI/180;
+                  }else if(b.xi[4]<-45*Math.PI/180){
+                    b.xi[4] = -45*Math.PI/180;
+                  }
                   //console.log(b.xi[3])
-                  if (b.xi[3] < 0){
+                  var tailz = b.xi[3]+0.5*b.L*Math.sin(b.xi[4]);
+                  var nosez = b.xi[3]-0.5*b.L*Math.sin(b.xi[4]);
+                  if (b.xi[3] < 0.01 || tailz < -0.1 || nosez < -0.1){
                     //if (b.surfaced == false){
+                      //b.ui[4] = b.ui[4]-9.81*1e4;
+                      if (b.surfaced == false){
+                        b.xi[1] = b.xi[1]*0.5;
+                        b.xi[2] = b.xi[2]-b.xi[4]*0.5;
+                        b.ui[3] = b.ui[3]+10*9.81*1e3+(Math.abs(b.xi[4])*1e3);
+                        b.ui[4] = b.ui[4]-Math.sign(b.xi[4])*50*9.81*1e4;
+                      }
                       b.ui[3] = b.ui[3]+9.81*1e3;
-                      b.ui[4] = b.ui[4]-9.81*1e4;
+                      b.ui[4] = b.ui[4]-Math.sign(b.xi[4])*9.81*1e4;
                       b.surfaced = true;
                     //}
                   }else{
-                    b.surfaced = false;
+                      if (b.surfaced == true){
+                        //b.xi[1] = b.xi[1]*0.3;
+                        b.ui[3] = -0.5*b.ui[3];
+                        b.ui[4] = -0.5*b.ui[4];
+                      }
+                      b.surfaced = false;
                   }
                   
                     // Update the sub's speed. Apply friction to gradually reduce energy.
@@ -322,7 +341,11 @@ S = fix/unfix seastate | 0-9 = set seastate
         depthOrder(z){
           var b;
           for (b of this.subList) {
-            b.depthDem = z;
+            if (z < 0.05){
+              b.depthDem = 0.05;
+            }else{
+              b.depthDem = z;
+            }
           }
         }
         APall(){
@@ -402,6 +425,20 @@ S = fix/unfix seastate | 0-9 = set seastate
           for (b of this.subList) {
             b.pitchSP = 0*Math.PI/180;
           }
+        }
+        ResetStates(){
+          var b;
+          for (b of this.subList) {
+            b.xi = [0,0,0,1,0];
+            b.SeaState = 0;
+            b.SeaFixed = false;
+            b.depthDem = b.xi[3];
+            b.zh.fill(b.xi[3])
+            b.zDem.fill(b.xi[3])
+            b.ssFZ.fill(0);
+            b.ssMY.fill(0);
+          }
+          
         }
         SeaToggle(){
           var b;
@@ -542,6 +579,18 @@ S = fix/unfix seastate | 0-9 = set seastate
                 context.strokeStyle = '#00508a';
                 context.stroke();
                 
+                //Depth
+                context.font = "16px Courier New";
+                context.fillStyle = "#00508a";
+                context.textAlign = "left";
+                  context.fillText("Depth: ".concat((50*b.xi[3]).toFixed(2).toString(),'m'), ScreenHor(-1.5),ScreenVer(-0.7));
+                
+                //Pitch
+                context.font = "16px Courier New";
+                context.fillStyle = "#00508a";
+                context.textAlign = "left";
+                  context.fillText("Pitch: ".concat((b.xi[4]*180/Math.PI).toFixed(2).toString(),'°'), ScreenHor(0.25),ScreenVer(-0.7));
+              
                 //SeaState
                 context.font = "16px Courier New";
                 context.fillStyle = "#00508a";
@@ -752,6 +801,12 @@ S = fix/unfix seastate | 0-9 = set seastate
       }
       if (e.keyCode == 79){
         sim.pitchSP_level();
+      }
+      if (e.keyCode == 82){
+        sim.ResetStates();
+        sim.intReset();
+        sim.pitchSP_level();
+        sim.APall();
       }
       if (e.keyCode == 83){
         sim.SeaToggle();
