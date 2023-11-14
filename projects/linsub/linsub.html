@@ -52,19 +52,24 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
             this.x = x;
             this.y = y;
             this.xi = [0,0,0,1,0];
-            this.ui = [0,0,0,0,0];
+            this.ui = [0,0,0,0,0,0];
             this.xeint = [0,0,0];
             this.depthDem = this.xi[3];
             this.pitchDem = 0;
             this.pitchSP = 0;
           
             this.Compressibility = 1;
-            this.compFactor = 0.02;
+            this.compFactor = 1e-4;
             this.TrimTarget = 'order';//'order' or 'measurement';
             this.TrimCompensator = 1;
             this.compzd = 0;
             this.trimz = 50*this.xi[3];
-            this.trimErr = (50*this.compzd/this.compFactor); //m
+            this.trimEffort = 0;
+            this.trimErr = (50*this.compzd/this.compFactor); 
+            this.txi = [0,0,0];
+            this.tui = [0,0];
+          
+          //m
             this.teint = 0;
             
             this.periodegS = 1;
@@ -163,21 +168,35 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                     }else if (b.TrimTarget == 'order'){
                       CompensationTarget = b.depthDem;
                     }
-                    b.compzd = b.Compressibility*b.compFactor*(CompensationTarget-b.trimz/50);
-                  //trim error in m
-                  b.trimErr = (50*b.compzd/b.compFactor);
+                    
+                    b.compzd = b.Compressibility*b.compFactor*(50*b.xi[3]);
+                    b.trimzd = b.Compressibility*b.compFactor*(b.trimz);
+                    //trim error in m
+                    b.trimErr = 50*CompensationTarget-b.trimz;
+                  
+                    b.trimOffset = (b.compzd-b.trimzd)/b.compFactor;
+                      //(b.compzd-b.trimzd)/b.compFactor;
                   
                     //zd q z tht
                     xdi[0] = 0;
-                    xdi[1] = (-0.0584)*b.xi[1]+(-3.0671)*b.xi[2]+(-0.2633)*b.xi[4]+ b.compzd + (0.0092)*Dived*b.ui[1]+(-0.337)*Dived*b.ui[2]+(1.001e-05)*b.ui[3]+(-1.18e-07)*b.ui[4];
+                    xdi[1] = (-0.0584)*b.xi[1]+(-3.0671)*b.xi[2]+(-0.2633)*b.xi[4]+ b.compzd-b.trimzd + (0.0092)*Dived*b.ui[1]+(-0.337)*Dived*b.ui[2]+(1.001e-05)*b.ui[3]+(-1.18e-07)*b.ui[4];
                     xdi[2] = (0.0051)*b.xi[1]+(-0.3767)*b.xi[2]+(0.0114)*b.xi[4]  + (0.0736)*Dived*b.ui[1]+(-0.0698)*Dived*b.ui[2]+(-1.18e-07)*b.ui[3]+(5.767e-08)*b.ui[4];
                     xdi[3] = (1)*b.xi[1];
                     xdi[4] = (1)*b.xi[2];
-                  
+                    
                   for (var f = 0; f< b.xi.length; f++){
                     b.xi[f] += dt*xdi[f];
                   }
                   
+                  /*
+                  let txdi = [];
+                  txdi[0] = 0;
+                  txdi[1] = (-0.08886)*b.txi[1]+(-1)*b.txi[2]+b.tui[1];
+                  txdi[2] = b.txi[1];
+                  for (var f = 0; f< b.txi.length; f++){
+                    b.txi[f] += dt*txdi[f];
+                  }
+                  */
                   
                   var zhdummy;
                   for (var f = 0; f< b.zh.length-1; f++){
@@ -257,10 +276,11 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                   }
                   
                   let tkP = 0.4;
-                  let tkI = 0.2;
+                  let tkI = 0.0;
                   
                   if (b.TrimCompensator){
-                    b.trimz = b.trimz+(b.trimErr*tkP+b.teint*tkI)*dt;
+                      b.trimEffort = b.trimErr*tkP+b.teint*tkI*dt;
+                      b.trimz = b.trimz+b.trimEffort*dt;
                   }
                   
                   
@@ -624,6 +644,16 @@ grd.addColorStop(0.8, "rgba(20,150,200,0.8)");
                 context.lineTo(ScreenHor(800),ScreenVer(b.depthDem));
                 context.stroke();
                 context.setLineDash([]);
+              
+                context.lineWidth = 1;
+                context.beginPath();
+                context.moveTo(ScreenHor(-4),ScreenVer(b.zh[0]));
+                for (let i=1; i <= (b.tcr).length; i++) {
+                  context.lineTo(ScreenHor(-4+i*0.0154),ScreenVer(b.tcr[i]/50));
+                }
+                context.strokeStyle = '#ff9aca';//'#a7a7a7';
+                context.stroke();
+              
                 //TrackLine
                 
                 context.lineWidth = 1;
@@ -676,10 +706,8 @@ grd.addColorStop(0.8, "rgba(20,150,200,0.8)");
                 context.fillStyle = "#00508a";
                 context.textAlign = "left";
                   context.fillText("TrimError: ".concat((b.trimErr).toFixed(2).toString()), ScreenHor(-1.5),ScreenVer(-0.3));
-                context.font = "16px Courier New";
-                context.fillStyle = "#00508a";
-                context.textAlign = "left";
                   context.fillText("Trim Target: ".concat((b.TrimTarget)), ScreenHor(-1.5),ScreenVer(-0.1));
+                  context.fillText("Trimz: ".concat(b.trimz.toFixed(2).toString()), ScreenHor(-0.25),ScreenVer(-0.5));
                 
                 //Pitch
                 context.font = "16px Courier New";
@@ -749,8 +777,8 @@ grd.addColorStop(0.8, "rgba(20,150,200,0.8)");
                 //fill hull according to trim
                 //proportionalized & capped trim error
                 var maxte = 125;
-                var pte = Math.min(maxte,Math.abs(b.trimErr))/maxte;
-                if (b.trimErr > 0){
+                var pte = Math.min(maxte,Math.abs(b.trimOffset))/maxte;
+                if (b.trimOffset > 0){
                   context.fillStyle = 'rgba(100,0,80,'+(pte)+')';
                   
                 }else{
