@@ -59,7 +59,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
             this.pitchSP = 0;
           
             this.Compressibility = 1;
-            this.compFactor = 1e-4;
+            this.compFactor = 1.5e-4;
             this.TrimTarget = 'order';//'order' or 'measurement';
             this.TrimCompensator = 1;
             this.compzd = 0;
@@ -88,7 +88,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
           
             //trim compensation response
             this.tcr = new Array(200);
-            this.tcr.fill(0)
+            this.tcr.fill(50*this.xi[3])
           
             this.zh = new Array(200);
             this.zh.fill(this.xi[3])
@@ -172,6 +172,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                     b.compzd = b.Compressibility*b.compFactor*(50*b.xi[3]);
                     b.trimzd = b.Compressibility*b.compFactor*(b.trimz);
                     //trim error in m
+                    b.trimErrPrev = b.trimErr;
                     b.trimErr = 50*CompensationTarget-b.trimz;
                   
                     b.trimOffset = (b.compzd-b.trimzd)/b.compFactor;
@@ -188,15 +189,18 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                     b.xi[f] += dt*xdi[f];
                   }
                   
-                  /*
+                  
                   let txdi = [];
                   txdi[0] = 0;
-                  txdi[1] = (-0.08886)*b.txi[1]+(-1)*b.txi[2]+b.tui[1];
+                  txdi[1] = (-0.8886)*b.txi[1]+(-1)*b.txi[2]+b.tui[1];
                   txdi[2] = b.txi[1];
                   for (var f = 0; f< b.txi.length; f++){
                     b.txi[f] += dt*txdi[f];
                   }
-                  */
+                  var maxTrimz = 275;
+                  var minTrimz = 0;
+                  b.trimz = Math.max(minTrimz,Math.min(maxTrimz,b.trimz+b.txi[1]));//b.trimEffort*dt;
+                  
                   
                   var zhdummy;
                   for (var f = 0; f< b.zh.length-1; f++){
@@ -275,12 +279,22 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                     b.teint += b.trimErr*dt;
                   }
                   
-                  let tkP = 0.4;
-                  let tkI = 0.0;
-                  
+                  let tkP = 2.3*1e-4;
+                  let tkI = 0.00*1e-4;
+                  let tkD = 1.0*1e-4;
+                  let trimEffortSat = 0.2;//1e6*0.1;
                   if (b.TrimCompensator){
-                      b.trimEffort = b.trimErr*tkP+b.teint*tkI*dt;
-                      b.trimz = b.trimz+b.trimEffort*dt;
+                      b.trimEffort = b.trimErr*tkP+b.teint*tkI*dt+(b.trimErr-b.trimErrPrev)*tkD/dt;
+                      if (b.trimEffort > trimEffortSat){
+                        b.trimEffort = trimEffortSat;
+                        b.teint = b.teint-b.trimErr*dt;
+                      }else if (b.trimEffort < -trimEffortSat){
+                        b.trimEffort = -trimEffortSat;
+                        b.teint = b.teint-b.trimErr*dt;
+                      }
+                      b.tui[1] = b.tui[1]+b.trimEffort;
+                      var maxtui = 50;
+                      b.tui[1] = Math.min(maxtui,Math.max(-maxtui,b.tui[1]));
                   }
                   
                   
