@@ -69,15 +69,16 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
             this.txi = [0,0,0];
             this.tui = [0,0];
           
-          //m
+            this.maxTrimz = 275;
+            this.minTrimz = 2.5;
             this.teint = 0;
             
             this.periodegS = 1;
             this.periodegC = 1;
             this.periodegInc = 5;
           
-            this.SeaState = 0;//0.49;
-            this.SeaFixed = 1;
+            this.SeaState = 0.49;
+            this.SeaFixed = 0;
             
             this.zDem = new Array(200);
             this.zDem.fill(this.depthDem)
@@ -197,9 +198,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                   for (var f = 0; f< b.txi.length; f++){
                     b.txi[f] += dt*txdi[f];
                   }
-                  var maxTrimz = 275;
-                  var minTrimz = 0;
-                  b.trimz = Math.max(minTrimz,Math.min(maxTrimz,b.trimz+b.txi[1]));//b.trimEffort*dt;
+                  b.trimz = Math.max(b.minTrimz,Math.min(b.maxTrimz,b.trimz+b.txi[1]));//b.trimEffort*dt;
                   
                   
                   var zhdummy;
@@ -325,8 +324,8 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                     }
                   }
                   
-                  let ssFZmag = (20000/6)*b.SeaState;
-                  let ssMYmag = (1000000/6)*b.SeaState;
+                  let ssFZmag = (20000/7)*b.SeaState;
+                  let ssMYmag = (1000000/7)*b.SeaState;
                   
                   var periodegInc
                   periodegInc = b.periodegInc+2*(Math.random()-0.5)/1;
@@ -541,6 +540,19 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
             b.depthDem = b.xi[3];
             b.zh.fill(b.xi[3])
             b.zDem.fill(b.xi[3])
+            b.AP[1] = 1;
+            b.AP[2] = 1;
+            b.surfaced = false;
+            b.Compressibility = 1;
+            b.TrimCompensator = 1;
+            b.TrimTarget = 'order';
+            b.trimz = 50*b.xi[3];
+            b.trimErrPrev = 0;
+            b.trimErr = 0;
+            b.tcr.fill(50*b.xi[3])
+            b.txi[1] = 0;
+            b.txi[2] = 0;
+            b.tui[1] = 0;
             b.ssFZ.fill(0);
             b.ssMY.fill(0);
           }
@@ -632,11 +644,18 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                 context.lineTo(ScreenHor(-4),ScreenVer(8));
                 //context.strokeStyle = '#129aca';
                 const grd = context.createLinearGradient(ScreenHor(-4), ScreenVer(-0.2), ScreenHor(-4), ScreenVer(8));
+              if (b.Compressibility == 1){
 grd.addColorStop(0.01, "rgba(255,255,255,0.0)");
 grd.addColorStop(0.06, "rgba(0,150,140,0.1)");
 grd.addColorStop(0.1, "rgba(20,150,200,0.2)");
 grd.addColorStop(0.4, "rgba(20,150,200,0.4)");
-grd.addColorStop(0.8, "rgba(20,150,200,0.8)");
+grd.addColorStop(0.7, "rgba(20,150,200,0.8)");
+grd.addColorStop(1.0, "rgba(0,50,170,0.8)");
+              }else{
+grd.addColorStop(0.01, "rgba(255,255,255,0.0)");
+grd.addColorStop(0.06, "rgba(0,150,170,0.1)");
+grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
+              }
                 context.fillStyle = grd; //'rgba(20,150,200,0.1)';
                 context.fill();
               
@@ -839,6 +858,20 @@ grd.addColorStop(0.8, "rgba(20,150,200,0.8)");
                 //context.fill();
                 context.strokeStyle = '#000000';
                 context.stroke();*/
+              
+              // trim compensation tank(s)
+              /*
+              context.beginPath();
+                context.moveTo(ScreenHor(+0.5*b.h*Math.sin(b.xi[4])+b.x-(0.5-30/100)*b.L*Math.cos(b.xi[4])),ScreenVer(+0.5*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5-30/100)*b.L*Math.sin(b.xi[4])));
+                context.lineTo(ScreenHor(+0.5*b.h*Math.sin(b.xi[4])+b.x-(0.5-30/100)*b.L*Math.cos(b.xi[4])),ScreenVer(+0.5*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+30/100)*b.L*Math.sin(b.xi[4])));
+                context.lineTo(ScreenHor(+0.5*b.h*Math.sin(b.xi[4])+b.x-(0.5+30/100)*b.L*Math.cos(b.xi[4])),ScreenVer(+0.5*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+30/100)*b.L*Math.sin(b.xi[4])));
+                context.lineTo(ScreenHor(+0.5*b.h*Math.sin(b.xi[4])+b.x-(0.5+30/100)*b.L*Math.cos(b.xi[4])),ScreenVer(+0.5*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5-30/100)*b.L*Math.sin(b.xi[4])));
+                context.closePath();
+                context.fillStyle = '#ffffff';
+                context.fill();
+                context.strokeStyle = '#00508a';
+                context.stroke();
+                */
                 
                 //hydroplanes
                 //ds
@@ -968,7 +1001,6 @@ grd.addColorStop(0.8, "rgba(20,150,200,0.8)");
         sim.ResetStates();
         sim.intReset();
         sim.pitchSP_level();
-        sim.APall();
       }
       if (e.keyCode == 83){
         sim.SeaToggle();
