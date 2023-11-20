@@ -6,7 +6,7 @@
       <style>
         @font-face { font-family: SchemathicPrototype-Regular; src: url('../misc/SchemathicPrototype-Regular.otf'); }
   div, iframe {
-    height: 1550px;
+    height: 155.0px;
     width: 1000px;
     padding: 0px;
     margin: 0 auto;
@@ -18,7 +18,7 @@ iframe {
       </style>
 </head>
 <body>
-  <div style="overflow: hidden;">
+  <div id="GeneralDiv" style="overflow: hidden;">
   <h1 style="position:relative;top:-25px;font-family:SchemathicPrototype-Regular;font-weight:normal;width:265px;font-size: 3.0rem;color:#00508A;" onmouseover="this.style.color='#189ACA';this.style.cursor='pointer';" onmouseout="this.style.color='#00508A';this.style.cursor='default';" onclick="location.href='https://aeromidd.com/';";>
     AEROMIDD
   </h1>
@@ -82,7 +82,7 @@ iframe {
   <input id="interactive_button" type="image" value="https://aeromidd.github.io/misc/IAthumbW.png|https://aeromidd.github.io/misc/IAthumbKtxt.png" style="position:relative;left:-448px;top:-1607px; margin:0 auto; display:block; width:97.5px;height:97.5px;border:2px solid #00508a;border-radius: 5px;" src="" alt="Interactive" onmouseover="this.src=this.value.split('|')[1];" onmouseout="this.src=this.value.split('|')[0];"/>
   <script>
   </script>
-    <h2 id="CRtext" style="position:relative;top:-850px;left:108px;font-weight:normal;font-size: 0.85rem;font-family:Verdana;color:#c7c7c7;">
+    <h2 id="CRtext" style="position:relative;left:108px;font-weight:normal;font-size: 0.85rem;font-family:Verdana;color:#c7c7c7;">
     © Michael Middleton ____
   </h2>
     <script>
@@ -91,8 +91,30 @@ iframe {
   
   <script>
     console.clear()
+    /*
+    // The Calling /p/ or /c/ page needs to have the following command (example for aerofoil-catalogue project):
+    let ThisProjectContentURL="https://aeromidd.com/projects/aerofoil-catalogue/aerofoil-catalogue.html";
+    let ProjHeight = 1425;
+    //*/
+    
+    let htmlProjectContentHeight = Math.max(ProjHeight,655)+(1440-1425);
+    GeneralDiv.style.height = htmlProjectContentHeight+85+"px";
+    htmlProjectContent.style.height = htmlProjectContentHeight+"px";
+    latest_button.style.top = 0-212-htmlProjectContentHeight+"px";
+    next_button.style.top = 5-212-htmlProjectContentHeight+"px";
+    rand_button.style.top = 10-212-htmlProjectContentHeight+"px";
+    prev_button.style.top = 15-212-htmlProjectContentHeight+"px";
+    first_button.style.top = 20-212-htmlProjectContentHeight+"px";
+    allprojects_button.style.top = 25-212-htmlProjectContentHeight+"px";
+    aerospace_button.style.top = 30-212-htmlProjectContentHeight+"px";
+    dataviz_button.style.top = 35-212-htmlProjectContentHeight+"px";
+    graphics_button.style.top = 40-212-htmlProjectContentHeight+"px";
+    interactive_button.style.top = 45-212-htmlProjectContentHeight+"px";
+    
+    //CRtext.style.top = 200-ProjHeight+"px";
+    DummyTitleArea.style.top = 50-212-htmlProjectContentHeight+"px"
+    ProjectTitleArea.style.top = -5-212-htmlProjectContentHeight+"px"
 
-    htmlProjectContent.style.height = htmlProjectContentHeight;
     
     htmlProjectContent.src = ThisProjectContentURL;
     latest_button.src = latest_button.value.split('|')[1];
@@ -152,7 +174,7 @@ iframe {
   }else if (currentURLsuffix == '/c/interactive'){
     ProjectTitleArea.innerText = 'Category: Interactive Projects';
   }else{
-    ProjectTitleArea.innerText = currentURLsuffix;
+    ProjectTitleArea.innerText = 'Aerofoil Catalogue';//currentURLsuffix;
   }
   let LatestProjectPosition = PRJData.length-1;
   //console.log(currentURL);
