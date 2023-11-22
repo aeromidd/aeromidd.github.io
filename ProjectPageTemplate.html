@@ -96,12 +96,18 @@ iframe {
     let ThisProjectContentURL="https://aeromidd.com/projects/aerofoil-catalogue/aerofoil-catalogue.html";
     //let ProjHeight = 1425;
     //*/
-    var iframe = document.getElementById('htmlProjectContent');
-    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    GeneralDiv.style.height = 85+655+'px';
+    htmlProjectContent.src = ThisProjectContentURL;
+    htmlProjectContent.onload = function(){
+      
+    
+    var projiframe = document.getElementById('htmlProjectContent');
+    var innerDoc = projiframe.contentDocument || projiframe.contentWindow.document;
     
     let ProjBorder = innerDoc.getElementById('BorderCanvas');
     let ProjHeight = ProjBorder.style.height;
     
+};
     let htmlProjectContentHeight = Math.max(ProjHeight,655)+(1440-1425);
     GeneralDiv.style.height = htmlProjectContentHeight+85+"px";
     htmlProjectContent.style.height = htmlProjectContentHeight+"px";
@@ -121,7 +127,6 @@ iframe {
     ProjectTitleArea.style.top = -5-212-htmlProjectContentHeight+"px"
 
     
-    htmlProjectContent.src = ThisProjectContentURL;
     latest_button.src = latest_button.value.split('|')[1];
     latest_button.src = latest_button.value.split('|')[0];
     next_button.src = next_button.value.split('|')[1];
