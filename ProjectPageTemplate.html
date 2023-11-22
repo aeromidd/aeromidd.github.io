@@ -94,8 +94,13 @@ iframe {
     /*
     // The Calling /p/ or /c/ page needs to have the following command (example for aerofoil-catalogue project):
     let ThisProjectContentURL="https://aeromidd.com/projects/aerofoil-catalogue/aerofoil-catalogue.html";
-    let ProjHeight = 1425;
+    //let ProjHeight = 1425;
     //*/
+    var iframe = document.getElementById('htmlProjectContent');
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    
+    let ProjBorder = innerDoc.getElementById('BorderCanvas');
+    let ProjHeight = ProjBorder.style.height;
     
     let htmlProjectContentHeight = Math.max(ProjHeight,655)+(1440-1425);
     GeneralDiv.style.height = htmlProjectContentHeight+85+"px";
