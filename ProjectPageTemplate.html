@@ -105,7 +105,7 @@ iframe {
     var innerDoc = projiframe.contentDocument || projiframe.contentWindow.document;
     
     let ProjBorder = innerDoc.getElementById('BorderCanvas');
-    let ProjHeight = ProjBorder.style.height;
+    let ProjHeight = parseFloat(ProjBorder.style.height);
       console.log('1')
     console.log(ProjHeight)
       console.log('2')
