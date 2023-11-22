@@ -98,38 +98,8 @@ iframe {
     //*/
     GeneralDiv.style.height = 85+655+'px';
     htmlProjectContent.src = ThisProjectContentURL;
-    htmlProjectContent.onload = function(){
-      
-    
-    var projiframe = document.getElementById('htmlProjectContent');
-    var innerDoc = projiframe.contentDocument || projiframe.contentWindow.document;
-    
-    let ProjBorder = innerDoc.getElementById('BorderCanvas');
-    let ProjHeight = parseFloat(ProjBorder.style.height);
-      console.log('1')
-    console.log(ProjHeight)
-      console.log('2')
-    console.log(ProjHeight);
-    let htmlProjectContentHeight = Math.max(ProjHeight,655)+(1440-1425);
-    GeneralDiv.style.height = htmlProjectContentHeight+85+"px";
-    htmlProjectContent.style.height = htmlProjectContentHeight+"px";
-    latest_button.style.top = 0-212-htmlProjectContentHeight+"px";
-    next_button.style.top = 5-212-htmlProjectContentHeight+"px";
-    rand_button.style.top = 10-212-htmlProjectContentHeight+"px";
-    prev_button.style.top = 15-212-htmlProjectContentHeight+"px";
-    first_button.style.top = 20-212-htmlProjectContentHeight+"px";
-    allprojects_button.style.top = 25-212-htmlProjectContentHeight+"px";
-    aerospace_button.style.top = 30-212-htmlProjectContentHeight+"px";
-    dataviz_button.style.top = 35-212-htmlProjectContentHeight+"px";
-    graphics_button.style.top = 40-212-htmlProjectContentHeight+"px";
-    interactive_button.style.top = 45-212-htmlProjectContentHeight+"px";
-    
-    //CRtext.style.top = 200-ProjHeight+"px";
-    DummyTitleArea.style.top = 50-212-htmlProjectContentHeight+"px"
-    ProjectTitleArea.style.top = -5-212-htmlProjectContentHeight+"px"
 
-    
-    latest_button.src = latest_button.value.split('|')[1];
+        latest_button.src = latest_button.value.split('|')[1];
     latest_button.src = latest_button.value.split('|')[0];
     next_button.src = next_button.value.split('|')[1];
     next_button.src = next_button.value.split('|')[0];
@@ -246,7 +216,39 @@ iframe {
              
              
   }));//}, false);
-};
+
+    
+    htmlProjectContent.onload = function(){
+      
+    
+    var projiframe = document.getElementById('htmlProjectContent');
+    var innerDoc = projiframe.contentDocument || projiframe.contentWindow.document;
+    
+    let ProjBorder = innerDoc.getElementById('BorderCanvas');
+    let ProjHeight = parseFloat(ProjBorder.style.height);
+      console.log('1')
+    console.log(ProjHeight)
+      console.log('2')
+    console.log(ProjHeight);
+    let htmlProjectContentHeight = Math.max(ProjHeight,655)+(1440-1425);
+    GeneralDiv.style.height = htmlProjectContentHeight+85+"px";
+    htmlProjectContent.style.height = htmlProjectContentHeight+"px";
+    latest_button.style.top = 0-212-htmlProjectContentHeight+"px";
+    next_button.style.top = 5-212-htmlProjectContentHeight+"px";
+    rand_button.style.top = 10-212-htmlProjectContentHeight+"px";
+    prev_button.style.top = 15-212-htmlProjectContentHeight+"px";
+    first_button.style.top = 20-212-htmlProjectContentHeight+"px";
+    allprojects_button.style.top = 25-212-htmlProjectContentHeight+"px";
+    aerospace_button.style.top = 30-212-htmlProjectContentHeight+"px";
+    dataviz_button.style.top = 35-212-htmlProjectContentHeight+"px";
+    graphics_button.style.top = 40-212-htmlProjectContentHeight+"px";
+    interactive_button.style.top = 45-212-htmlProjectContentHeight+"px";
+    
+    //CRtext.style.top = 200-ProjHeight+"px";
+    DummyTitleArea.style.top = 50-212-htmlProjectContentHeight+"px"
+    ProjectTitleArea.style.top = -5-212-htmlProjectContentHeight+"px"
+
+    };
     
     
   </script>
