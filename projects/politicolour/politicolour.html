@@ -1,1 +1,138 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width">
+      <title>POLITICOLOUR</title>
+      <style>
+          /*html, body {margin: 0; height: 100%; overflow: hidden}*/
+    input[type='number']::-webkit-inner-spin-button,
+    input[type='number']::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      appearance: none;
+      margin: 0;
+    }
 
+    .slider {
+      -webkit-appearance: none;
+      appearance: none;
+      position: absolute;
+      top: 510px;
+      left: 386px;
+      width: 100px;
+      height: 15px;
+      border-radius: 20px;
+      border: 3px solid #00508a;
+      background: #d3d3d3;
+      outline: none;
+      opacity: 0.8;
+      -webkit-transition: .2s;
+      transition: opacity .2s;
+    }
+    
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      perspective: 1px;
+      width: 45px;
+      height: 20px;
+      border: 3px solid #00508a;
+      border-collapse: separate;
+      border-radius: 20px;
+      background: #ffffff;
+      opacity: 1;
+      cursor: pointer;
+    }
+
+    .slider:hover {
+      opacity: 1;
+      /* Fully shown on mouse-over */
+      background: #189aca;
+      cursor: pointer;
+    }
+      </style>
+   </head>
+   <body>
+     <img id="projectpic1" src="https://aeromidd.github.io/projects/politicolour/Politicolour_LEFT_small.png" alt="alternatetext" style="position:absolute;left:10px; top:50px;width:874px;">
+     <img id="dcyimg" src="https://aeromidd.github.io/misc/Empty.png" style="position:absolute;left:10px;top:10px;width:875px;height:1420px;" </img>
+       <p style="position:absolute;top:499px;text-align:center;center:15px;width:865px;left:-66px;color:#00508a;font:15px Garamond">LEFT</p>
+       <p style="position:absolute;top:499px;text-align:center;center:15px;width:865px;left:88px;color:#00508a;font:15px Garamond">RIGHT</p>
+     
+     <div class="slidecontainer">
+      <form>
+        <input id="LRSlider" class="slider" type="range" name="LRSlider" min="0" max="1" step="1" value="0" oninput="this.onclick();" onclick="SwitchProjectPic();"/>
+      </form>
+       <script type="text/javascript">
+         
+         SwitchProjectPic = function(){
+         let projectpic1 = document.getElementById('projectpic1');
+         let projectpic_options = "https://aeromidd.github.io/projects/politicolour/Politicolour_LEFT_small.png|https://aeromidd.github.io/projects/politicolour/Politicolour_RIGHT_small.png";
+         if (LRSlider.value == 0){LRSlider.value = 1;projectpic1.src=projectpic_options.split('|')[1];}else{LRSlider.value = 0;projectpic1.src=projectpic_options.split('|')[0];};
+         };
+       </script>
+     <p style="position:absolute;top:540px;left:15px;text-align:center;center:15px;width:865px;color:#757575;font:13px Helvetica">A data visual showing, for each country in the world,<br> the predominant branding colour of <u>the most nationally popular political party considered* Left of center and Right of center</u> (in 2021).
+<br>
+    <br>
+       I created this as I've noticed in passing that in some countries, there is a tradition or trend in colour branding used by major political parties depending on where they are on the political "left/right" spectrum, while in others, there is a totally different convention. Particularly, the USA stood out to me, where red is typically used to depict Republicans ("right wing") and blue to depict Democrats ("left wing") -- whereas in many places in Europe, the exact opposite is true: red is often reserved by left wing and/or socialist movements and their derivatives, while blue is more likely to be used as a color denoting conservative/right wing parties. Based on these results, it appears that this trend holds in many regions across the world (with the US being a bit of an odd-one-out), but there are some other interesting exceptions I didn't know about either.
+       <br>
+       <br>
+Data Source: entries semi-automatically searched by <br>
+       *https://en.wikipedia.org/wiki/List_of_political_parties_in_[SovereignNation]
+       <br>
+       <br>
+       The predominant branding colour was determined by the colour highlighted in the corresponding party's wikipedia article (the vast majority of parties I selected for here had these labels easily accessible in the right-hand panel and sometimes an RGB value I could take.
+       <br>
+       <br>
+       If this information was not found by my program, it attempted to discern the most prevalent colour used in the party logo if available, with a manual check to find online photos of rallies and party conferences involving banners, logos, and other branding.</p>
+     
+     
+      <canvas id="BorderCanvas"></canvas>
+      <script type="text/javascript">
+         var canvas = document.getElementById('BorderCanvas');
+         if (canvas.getContext) {
+           var context = canvas.getContext('2d');
+           var xsize = 880;
+           var ysize = 840;
+           canvas.style.width = xsize + "px";
+           canvas.style.height = ysize + "px";
+           // Set actual size in memory (scaled to account for extra pixel density).
+           var scale = 1; //window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+           canvas.width = Math.floor(xsize * scale);
+           canvas.height = Math.floor(ysize * scale);
+           // Normalize coordinate system to use css pixels.
+           context.scale(scale, scale);
+           context.clearRect(0, 0, canvas.width / scale, canvas.height / scale);
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(0, 0);
+           context.lineTo(canvas.width / scale, 0);
+           context.strokeStyle = '#00508a';
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(0, 0);
+           context.lineTo(0, canvas.height / scale);
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(canvas.width / scale, canvas.height / scale);
+           context.lineTo(canvas.width / scale, 0);
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(canvas.width / scale, canvas.height / scale);
+           context.lineTo(0, canvas.height / scale);
+           context.stroke();
+           ////
+         }
+      </script>
+      
+      <script type="text/javascript">
+         
+           
+      </script>
+   </body>
+</html>
