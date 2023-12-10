@@ -183,24 +183,26 @@ function ScrollRouteList() {
      <input type="number" id="InputLat2" name="quantity" min="-90" max="89.999" step=".001" value = "0.000"  style="position:absolute;left:560px;width:110px;top:451px;height:20px;text-align:center" onChange="drawFoW();">
      <input type="number" id="InputLon2" name="quantity" min="-180" max="179.999" step=".001" value = "0.000" style="position:absolute;left:680px;width:110px;top:451px;height:20px;text-align:center" onChange="drawFoW();">
      
-<input type="number" id = "InputAlt" min="2000" step="1000" max="6561680" value= "30000" style="position:absolute;left:400px;top:420px;height:25px;width:85px" onChange="drawFoW();">
+<input type="number" id = "InputAlt" min="2000" step="1000" max="6561680" value= "30000" style="position:absolute;left:400px;top:420px;height:25px;width:85px" onChange="AltitudePicChange();drawFoW();">
      
-     <select style="position:absolute;left:490px;top:420px;width:15px;height:30px" onChange="InputAlt.value = this.value;drawFoW();">
-       <option value="1340000"> 1,340,000 ft (ISS)</option>
-       <option value="330000"> 330,000 ft (edge of space)</option>
-       <option value="100000"> 100,000 ft</option>
-       <option value="80000"> 80,000 ft</option>
-       <option value="60000"> 60,000 ft</option>
-       <option value="50000"> 50,000 ft</option>
-       <option value="40000"> 40,000 ft</option>
-       <option value="35000"> 35,000 ft (standard long-haul)</option>
-       <option value="30000" selected="true"> 30,000 ft</option>
-       <option value="25000"> 25,000 ft (standard short-haul)</option>
-       <option value="20000"> 20,000 ft</option>
-       <option value="15000"> 15,000 ft</option>
-       <option value="10000"> 10,000 ft</option>
+     <select style="position:absolute;left:490px;top:420px;width:15px;height:30px" onChange="InputAlt.value = this.value;AltitudePicChange();drawFoW();">
+       <option value="1340000">▼ 1,340,000 ft (ISS)</option>
+       <option value="330000">▼ 330,000 ft (edge of space)</option>
+       <option value="100000">▼ 100,000 ft</option>
+       <option value="80000">▼ 80,000 ft</option>
+       <option value="60000">▼ 60,000 ft</option>
+       <option value="50000">▼ 50,000 ft</option>
+       <option value="40000">▼ 40,000 ft</option>
+       <option value="35000">▼ 35,000 ft (standard long-haul)</option>
+       <option value="30000" selected="true">▼ 30,000 ft</option>
+       <option value="25000">▼ 25,000 ft (standard short-haul)</option>
+       <option value="20000">▼ 20,000 ft</option>
+       <option value="15000">▼ 15,000 ft</option>
+       <option value="10000">▼ 10,000 ft</option>
      </select>
-     
+     <img id="AltitudePic" style="position:absolute;top:455px;left:350px;width:200px;height:75px;border:0px solid red" src="https://aeromidd.github.io/projects
+/sightpaths/cessnaF.png"></img>
+  
      <button id="RandAP1" style="position:absolute;left:40px;top:510px;width:95px;height:25px;">Random</button>
      <button id="RandAP2" style="position:absolute;left:765px;top:510px;width:95px;height:25px;">Random</button>
      <button id="RandCoords1" style="position:absolute;left:40px;top:450px;width:60px;height:25px;padding:0">Random</button>
@@ -790,6 +792,49 @@ function getFlights(){
     'nFlights': nFlights,
     'lines': lines
   };
+}
+function AltitudePicChange() {
+	let alt = InputAlt.value;
+	if (alt < 15000){
+		AltitudePic.src = 'https://aeromidd.github.io/projects/sightpaths/cessnaF.png';
+		//cessna
+	}else if (alt < 20000){
+		AltitudePic.src = 'https://aeromidd.github.io/projects/sightpaths/q400.png';
+		//small prop airliner... Q400?
+	}else if (alt < 30000){
+		AltitudePic.src = 'https://aeromidd.github.io/projects/sightpaths/737.png';
+		//small jet airliner 737
+	}else if (alt < 40000){
+		AltitudePic.src = 'https://aeromidd.github.io/projects/sightpaths/a380.png';
+		//large airliner A380
+	}else if (alt < 50000){
+		AltitudePic.src = 'https://aeromidd.github.io/projects/sightpaths/bizjet.png';
+		//business jet
+	}else if (alt < 60000){
+		AltitudePic.src = 'https://aeromidd.github.io/projects/sightpaths/concorde.png';
+		//Concorde
+	}else if (alt < 70000){
+		AltitudePic.src = 'https://aeromidd.github.io/projects/sightpaths/f22_edited.png';
+		//F-22?
+	}else if (alt < 80000){
+		AltitudePic.src = 'https://aeromidd.github.io/projects/sightpaths/U2.png';
+		//U2
+	}else if (alt < 100000){
+		AltitudePic.src = 'https://aeromidd.github.io/projects/sightpaths/sr71.png';
+		//SR-71
+	}else if (alt < 360000){
+		AltitudePic.src = 'https://aeromidd.github.io/projects/sightpaths/x-15.png';
+		//X-15
+	}else if (alt < 1300000){
+		AltitudePic.src = 'https://aeromidd.github.io/projects/sightpaths/spaceshuttle.png';
+		//SpaceShuttle
+	}else if (alt < 1500000){
+		AltitudePic.src = 'https://aeromidd.github.io/projects/sightpaths/iss.png';
+		//ISS!
+	}else{
+		AltitudePic.src = 'https://aeromidd.github.io/projects/sightpaths/saturnv.png';
+		//Ext-LEO rocket... SaturnV?
+	}
 }
       </script>
    </body>
