@@ -93,7 +93,7 @@ iframe {
     console.clear()
     /*
     // The Calling /p/ or /c/ page needs to have the following command (example for aerofoil-catalogue project):
-    let ThisProjectContentURL="https://aeromidd.com/projects/aerofoil-catalogue/aerofoil-catalogue.html";
+    let ThisProjectContentURL="https://aeromidd.com/projects/one-small-step/one-small-step.html";
     //let ProjHeight = 1425;
     //*/
     GeneralDiv.style.height = 85+655+'px';
@@ -158,6 +158,9 @@ iframe {
   }else{
     ProjectTitleArea.innerText = 'Title not found for: '+currentURLsuffix;
   }
+             
+    PAGETITLE.innerText = 'Aeromidd: '+ProjectTitleArea.innerText;
+             
   let LatestProjectPosition = PRJData.length-1;
   //console.log(currentURL);
   CRtext.innerText = 'ProjectPosition='+ProjectPosition.toString()+', currentURL='+currentURL;
