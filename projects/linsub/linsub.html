@@ -825,25 +825,64 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
                 
                 //upper fin
                 context.beginPath();
-                context.moveTo(ScreenHor(-0*b.h*Math.sin(b.xi[4])+b.x-(0.5+10/100)*b.L*Math.cos(b.xi[4])), ScreenVer(-0*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+15/100)*b.L*Math.sin(b.xi[4])));
-                context.lineTo(ScreenHor(-1.2*b.h*Math.sin(b.xi[4])+b.x-(0.5+10/100)*b.L*Math.cos(b.xi[4])), ScreenVer(-1.2*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+12/100)*b.L*Math.sin(b.xi[4])));
-                context.lineTo(ScreenHor(-1.25*b.h*Math.sin(b.xi[4])+b.x-(0.5+5/100)*b.L*Math.cos(b.xi[4])), ScreenVer(-1.25*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+7/100)*b.L*Math.sin(b.xi[4])));
-                context.lineTo(ScreenHor(-1.2*b.h*Math.sin(b.xi[4])+b.x-(0.5+4/100)*b.L*Math.cos(b.xi[4])), ScreenVer(-1.2*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+6/100)*b.L*Math.sin(b.xi[4])));
-                context.lineTo(ScreenHor(-0.5*b.h*Math.sin(b.xi[4])+b.x-(0.5+3/100)*b.L*Math.cos(b.xi[4])), ScreenVer(-0.5*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+5/100)*b.L*Math.sin(b.xi[4])));
-                context.lineTo(ScreenHor(-0.3*b.h*Math.sin(b.xi[4])+b.x-(0.5+2/100)*b.L*Math.cos(b.xi[4])), ScreenVer(-0.3*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+4/100)*b.L*Math.sin(b.xi[4])));
+              
+                context.moveTo(
+                  ScreenHor(b.x-(0.5+10.5/100)*b.L*Math.cos(b.xi[4])-0*b.h*Math.sin(b.xi[4])), 
+                  ScreenVer(b.xi[3]+(0.5+10.5/100)*b.L*Math.sin(b.xi[4]))-0*b.h*Math.cos(b.xi[4]));
+              
+                context.lineTo(
+                  ScreenHor(-1.2*b.h*Math.sin(b.xi[4])+b.x-(0.5+10/100)*b.L*Math.cos(b.xi[4])), 
+                  ScreenVer(-1.2*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+10/100)*b.L*Math.sin(b.xi[4])));
+              
+                context.lineTo(
+                  ScreenHor(-1.25*b.h*Math.sin(b.xi[4])+b.x-(0.5+5/100)*b.L*Math.cos(b.xi[4])), 
+                  ScreenVer(-1.25*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+5/100)*b.L*Math.sin(b.xi[4])));
+              
+                context.lineTo(
+                  ScreenHor(-1.2*b.h*Math.sin(b.xi[4])+b.x-(0.5+4/100)*b.L*Math.cos(b.xi[4])), 
+                  ScreenVer(-1.2*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+4/100)*b.L*Math.sin(b.xi[4])));
+              
+                context.lineTo(
+                  ScreenHor(-0.5*b.h*Math.sin(b.xi[4])+b.x-(0.5+3/100)*b.L*Math.cos(b.xi[4])), 
+                  ScreenVer(-0.5*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+3/100)*b.L*Math.sin(b.xi[4])));
+              
+                context.lineTo(
+                  ScreenHor(-0.3*b.h*Math.sin(b.xi[4])+b.x-(0.5+2/100)*b.L*Math.cos(b.xi[4])), 
+                  ScreenVer(-0.3*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+2/100)*b.L*Math.sin(b.xi[4])));
+              
                 context.closePath();
                 context.fillStyle = '#ffffff';
                 context.fill();
                 context.strokeStyle = '#00508a';
                 context.stroke();
+              
                 //lower fin
                 context.beginPath();
-                context.moveTo(ScreenHor(0.2*b.h*Math.sin(b.xi[4])+b.x-(0.5+10/100)*b.L*Math.cos(b.xi[4])), ScreenVer(0.2*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+12/100)*b.L*Math.sin(b.xi[4])));
-                context.lineTo(ScreenHor(1.2*b.h*Math.sin(b.xi[4])+b.x-(0.5+10/100)*b.L*Math.cos(b.xi[4])), ScreenVer(1.2*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+12/100)*b.L*Math.sin(b.xi[4])));
-                context.lineTo(ScreenHor(1.25*b.h*Math.sin(b.xi[4])+b.x-(0.5+5/100)*b.L*Math.cos(b.xi[4])), ScreenVer(1.25*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+7/100)*b.L*Math.sin(b.xi[4])));
-                context.lineTo(ScreenHor(1.2*b.h*Math.sin(b.xi[4])+b.x-(0.5+4/100)*b.L*Math.cos(b.xi[4])), ScreenVer(1.2*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+6/100)*b.L*Math.sin(b.xi[4])));
-                context.lineTo(ScreenHor(0.6*b.h*Math.sin(b.xi[4])+b.x-(0.5+3/100)*b.L*Math.cos(b.xi[4])), ScreenVer(0.6*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+5/100)*b.L*Math.sin(b.xi[4])));
-                context.lineTo(ScreenHor(0.5*b.h*Math.sin(b.xi[4])+b.x-(0.5+2/100)*b.L*Math.cos(b.xi[4])), ScreenVer(0.5*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+4/100)*b.L*Math.sin(b.xi[4])));
+              
+                context.moveTo(
+                  ScreenHor(0.2*b.h*Math.sin(b.xi[4])+b.x-(0.5+10.5/100)*b.L*Math.cos(b.xi[4])), 
+                  ScreenVer(0.2*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+10.5/100)*b.L*Math.sin(b.xi[4])));
+              
+                context.lineTo(
+                  ScreenHor(1.2*b.h*Math.sin(b.xi[4])+b.x-(0.5+10/100)*b.L*Math.cos(b.xi[4])), 
+                  ScreenVer(1.2*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+10/100)*b.L*Math.sin(b.xi[4])));
+              
+                context.lineTo(
+                  ScreenHor(1.25*b.h*Math.sin(b.xi[4])+b.x-(0.5+5/100)*b.L*Math.cos(b.xi[4])), 
+                  ScreenVer(1.25*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+5/100)*b.L*Math.sin(b.xi[4])));
+              
+                context.lineTo(
+                  ScreenHor(1.2*b.h*Math.sin(b.xi[4])+b.x-(0.5+4/100)*b.L*Math.cos(b.xi[4])), 
+                  ScreenVer(1.2*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+4/100)*b.L*Math.sin(b.xi[4])));
+              
+                context.lineTo(
+                  ScreenHor(0.6*b.h*Math.sin(b.xi[4])+b.x-(0.5+3/100)*b.L*Math.cos(b.xi[4])),
+                  ScreenVer(0.6*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+3/100)*b.L*Math.sin(b.xi[4])));
+              
+                context.lineTo(
+                  ScreenHor(0.5*b.h*Math.sin(b.xi[4])+b.x-(0.5+2/100)*b.L*Math.cos(b.xi[4])), 
+                  ScreenVer(0.5*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+2/100)*b.L*Math.sin(b.xi[4])));
+              
                 context.closePath();
                 context.fillStyle = '#ffffff';
                 context.fill();
@@ -860,18 +899,38 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
                 context.stroke();*/
               
               // trim compensation tank(s)
-              /*
+              
               context.beginPath();
-                context.moveTo(ScreenHor(+0.5*b.h*Math.sin(b.xi[4])+b.x-(0.5-30/100)*b.L*Math.cos(b.xi[4])),ScreenVer(+0.5*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5-30/100)*b.L*Math.sin(b.xi[4])));
-                context.lineTo(ScreenHor(+0.5*b.h*Math.sin(b.xi[4])+b.x-(0.5-30/100)*b.L*Math.cos(b.xi[4])),ScreenVer(+0.5*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+30/100)*b.L*Math.sin(b.xi[4])));
-                context.lineTo(ScreenHor(+0.5*b.h*Math.sin(b.xi[4])+b.x-(0.5+30/100)*b.L*Math.cos(b.xi[4])),ScreenVer(+0.5*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5+30/100)*b.L*Math.sin(b.xi[4])));
-                context.lineTo(ScreenHor(+0.5*b.h*Math.sin(b.xi[4])+b.x-(0.5+30/100)*b.L*Math.cos(b.xi[4])),ScreenVer(+0.5*b.h*Math.cos(b.xi[4])+b.xi[3]+(0.5-30/100)*b.L*Math.sin(b.xi[4])));
+                context.moveTo(
+                  ScreenHor(+b.x
++((0.5-80/100)*b.L*Math.cos(-b.xi[4])+0.8*b.h*Math.sin(-b.xi[4]))),
+                  ScreenVer(+b.xi[3]
++((0.5-80/100)*b.L*Math.sin(-b.xi[4]))-0.8*b.h*Math.cos(-b.xi[4])));
+              
+                context.lineTo(
+                  ScreenHor(+b.x
++((0.5-20/100)*b.L*Math.cos(-b.xi[4])+0.8*b.h*Math.sin(-b.xi[4]))),
+                  ScreenVer(+b.xi[3]
++((0.5-20/100)*b.L*Math.sin(-b.xi[4]))-0.8*b.h*Math.cos(-b.xi[4])));
+              
+                context.lineTo(
+                  ScreenHor(+b.x
++((0.5-20/100)*b.L*Math.cos(b.xi[4])+0.8*b.h*Math.sin(-b.xi[4]))),
+                  ScreenVer(+b.xi[3]
++((0.5-20/100)*b.L*Math.sin(-b.xi[4]))+0.8*b.h*Math.cos(-b.xi[4])));
+              
+                context.lineTo(
+                  ScreenHor(+b.x
++((0.5-80/100)*b.L*Math.cos(-b.xi[4])+0.8*b.h*Math.sin(-b.xi[4]))),
+                  ScreenVer(+b.xi[3]
++((0.5-80/100)*b.L*Math.sin(-b.xi[4]))+0.8*b.h*Math.cos(-b.xi[4])));
+              
                 context.closePath();
                 context.fillStyle = '#ffffff';
                 context.fill();
                 context.strokeStyle = '#00508a';
                 context.stroke();
-                */
+                //*/
                 
                 //hydroplanes
                 //ds
@@ -880,13 +939,11 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
                 context.moveTo(ScreenHor(0.1*b.h*Math.sin(b.xi[4])+b.dsl*Math.cos(-b.ui[2]-b.xi[4])+b.x-0.5*b.L*Math.cos(b.xi[4])), ScreenVer(0.1*b.h*Math.cos(b.xi[4])+b.dsl*Math.sin(-b.ui[2]-b.xi[4])+b.xi[3]+0.5*b.L*Math.sin(b.xi[4])));
                 context.lineTo(ScreenHor(0.1*b.h*Math.sin(b.xi[4])+b.x-0.5*b.L*Math.cos(b.xi[4])), ScreenVer(0.1*b.h*Math.cos(b.xi[4])+b.xi[3]+0.5*b.L*Math.sin(b.xi[4])));
                 context.lineTo(ScreenHor(0.1*b.h*Math.sin(b.xi[4])+-b.dsl*Math.cos(-b.ui[2]-b.xi[4])+b.x-0.5*b.L*Math.cos(b.xi[4])), ScreenVer(0.1*b.h*Math.cos(b.xi[4])-b.dsl*Math.sin(-b.ui[2]-b.xi[4])+b.xi[3]+0.5*b.L*Math.sin(b.xi[4])));
-                //context.fill();
                 context.strokeStyle = '#ff0000';
                 context.stroke();
                 //*/
                 let pTh = b.dsl/5;
                 context.beginPath();
-                //context.moveTo(ScreenHor(0.1*b.h*Math.sin(b.xi[4])+0*b.dsl*Math.cos(-b.ui[2]-b.xi[4])+b.x-0.5*b.L*Math.cos(b.xi[4])), ScreenVer(0.1*b.h*Math.cos(b.xi[4])+0*b.dsl*Math.sin(-b.ui[2]-b.xi[4])+b.xi[3]+0.5*b.L*Math.sin(b.xi[4])));
                 context.lineTo(ScreenHor(0.1*b.h*Math.sin(b.xi[4])+0*b.dsl*Math.cos(-b.ui[2]-b.xi[4])+b.x-0.5*b.L*Math.cos(b.xi[4])), ScreenVer(0.1*b.h*Math.cos(b.xi[4])+0*b.dsl*Math.sin(-b.ui[2]-b.xi[4])+b.xi[3]+0.5*b.L*Math.sin(b.xi[4])));
                 context.lineTo(ScreenHor(0.1*b.h*Math.sin(b.xi[4])+0*b.dsl*Math.cos(-b.ui[2]-b.xi[4])+pTh*Math.sin(-b.ui[2]-b.xi[4])+b.x-0.5*b.L*Math.cos(b.xi[4])), ScreenVer(0.1*b.h*Math.cos(b.xi[4])+0*b.dsl*Math.sin(-b.ui[2]-b.xi[4])-pTh*Math.cos(-b.ui[2]-b.xi[4])+b.xi[3]+0.5*b.L*Math.sin(b.xi[4])));
                 context.lineTo(ScreenHor(0.1*b.h*Math.sin(b.xi[4])+-1.5*b.dsl*Math.cos(-b.ui[2]-b.xi[4])+b.x-0.5*b.L*Math.cos(b.xi[4])), ScreenVer(0.1*b.h*Math.cos(b.xi[4])-1.5*b.dsl*Math.sin(-b.ui[2]-b.xi[4])+b.xi[3]+0.5*b.L*Math.sin(b.xi[4])));
