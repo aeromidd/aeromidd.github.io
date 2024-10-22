@@ -92,7 +92,7 @@
    <body>
      <label for="RouteListTXTBOX" style="position:absolute;top:645px;text-align:center;left:22.5px;width:865px;color:#00508a;font:13px Courier New">FLIGHT LIST:</label>
   <textarea id="RouteListTXTBOX" style="position:absolute;top:660px;text-align:center;left:12.5px;width:865px;color:#00508a;font:13px Courier New" name="RouteListTXTBOX" value="" readonly></textarea>
-     <p id="DescTXT" style="position:absolute;top:700px;text-align:center;left:15px;width:865px;color:#757575;font:13px Helvetica">PLACEHOLDER TEXT DESCRIPTION</p>
+     <p id="DescTXT" style="position:absolute;top:700px;text-align:center;left:15px;width:865px;color:#757575;font:13px Helvetica">Have you ever wondered how far you can see when looking out of a plane window? <br> Or thought: "How much of the world have I seen?" <br><br> I developed this tool to attempt to answer that question. You can draw flightpaths manually or select airports or coordinates at selected points of origin and destination using the dropdown/search functions, along with the average altitude of your flights. As a result, a "fog of war" map will be generated depicting the sum area of possible lines of sight, revealing the landmasses and other geographical features you would have flown over and been able to see from the selected flightpaths*. <br><br> The preview will only show the current flight of interest. Clicking the button to "Download HD Map of Listed Flights" will produce a high definition version of the map of your full Flight List for your own use (give it a couple of moments to download!). It will also provide a percentage % estimate of how much of the earth's surface you've seen.<br><br><br> *caveat - this tool does not take into account lines of sight being obscured by elevation, and also assumes that you looked out of your aircraft on all sides for the entire duration of your flight. <br> <br>  If you decide to post your result anywhere online, please include credit.</p>
      <p id="nFlightsSaved" style="position:absolute;top:600px;left:550px;width:200px;color:#757575;font:13px Helvetica">List Empty.</p>
      <script>
 function ScrollRouteList() {
@@ -103,6 +103,8 @@ function ScrollRouteList() {
 }
        
      </script>
+     
+     <p id="IFBLANKtxt" style="position:absolute;top:200px;left:250px;width:400px;text-align:center;color:#019aca;font:13px Helvetica">Click anywhere in this area to begin.<br><br><small><small>If you do not see a map within 30 seconds, try clicking again or refreshing the page.</small></small></p>
       <canvas id="BorderCanvas"></canvas>
       <script type="text/javascript">
          var canvas = document.getElementById('BorderCanvas');
