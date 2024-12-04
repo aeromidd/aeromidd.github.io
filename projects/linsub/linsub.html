@@ -21,12 +21,12 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
 'use strict';
 (function(){
     // Physics constants
-    const SimStepsPerFrame = 1; //1000
-    const FrameDelayMillis = 10; //10
-    const FrictionHalfLifeSeconds = 0.1;//1.5
-    const SubMass = 50e3;
-    const SpringRestLength = 0.25;
-    const SpringConst = 100.0;
+    const SimStepsPerFrame = 2; //1000 -- synonymous with simulation speed
+    const FrameDelayMillis = SimStepsPerFrame*10;//10; //10
+    const FrictionHalfLifeSeconds = 0.1;//1.5 //not used currently
+    const SubMass = 50e3; //not used currently
+    const SpringRestLength = 0.25; //not used currently
+    const SpringConst = 100.0; //not used currently
 
     // Rendering constants
     const PixelsPerMeter = 100.0;       // rendering zoom factor
@@ -324,8 +324,8 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                     }
                   }
                   
-                  let ssFZmag = (20000/7)*b.SeaState;
-                  let ssMYmag = (1000000/7)*b.SeaState;
+                  let ssFZmag = (2e4/7)*b.SeaState;//(2e4/7)*b.SeaState;
+                  let ssMYmag = (1.5e6/7)*b.SeaState;//(1e6/7)*b.SeaState;
                   
                   var periodegInc
                   periodegInc = b.periodegInc+2*(Math.random()-0.5)/1;
@@ -1104,7 +1104,7 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
             sim.Update(dt);
         }
         Render(sim);
-        window.setTimeout(AnimationFrame, FrameDelayMillis);
+        window.setTimeout(AnimationFrame, 10); //FrameDelayMillis
     }
     var lastDownTarget, canvas;
     window.onload = function() {
