@@ -21,7 +21,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
 'use strict';
 (function(){
     // Physics constants
-    const SimStepsPerFrame = 2; //1000 -- synonymous with simulation speed
+    const SimStepsPerFrame = 1; //1000 -- synonymous with simulation speed
     const FrameDelayMillis = SimStepsPerFrame*10;//10; //10
     const FrictionHalfLifeSeconds = 0.1;//1.5 //not used currently
     const SubMass = 50e3; //not used currently
@@ -80,7 +80,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
             this.SeaState = 0.49;
             this.SeaFixed = 0;
             
-            this.zDem = new Array(200);
+            this.zDem = new Array(250);
             this.zDem.fill(this.depthDem)
   
             this.AP = [0,1,1];
@@ -193,7 +193,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                   
                   let txdi = [];
                   txdi[0] = 0;
-                  txdi[1] = (-0.8886)*b.txi[1]+(-1)*b.txi[2]+b.tui[1];
+                  txdi[1] = (-2.8886)*b.txi[1]+(-1)*b.txi[2]+b.tui[1];
                   txdi[2] = b.txi[1];
                   for (var f = 0; f< b.txi.length; f++){
                     b.txi[f] += dt*txdi[f];
@@ -236,17 +236,18 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                   }else{
                     b.pitchDem = b.pitchSP;//0*Math.PI/180;
                   }
-                  if (b.pitchDem > 6*Math.PI/180){
-                    b.pitchDem = 6*Math.PI/180;
+                  let maxPitch = 6;
+                  if (b.pitchDem > maxPitch*Math.PI/180){
+                    b.pitchDem = maxPitch*Math.PI/180;
                   }
-                  if (b.pitchDem < -6*Math.PI/180){
-                    b.pitchDem = -6*Math.PI/180;
+                  if (b.pitchDem < -maxPitch*Math.PI/180){
+                    b.pitchDem = -maxPitch*Math.PI/180;
                   }
-                  if (b.pitchSP > 6*Math.PI/180){
-                    b.pitchSP = 6*Math.PI/180;
+                  if (b.pitchSP > maxPitch*Math.PI/180){
+                    b.pitchSP = maxPitch*Math.PI/180;
                   }
-                  if (b.pitchSP < -6*Math.PI/180){
-                    b.pitchSP = -6*Math.PI/180;
+                  if (b.pitchSP < -maxPitch*Math.PI/180){
+                    b.pitchSP = -maxPitch*Math.PI/180;
                   }
                   
                   let qErr = 0.05*b.pitchDem-b.xi[2];
@@ -278,18 +279,18 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                     b.teint += b.trimErr*dt;
                   }
                   
-                  let tkP = 2.3*1e-4;
-                  let tkI = 0.00*1e-4;
-                  let tkD = 1.0*1e-4;
-                  let trimEffortSat = 0.2;//1e6*0.1;
+                  let tkP = 0.9*1e-4;
+                  let tkI = 0.0*1e-4;
+                  let tkD = 1.5*1e-4;
+                  let trimEffortSat = 0.05;//1e6*0.1;
                   if (b.TrimCompensator){
                       b.trimEffort = b.trimErr*tkP+b.teint*tkI*dt+(b.trimErr-b.trimErrPrev)*tkD/dt;
                       if (b.trimEffort > trimEffortSat){
                         b.trimEffort = trimEffortSat;
-                        b.teint = b.teint-b.trimErr*dt;
+                        //b.teint = b.teint-b.trimErr*dt;
                       }else if (b.trimEffort < -trimEffortSat){
                         b.trimEffort = -trimEffortSat;
-                        b.teint = b.teint-b.trimErr*dt;
+                        //b.teint = b.teint-b.trimErr*dt;
                       }
                       b.tui[1] = b.tui[1]+b.trimEffort;
                       var maxtui = 50;
@@ -1099,7 +1100,7 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
       }
     }
     function AnimationFrame() {
-        const dt = (0.0025 * FrameDelayMillis) / SimStepsPerFrame;
+        const dt = (0.00125 * FrameDelayMillis) / SimStepsPerFrame; //0.0025
         for (let i=0; i < SimStepsPerFrame; ++i) {
             sim.Update(dt);
         }
