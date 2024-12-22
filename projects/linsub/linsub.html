@@ -22,24 +22,24 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
 <br>
 <canvas id="SimCanvas" tabindex='0'></canvas>
 <div class="slidecontainer">
-  <input type="range" min="0.0" max="5.0" step="1.0" value="2" class="slider" id="SimSpeedSlider" style="position:absolute; left:650px; top:50px; width: 120px;" oninput="this.nextElementSibling.value = this.value +'x'">
-<output style="position:absolute; left:775px; top:50px;" >2.0x</output>
+  <input type="range" min="0" max="30" step="10" value="10" class="slider" id="SimSpeedSlider" style="position:absolute; left:650px; top:50px; width: 120px;" oninput="this.nextElementSibling.value = this.value +'x'">
+<output style="position:absolute; left:775px; top:50px;" >10x</output>
 </div>
 <table id="AftPlaneGainsTable" style="position:absolute; left:8px; top:200px; display:none">
 <tr>
-  <td style="width:45px;text-align:center">Aftplane Control</td>
+  <td style="width:45px;text-align:center;font-family:'Garamond';font-size: 14px;background:#00508a;color:#ffffff">Sternplane Control</td>
   <td style="width:45px;text-align:center">P</td>
   <td style="width:45px;text-align:center">I</td>
   <td style="width:45px;text-align:center">D</td>
 </tr>
 <tr>
-  <td style="width:45px;text-align:center">Depth</td>
+  <td style="width:45px;text-align:center;font-family:'Garamond';font-size: 14px;">Depth</td>
   <td><input id="ctrlds_zP" value="0.0" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
   <td><input id="ctrlds_zI" value="0.0" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
   <td><input id="ctrlds_zD" value="-0.9" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
 </tr>
 <tr>
-  <td style="width:45px;text-align:center">Pitch</td>
+  <td style="width:45px;text-align:center;font-family:'Garamond';font-size: 14px;">Pitch</td>
   <td><input id="ctrlds_thtP" value="-26.0" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
   <td><input id="ctrlds_thtI" value="-0.12" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
   <td><input id="ctrlds_thtD" value="-21.0" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
@@ -51,24 +51,26 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
   <td style="width:45px;text-align:center">P</td>
   <td style="width:45px;text-align:center">I</td>
   <td style="width:45px;text-align:center">D</td>
-  <td style="width:45px;text-align:center">Fwdplane Control</td>
+  <td style="width:45px;text-align:center;font-family:'Garamond';font-size: 14px;background:#00508a;color:#ffffff">Bowplane Control</td>
 </tr>
 <tr>
   <td><input id="ctrldb_zP" value="-0.4" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
   <td><input id="ctrldb_zI" value="0.0" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
   <td><input id="ctrldb_zD" value="-1.2" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
-  <td style="width:45px;text-align:center">Depth</td>
+  <td style="width:45px;text-align:center;font-family:'Garamond';font-size: 14px;">Depth</td>
 </tr>
 <tr>
   <td><input id="ctrldb_thtP" value="8.0" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
   <td><input id="ctrldb_thtI" value="-0.03" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
   <td><input id="ctrldb_thtD" value="7.9" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
-  <td style="width:45px;text-align:center">Pitch</td>
+  <td style="width:45px;text-align:center;font-family:'Garamond';font-size: 14px;">Pitch</td>
 </tr>
 </table>
   
   
-<button id="PlaneGainsToggle" style="position:absolute;left:625px;top:100px;width:175px;height:25px;" onClick="TogglePlaneGainsTable();">Edit Hydroplane Controller</button>
+<button id="PlaneGainsToggle" style="position:absolute;left:625px;top:81px;width:184px;height:25px;" onClick="TogglePlaneGainsTable();">Edit Hydroplane Controller</button>
+  
+<button id="FreezeDepthToggle" style="position:absolute;left:625px;top:130px;width:114px;height:25px;" onClick="ToggleFreezeDepth();">Freeze Depth</button>
 
 
 <script type="text/javascript">
@@ -101,12 +103,13 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
             // position vector
             this.x = x;
             this.y = y;
-            this.xi = [0,0,0,1,0];
+            this.xi = [0,0,0,1.5,0];
             this.ui = [0,0,0,0,0,0];
             this.xeint = [0,0,0];
             this.depthDem = this.xi[3];
             this.pitchDem = 0;
             this.pitchSP = 0;
+            this.freezeDepth = 0;
           
             this.Compressibility = 1;
             this.compFactor = 1.5e-4;
@@ -236,6 +239,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                     xdi[3] = (1)*b.xi[1];
                     xdi[4] = (1)*b.xi[2];
                     
+                    
                   for (var f = 0; f< b.xi.length; f++){
                     b.xi[f] += dt*xdi[f];
                   }
@@ -286,7 +290,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                   }else{
                     b.pitchDem = b.pitchSP;//0*Math.PI/180;
                   }
-                  let maxPitch = 6;
+                  let maxPitch = 10;
                   if (b.pitchDem > maxPitch*Math.PI/180){
                     b.pitchDem = maxPitch*Math.PI/180;
                   }
@@ -532,15 +536,12 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                       }
                       b.surfaced = false;
                   }
-                  
-                  //Show/Hide Plane Gains Table
-                  //document.getElementById("PlaneGainsTable").style.display = "";  //Show the table
-//document.getElementById("PlaneGainsTable").display = "none";  //Hide the table
                   
                   
-                    // Update the sub's speed. Apply friction to gradually reduce energy.
-                    //b.vx = (friction * b.vx) + dvx;
-                    //b.vy = (friction * b.vy) + dvy;
+                    if (FreezeDepthToggle.innerHTML == 'Unfreeze Depth'){
+                      b.xi[1] = 0;
+                      b.xi[3] = b.xi[3];
+                    }
                 }
             }
         }
@@ -1235,11 +1236,11 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
     }
     function AnimationFrame() {
         // Physics constants
-    let SimStepsPerFrame = 2.0
+    let SimStepsPerFrame = 1;
     if (SimSpeedSlider.value == 0){
       SimStepsPerFrame = 0;
     }else{
-      SimStepsPerFrame = SimSpeedSlider.value;
+      SimStepsPerFrame = SimSpeedSlider.value/10;
     }; //1000 -- synonymous with simulation speed
     const FrameDelayMillis = SimStepsPerFrame*10;//10; //10
         const dt = (0.00125 * FrameDelayMillis) / SimStepsPerFrame; //0.0025
@@ -1273,9 +1274,19 @@ function isNumberKey(evt) {
   return true;
 }
 function TogglePlaneGainsTable(){
-  if(AftPlaneGainsTable.style.display=='none'){AftPlaneGainsTable.style.display='';FwdPlaneGainsTable.style.display='';}else{AftPlaneGainsTable.style.display='none';FwdPlaneGainsTable.style.display='none';};
+  if(AftPlaneGainsTable.style.display=='none'){AftPlaneGainsTable.style.display='';FwdPlaneGainsTable.style.display='';PlaneGainsToggle.innerHTML="Close Hydroplane Controller";}else{AftPlaneGainsTable.style.display='none';FwdPlaneGainsTable.style.display='none';PlaneGainsToggle.innerHTML="Edit Hydroplane Controller";};
   
   console.log('togglePlaneCtrl');
+}
+function ToggleFreezeDepth(){
+  if (FreezeDepthToggle.innerHTML == 'Unfreeze Depth'){
+    FreezeDepthToggle.innerHTML = 'Freeze Depth';
+  }else{
+    FreezeDepthToggle.innerHTML = 'Unfreeze Depth';
+  }
+  /*
+  if(FreezeDepthToggle.style.display=='none'){AftPlaneGainsTable.style.display='';FwdPlaneGainsTable.style.display='';PlaneGainsToggle.innerHTML="Close Hydroplane Controller";}else{AftPlaneGainsTable.style.display='none';FwdPlaneGainsTable.style.display='none';PlaneGainsToggle.innerHTML="Edit Hydroplane Controller";};
+  */
 }
 
 </script> 
