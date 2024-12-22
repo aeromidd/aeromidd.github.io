@@ -7,7 +7,7 @@
 </script>
   <style>
     table, th, td {
-  border: 2px solid black;
+  border: 1px solid black;
 }
   </style>
 </head>
@@ -27,33 +27,36 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
   <input type="range" min="0.0" max="5.0" step="1.0" value="2" class="slider" id="SimSpeedSlider" style="position:absolute; left:650px; top:50px; width: 120px;" oninput="this.nextElementSibling.value = this.value +'x'">
 <output style="position:absolute; left:775px; top:50px;" >2.0x</output>
 </div>
-  <table style="position:absolute; left:20px; top:150px;">
+<table id="PlaneGainsTable" style="position:absolute; left:5px; top:200px;">
 <tr>
   <td>Gains</td>
-  <td>P_z</td>
-  <td>I_z</td>
-  <td>D_z</td>
-  <td>P_θ</td>
-  <td>I_θ</td>
-  <td>D_θ</td>
+  <td style="width:45px;text-align:center">P</td>
+  <td style="width:45px;text-align:center">I</td>
+  <td style="width:45px;text-align:center">D</td>
 </tr>
 <tr>
-  <td>Bowplane</td>
-  <td><input id="ctrldb_zP" value="-0.4" step="0.01" type="number" style="width:50px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
-  <td><input id="ctrldb_zI" value="0.0" step="0.01" type="number" style="width:50px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
-  <td><input id="ctrldb_zD" value="-1.2" step="0.01" type="number" style="width:50px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
-  <td><input id="ctrldb_thtP" value="8.0" step="0.01" type="number" style="width:50px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
-  <td><input id="ctrldb_thtI" value="-0.03" step="0.01" type="number" style="width:50px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
-  <td><input id="ctrldb_thtD" value="7.9" step="0.01" type="number" style="width:50px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td>Fwdplane | Depth</td>
+  <td><input id="ctrldb_zP" value="-0.4" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="ctrldb_zI" value="0.0" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="ctrldb_zD" value="-1.2" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
 </tr>
 <tr>
-  <td>Sternplane</td>
-  <td><input id="ctrlds_zP" value="0.0" step="0.01" type="number" style="width:50px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
-  <td><input id="ctrlds_zI" value="0.0" step="0.01" type="number" style="width:50px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
-  <td><input id="ctrlds_zD" value="-0.9" step="0.01" type="number" style="width:50px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
-  <td><input id="ctrlds_thtP" value="-26.0" step="0.01" type="number" style="width:50px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
-  <td><input id="ctrlds_thtI" value="-0.121" step="0.01" type="number" style="width:50px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
-  <td><input id="ctrlds_thtD" value="-21.0" step="0.01" type="number" style="width:50px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td>Aftplane | Depth</td>
+  <td><input id="ctrlds_zP" value="0.0" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="ctrlds_zI" value="0.0" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="ctrlds_zD" value="-0.9" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+</tr>
+<tr>
+  <td>Fwdplane | Pitch</td>
+  <td><input id="ctrldb_thtP" value="8.0" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="ctrldb_thtI" value="-0.03" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="ctrldb_thtD" value="7.9" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+</tr>
+<tr>
+  <td>Aftplane | Pitch</td>
+  <td><input id="ctrlds_thtP" value="-26.0" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="ctrlds_thtI" value="-0.12" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="ctrlds_thtD" value="-21.0" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
 </tr>
 </table>
 
@@ -519,6 +522,11 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                       b.surfaced = false;
                   }
                   
+                  //Show/Hide Plane Gains Table
+                  //document.getElementById("PlaneGainsTable").display = "";  //Show the table
+//document.getElementById("PlaneGainsTable").display = "none";  //Hide the table
+                  
+                  
                     // Update the sub's speed. Apply friction to gradually reduce energy.
                     //b.vx = (friction * b.vx) + dvx;
                     //b.vy = (friction * b.vy) + dvy;
