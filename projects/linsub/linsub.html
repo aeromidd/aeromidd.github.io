@@ -5,6 +5,11 @@
 <title>JSub</title>
 <script type="text/javascript">
 </script>
+  <style>
+    table, th, td {
+  border: 2px solid black;
+}
+  </style>
 </head>
 <body>
 A/Z: manual sternplane | K/M: manual bowplane | T: toggle depth autopilot | I = reset integrators
@@ -15,11 +20,42 @@ C: toggle compressibility | V: toggle active trim compensator | B: toggle trim t
 <br>
 S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
 <br>
+  let dbG = [0, -1.2,    7.9, -0.4,    8,  0*-0.003, -0.025];
+                  let dsG = [0,   -0.9,    -21,      0,  -26,   0, -0.121];
 <canvas id="SimCanvas" tabindex='0'></canvas>
 <div class="slidecontainer">
   <input type="range" min="0.0" max="5.0" step="1.0" value="2" class="slider" id="SimSpeedSlider" style="position:absolute; left:650px; top:50px; width: 120px;" oninput="this.nextElementSibling.value = this.value +'x'">
 <output style="position:absolute; left:775px; top:50px;" >2.0x</output>
 </div>
+  <table style="position:absolute; left:20px; top:150px;">
+<tr>
+  <td>Gains</td>
+  <td>P_z</td>
+  <td>I_z</td>
+  <td>D_z</td>
+  <td>P_θ</td>
+  <td>I_θ</td>
+  <td>D_θ</td>
+</tr>
+<tr>
+  <td>Bowplane</td>
+  <td><input id="ctrldb_zP" value="-0.4" step="0.01" type="number" style="width:50px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="ctrldb_zI" value="0.0" step="0.01" type="number" style="width:50px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="ctrldb_zD" value="-1.2" step="0.01" type="number" style="width:50px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="ctrldb_thtP" value="8.0" step="0.01" type="number" style="width:50px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="ctrldb_thtI" value="-0.03" step="0.01" type="number" style="width:50px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="ctrldb_thtD" value="7.9" step="0.01" type="number" style="width:50px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+</tr>
+<tr>
+  <td>Sternplane</td>
+  <td><input id="ctrlds_zP" value="0.0" step="0.01" type="number" style="width:50px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="ctrlds_zI" value="0.0" step="0.01" type="number" style="width:50px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="ctrlds_zD" value="-0.9" step="0.01" type="number" style="width:50px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="ctrlds_thtP" value="-26.0" step="0.01" type="number" style="width:50px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="ctrlds_thtI" value="-0.121" step="0.01" type="number" style="width:50px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="ctrlds_thtD" value="-21.0" step="0.01" type="number" style="width:50px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+</tr>
+</table>
 
 <script type="text/javascript">
 'use strict';
@@ -253,9 +289,88 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                   let qErr = 0.05*b.pitchDem-b.xi[2];
                   let thtErr = b.pitchDem-b.xi[4];
                   
+                  //db
+                  var Gdb_zP
+                  if (ctrldb_zP.value!==""){
+                    Gdb_zP=ctrldb_zP.value;
+                  }else{
+                    Gdb_zP=0;
+                  }
+                  var Gdb_zI
+                  if (ctrldb_zI.value!==""){
+                    Gdb_zI=ctrldb_zI.value;
+                  }else{
+                    Gdb_zI=0;
+                  }
+                  var Gdb_zD
+                  if (ctrldb_zD.value!==""){
+                    Gdb_zD=ctrldb_zD.value;
+                  }else{
+                    Gdb_zD=0;
+                  }
+                  var Gdb_thtP
+                  if (ctrldb_thtP.value!==""){
+                    Gdb_thtP=ctrldb_thtP.value;
+                  }else{
+                    Gdb_thtP=0;
+                  }
+                  var Gdb_thtI
+                  if (ctrldb_thtI.value!==""){
+                    Gdb_thtI=ctrldb_thtI.value;
+                  }else{
+                    Gdb_thtI=0;
+                  }
+                  var Gdb_thtD
+                  if (ctrldb_thtD.value!==""){
+                    Gdb_thtD=ctrldb_thtD.value;
+                  }else{
+                    Gdb_thtD=0;
+                  }
+                  //ds
+                  var Gds_zP
+                  if (ctrlds_zP.value!==""){
+                    Gds_zP=ctrlds_zP.value;
+                  }else{
+                    Gds_zP=0;
+                  }
+                  var Gds_zI
+                  if (ctrlds_zI.value!==""){
+                    Gds_zI=ctrlds_zI.value;
+                  }else{
+                    Gds_zI=0;
+                  }
+                  var Gds_zD
+                  if (ctrlds_zD.value!==""){
+                    Gds_zD=ctrlds_zD.value;
+                  }else{
+                    Gds_zD=0;
+                  }
+                  var Gds_thtP
+                  if (ctrlds_thtP.value!==""){
+                    Gds_thtP=ctrlds_thtP.value;
+                  }else{
+                    Gds_thtP=0;
+                  }
+                  var Gds_thtI
+                  if (ctrlds_thtI.value!==""){
+                    Gds_thtI=ctrlds_thtI.value;
+                  }else{
+                    Gds_thtI=0;
+                  }
+                  var Gds_thtD
+                  if (ctrlds_thtD.value!==""){
+                    Gds_thtD=ctrlds_thtD.value;
+                  }else{
+                    Gds_thtD=0;
+                  }
+                  //console.log(Number(Gdb_z))
+                  
+                  let dbG = [0, Gdb_zD,    Gdb_thtD,      Gdb_zP,    Gdb_thtP,  Gdb_zI, Gdb_thtI];
+                  let dsG = [0, Gds_zD,    Gds_thtD,      Gds_zP,    Gds_thtP,  Gds_zI, Gds_thtI];
+                  /*)
                   let dbG = [0, -1.2,    7.9,      -0.4,    8,  0*-0.003, -0.025];
                   let dsG = [0,   -0.9,    -21,      0,  -26,   0, -0.121];
-                  
+                  */
                   /*
                   OGK
                   let dbG = [0,    -1.2,    -0.8,      -0.4,    -0.8,    0,    0];
@@ -1132,6 +1247,12 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
         AnimationFrame();
     }
 })();
+function isNumberKey(evt) {
+  var charCode = (evt.which) ? evt.which : evt.keyCode
+  if (charCode > 31 && (charCode != 46 && charCode != 45 &&(charCode < 48 || charCode > 57)))
+    return false;
+  return true;
+}
 
 </script> 
 </body>
