@@ -20,45 +20,56 @@ C: toggle compressibility | V: toggle active trim compensator | B: toggle trim t
 <br>
 S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
 <br>
-  let dbG = [0, -1.2,    7.9, -0.4,    8,  0*-0.003, -0.025];
-                  let dsG = [0,   -0.9,    -21,      0,  -26,   0, -0.121];
 <canvas id="SimCanvas" tabindex='0'></canvas>
 <div class="slidecontainer">
   <input type="range" min="0.0" max="5.0" step="1.0" value="2" class="slider" id="SimSpeedSlider" style="position:absolute; left:650px; top:50px; width: 120px;" oninput="this.nextElementSibling.value = this.value +'x'">
 <output style="position:absolute; left:775px; top:50px;" >2.0x</output>
 </div>
-<table id="PlaneGainsTable" style="position:absolute; left:5px; top:200px;">
+<table id="AftPlaneGainsTable" style="position:absolute; left:8px; top:200px; display:none">
 <tr>
-  <td>Gains</td>
+  <td style="width:45px;text-align:center">Aftplane Control</td>
   <td style="width:45px;text-align:center">P</td>
   <td style="width:45px;text-align:center">I</td>
   <td style="width:45px;text-align:center">D</td>
 </tr>
 <tr>
-  <td>Fwdplane | Depth</td>
-  <td><input id="ctrldb_zP" value="-0.4" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
-  <td><input id="ctrldb_zI" value="0.0" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
-  <td><input id="ctrldb_zD" value="-1.2" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
-</tr>
-<tr>
-  <td>Aftplane | Depth</td>
+  <td style="width:45px;text-align:center">Depth</td>
   <td><input id="ctrlds_zP" value="0.0" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
   <td><input id="ctrlds_zI" value="0.0" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
   <td><input id="ctrlds_zD" value="-0.9" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
 </tr>
 <tr>
-  <td>Fwdplane | Pitch</td>
-  <td><input id="ctrldb_thtP" value="8.0" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
-  <td><input id="ctrldb_thtI" value="-0.03" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
-  <td><input id="ctrldb_thtD" value="7.9" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
-</tr>
-<tr>
-  <td>Aftplane | Pitch</td>
+  <td style="width:45px;text-align:center">Pitch</td>
   <td><input id="ctrlds_thtP" value="-26.0" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
   <td><input id="ctrlds_thtI" value="-0.12" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
   <td><input id="ctrlds_thtD" value="-21.0" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
 </tr>
 </table>
+  
+  <table id="FwdPlaneGainsTable" style="position:absolute; left:563px; top:200px; display:none">
+<tr>
+  <td style="width:45px;text-align:center">P</td>
+  <td style="width:45px;text-align:center">I</td>
+  <td style="width:45px;text-align:center">D</td>
+  <td style="width:45px;text-align:center">Fwdplane Control</td>
+</tr>
+<tr>
+  <td><input id="ctrldb_zP" value="-0.4" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="ctrldb_zI" value="0.0" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="ctrldb_zD" value="-1.2" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td style="width:45px;text-align:center">Depth</td>
+</tr>
+<tr>
+  <td><input id="ctrldb_thtP" value="8.0" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="ctrldb_thtI" value="-0.03" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="ctrldb_thtD" value="7.9" step="0.01" type="number" style="width:45px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td style="width:45px;text-align:center">Pitch</td>
+</tr>
+</table>
+  
+  
+<button id="PlaneGainsToggle" style="position:absolute;left:625px;top:100px;width:175px;height:25px;" onClick="TogglePlaneGainsTable();">Edit Hydroplane Controller</button>
+
 
 <script type="text/javascript">
 'use strict';
@@ -523,7 +534,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                   }
                   
                   //Show/Hide Plane Gains Table
-                  //document.getElementById("PlaneGainsTable").display = "";  //Show the table
+                  //document.getElementById("PlaneGainsTable").style.display = "";  //Show the table
 //document.getElementById("PlaneGainsTable").display = "none";  //Hide the table
                   
                   
@@ -1260,6 +1271,11 @@ function isNumberKey(evt) {
   if (charCode > 31 && (charCode != 46 && charCode != 45 &&(charCode < 48 || charCode > 57)))
     return false;
   return true;
+}
+function TogglePlaneGainsTable(){
+  if(AftPlaneGainsTable.style.display=='none'){AftPlaneGainsTable.style.display='';FwdPlaneGainsTable.style.display='';}else{AftPlaneGainsTable.style.display='none';FwdPlaneGainsTable.style.display='none';};
+  
+  console.log('togglePlaneCtrl');
 }
 
 </script> 
