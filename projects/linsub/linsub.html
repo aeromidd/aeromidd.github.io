@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
 <head>
 <meta charset=utf-8 />
@@ -75,6 +75,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
 <button id="RTPDbutton" style="position:absolute;left:625px;top:155px;width:180px;height:25px;" value="false" onClick="RTPD();">Order Periscope Depth</button>
   
 <button id="RTSDbutton" style="position:absolute;left:625px;top:180px;width:180px;height:25px;" value="false"  onClick="RTSD();">Order Standard Depth</button>
+<button id="Timerbutton" style="position:absolute;left:325px;top:180px;width:180px;height:25px;" value="false" >0</button>
 
 
 <script type="text/javascript">
@@ -294,7 +295,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                   }else{
                     b.pitchDem = b.pitchSP;//0*Math.PI/180;
                   }
-                  let maxPitch = 10;
+                  let maxPitch = 0; //10
                   if (b.pitchDem > maxPitch*Math.PI/180){
                     b.pitchDem = maxPitch*Math.PI/180;
                   }
@@ -681,7 +682,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
         ResetStates(){
           var b;
           for (b of this.subList) {
-            b.xi = [0,0,0,1,0];
+            b.xi = [0,0,0,1.5,0];
             b.SeaState = 0;
             b.SeaFixed = false;
             b.depthDem = b.xi[3];
@@ -1249,6 +1250,7 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
         sim.SeaSelect(e.keyCode);
       }
     }
+    var time = 0;
     function AnimationFrame() {
         // Physics constants
     let SimStepsPerFrame = 1;
@@ -1261,8 +1263,15 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
         const dt = (0.00125 * FrameDelayMillis) / SimStepsPerFrame; //0.0025
         for (let i=0; i < SimStepsPerFrame; ++i) {
             sim.Update(dt);
+            time = time+dt;
         }
         Render(sim);
+        
+        //Timerbutton.innerHTML = dt;
+        if (Math.round(time*10)%5 == 0){
+          Timerbutton.innerHTML = time.toFixed(2);
+        }
+        //*/
         window.setTimeout(AnimationFrame, 10); //FrameDelayMillis
     }
     var lastDownTarget, canvas;
@@ -1306,24 +1315,24 @@ function ToggleFreezeDepth(){
     function RTPD(){
       if (RTPDbutton.value=="false"){
         RTPDbutton.value="true";
-        RTPDbutton.style.backgroundColor= '#04AA6D';
+        RTPDbutton.style.backgroundColor= '#ffca01';
         RTSDbutton.value="false";
         RTSDbutton.style.backgroundColor= '#f0f0f0';
       }else{
-        RTPDbutton.value="false";
-        RTPDbutton.style.backgroundColor= '#f0f0f0';
+        //RTPDbutton.value="false";
+        //RTPDbutton.style.backgroundColor= '#f0f0f0';
       }
       //console.log(RTPDbutton.value);
     }
       function RTSD(){
       if (RTSDbutton.value=="false"){
         RTSDbutton.value="true";
-        RTSDbutton.style.backgroundColor= '#04AA6D';
+        RTSDbutton.style.backgroundColor= '#ffca01';
         RTPDbutton.value="false";
         RTPDbutton.style.backgroundColor= '#f0f0f0';
       }else{
-        RTSDbutton.value="false";
-        RTSDbutton.style.backgroundColor= '#f0f0f0';
+        //RTSDbutton.value="false";
+        //RTSDbutton.style.backgroundColor= '#f0f0f0';
       }
       //console.log(RTSDbutton.value);
     }
