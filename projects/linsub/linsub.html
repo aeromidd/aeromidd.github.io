@@ -22,7 +22,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
 <br>
 <canvas id="SimCanvas" tabindex='0'></canvas>
 <div class="slidecontainer">
-  <input type="range" min="0" max="30" step="10" value="10" class="slider" id="SimSpeedSlider" style="position:absolute; left:650px; top:50px; width: 120px;" oninput="this.nextElementSibling.value = this.value +'x'">
+  <input type="range" min="0" max="50" step="10" value="10" class="slider" id="SimSpeedSlider" style="position:absolute; left:650px; top:50px; width: 120px;" oninput="this.nextElementSibling.value = this.value +'x'">
 <output style="position:absolute; left:775px; top:50px;" >10x</output>
 </div>
 <table id="AftPlaneGainsTable" style="position:absolute; left:8px; top:200px; display:none">
@@ -70,6 +70,8 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
   
 <button id="PlaneGainsToggle" style="position:absolute;left:625px;top:81px;width:184px;height:25px;" onClick="TogglePlaneGainsTable();">Edit Hydroplane Controller</button>
   
+<button id="readoutThing" style="position:absolute;left:25px;top:281px;width:284px;height:25px;" onClick="">READOUT</button>
+  
 <button id="FreezeDepthToggle" style="position:absolute;left:625px;top:130px;width:114px;height:25px;" onClick="ToggleFreezeDepth();">Freeze Depth</button>
   
 <button id="RTPDbutton" style="position:absolute;left:625px;top:155px;width:180px;height:25px;" value="false" onClick="RTPD();">Order Periscope Depth</button>
@@ -102,21 +104,23 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
         constructor(mass, anchor, x, y, xi) {
             this.mass = mass;
             this.anchor = anchor;   // 0=mobile, positive=fixed in place
-            this.L = 1.5; //boat length
+            this.L = 1.5; //boat length // length dimensions are in 50m increments
             this.h = this.L/15; //boat height
             this.dsl =.1;  // hydroplane length
             // position vector
             this.x = x;
             this.y = y;
             this.xi = [0,0,0,1.5,0];
-            this.ui = [0,0,0,0,0,0];
+            this.ui = [0,0,0,0,0];
+            this.uiprev = [0,0,0,0,0];
+            this.maxplanerate = (25*Math.PI/180);
             this.xeint = [0,0,0];
             this.depthDem = this.xi[3];
             this.pitchDem = 0;
             this.pitchSP = 0;
             this.freezeDepth = 0;
           
-            this.Compressibility = 1;
+            this.Compressibility = 0;
             this.compFactor = 1.5e-4;
             this.TrimTarget = 'order';//'order' or 'measurement';
             this.TrimCompensator = 1;
@@ -126,6 +130,38 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
             this.trimErr = (50*this.compzd/this.compFactor); 
             this.txi = [0,0,0];
             this.tui = [0,0];
+            //plant matrices
+            this.A = [[0,0,0,0,0,0,0],
+            [0,-0.0584,-3.07,0,-0.263,0,0],
+            [0,0.0051,-0.377,0,0.0114,0,0],
+            [0,1,0,0,0,0,0],
+            [0,0,1,0,0,0,0],
+            [0,0,0,1,0,0,0],
+            [0,0,0,0,1,0,0],
+            ];
+            this.B = [[0,0,0,0,0],
+            [0,0.0092,-0.337,1e-05,-1.18e-07],
+            [0,0.0736,-0.0698,-1.18e-07,5.77e-08],
+            [0,0,0,0,0],
+            [0,0,0,0,0],
+            [0,0,0,0,0],
+            [0,0,0,0,0],
+            ];
+            //CARE:
+            this.dbG = [0, -1.2,  7.9,   -0.4,  8, -0.003, -0.025];
+            this.dsG = [0, -0.9,  -21,    0, -26,   0.002, -0.121];
+            ctrldb_zD.value = this.dbG[1];
+            ctrldb_zP.value = this.dbG[3];
+            ctrldb_zI.value = this.dbG[5];
+            ctrldb_thtD.value = this.dbG[2];
+            ctrldb_thtP.value = this.dbG[4];
+            ctrldb_thtI.value = this.dbG[6];
+            ctrlds_zD.value = this.dsG[1];
+            ctrlds_zP.value = this.dsG[3];
+            ctrlds_zI.value = this.dsG[5];
+            ctrlds_thtD.value = this.dsG[2];
+            ctrlds_thtP.value = this.dsG[4];
+            ctrlds_thtI.value = this.dsG[6];
           
             this.maxTrimz = 275;
             this.minTrimz = 2.5;
@@ -238,16 +274,81 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                       //(b.compzd-b.trimzd)/b.compFactor;
                   
                     //zd q z tht
+                    //xdi = [0,b.compzd-b.trimzd+0.0,0,0,0];
+                    /*
+                    for (var o = o; o<xdi.length; o++){
+                      for (var state = 0; state<b.A[0].length; state++){
+                        xdi[o] += b.A[o][state]*b.xi[state]; //A*x
+                      }
+                      for (var input = 0; input<b.B[0].length; input++){
+                        xdi[o] += b.B[o][input]*b.ui[input]; //B*u
+                      }
+                    }
+                    //*/
+                    //var xdi_s = [0,0,0,0,0,0,0];
+                    //var xdi_i = [0,0,0,0,0];
+                  
+                    
+                    //var xdi_f = matrixmultiply([[0,0,0,0,0],[0,1,2,3,4],[0,5,6,7,8]],[[0],[2],[2],[2],[2]]);
+                    /*
+                    function matrixmultiply(m1, m2) {
+                        var result = [];
+                        for (var i = 0; i < m1.length; i++) {
+                            result[i] = [];
+                            for (var j = 0; j < m2[0].length; j++) {
+                                var sum = 0;
+                                for (var k = 0; k < m1[0].length; k++) {
+                                    sum += m1[i][k] * m2[k][j];
+                                }
+                                result[i][j] = sum;
+                            }
+                        }
+                        return result;
+                    };
+                    var xi_s = [
+                                [b.xi[0]],
+                                [b.xi[1]],
+                                [b.xi[2]],
+                                [b.xi[3]],
+                                [b.xi[4]],
+                                [b.xi[5]],
+                                ];
+                    //console.log(xi_s)
+                    var xi_u = [
+                                [b.ui[0]],
+                                [b.ui[1]],
+                                [b.ui[2]],
+                                [b.ui[3]],
+                                [b.ui[4]],
+                                [b.ui[5]],
+                                ];
+                    var xdi_s = matrixmultiply(b.A,xi_s);
+                    var xdi_u = matrixmultiply(b.B,xi_u);
+                    xdi = xdi_s+xdi_u;
+                    readoutThing.innerHTML = (b.A[2][2]);
+                    //*/
+                    
+                    
+                    
+                    xdi[0] = 0;
+                    xdi[1] = (b.A[1][1])*b.xi[1]+(b.A[1][2])*b.xi[2]+(b.A[1][4])*b.xi[4]+ b.compzd-b.trimzd + (b.B[1][1])*Dived*b.ui[1]+(b.B[1][2])*Dived*b.ui[2]+(b.B[1][3])*b.ui[3]+(b.B[1][4])*b.ui[4];
+                    xdi[2] = (b.A[2][1])*b.xi[1]+(b.A[2][2])*b.xi[2]+(b.A[2][4])*b.xi[4]  + (b.B[2][1])*Dived*b.ui[1]+(b.B[2][2])*Dived*b.ui[2]+(b.B[2][3])*b.ui[3]+(b.B[2][4])*b.ui[4];
+                    xdi[3] = (1)*b.xi[1];
+                    xdi[4] = (1)*b.xi[2];
+                    //*/
+                    /*
                     xdi[0] = 0;
                     xdi[1] = (-0.0584)*b.xi[1]+(-3.0671)*b.xi[2]+(-0.2633)*b.xi[4]+ b.compzd-b.trimzd + (0.0092)*Dived*b.ui[1]+(-0.337)*Dived*b.ui[2]+(1.001e-05)*b.ui[3]+(-1.18e-07)*b.ui[4];
                     xdi[2] = (0.0051)*b.xi[1]+(-0.3767)*b.xi[2]+(0.0114)*b.xi[4]  + (0.0736)*Dived*b.ui[1]+(-0.0698)*Dived*b.ui[2]+(-1.18e-07)*b.ui[3]+(5.767e-08)*b.ui[4];
                     xdi[3] = (1)*b.xi[1];
                     xdi[4] = (1)*b.xi[2];
+                    */
                     
                     
                   for (var f = 0; f< b.xi.length; f++){
                     b.xi[f] += dt*xdi[f];
                   }
+                  
                   
                   
                   let txdi = [];
@@ -295,7 +396,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                   }else{
                     b.pitchDem = b.pitchSP;//0*Math.PI/180;
                   }
-                  let maxPitch = 0; //10
+                  let maxPitch = 5; //10
                   if (b.pitchDem > maxPitch*Math.PI/180){
                     b.pitchDem = maxPitch*Math.PI/180;
                   }
@@ -313,6 +414,9 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                   let thtErr = b.pitchDem-b.xi[4];
                   
                   //db
+                  /*
+                  //*/
+                  //
                   var Gdb_zP
                   if (ctrldb_zP.value!==""){
                     Gdb_zP=ctrldb_zP.value;
@@ -350,6 +454,9 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                     Gdb_thtD=0;
                   }
                   //ds
+                  /*
+                  //*/
+                  //
                   var Gds_zP
                   if (ctrlds_zP.value!==""){
                     Gds_zP=ctrlds_zP.value;
@@ -437,11 +544,19 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                   
                   
                   if (b.AP[1] == 1){
+                  b.uiprev[1] = b.ui[1];
                   b.ui[1] = zdErr*dbG[1]+qErr*dbG[2]+zErr*dbG[3]+thtErr*dbG[4]+b.xeint[1]*dbG[5]+b.xeint[2]*dbG[6];
+                    if (Math.abs(b.ui[1]-b.uiprev[1])>b.maxplanerate*0.05){
+                      b.ui[1] = b.uiprev[1]+Math.sign(b.ui[1]-b.uiprev[1])*b.maxplanerate*0.05;
+                    }
                   }
                   
                   if (b.AP[2] == 1){
+                  b.uiprev[2] = b.ui[2];
                   b.ui[2] = zdErr*dsG[1]+qErr*dsG[2]+zErr*dsG[3]+thtErr*dsG[4]+b.xeint[1]*dsG[5]+b.xeint[2]*dsG[6];
+                    if (Math.abs(b.ui[2]-b.uiprev[2])>b.maxplanerate*0.05){
+                      b.ui[2] = b.uiprev[2]+Math.sign(b.ui[2]-b.uiprev[2])*b.maxplanerate*0.05;
+                    }
                   }
               
                   if (Math.abs(b.ui[1]) >= 30*Math.PI/180){
@@ -569,6 +684,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
     //console.log('RTPD clicked!');
     sim.depthOrder(1.5);
 }); 
+                  
 //*/
                 }
             }
