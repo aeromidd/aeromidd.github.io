@@ -76,11 +76,11 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
   
 <button id="readoutThing" style="position:absolute;left:25px;top:281px;width:284px;height:25px;" onClick="">READOUT</button>
   
-<button id="FreezeDepthToggle" style="position:absolute;left:625px;top:130px;width:114px;height:25px;" onClick="ToggleFreezeDepth();">Freeze Depth</button>
+<button id="FreezeDepthToggle" style="position:absolute;left:425px;top:130px;width:114px;height:25px;" onClick="ToggleFreezeDepth();">Freeze Depth</button>
   
-<button id="RTPDbutton" style="position:absolute;left:625px;top:155px;width:180px;height:25px;" value="false" onClick="RTPD();">Order Periscope Depth</button>
+<button id="RTPDbutton" style="position:absolute;left:625px;top:105px;width:180px;height:25px;" value="false" onClick="RTPD();">Order Periscope Depth</button>
   
-<button id="RTSDbutton" style="position:absolute;left:625px;top:180px;width:180px;height:25px;" value="false"  onClick="RTSD();">Order Standard Depth</button>
+<button id="RTSDbutton" style="position:absolute;left:625px;top:130px;width:180px;height:25px;" value="false"  onClick="RTSD();">Order Standard Depth</button>
 <button id="Timerbutton" style="position:absolute;left:50px;top:150px;width:180px;height:25px;" value="false" >0</button>
 
 
@@ -175,9 +175,12 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
             this.minTrimz = 2.5;
             this.teint = 0;
             
+            this.periodegM = 1;
             this.periodegS = 1;
+            this.periodegS2 = 1;
             this.periodegC = 1;
             this.periodegInc = 5;
+            this.periodegInc2 = 12;
           
             this.SeaState = 0.49;
             this.SeaFixed = 0;
@@ -196,9 +199,9 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
             this.zh = new Array(200);
             this.zh.fill(this.xi[3]*this.SF)
             
-            this.ssFZ = new Array(500);
+            this.ssFZ = new Array(1250);
             this.ssFZ.fill(0);
-            this.ssMY = new Array(500);
+            this.ssMY = new Array(1250);
             this.ssMY.fill(0);
           
             this.surfaced = false;
@@ -210,6 +213,11 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
             // force vector
             this.fx = 0.0;
             this.fy = 0.0;
+          
+            this.waveHeight = 0;
+            this.trailCounter = 0;
+            this.trailCounterCap = -1;
+            this.waveshimmer = 0;
         }
 
         Distance(x, y) {
@@ -397,7 +405,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                   
                   //let depthDem = 3; //b.xi[3]
                   
-                  let zErr = (b.depthDem-b.xi[3]);//*50;
+                  let zErr = (b.depthDem-(b.xi[3]+b.waveHeight)); // depth error + wave height sensor noise
                   
                   //let zdErr = 0.2*5*0.8*(zErr)*Math.PI/180-b.xi[1];
                   
@@ -566,16 +574,11 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                       b.tui[1] = Math.min(maxtui,Math.max(-maxtui,b.tui[1]));
                   }
                   
-                  if (Math.abs(b.ui[1])>45*Math.PI/180){
-                    b.uint[1] = b.uint[1]+0*dt;
-                  }else{
-                    b.uint[1] = b.uint[1]+dbG[5]*zdErr*dt+dbG[6]*thtErr*dt;
-                  }
-                  if (Math.abs(b.ui[2])>45*Math.PI/180){
-                    b.uint[2] = b.uint[2]+0*dt;
-                  }else{
-                    b.uint[2] = b.uint[2]+dsG[5]*zdErr*dt+dsG[6]*thtErr*dt;
-                  }
+                  // integrators:
+                  
+                  b.uint[1] = Math.max(Math.min(b.uint[1]+dbG[5]*zdErr*dt+dbG[6]*thtErr*dt,45*Math.PI/180),-45*Math.PI/180);
+                  
+                    b.uint[2] = Math.max(Math.min(b.uint[2]+dsG[5]*zdErr*dt+dsG[6]*thtErr*dt,45*Math.PI/180),-45*Math.PI/180);
                   
                   if (b.AP[1] == 1){
                     b.uiprev[1] = b.ui[1];
@@ -616,15 +619,25 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                     }
                   }
                   
-                  let ssFZmag = 500*9.81*1e3*b.SeaState;//1e4*(2e3/7)*b.SeaState;//(2e4/7)*b.SeaState;
-                  let ssMYmag =  ssFZmag*(b.L/b.SF);//1e6*(2e5/7)*b.SeaState;//(1e6/7)*b.SeaState;
+                  b.SeaForcePerScreenUnit = 0.25*1e3*9.81;
+                  let ssFZmag = b.SeaForcePerScreenUnit*b.SeaState; // Newtons per FM trail array element (each approx 2.48m in length)
+                  let ssMYmag =  0*ssFZmag*(b.L/b.SF);// Newton Metres per FM trail array element (each roughly 2.5m in length)
                   
                   var periodegInc
                   periodegInc = b.periodegInc+2*(Math.random()-0.5)/1;
-                  if (periodegInc > 15){
-                      periodegInc = 15;
-                  }else if (periodegInc < 2){
-                    periodegInc = 2;
+                  if (periodegInc > 20){
+                      periodegInc = 20;
+                  }else if (periodegInc < 0.5){
+                    periodegInc = 0.5;
+                  }
+                  b.periodegInc = periodegInc;
+                  
+                  var periodegInc2
+                  periodegInc2 = b.periodegInc2+2*(Math.random()-0.5)/1;
+                  if (periodegInc2 > 15){
+                      periodegInc2 = 15;
+                  }else if (periodegInc2 < 2){
+                    periodegInc2 = 2;
                   }
                   b.periodegInc = periodegInc;
                   
@@ -635,6 +648,13 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                   }
                   b.periodegS = periodegS;
                   
+                  var periodegS2
+                  periodegS2 = b.periodegS2+periodegInc2+(Math.random()-0.5)/1000;
+                  if (periodegS2 == 6360+periodegInc2){
+                      periodegS2 = periodegInc2;
+                  }
+                  b.periodegS2 = periodegS2;
+                  
                   var periodegC
                   periodegC = b.periodegC+periodegInc+(Math.random()-0.5)/1000;
                   if (periodegC == 6360+periodegInc){
@@ -643,32 +663,74 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                   b.periodegC = periodegC;
                   
                   var ssFZdummy;
-                  var f_;
-                  for (var f = 0; f< b.ssFZ.length-1; f=f+1){
-                    f_ = (Math.round(f*10)/10)
-                    if (f_%1==0){
-                      ssFZdummy = b.ssFZ[f_+1];
-                      b.ssFZ[f_] = ssFZdummy;
-                    }
+                  var ssFZB;
+                  var sharpness_factor = 0.02;
+                  if (b.trailCounter > b.trailCounterCap){
+                  for (var f = 0; f< b.ssFZ.length-1; f++){
+                    ssFZdummy = b.ssFZ[f+1];
+                    b.ssFZ[f] = ssFZdummy;
+                  }
                   }
-                  b.ssFZ[b.ssFZ.length-1] = ssFZmag*(Math.sin(b.periodegS*Math.PI/180)+Math.cos((10+b.periodegC)*Math.PI/180)); //b.ssFZ[b.ssFZ.length-2]+
+                  ssFZB = 2*ssFZmag*(0.3*Math.sin(0.3*b.periodegS*Math.PI/180)+0.2*Math.sin(0.3*(57+b.periodegS2)*Math.PI/180)+0.5*Math.cos(0.3*(12+b.periodegC)*Math.PI/180));
+                  if (ssFZB < 0){
+                    ssFZB = -Math.pow(ssFZB,1);
+                  }else{
+                    ssFZB = 0.9*ssFZB;
+                  }
+                  b.ssFZ[b.ssFZ.length-1] = ssFZB-ssFZmag;
+                  
+                  //b.ssFZ[b.ssFZ.length-1] = (1/1e0)*(b.ssFZ[b.ssFZ.length-1] - (sharpness_factor * Math.pow(Math.max(0, b.ssFZ[b.ssFZ.length-1]),2) + 0.5 * Math.abs(Math.min(0, b.ssFZ[b.ssFZ.length-1]))));
+                  //b.ssFZ[b.ssFZ.length-2]+
                   //console.log(b.ssFZ[b.ssFZ.length-1])
                   
                   var ssMYdummy;
+                  if (b.trailCounter > b.trailCounterCap){
                   for (var f = 0; f< b.ssMY.length-1; f++){
                     ssMYdummy = b.ssMY[f+1];
                     b.ssMY[f] = ssMYdummy;
                   }
+                  }
                   b.ssMY[b.ssMY.length-1] = ssMYmag*(Math.sin((40+b.periodegS)*Math.PI/180)+Math.cos((60+b.periodegC)*Math.PI/180));//b.ssMY[b.ssMY.length-2]+ssMYmag*(Math.random()-0.5)/1; //b.ssMY[b.ssMY.length-2]+
                   
-                  let seaDist = b.xi[3]*3;
+                  /*
+                  let seaDist = b.xi[3]-10;
                   if (seaDist < 1){
                     seaDist = 1;
                   }
+                  */
+                  let seaDist = Math.max(Math.min((Math.pow(b.xi[3]/20,-1.2)-0.1),1),0);
+                  
+                  b.waveHeight = seaDist*(-1)*b.ssFZ[b.ssFZ.length/2]/((2/b.SF)*b.SeaForcePerScreenUnit)/b.SF;
+                  readoutThing.innerHTML = 'waveHeight = '+(b.waveHeight).toFixed(3).toString();
+                  
                   //Math.ceil(b.ssFZ.length/2)
-                  b.ui[3] = b.ssFZ[Math.ceil(b.ssFZ.length/2)]*(1/seaDist);
-                  b.ui[4] = b.ssMY[Math.ceil(b.ssMY.length/2)]*(1/seaDist);
-                  
+                  // old sea force/moment application
+                  //b.ui[3] = b.ssFZ[Math.ceil(b.ssFZ.length/2)]*(1/seaDist);
+                  //b.ui[4] = b.ssMY[Math.ceil(b.ssMY.length/2)]*(1/seaDist);
+                  // new attempt (summed force and moment across boat):
+                  var vehicleSpan = 124*b.L;//FMdatapoints covering length of boat in screensize
+                  let trailUnitsToMetres = (vehicleSpan/(b.L/b.SF));
+                      
+                  b.ui[3] = (seaDist)*(b.ssFZ.slice(750-0.5*vehicleSpan/2, 750+0.5*vehicleSpan/2)).reduce((partialSum, a) => partialSum + a, 0);
+                  
+                  var cgx = 0.33; //relative to centre of boat
+                  var momentChunksAft = (b.ssFZ.slice(750-0.5*vehicleSpan/2, 750+cgx*vehicleSpan/2));
+                  var momentChunksFwd = (b.ssFZ.slice(750+cgx*vehicleSpan/2,750+0.8*vehicleSpan/2));
+                  
+                  for (var im = 0; im < momentChunksAft.length; im++){
+                    momentChunksAft[im] = momentChunksAft[im]*(momentChunksAft.length-im)*trailUnitsToMetres;
+                  }
+                  for (var im = 0; im < momentChunksFwd.length; im++){
+                    momentChunksFwd[im] = -1*momentChunksFwd[im]*(im)*trailUnitsToMetres;
+                  }
+                  
+                  var allMomentChunks = momentChunksAft.concat(momentChunksFwd);
+                  
+                  
+                  b.ui[4] = (seaDist)*allMomentChunks.reduce((partialSum, a) => partialSum + a, 0);
+                  //readoutThing.innerHTML = [b.ui[3].toFixed(3),b.ui[4].toFixed(3)];
+                  
+                  //hard limit on pitch.
                   if (b.xi[4] > 45*Math.PI/180){
                     b.xi[4] = 45*Math.PI/180;
                   }else if(b.xi[4]<-45*Math.PI/180){
@@ -701,6 +763,9 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                   }
                   //*/
                   
+                 //sea wave height noise on depth sensor
+                 
+                  
                   
                     if (FreezeDepthToggle.innerHTML == 'Unfreeze Depth'){
                       b.xi[1] = 0;
@@ -714,9 +779,13 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
 }); RTPDbutton.addEventListener('click', function() { 
     console.clear();
     //console.log('RTPD clicked!');
-    sim.depthOrder(10);
+    sim.depthOrder(12);
 }); 
-                  
+                  if (b.trailCounter > b.trailCounterCap){
+                    b.trailCounter = 0;
+                  }else{
+                    b.trailCounter += 1;
+                  };
 //*/
                 }
             }
@@ -1075,22 +1144,49 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
                 }
               
                 //Waves
+                b.waveshimmer = 90*1/57;//+= SimSpeedSlider.value*0.5*Math.PI/180;
+                if (b.waveshimmer>1*Math.PI){
+                  b.waveshimmer = b.waveshimmer-1*Math.PI;
+                }
                 context.lineWidth = 1;
                 context.beginPath();
                 context.moveTo(ScreenHor(-4),ScreenVer(0));
-                for (let i=1; i <= (b.ssFZ).length; i++) {
-                  context.lineTo(ScreenHor(-4+i*0.02),ScreenVer(0+b.ssFZ[i]/((2/b.SF)*500*9.81*1e3)));
-                }
+                
+                var bigwaveONidx = [];
+                var bigwaveOFFidx = [];
+                for (let i=0; i < (b.ssFZ).length; i++) {
+                  /*
+                  if (i>0){
+                    if (b.ssFZ[i] != b.ssFZ[i-1]){
+                      //if (b.ssFZ[i] >= 0){
+                        bigwaveONidx.push(i);
+                      //}else{
+                        //bigwaveOFFidx.push(i);
+                      }
+                    }
+                  }
+                  */
+                  context.lineTo(ScreenHor(-4+8.1*i/b.ssFZ.length),ScreenVer(0+Math.sin(b.waveshimmer*(5))*b.ssFZ[i]/((2/b.SF)*b.SeaForcePerScreenUnit)));
+                }
                 context.strokeStyle = '#00508a';
                 context.stroke();
                 context.lineWidth = 1;
                 context.beginPath();
                 context.moveTo(ScreenHor(-4),ScreenVer(0));
-                for (let i=1; i <= (b.ssMY).length; i++) {
-                  context.lineTo(ScreenHor(-4+i*0.02),ScreenVer(0+b.ssMY[i]/((2/b.SF)*(b.L/b.SF)*500*9.81*1e3)));
+                for (let i=0; i < (b.ssMY).length; i++) {
+                  context.lineTo(ScreenHor(-4+8.1*i/b.ssMY.length),ScreenVer(0+Math.sin(b.waveshimmer*(8.22))*b.ssMY[i]/((2/b.SF)*(b.L/b.SF)*b.SeaForcePerScreenUnit)));
                 }
                 context.strokeStyle = '#129aca';
                 context.stroke();
+                /*
+                var G;
+                for (let i=1; i < bigwaveON.length; i++){
+                  G[i] = context.createLinearGradient( ScreenHor(-4+8.1*bigwaveON[i-1]/b.ssFZ.length), ScreenVer(-0.2), ScreenHor(-4+8.1*bigwaveON[i]/b.ssFZ.length), ScreenVer(8));
+          G[i].addColorStop(0.01, "rgba(255,255,255,0.0)");
+G[i].addColorStop(0.06, "rgba(0,150,170,0.1)");
+G[i].addColorStop(1.0, "rgba(0,150,170,0.1)");
+                }
+                */
               
                 //hull bottom
                 context.lineWidth = 1;
