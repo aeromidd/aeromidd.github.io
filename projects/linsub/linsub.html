@@ -24,7 +24,8 @@ C: toggle compressibility | V: toggle active trim compensator | B: toggle trim t
 <br>
 S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
 <br>
-<canvas id="SimCanvas" tabindex='0'></canvas>
+<canvas id="BlurredSimCanvas" tabindex='0'></canvas>
+<canvas id="SimCanvas" tabindex='0' style="position:absolute;top:75px;left:5px;"></canvas>
 <div class="slidecontainer">
   <input type="range" min="0" max="5" step="1" value="1" class="slider" id="SimSpeedSlider" style="position:absolute; left:650px; top:50px; width: 120px;" oninput="this.nextElementSibling.value = this.value +'x'">
 <output style="position:absolute; left:775px; top:50px;" >1x</output>
@@ -83,6 +84,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
 <button id="RTSDbutton" style="position:absolute;left:625px;top:130px;width:180px;height:25px;" value="false"  onClick="RTSD();">Order Standard Depth</button>
 <button id="Timerbutton" style="position:absolute;left:50px;top:150px;width:180px;height:25px;" value="false" >0</button>
 
+<input type="checkbox" style="position:absolute;left:5px;top:90px;" id="NiceGraphicsON" checked>
 
 <script type="text/javascript">
 'use strict';
@@ -991,23 +993,39 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
 
     function Render(sim) {
         const canvas = document.getElementById('SimCanvas');
+        const blurredcanvas = document.getElementById('BlurredSimCanvas');
         const context = canvas.getContext('2d');
+        const bgcontext = blurredcanvas.getContext('2d');
+      if (NiceGraphicsON.checked == true){
+        BlurredSimCanvas.style.webkitFilter = 'blur(5px)';
+        };
         // Set display size (css pixels).
         var xsize = 800;
         var ysize = 800;
         canvas.style.width = xsize + "px";
         canvas.style.height = ysize + "px";
+        blurredcanvas.style.width = xsize + "px";
+        blurredcanvas.style.height = ysize + "px";
+        blurredcanvas.style.position = canvas.style.position;
+        blurredcanvas.style.top = canvas.style.top;
+        blurredcanvas.style.left = canvas.style.left;
 
         // Set actual size in memory (scaled to account for extra pixel density).
         var scale = 2;//window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
         canvas.width = Math.floor(xsize * scale);
         canvas.height = Math.floor(ysize * scale);
+        blurredcanvas.width = Math.floor(xsize * scale);
+        blurredcanvas.height = Math.floor(ysize * scale);
       
 
         // Normalize coordinate system to use css pixels.
         context.scale(scale, scale);
       
         context.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+      
+        bgcontext.scale(scale, scale);
+      
+        bgcontext.clearRect(0, 0, blurredcanvas.clientWidth, blurredcanvas.clientHeight);
 
         context.strokeStyle = '#03f';
         context.lineWidth = 1;
@@ -1152,23 +1170,11 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
                 context.beginPath();
                 context.moveTo(ScreenHor(-4),ScreenVer(0));
                 
-                var bigwaveONidx = [];
-                var bigwaveOFFidx = [];
                 for (let i=0; i < (b.ssFZ).length; i++) {
-                  
-                    if (i>1){
-                      if (Math.sign(b.ssFZ[i]) != Math.sign(b.ssFZ[i-1])){
-                          if (b.ssFZ[i] >= 0){
-                            bigwaveONidx.push(i);
-                          }else{
-                            bigwaveOFFidx.push(i);
-                          }
-                       }
-                    }
                   
                   context.lineTo(ScreenHor(-4+8.1*i/b.ssFZ.length),ScreenVer(0+Math.sin(b.waveshimmer*(5))*b.ssFZ[i]/((2/b.SF)*b.SeaForcePerScreenUnit)));
                 }
-                context.strokeStyle = '#00508a';
+                context.strokeStyle = 'rgba(0,150,130,1.0)';
                 context.stroke();
                 context.lineWidth = 1;
                 context.beginPath();
@@ -1179,63 +1185,39 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
                 context.strokeStyle = '#129aca';
                 context.stroke();
                 
-                var G;
-                var bwstartON = 0;
-                var bwON = 0;
-                if (true){
-                  var bwdiff = bigwaveONidx.length-bigwaveOFFidx.length;
-                  /*
-                  var bwdiff = bigwaveONidx.length-bigwaveOFFidx.length;
-                  if (bwdiff>0){ //more ONs than OFFs
-                    if (Math.min(...bigwaveONidx)<Math.min(...bigwaveOFFidx)){ //missing ON is at end
-                     for (var ubw = 0; ubw < Math.abs(bwdiff);ubw++){ bigwaveONidx.push(bigwaveOFFidx[bigwaveOFFidx.length-1]);
-                                                                    };
-                    }else{ //missing ON is at beginning
-                     for (var ubw = 0; ubw < Math.abs(bwdiff);ubw++){  bigwaveONidx.unshift(bigwaveOFFidx[0]);
-                                                                    };
-                      
-                    }
-                  }else if (bwdiff<0){ //more OFFs than ONs
-                    if (Math.min(...bigwaveOFFidx)<Math.min(...bigwaveONidx)){ //missing OFF is at end
-                     for (var ubw = 0; ubw < Math.abs(bwdiff);ubw++){  bigwaveOFFidx.push(bigwaveONidx[bigwaveONidx.length-1]);
-                                                                              };
-                    }else{ //missing OFF is at beginning
-                     for (var ubw = 0; ubw < Math.abs(bwdiff);ubw++){  bigwaveOFFidx.unshift(bigwaveONidx[0]);
-                                                                              };
-                    }
-                  }
-                  */
-                  readoutThing.innerHTML = bwdiff;//bigwaveONidx.length==bigwaveOFFidx.length;
-                  
-                var bwA
-                var bwB
-                for (let i=0; i < bigwaveONidx.length; i=i+1){
-                  //if (bwstartON) {
-                    bwA = bigwaveONidx[i];
-                    bwB = bigwaveOFFidx[i];
-                  //}else{
-                    //bwA = bigwaveOFFidx[i];
-                    //bwB = bigwaveONidx[i];
-                  //}
-                  context.beginPath();
-context.rect(ScreenHor(-4+8.1*bwA/b.ssFZ.length), ScreenVer(-0.2), ScreenHor(-4+8.1*bwB/b.ssFZ.length)-ScreenHor(-4+8.1*bwA/b.ssFZ.length), ScreenVer(1.75)-ScreenVer(-0.2));
-if (true){
-  context.fillStyle = 'rgba(0,150,180,0.2)';
-}else{
-  context.fillStyle = 'rgba(255,255,255,0)';
-  context.stroke();
-}
+                // wave shading
+                var wavechar;
+              context.moveTo(ScreenHor(-4),ScreenVer(0));
+                for (let i=0; i < (b.ssFZ).length; i++) {
+                  wavechar = Math.sin(b.waveshimmer*(5))*b.ssFZ[i]/((2/b.SF)*b.SeaForcePerScreenUnit);
+                  context.lineTo(ScreenHor(-4+8.1*i/b.ssFZ.length),ScreenVer(0+wavechar));
+                }
+                for (let i=(b.ssFZ).length-1; i >= 0; i=i-1) {
+                  wavechar = Math.sin(b.waveshimmer*(5))*b.ssFZ[i]/((2/b.SF)*b.SeaForcePerScreenUnit);
+                  context.lineTo(ScreenHor(-4+8.1*i/b.ssFZ.length),ScreenVer(Math.max(wavechar,Math.max(wavechar+1*b.SF,0))));
+                }
+  context.fillStyle = 'rgba(0,150,130,0.2)';
   context.fill();
-                  /*
-                  G = context.createLinearGradient( ScreenHor(-4+8.1*bigwaveONidx[i-1]/b.ssFZ.length), ScreenVer(-0.2), ScreenHor(-4+8.1*bigwaveONidx[i]/b.ssFZ.length), ScreenVer(1.5));
-          G.addColorStop(0.01, "rgba(255,255,255,0.0)");
-G.addColorStop(0.06, "rgba(0,150,170,1.0)");
-G.addColorStop(1.0, "rgba(150,0,170,1.0)");
-                  context.fillStyle = G; 
-                  context.fill();
-//*/
+              
+              //blurred deep wave shadows:
+               if (NiceGraphicsON.checked == true){
+                 bgcontext.moveTo(ScreenHor(-4),ScreenVer(0));
+                for (let i=0; i < (b.ssFZ).length; i++) {
+                  wavechar = Math.sin(b.waveshimmer*(5))*b.ssFZ[i]/((2/b.SF)*b.SeaForcePerScreenUnit);
+                  bgcontext.lineTo(ScreenHor(-4+8.1*i/b.ssFZ.length),ScreenVer(0+wavechar));
                 }
+                for (let i=(b.ssFZ).length-1; i >= 0; i=i-1) {
+                  wavechar = Math.sin(b.waveshimmer*(5))*b.ssFZ[i]/((2/b.SF)*b.SeaForcePerScreenUnit);
+                  bgcontext.lineTo(ScreenHor(-4+8.1*i/b.ssFZ.length-(0.5*1e3*(Math.pow(wavechar,2)))-0),ScreenVer(Math.max((2e3*(Math.pow(wavechar,2)))+0-wavechar,-wavechar)));
                 }
+              //0.05*2*(Math.abs(wavechar)<0.1*b.SF)
+              const shadowgrd = bgcontext.createLinearGradient(ScreenHor(-4), ScreenVer(-0), ScreenHor(-4), ScreenVer(2.0));
+shadowgrd.addColorStop(0.01,'rgba(0,150,130,0.5)');
+shadowgrd.addColorStop((30*b.SF)/2.0, 'rgba(0,170,180,0.2)');
+shadowgrd.addColorStop(1.0, 'rgba(0,220,220,0.05)');
+  bgcontext.fillStyle = shadowgrd;//'rgba(0,150,180,0.2)';
+  bgcontext.fill();
+               }
                 
               
                 //hull bottom
