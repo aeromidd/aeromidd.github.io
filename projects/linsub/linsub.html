@@ -5,9 +5,8 @@
 <title>JSub</title>
 <script type="text/javascript">
   //TO DO:
-  //-- make integrators relative to planes, not states. Implement optional antiwindup.
-  //-- get revised boat model and controller (also make it work with limited plane rates)
-  //-- re-implement surfaced effects
+  // fix trim compensator
+  // add plant customization options. Requires some matrix maths so recommend not updating live like ctrl, but rather submitting after changing.
 </script>
   <style>
     table, th, td {
@@ -27,7 +26,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
 <canvas id="BlurredSimCanvas" tabindex='0'></canvas>
 <canvas id="SimCanvas" tabindex='0' style="position:absolute;top:75px;left:5px;"></canvas>
 <div class="slidecontainer">
-  <input type="range" min="0" max="5" step="1" value="1" class="slider" id="SimSpeedSlider" style="position:absolute; left:650px; top:50px; width: 120px;" oninput="this.nextElementSibling.value = this.value +'x'">
+  <input type="range" min="0" max="10" step="1" value="1" class="slider" id="SimSpeedSlider" style="position:absolute; left:650px; top:50px; width: 120px;" oninput="this.nextElementSibling.value = this.value +'x'">
 <output style="position:absolute; left:775px; top:50px;" >1x</output>
 </div>
 <table id="AftPlaneGainsTable" style="position:absolute; left:8px; top:200px; display:none">
@@ -129,8 +128,8 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
             this.pitchSP = 0;
             this.freezeDepth = 0;
           
-            this.Compressibility = 0;
-            this.compFactor = 1.5e-4;
+            this.Compressibility = 1;
+            this.compFactor = 5e-3;
             this.TrimTarget = 'order';//'order' or 'measurement';
             this.TrimCompensator = 1;
             this.compzd = 0;
@@ -187,7 +186,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
             this.SeaState = 0.49;
             this.SeaFixed = 0;
             
-            this.zDem = new Array(250);
+            this.zDem = new Array(650);
             this.zDem.fill(this.depthDem*this.SF)
   
             this.AP = [0,1,1];
@@ -195,10 +194,10 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
             this.resetInt = 0;
           
             //trim compensation response
-            this.tcr = new Array(200);
+            this.tcr = new Array(500);
             this.tcr.fill(this.xi[3]*this.SF)
           
-            this.zh = new Array(200);
+            this.zh = new Array(500);
             this.zh.fill(this.xi[3]*this.SF)
             
             this.ssFZ = new Array(1250);
@@ -621,7 +620,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                     }
                   }
                   
-                  b.SeaForcePerScreenUnit = 0.25*1e3*9.81;
+                  b.SeaForcePerScreenUnit = 0.5*1e3*9.81;
                   let ssFZmag = b.SeaForcePerScreenUnit*b.SeaState; // Newtons per FM trail array element (each approx 2.48m in length)
                   let ssMYmag =  0*ssFZmag*(b.L/b.SF);// Newton Metres per FM trail array element (each roughly 2.5m in length)
                   
@@ -704,6 +703,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                   
                   b.waveHeight = seaDist*(-1)*b.ssFZ[b.ssFZ.length/2]/((2/b.SF)*b.SeaForcePerScreenUnit)/b.SF;
                   readoutThing.innerHTML = 'waveHeight = '+(b.waveHeight).toFixed(3).toString();
+                  //readoutThing.innerHTML = [(b.uint[1]*180/3.1415).toFixed(3),(b.uint[2]*180/3.1415).toFixed(3)];
                   
                   //Math.ceil(b.ssFZ.length/2)
                   // old sea force/moment application
@@ -927,7 +927,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
             b.AP[1] = 1;
             b.AP[2] = 1;
             b.surfaced = false;
-            b.Compressibility = 0;
+            b.Compressibility = 1;
             b.TrimCompensator = 1;
             b.TrimTarget = 'order';
             b.trimz = b.xi[3];
@@ -1074,10 +1074,10 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
                 context.lineWidth = 1;
                 context.beginPath();
                 context.moveTo(ScreenHor(-4),ScreenVer(b.zDem[0]));
-                for (let i=1; i <= (b.zDem).length; i++) {
-                  context.lineTo(ScreenHor(-4+i*0.02),ScreenVer(b.zDem[i]));
+                for (let i=0; i <= (b.zDem).length; i++) {
+                  context.lineTo(ScreenHor(-4+3.5*b.L*i/b.zDem.length),ScreenVer(b.zDem[i]));
                 }
-                context.lineTo(ScreenHor(800),ScreenVer(b.depthDem*b.SF));
+                context.lineTo(ScreenHor(4.1),ScreenVer(b.depthDem*b.SF));
                 context.stroke();
                 context.setLineDash([]);
               
@@ -1085,7 +1085,7 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
                 context.beginPath();
                 context.moveTo(ScreenHor(-4),ScreenVer(b.zh[0]));
                 for (let i=1; i <= (b.tcr).length; i++) {
-                  context.lineTo(ScreenHor(-4+i*0.0154),ScreenVer(b.tcr[i]));
+                  context.lineTo(ScreenHor(-4+2*b.L*i/b.tcr.length),ScreenVer(b.tcr[i]));
                 }
                 context.strokeStyle = '#ff9aca';//'#a7a7a7';
                 context.stroke();
@@ -1096,7 +1096,7 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
                 context.beginPath();
                 context.moveTo(ScreenHor(-4),ScreenVer(b.zh[0]));
                 for (let i=1; i <= (b.zh).length; i++) {
-                  context.lineTo(ScreenHor(-4+i*0.0154),ScreenVer(b.zh[i]));
+                  context.lineTo(ScreenHor(-4+2*b.L*i/b.zh.length),ScreenVer(b.zh[i]));
                 }
                 context.strokeStyle = '#119aca';//'#a7a7a7';
                 context.stroke();
@@ -1174,7 +1174,7 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
                   
                   context.lineTo(ScreenHor(-4+8.1*i/b.ssFZ.length),ScreenVer(0+Math.sin(b.waveshimmer*(5))*b.ssFZ[i]/((2/b.SF)*b.SeaForcePerScreenUnit)));
                 }
-                context.strokeStyle = 'rgba(0,150,130,1.0)';
+                context.strokeStyle = 'rgba(0,150,180,0.3)';
                 context.stroke();
                 context.lineWidth = 1;
                 context.beginPath();
@@ -1183,7 +1183,7 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
                   context.lineTo(ScreenHor(-4+8.1*i/b.ssMY.length),ScreenVer(0+Math.sin(b.waveshimmer*(8.22))*b.ssMY[i]/((2/b.SF)*(b.L/b.SF)*b.SeaForcePerScreenUnit)));
                 }
                 context.strokeStyle = '#129aca';
-                context.stroke();
+                //context.stroke();
                 
                 // wave shading
                 var wavechar;
@@ -1568,7 +1568,7 @@ shadowgrd.addColorStop(1.0, 'rgba(0,220,220,0.05)');
           Timerbutton.innerHTML = time.toFixed(2);
         }
         //*/
-        window.setTimeout(AnimationFrame, 20); //FrameDelayMillis
+        window.setTimeout(AnimationFrame, 25); //FrameDelayMillis
     }
     var lastDownTarget, canvas;
     window.onload = function() {
