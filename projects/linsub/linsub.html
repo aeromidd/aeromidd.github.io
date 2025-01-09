@@ -120,7 +120,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
             this.ui = [0,0,0,0,0];
             this.uiprev = [0,0,0,0,0];
             this.maxplanerate = (15*Math.PI/180);
-            this.maxPitch = 10;
+            this.maxPitch = 15;
             this.xeint = [0,0,0];
             this.uint = [0,0,0];
             this.depthDem = this.xi[3];
@@ -140,24 +140,24 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
             this.tui = [0,0];
             //plant matrices
             this.A = [[0,0,0,0,0,0,0],
-            [0,-0.158,-19.9,0,-0.81,0,0],
-            [0,0.00401,-0.565,0,0.0178,0,0],
+            [0,-0.204,-14.9,0,-1.02,0,0],
+            [0,0.00691,-0.765,0,0.0313,0,0],
             [0,1,0,0,0,0,0],
             [0,0,1,0,0,0,0],
             [0,0,0,1,0,0,0],
             [0,0,0,0,1,0,0],
             ];
             this.B = [[0,0,0,0,0],
-            [0,-0.413,-0.756,4.36e-07,-4.08e-10],
-            [0,0.0202,-0.0588,-4.08e-10,5.79e-10],
+            [0,-0.63,-0.203,4.57e-07,-6.15e-09],
+            [0,0.0327,-0.0841,-3.08e-09,8.71e-10],
             [0,0,0,0,0],
             [0,0,0,0,0],
             [0,0,0,0,0],
             [0,0,0,0,0],
             ];
-            //CTRL:
-            this.dbG = [0, -0.275, 29.7, -0.0876, 21.7, -0.00225, 0.628];
-            this.dsG = [0, -0.141, -41, -0.0235, -20.0, -0.000586, -1.2];
+            //CARE:
+            this.dbG = [0, -0.409, 18.2, -0.151, 3.72, -7.54e-05, 0.0711];
+            this.dsG = [0, -0.151, -114, -0.0211, -44.1, -1.05e-05, -1.28];
             //change -39.6 to -20 for a more stable solution
             ctrldb_zD.value = this.dbG[1];
             ctrldb_zP.value = this.dbG[3];
@@ -416,17 +416,20 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                   
                   
                   let maxPitch = b.maxPitch;
+                  var useZdErr;
                   if (b.AP[1] == 1 && b.AP[2] == 1){
-                  if (Math.abs(zErr)>15){
+                  if (Math.abs(zErr)>35 && maxPitch != 0){
                       b.pitchDem = Math.min(Math.max(-maxPitch*0.8*(zErr/30)*Math.PI/180,-maxPitch*Math.PI/180),maxPitch*Math.PI/180);
                       zdErr = -10*0.51444*Math.sin(b.pitchDem)-b.xi[1];
                       qErr = 0*dt*b.pitchDem-b.xi[2];
                       thtErr = b.pitchDem-b.xi[4];
+                      useZdErr = true;
                   }else{
                       b.pitchDem = b.pitchSP;
                       zdErr = 5*(zErr)*Math.PI/180-b.xi[1];
                       qErr = 0-b.xi[2];
                       thtErr = b.pitchDem-b.xi[4];
+                      useZdErr = false;
                   }
                   }
                   if (b.pitchDem < -maxPitch*Math.PI/180){
@@ -439,7 +442,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                     b.pitchSP = -maxPitch*Math.PI/180;
                   }
                   
-                  readoutThing.innerHTML = zErr;
+                  //readoutThing.innerHTML = zErr;
                   
                   //let qErr = 0.05*b.pitchDem-b.xi[2];
                   //let thtErr = b.pitchDem-b.xi[4];
@@ -552,8 +555,8 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                     b.teint = 0;
                     b.resetInt = 0;
                   }else{
-                    b.xeint[1] += zdErr*dt;
-                    b.xeint[2] += thtErr*dt;
+                    b.xeint[1] += zdErr*dt; //obsolete
+                    b.xeint[2] += thtErr*dt; //obsolete
                     b.teint += b.trimErr*dt;
                   }
                   
@@ -576,10 +579,17 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                   }
                   
                   // integrators:
+                  var intZErr;
+                  if (useZdErr == true){
+                      intZErr = zdErr;
+                  }else{
+                      intZErr = zErr;
+                  }
                   
-                  b.uint[1] = Math.max(Math.min(b.uint[1]+dbG[5]*zdErr*dt+dbG[6]*thtErr*dt,45*Math.PI/180),-45*Math.PI/180);
                   
-                    b.uint[2] = Math.max(Math.min(b.uint[2]+dsG[5]*zdErr*dt+dsG[6]*thtErr*dt,45*Math.PI/180),-45*Math.PI/180);
+                  b.uint[1] = Math.max(Math.min(b.uint[1]+dbG[5]*intZErr*dt+dbG[6]*thtErr*dt,45*Math.PI/180),-45*Math.PI/180);
+                  
+                    b.uint[2] = Math.max(Math.min(b.uint[2]+dsG[5]*intZErr*dt+dsG[6]*thtErr*dt,45*Math.PI/180),-45*Math.PI/180);
                   
                   if (b.AP[1] == 1){
                     b.uiprev[1] = b.ui[1];
@@ -702,7 +712,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                   let seaDist = Math.max(Math.min((Math.pow(b.xi[3]/20,-1.2)-0.1),1),0);
                   
                   b.waveHeight = seaDist*(-1)*b.ssFZ[b.ssFZ.length/2]/((2/b.SF)*b.SeaForcePerScreenUnit)/b.SF;
-                  readoutThing.innerHTML = 'waveHeight = '+(b.waveHeight).toFixed(3).toString();
+                  //readoutThing.innerHTML = 'waveHeight = '+(b.waveHeight).toFixed(3).toString();
                   //readoutThing.innerHTML = [(b.uint[1]*180/3.1415).toFixed(3),(b.uint[2]*180/3.1415).toFixed(3)];
                   
                   //Math.ceil(b.ssFZ.length/2)
@@ -720,10 +730,10 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                   var momentChunksFwd = (b.ssFZ.slice(750+cgx*vehicleSpan/2,750+0.8*vehicleSpan/2));
                   
                   for (var im = 0; im < momentChunksAft.length; im++){
-                    momentChunksAft[im] = momentChunksAft[im]*(momentChunksAft.length-im)*trailUnitsToMetres;
+                    momentChunksAft[im] = -1*momentChunksAft[im]*(momentChunksAft.length-im)*trailUnitsToMetres;
                   }
                   for (var im = 0; im < momentChunksFwd.length; im++){
-                    momentChunksFwd[im] = -1*momentChunksFwd[im]*(im)*trailUnitsToMetres;
+                    momentChunksFwd[im] = +1*momentChunksFwd[im]*(im)*trailUnitsToMetres;
                   }
                   
                   var allMomentChunks = momentChunksAft.concat(momentChunksFwd);
@@ -781,7 +791,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
 }); RTPDbutton.addEventListener('click', function() { 
     console.clear();
     //console.log('RTPD clicked!');
-    sim.depthOrder(12);
+    sim.depthOrder(15);
 }); 
                   if (b.trailCounter > b.trailCounterCap){
                     b.trailCounter = 0;
@@ -1212,9 +1222,9 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
                 }
               //0.05*2*(Math.abs(wavechar)<0.1*b.SF)
               const shadowgrd = bgcontext.createLinearGradient(ScreenHor(-4), ScreenVer(-0), ScreenHor(-4), ScreenVer(2.0));
-shadowgrd.addColorStop(0.01,'rgba(0,150,130,0.5)');
-shadowgrd.addColorStop((30*b.SF)/2.0, 'rgba(0,170,180,0.2)');
-shadowgrd.addColorStop(1.0, 'rgba(0,220,220,0.05)');
+shadowgrd.addColorStop((15*b.SF)/2.0,'rgba(0,150,130,0.25)');
+shadowgrd.addColorStop((45*b.SF)/2.0, 'rgba(0,160,180,0.2)');
+shadowgrd.addColorStop(1.0, 'rgba(0,200,220,0.1)');
   bgcontext.fillStyle = shadowgrd;//'rgba(0,150,180,0.2)';
   bgcontext.fill();
                }
