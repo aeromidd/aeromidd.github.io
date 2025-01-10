@@ -3,7 +3,7 @@
 <head>
 <meta charset=utf-8 />
 <title>JSub</title>
-<script type="text/javascript">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.2.1/math.js">
   //TO DO:
   // fix trim compensator
   // add plant customization options. Requires some matrix maths so recommend not updating live like ctrl, but rather submitting after changing.
@@ -70,18 +70,108 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
   <td style="width:45px;text-align:center;font-family:'Garamond';font-size: 14px;">Pitch</td>
 </tr>
 </table>
-  
+
+<table id="PlantPhysicsTable" style="position:absolute; left:8px; top:300px; display:none">
+<tr>
+  <td colspan="2" style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;background:#00508a;color:#ffffff">Submarine Plant Physics</td>
+</tr>
+<tr>
+  <td colspan="2" style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;font-weight:bold;">Vehicle Particulars</td>
+  </td>
+</tr>
+<tr>
+  <td style="width:120px;text-align:center;font-family:'Garamond';font-size: 14px;">Seawater Density [kg/m³]</td>
+  <td><input id="Plant_rho" value="1030.0" step="1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+</tr>
+<tr>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Hull Length [m]</td>
+  <td><input id="Plant_L" value="75.0" step="1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+</tr>
+<tr>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Hull Radius [m]</td>
+  <td><input id="Plant_r" value="5.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+</tr>
+<tr>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Mass [t]</td>
+  <td><input id="Plant_mass" value="1000.0" step="1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+</tr>
+<tr>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Vertical CoB [m]</td>
+  <td><input id="Plant_zcb" value="-1.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+</tr>
+<tr>
+  <td colspan="2" style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;font-weight:bold;">Hull Hydrodynamics</td>
+  </td>
+</tr>
+<tr>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Z_Wdot [-]</td>
+  <td><input id="Plant_Z_Wdot" value="-6.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+</tr>
+<tr>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Z_Qdot [-]</td>
+  <td><input id="Plant_Z_Qdot" value="-3.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+</tr>
+<tr>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">M_Wdot [-]</td>
+  <td><input id="Plant_M_Wdot" value="-2.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+</tr>
+<tr>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">M_Qdot [-]</td>
+  <td><input id="Plant_M_Qdot" value="-1.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+</tr>
+<tr>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Z_UW [-]</td>
+  <td><input id="Plant_Z_UW" value="-24.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+</tr>
+<tr>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Z_UQ [-]</td>
+  <td><input id="Plant_Z_UQ" value="-36.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+</tr>
+<tr>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">M_UW [-]</td>
+  <td><input id="Plant_M_UW" value="3.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+</tr>
+<tr>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">M_UQ [-]</td>
+  <td><input id="Plant_M_UQ" value="-12.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+</tr>
+<tr>
+  <td colspan="2" style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;font-weight:bold;">Hydroplane Hydrodynamics</td>
+  </td>
+</tr>
+<tr>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Z_UU: Bow  [-]</td>
+  <td><input id="Plant_Z_UUdb" value="-12.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+</tr>
+<tr>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Z_UU: Stern [-]</td>
+  <td><input id="Plant_Z_UUds" value="-24.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+</tr>
+<tr>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">M_UU: Bow [-]</td>
+  <td><input id="Plant_M_UUdb" value="3.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+</tr>
+<tr>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">M_UU: Stern [-]</td>
+  <td><input id="Plant_M_UUds" value="-18.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+</tr>
+</table>
   
 <button id="PlaneGainsToggle" style="position:absolute;left:625px;top:81px;width:184px;height:25px;" onClick="TogglePlaneGainsTable();">Edit Hydroplane Controller</button>
   
-<button id="readoutThing" style="position:absolute;left:25px;top:281px;width:284px;height:25px;" onClick="">READOUT</button>
+<button id="PlantPhysicsToggle" style="position:absolute;left:5px;top:81px;width:200px;height:25px;" onClick="TogglePlantPhysicsTable();">Edit Submarine Plant Physics</button>
+  
+<button id="readoutThing" style="position:absolute;left:25px;top:181px;width:284px;height:25px;" onClick="">READOUT</button>
   
 <button id="FreezeDepthToggle" style="position:absolute;left:425px;top:130px;width:114px;height:25px;" onClick="ToggleFreezeDepth();">Freeze Depth</button>
   
-<button id="RTPDbutton" style="position:absolute;left:625px;top:105px;width:180px;height:25px;" value="false" onClick="RTPD();">Order Periscope Depth</button>
+
+  <button id="UpdatePlantbutton" style="position:absolute;left:625px;top:305px;width:163px;height:25px;" value="false" onClick="">Update Submarine Plant</button>
   
-<button id="RTSDbutton" style="position:absolute;left:625px;top:130px;width:180px;height:25px;" value="false"  onClick="RTSD();">Order Standard Depth</button>
-<button id="Timerbutton" style="position:absolute;left:50px;top:150px;width:180px;height:25px;" value="false" >0</button>
+<button id="RTPDbutton" style="position:absolute;left:625px;top:105px;width:163px;height:25px;" value="false" onClick="RTPD();">Order Periscope Depth</button>
+  
+<button id="RTSDbutton" style="position:absolute;left:625px;top:130px;width:163px;height:25px;" value="false"  onClick="RTSD();">Order Standard Depth</button>
+<button id="Timerbutton" style="position:absolute;left:50px;top:150px;width:163px;height:25px;" value="false" >0</button>
 
 <input type="checkbox" style="position:absolute;left:5px;top:90px;" id="NiceGraphicsON" checked>
 
@@ -112,7 +202,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
             this.SF = 1/50; //length scale factor for screen
             this.L = 75*this.SF;//1.5; //boat length // length dimensions are in 50m increments
             this.h = (this.L/15); //boat height
-            this.dsl =0.1;  // hydroplane length
+            this.dsl =(this.L/15);  // hydroplane length
             // position vector
             this.x = x;
             this.y = y;
@@ -138,27 +228,28 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
             this.trimErr = (this.compzd/this.compFactor); 
             this.txi = [0,0,0];
             this.tui = [0,0];
+            this.PlantUpdatingPrev = 0;
+            this.PlantUpdatingTimer = 100;
             //plant matrices
             this.A = [[0,0,0,0,0,0,0],
-            [0,-0.204,-14.9,0,-1.02,0,0],
-            [0,0.00691,-0.765,0,0.0313,0,0],
+            [0,-0.333,-9.63,0,-1.51,0,0],
+            [0,0.00837,-0.507,0,0.0333,0,0],
             [0,1,0,0,0,0,0],
             [0,0,1,0,0,0,0],
             [0,0,0,1,0,0,0],
             [0,0,0,0,1,0,0],
             ];
             this.B = [[0,0,0,0,0],
-            [0,-0.63,-0.203,4.57e-07,-6.15e-09],
-            [0,0.0327,-0.0841,-3.08e-09,8.71e-10],
+            [0,-1.04,0.836,7.33e-07,-2.11e-08],
+            [0,0.0301,-0.077,-1.41e-08,9.95e-10],
             [0,0,0,0,0],
             [0,0,0,0,0],
             [0,0,0,0,0],
             [0,0,0,0,0],
             ];
             //CARE:
-            this.dbG = [0, -0.409, 18.2, -0.151, 3.72, -7.54e-05, 0.0711];
-            this.dsG = [0, -0.151, -114, -0.0211, -44.1, -1.05e-05, -1.28];
-            //change -39.6 to -20 for a more stable solution
+            this.dbG = [0, -0.5, 13, -0.15, 2.5, -1e-03, 0.01];
+            this.dsG = [0, -0.2, -120, -0.01, -42, -1e-03, -0.4];
             ctrldb_zD.value = this.dbG[1];
             ctrldb_zP.value = this.dbG[3];
             ctrldb_zI.value = this.dbG[5];
@@ -229,6 +320,138 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
     }
 
     
+                  RTSDbutton.addEventListener('click', function() { 
+    //console.clear();
+    console.log('RTSD clicked!');
+    sim.depthOrder(75);
+}); 
+                  RTPDbutton.addEventListener('click', function() { 
+    //console.clear();
+    //console.log('RTPD clicked!');
+    sim.depthOrder(15);
+});
+UpdatePlantbutton.addEventListener('click',function(){
+                    
+  var Ukts = 10;
+  var rho = Math.abs(Plant_rho.value);//1030;
+  var g = 9.81;
+  var L = Math.abs(Plant_L.value); //75
+  var mass = Math.abs(Plant_mass.value*1e3); //1000*1e3;
+  var r = Math.abs(Plant_r.value); //5
+  var zcb = Plant_zcb.value; //-1;
+  
+  //Hull calcs
+  var zcg = 0; //fixed CG
+  var BG = zcg-zcb;
+  var Iy = (1/12)*mass*(3*Math.pow(r,2)+Math.pow(L,2)); //cylinder inertia
+  //Hull Mass hydrodynamic terms
+  var Z_Wdot = Plant_Z_Wdot.value;//-(6.0);
+  var Z_Qdot = Plant_Z_Qdot.value;//-(3.0);
+  var M_Wdot = Plant_M_Wdot.value;//-(2.0);
+  var M_Qdot = Plant_M_Qdot.value;//-(1.0);
+  //Hull Damper hydrodynamic terms
+  var Z_UW =  Plant_Z_UW.value;//-(24.0);
+  var Z_UQ =  Plant_Z_UQ.value;//-(36.0);
+  var M_UW =  Plant_M_UW.value;//+(3.0);
+  var M_UQ =  Plant_M_UQ.value;//-(12.0);
+  //Hydroplane hydrodynamic terms
+  var Z_UUdb = Plant_Z_UUdb.value;//-(12.0);
+  var Z_UUds = Plant_Z_UUds.value;//-(24.0);
+  var M_UUdb = Plant_M_UUdb.value;//+(3.0);
+  var M_UUds = Plant_M_UUds.value;//-(18.0);
+  var U = Ukts*0.51444;
+  
+  //dimensionalisation
+  var rL2 = (1/1000)*0.5*rho*Math.pow(L,2);
+  var rL3 = (1/1000)*0.5*rho*Math.pow(L,3);
+  var rL4 = (1/1000)*0.5*rho*Math.pow(L,4);
+  var rL5 = (1/1000)*0.5*rho*Math.pow(L,5);
+  var Usq = Math.pow(U,2);
+  
+  //MSD system
+  
+  var MASS = [
+             [mass-Z_Wdot*rL3,         -Z_Qdot*rL4],
+             [-M_Wdot*rL4    ,       Iy-M_Qdot*rL5],
+             ];
+
+  var DAMPER = [
+               [-Z_UW*rL2*U   , -(Z_UQ*rL3+mass)*U],
+               [-M_UW*rL3*U   ,        -M_UQ*rL4*U],
+               ];
+ 
+  var SPRING = [ 
+               [0,        0],
+               [0,mass*g*BG],
+               ];
+  
+  var R = [
+          [Z_UUdb*rL2*Usq, Z_UUds*rL2*Usq, 1, 0],
+          [M_UUdb*rL3*Usq ,M_UUds*rL3*Usq, 0, 1],
+          ];
+
+  //Matrix Construction
+  var invMASS = math.inv(MASS);
+  var minusInvMASS = math.multiply(-1,invMASS);
+  var Afp1 = math.multiply(minusInvMASS,DAMPER);
+  var Afp2 = math.multiply(minusInvMASS,SPRING);
+  var Afp = math.concat(Afp1,Afp2);
+  var Af = math.concat(Afp,[
+      [1,0,0,-U], //account for zdot = w - sin(theta)
+      [0,1,0,0],
+      ],0);
+  var Bf = math.concat(math.multiply(invMASS,R),[
+      [0,0,0,0],
+      [0,0,0,0],
+      ],0);
+
+  var T = [
+      [1,0,0,-U], //account for zdot = w - sin(theta)
+      [0,1,0,0],
+      [0,0,1,0],
+      [0,0,0,1],
+      ];
+  var invT = [
+      [1,0,0,+U], //account for zdot = w - sin(theta)
+      [0,1,0,0],
+      [0,0,1,0],
+      [0,0,0,1],
+      ];
+  
+  //console.log(Af);
+  //console.log(math.multiply(Af,T));
+  var At = math.multiply(T,math.multiply(Af,invT));
+  var Bt = math.multiply(T,Bf);
+
+  //add integrator states:
+  var iAH = [
+            [0,0],
+            [0,0],
+            [0,0],
+            [0,0],
+           ];
+  var iAV = [
+            [0,0,1,0,0,0],
+            [0,0,0,1,0,0],
+           ];
+  var iBV = [
+             [0,0,0,0],
+             [0,0,0,0],
+            ];
+  var An = math.concat(math.concat(At,iAH,1),iAV,0);
+  var Bn = math.concat(Bt,iBV,0);
+  var Atop0 = [[0,0,0,0,0,0]];
+  var Aside0 = [[0],[0],[0],[0],[0],[0],[0]];
+  var An0t = math.concat(Atop0,An,0);
+  var An0 = math.concat(Aside0,An0t,1);
+  var Btop0 = [[0,0,0,0]];
+  var Bside0 = [[0],[0],[0],[0],[0],[0],[0]];
+  var Bn0t = math.concat(Btop0,Bn,0);
+  var Bn0 = math.concat(Bside0,Bn0t,1);
+                    
+                    sim.UpdatePlant(An0,Bn0,L,r)
+                    
+                  });
 
     class Simulation {
         constructor() {
@@ -418,7 +641,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                   let maxPitch = b.maxPitch;
                   var useZdErr;
                   if (b.AP[1] == 1 && b.AP[2] == 1){
-                  if (Math.abs(zErr)>35 && maxPitch != 0){
+                  if (Math.abs(zErr)>[b.h*5/b.SF] && maxPitch != 0){
                       b.pitchDem = Math.min(Math.max(-maxPitch*0.8*(zErr/30)*Math.PI/180,-maxPitch*Math.PI/180),maxPitch*Math.PI/180);
                       zdErr = -10*0.51444*Math.sin(b.pitchDem)-b.xi[1];
                       qErr = 0*dt*b.pitchDem-b.xi[2];
@@ -531,22 +754,19 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                   
                   let dbG = [0, Gdb_zD,    Gdb_thtD,      Gdb_zP,    Gdb_thtP,  Gdb_zI, Gdb_thtI];
                   let dsG = [0, Gds_zD,    Gds_thtD,      Gds_zP,    Gds_thtP,  Gds_zI, Gds_thtI];
-                  /*)
-                  let dbG = [0, -1.2,    7.9,      -0.4,    8,  0*-0.003, -0.025];
-                  let dsG = [0,   -0.9,    -21,      0,  -26,   0, -0.121];
-                  */
-                  /*
-                  OGK
-                  let dbG = [0,    -1.2,    -0.8,      -0.4,    -0.8,    0,    0];
-                  let dsG = [0,      -1,      -8,     -0.05,     -26,    0,    0];
-                  
-                  //    zd       q        z           tht     zI       thtI
-                  K1 = [-0.1498, 1.9129, -0.0138, 0.4196, -0.0003, -0.0025;
-                        0.0755, -1.6114, 0.0082, -0.4971, 0.0002, -0.0121];
-                  //    zd       q        tht      zdI     thtI
-                  K2 = [-0.0542, 17.9913, 1.7769, -0.0032, 0.0529;
-                       -0.0564, -4.1923, -0.5019, -0.0018, -0.0235];
-                  */
+                  
+                  
+                  if (b.PlantUpdatingTimer >0){
+                    b.PlantUpdatingTimer = b.PlantUpdatingTimer - 1;
+                    var puTimer = Math.abs(b.PlantUpdatingTimer/100);
+                    UpdatePlantbutton.style.backgroundColor = "rgba("+255+","+(1-puTimer)*255+","+(1-puTimer)*255+",1)";
+                  }else{
+                    b.PlantUpdatingTimer = 0;
+                    UpdatePlantbutton.style.backgroundColor = "rgba(200,255,200,1)";
+                  };
+                  //UpdatePlantbutton.innerHTML = b.PlantUpdatingTimer;
+                  
+                  
                   if (b.resetInt == 1){
                     b.xeint[1] = 0;
                     b.xeint[2] = 0;
@@ -630,7 +850,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                     }
                   }
                   
-                  b.SeaForcePerScreenUnit = 0.5*1e3*9.81;
+                  b.SeaForcePerScreenUnit = 0.25*1e3*9.81;
                   let ssFZmag = b.SeaForcePerScreenUnit*b.SeaState; // Newtons per FM trail array element (each approx 2.48m in length)
                   let ssMYmag =  0*ssFZmag*(b.L/b.SF);// Newton Metres per FM trail array element (each roughly 2.5m in length)
                   
@@ -682,7 +902,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                     b.ssFZ[f] = ssFZdummy;
                   }
                   }
-                  ssFZB = 2*ssFZmag*(0.3*Math.sin(0.3*b.periodegS*Math.PI/180)+0.2*Math.sin(0.3*(57+b.periodegS2)*Math.PI/180)+0.5*Math.cos(0.3*(12+b.periodegC)*Math.PI/180));
+                  ssFZB = 2.5*ssFZmag*(0.3*Math.sin(0.3*b.periodegS*Math.PI/180)+0.2*Math.sin(0.3*(57+b.periodegS2)*Math.PI/180)+0.5*Math.cos(0.3*(12+b.periodegC)*Math.PI/180));
                   if (ssFZB < 0){
                     ssFZB = -Math.pow(ssFZB,1);
                   }else{
@@ -690,9 +910,6 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                   }
                   b.ssFZ[b.ssFZ.length-1] = ssFZB-ssFZmag;
                   
-                  //b.ssFZ[b.ssFZ.length-1] = (1/1e0)*(b.ssFZ[b.ssFZ.length-1] - (sharpness_factor * Math.pow(Math.max(0, b.ssFZ[b.ssFZ.length-1]),2) + 0.5 * Math.abs(Math.min(0, b.ssFZ[b.ssFZ.length-1]))));
-                  //b.ssFZ[b.ssFZ.length-2]+
-                  //console.log(b.ssFZ[b.ssFZ.length-1])
                   
                   var ssMYdummy;
                   if (b.trailCounter > b.trailCounterCap){
@@ -784,15 +1001,6 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
                       b.xi[3] = b.xi[3];
                     }
                   
-                  RTSDbutton.addEventListener('click', function() { 
-    console.clear();
-    //console.log('RTSD clicked!');
-    sim.depthOrder(75);
-}); RTPDbutton.addEventListener('click', function() { 
-    console.clear();
-    //console.log('RTPD clicked!');
-    sim.depthOrder(15);
-}); 
                   if (b.trailCounter > b.trailCounterCap){
                     b.trailCounter = 0;
                   }else{
@@ -952,6 +1160,25 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
           }
           
         }
+      UpdatePlant(A,B,L,r){
+          var b;
+          for (b of this.subList) {
+            console.clear()
+            if (b.PlantUpdatingTimer <= 0){
+              b.A = A;
+              b.B = B;
+              b.L = L*b.SF;
+              b.h = r*b.SF;
+              b.dsl = Math.max(Math.min(((L+r)/16),25),2.5)*b.SF;
+              b.PlantUpdatingTimer = 100;
+              console.log('Update');
+              //console.log(b.B)
+              //console.log(B)
+            }else{
+              console.log('NO_Update');
+            }
+          }
+        }
         SeaToggle(){
           var b;
           for (b of this.subList) {
@@ -1600,15 +1827,17 @@ function TogglePlaneGainsTable(){
   
   console.log('togglePlaneCtrl');
 }
+function TogglePlantPhysicsTable(){
+  if(PlantPhysicsTable.style.display=='none'){PlantPhysicsTable.style.display='';PlantPhysicsToggle.innerHTML="Close Submarine Plant";}else{PlantPhysicsTable.style.display='none';PlantPhysicsToggle.innerHTML="Edit Submarine Plant";};
+  
+  console.log('togglePlantPhysics');
+}
 function ToggleFreezeDepth(){
   if (FreezeDepthToggle.innerHTML == 'Unfreeze Depth'){
     FreezeDepthToggle.innerHTML = 'Freeze Depth';
   }else{
     FreezeDepthToggle.innerHTML = 'Unfreeze Depth';
   }
-  /*
-  if(FreezeDepthToggle.style.display=='none'){AftPlaneGainsTable.style.display='';FwdPlaneGainsTable.style.display='';PlaneGainsToggle.innerHTML="Close Hydroplane Controller";}else{AftPlaneGainsTable.style.display='none';FwdPlaneGainsTable.style.display='none';PlaneGainsToggle.innerHTML="Edit Hydroplane Controller";};
-  */
 }
     function RTPD(){
       if (RTPDbutton.value=="false"){
