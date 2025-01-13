@@ -10,7 +10,7 @@
 </script>
   <style>
     table, th, td {
-  border: 1px solid black;
+  border: 0.5px solid #00508a;
 }
   </style>
 </head>
@@ -73,7 +73,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
 
 <table id="PlantPhysicsTable" style="position:absolute; left:8px; top:300px; display:none">
 <tr>
-  <td colspan="2" style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;background:#00508a;color:#ffffff">Submarine Plant Physics</td>
+  <td colspan="2" style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;background:#00508a;color:#ffffff">Submarine Plant</td>
 </tr>
 <tr>
   <td colspan="2" style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;font-weight:bold;">Vehicle Particulars</td>
@@ -159,14 +159,14 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
   
 <button id="PlaneGainsToggle" style="position:absolute;left:625px;top:81px;width:184px;height:25px;" onClick="TogglePlaneGainsTable();">Edit Hydroplane Controller</button>
   
-<button id="PlantPhysicsToggle" style="position:absolute;left:5px;top:81px;width:200px;height:25px;" onClick="TogglePlantPhysicsTable();">Edit Submarine Plant Physics</button>
+<button id="PlantPhysicsToggle" style="position:absolute;left:5px;top:81px;width:200px;height:25px;" onClick="TogglePlantPhysicsTable();">Edit Submarine Plant</button>
   
 <button id="readoutThing" style="position:absolute;left:25px;top:181px;width:284px;height:25px;" onClick="">READOUT</button>
   
 <button id="FreezeDepthToggle" style="position:absolute;left:425px;top:130px;width:114px;height:25px;" onClick="ToggleFreezeDepth();">Freeze Depth</button>
   
 
-  <button id="UpdatePlantbutton" style="position:absolute;left:625px;top:305px;width:163px;height:25px;" value="false" onClick="">Update Submarine Plant</button>
+  <button id="UpdatePlantbutton" style="position:absolute;left:195.5px;top:302.5px;width:54px;height:19px;text-align:center;font-family:'Garamond';font-size: 14px;border: 1px solid #00508a;display:none;" value="false" onClick="">Update</button>
   
 <button id="RTPDbutton" style="position:absolute;left:625px;top:105px;width:163px;height:25px;" value="false" onClick="RTPD();">Order Periscope Depth</button>
   
@@ -206,7 +206,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
             // position vector
             this.x = x;
             this.y = y;
-            this.xi = [0,0,0,75,0];
+            this.xi = [0,0,0,this.L/this.SF,0];
             this.ui = [0,0,0,0,0];
             this.uiprev = [0,0,0,0,0];
             this.maxplanerate = (15*Math.PI/180);
@@ -758,7 +758,7 @@ UpdatePlantbutton.addEventListener('click',function(){
                   
                   if (b.PlantUpdatingTimer >0){
                     b.PlantUpdatingTimer = b.PlantUpdatingTimer - 1;
-                    var puTimer = Math.abs(b.PlantUpdatingTimer/100);
+                    var puTimer = Math.abs(b.PlantUpdatingTimer/50);
                     UpdatePlantbutton.style.backgroundColor = "rgba("+255+","+(1-puTimer)*255+","+(1-puTimer)*255+",1)";
                   }else{
                     b.PlantUpdatingTimer = 0;
@@ -1170,12 +1170,10 @@ UpdatePlantbutton.addEventListener('click',function(){
               b.L = L*b.SF;
               b.h = r*b.SF;
               b.dsl = Math.max(Math.min(((L+r)/16),25),2.5)*b.SF;
-              b.PlantUpdatingTimer = 100;
-              console.log('Update');
-              //console.log(b.B)
-              //console.log(B)
+              b.PlantUpdatingTimer = 50;
+              //console.log('Update');
             }else{
-              console.log('NO_Update');
+              //console.log('NO_Update');
             }
           }
         }
@@ -1819,7 +1817,11 @@ function TogglePlaneGainsTable(){
   console.log('togglePlaneCtrl');
 }
 function TogglePlantPhysicsTable(){
-  if(PlantPhysicsTable.style.display=='none'){PlantPhysicsTable.style.display='';PlantPhysicsToggle.innerHTML="Close Submarine Plant";}else{PlantPhysicsTable.style.display='none';PlantPhysicsToggle.innerHTML="Edit Submarine Plant";};
+  if(PlantPhysicsTable.style.display=='none'){
+    PlantPhysicsTable.style.display='';PlantPhysicsToggle.innerHTML="Close Submarine Plant";UpdatePlantbutton.style.display='';
+                                             }else{
+                                               PlantPhysicsTable.style.display='none';PlantPhysicsToggle.innerHTML="Edit Submarine Plant";UpdatePlantbutton.style.display='none';
+                                             };
   
   console.log('togglePlantPhysics');
 }
