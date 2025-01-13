@@ -156,6 +156,44 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
   <td><input id="Plant_M_UUds" value="-18.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
 </tr>
 </table>
+
+<table id="CtrlSettingsTable" style="position:absolute; left:622px; top:355px; width:180px; display:none;">
+<tr>
+  <td colspan="2" style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;background:#00508a;color:#ffffff">Controller Settings</td>
+</tr>
+<tr>
+  <td><input id="maxpitchInput" value="10.0" step="0.1" min="0" max="20" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Max. Pitch Angle</td>
+</tr>
+<tr>
+  <td><input id="UsePitchForDepthChangesInput" type="checkbox" style="width:60px;" checked>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Use Pitch for Depth Changes</td>
+</tr>
+<tr>
+  <td><input id="maxplanerateInput" value="15.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Max. Hydroplane Slew Rate</td>
+</tr>
+<tr>
+  <td><input id="maxBowplaneAngleInput" value="45.0" step="0.1" min= "0" max="45" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Max. Bowplane Angle</td>
+</tr>
+<tr>
+  <td><input id="maxSternplaneAngleInput" value="45.0" step="0.1" min= "0" max="45" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Max. Sternplane Angle</td>
+</tr>
+</tr>
+  
+  
+</table>
+<script>
+  /*
+b.maxplanerate = maxplanerateInput.value;
+                    b.maxPitch = maxpitchInput.value;
+                    b.maxBowplaneAngle = maxBowplaneAngleInput.value;
+                    b.maxSternplaneAngle = maxSternplaneAngleInput.value;
+                    b.UsePitchForDepthChanges = UsePitchForDepthChangesInput.value;
+                    */
+  </script>
   
 <button id="PlaneGainsToggle" style="position:absolute;left:625px;top:81px;width:184px;height:25px;" onClick="TogglePlaneGainsTable();">Edit Hydroplane Controller</button>
   
@@ -209,14 +247,18 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
             this.xi = [0,0,0,this.L/this.SF,0];
             this.ui = [0,0,0,0,0];
             this.uiprev = [0,0,0,0,0];
-            this.maxplanerate = (15*Math.PI/180);
-            this.maxPitch = 15;
             this.xeint = [0,0,0];
             this.uint = [0,0,0];
             this.depthDem = this.xi[3];
             this.pitchDem = 0;
             this.pitchSP = 0;
             this.freezeDepth = 0;
+            
+            this.maxplanerate = 15;
+            this.maxPitch = 15;
+            this.maxBowplaneAngle = 45;
+            this.maxSternplaneAngle = 45;
+            this.UsePitchForDepthChanges = true;
           
             this.Compressibility = 1;
             this.compFactor = 5e-3;
@@ -229,7 +271,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
             this.txi = [0,0,0];
             this.tui = [0,0];
             this.PlantUpdatingPrev = 0;
-            this.PlantUpdatingTimer = 100;
+            this.PlantUpdatingTimer = 50;
             //plant matrices
             this.A = [[0,0,0,0,0,0,0],
             [0,-0.333,-9.63,0,-1.51,0,0],
@@ -511,7 +553,13 @@ UpdatePlantbutton.addEventListener('click',function(){
                     b.trimErr = CompensationTarget-b.trimz;
                   
                     b.trimOffset = (b.compzd-b.trimzd)/b.compFactor;
-                      //(b.compzd-b.trimzd)/b.compFactor;
+                    
+                    
+                    b.maxplanerate = maxplanerateInput.value;
+                    b.maxPitch = maxpitchInput.value;
+                    b.maxBowplaneAngle = maxBowplaneAngleInput.value;
+                    b.maxSternplaneAngle = maxSternplaneAngleInput.value;
+                    b.UsePitchForDepthChanges = UsePitchForDepthChangesInput.checked;
                   
                     //zd q z tht
                     //xdi = [0,b.compzd-b.trimzd+0.0,0,0,0];
@@ -641,7 +689,7 @@ UpdatePlantbutton.addEventListener('click',function(){
                   let maxPitch = b.maxPitch;
                   var useZdErr;
                   if (b.AP[1] == 1 && b.AP[2] == 1){
-                  if (Math.abs(zErr)>[b.h*5/b.SF] && maxPitch != 0){
+                  if (Math.abs(zErr)>[b.h*5/b.SF] && maxPitch != 0 && b.UsePitchForDepthChanges){
                       b.pitchDem = Math.min(Math.max(-maxPitch*0.8*(zErr/30)*Math.PI/180,-maxPitch*Math.PI/180),maxPitch*Math.PI/180);
                       zdErr = -10*0.51444*Math.sin(b.pitchDem)-b.xi[1];
                       qErr = 0*dt*b.pitchDem-b.xi[2];
@@ -807,17 +855,17 @@ UpdatePlantbutton.addEventListener('click',function(){
                   }
                   
                   
-                  b.uint[1] = Math.max(Math.min(b.uint[1]+dbG[5]*intZErr*dt+dbG[6]*thtErr*dt,45*Math.PI/180),-45*Math.PI/180);
+                  b.uint[1] = Math.max(Math.min(b.uint[1]+dbG[5]*intZErr*dt+dbG[6]*thtErr*dt,b.maxBowplaneAngle*Math.PI/180),-b.maxBowplaneAngle*Math.PI/180);
                   
-                    b.uint[2] = Math.max(Math.min(b.uint[2]+dsG[5]*intZErr*dt+dsG[6]*thtErr*dt,45*Math.PI/180),-45*Math.PI/180);
+                    b.uint[2] = Math.max(Math.min(b.uint[2]+dsG[5]*intZErr*dt+dsG[6]*thtErr*dt,b.maxSternplaneAngle*Math.PI/180),-b.maxSternplaneAngle*Math.PI/180);
                   
                   if (b.AP[1] == 1){
                     b.uiprev[1] = b.ui[1];
                     b.ui[1] = zdErr*dbG[1]+qErr*dbG[2]+zErr*dbG[3]+thtErr*dbG[4];
                     b.ui[1] += b.uint[1];
                     
-                    if (Math.abs(b.ui[1]-b.uiprev[1])>b.maxplanerate*dt){
-                      b.ui[1] = b.uiprev[1]+Math.sign(b.ui[1]-b.uiprev[1])*b.maxplanerate*dt;
+                    if (Math.abs(b.ui[1]-b.uiprev[1])>b.maxplanerate*(Math.PI/180)*dt){
+                      b.ui[1] = b.uiprev[1]+Math.sign(b.ui[1]-b.uiprev[1])*b.maxplanerate*(Math.PI/180)*dt;
                     }
                   }
                   
@@ -826,16 +874,16 @@ UpdatePlantbutton.addEventListener('click',function(){
                     b.ui[2] = zdErr*dsG[1]+qErr*dsG[2]+zErr*dsG[3]+thtErr*dsG[4];
                     b.ui[2] += b.uint[2];
                     
-                    if (Math.abs(b.ui[2]-b.uiprev[2])>b.maxplanerate*dt){
-                      b.ui[2] = b.uiprev[2]+Math.sign(b.ui[2]-b.uiprev[2])*b.maxplanerate*dt;
+                    if (Math.abs(b.ui[2]-b.uiprev[2])>b.maxplanerate*(Math.PI/180)*dt){
+                      b.ui[2] = b.uiprev[2]+Math.sign(b.ui[2]-b.uiprev[2])*b.maxplanerate*(Math.PI/180)*dt;
                     }
                   }
               
-                  if (Math.abs(b.ui[1]) >= 45*Math.PI/180){
-                    b.ui[1] =  Math.sign(b.ui[1])*45*Math.PI/180;
+                  if (Math.abs(b.ui[1]) >= b.maxBowplaneAngle*Math.PI/180){
+                    b.ui[1] =  Math.sign(b.ui[1])*b.maxBowplaneAngle*Math.PI/180;
                   }
-                  if (Math.abs(b.ui[2]) >= 45*Math.PI/180){
-                    b.ui[2] =  Math.sign(b.ui[2])*45*Math.PI/180;
+                  if (Math.abs(b.ui[2]) >= b.maxSternplaneAngle*Math.PI/180){
+                    b.ui[2] =  Math.sign(b.ui[2])*b.maxSternplaneAngle*Math.PI/180;
                   }
                   
                   //Sea Forces
@@ -960,10 +1008,10 @@ UpdatePlantbutton.addEventListener('click',function(){
                   //readoutThing.innerHTML = [b.ui[3].toFixed(3),b.ui[4].toFixed(3)];
                   
                   //hard limit on pitch.
-                  if (b.xi[4] > 45*Math.PI/180){
-                    b.xi[4] = 45*Math.PI/180;
-                  }else if(b.xi[4]<-45*Math.PI/180){
-                    b.xi[4] = -45*Math.PI/180;
+                  if (b.xi[4] > 60*Math.PI/180){
+                    b.xi[4] = 60*Math.PI/180;
+                  }else if(b.xi[4]<-60*Math.PI/180){
+                    b.xi[4] = -60*Math.PI/180;
                   }
                   //console.log(b.xi[3])
                   var tailz = b.xi[3]+0.5*(b.L/b.SF)*Math.sin(-b.xi[4]);
@@ -1037,8 +1085,8 @@ UpdatePlantbutton.addEventListener('click',function(){
           for (b of this.subList) {
             b.AP[1] = 0;
             b.ui[1] += manualDBinc*Math.PI/180;
-                  if (Math.abs(b.ui[1]) >= 45*Math.PI/180){
-                    b.ui[1] =  Math.sign(b.ui[1])*45*Math.PI/180;
+                  if (Math.abs(b.ui[1]) >= b.maxBowplaneAngle*Math.PI/180){
+                    b.ui[1] =  Math.sign(b.ui[1])*b.maxBowplaneAngle*Math.PI/180;
                   }
           }
         }
@@ -1048,8 +1096,8 @@ UpdatePlantbutton.addEventListener('click',function(){
           for (b of this.subList) {
             b.AP[1] = 0;
             b.ui[1] -= manualDBinc*Math.PI/180;
-                  if (Math.abs(b.ui[1]) >= 45*Math.PI/180){
-                    b.ui[1] =  Math.sign(b.ui[1])*45*Math.PI/180;
+                  if (Math.abs(b.ui[1]) >= b.maxBowplaneAngle*Math.PI/180){
+                    b.ui[1] =  Math.sign(b.ui[1])*b.maxBowplaneAngle*Math.PI/180;
                   }
           }
         }
@@ -1059,8 +1107,8 @@ UpdatePlantbutton.addEventListener('click',function(){
           for (b of this.subList) {
             b.AP[2] = 0;
             b.ui[2] += manualDSinc*Math.PI/180;
-                  if (Math.abs(b.ui[2]) >= 45*Math.PI/180){
-                    b.ui[2] =  Math.sign(b.ui[2])*45*Math.PI/180;
+                  if (Math.abs(b.ui[2]) >= b.maxSternplaneAngle*Math.PI/180){
+                    b.ui[2] =  Math.sign(b.ui[2])*b.maxSternplaneAngle*Math.PI/180;
                   }
           }
         }
@@ -1070,8 +1118,8 @@ UpdatePlantbutton.addEventListener('click',function(){
           for (b of this.subList) {
             b.AP[2] = 0;
             b.ui[2] -= manualDSinc*Math.PI/180;
-                  if (Math.abs(b.ui[2]) >= 45*Math.PI/180){
-                    b.ui[2] =  Math.sign(b.ui[2])*45*Math.PI/180;
+                  if (Math.abs(b.ui[2]) >= b.maxSternplaneAngle*Math.PI/180){
+                    b.ui[2] =  Math.sign(b.ui[2])*b.maxSternplaneAngle*Math.PI/180;
                   }
           }
         }
@@ -1812,7 +1860,8 @@ function isNumberKey(evt) {
   return true;
 }
 function TogglePlaneGainsTable(){
-  if(AftPlaneGainsTable.style.display=='none'){AftPlaneGainsTable.style.display='';FwdPlaneGainsTable.style.display='';PlaneGainsToggle.innerHTML="Close Hydroplane Controller";}else{AftPlaneGainsTable.style.display='none';FwdPlaneGainsTable.style.display='none';PlaneGainsToggle.innerHTML="Edit Hydroplane Controller";};
+  if(AftPlaneGainsTable.style.display=='none'){AftPlaneGainsTable.style.display='';FwdPlaneGainsTable.style.display='';PlaneGainsToggle.innerHTML="Close Hydroplane Controller";CtrlSettingsTable.style.display='';
+                                              }else{AftPlaneGainsTable.style.display='none';FwdPlaneGainsTable.style.display='none';PlaneGainsToggle.innerHTML="Edit Hydroplane Controller";CtrlSettingsTable.style.display='none';};
   
   console.log('togglePlaneCtrl');
 }
