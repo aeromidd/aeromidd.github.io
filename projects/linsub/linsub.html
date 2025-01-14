@@ -554,10 +554,13 @@ UpdatePlantbutton.addEventListener('click',function(){
                   
                     b.trimOffset = (b.compzd-b.trimzd)/b.compFactor;
                     
-                    
+                    maxplanerateInput.value = Math.max(Math.min(45,maxplanerateInput.value),0);
                     b.maxplanerate = maxplanerateInput.value;
+                    maxpitchInput.value = Math.max(Math.min(20,maxpitchInput.value),0);
                     b.maxPitch = maxpitchInput.value;
+                    maxBowplaneAngleInput.value = Math.max(Math.min(45,maxBowplaneAngleInput.value),0);
                     b.maxBowplaneAngle = maxBowplaneAngleInput.value;
+                    maxSternplaneAngleInput.value = Math.max(Math.min(45,maxSternplaneAngleInput.value),0);
                     b.maxSternplaneAngle = maxSternplaneAngleInput.value;
                     b.UsePitchForDepthChanges = UsePitchForDepthChangesInput.checked;
                   
@@ -643,7 +646,7 @@ UpdatePlantbutton.addEventListener('click',function(){
                   
                   let txdi = [];
                   txdi[0] = 0;
-                  txdi[1] = (-2.8886)*b.txi[1]+(-1)*b.txi[2]+b.tui[1];
+                  txdi[1] = (-2.8886)*b.txi[1]+(-1)*b.txi[2]+b.tui[1]; //-2.8886
                   txdi[2] = b.txi[1];
                   for (var f = 0; f< b.txi.length; f++){
                     b.txi[f] += dt*txdi[f];
