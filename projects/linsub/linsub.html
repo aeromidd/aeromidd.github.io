@@ -239,8 +239,9 @@ b.maxplanerate = maxplanerateInput.value;
             this.anchor = anchor;   // 0=mobile, positive=fixed in place
             this.SF = 1/50; //length scale factor for screen
             this.L = 75*this.SF;//1.5; //boat length // length dimensions are in 50m increments
-            this.h = (this.L/15); //boat height
+            this.h = (this.L/15); //boat halfheight (radius)
             this.dsl =(this.L/15);  // hydroplane length
+            this.finH = Math.max((this.dsl+this.h)/2,this.dsl);
             // position vector
             this.x = x;
             this.y = y;
@@ -352,6 +353,7 @@ b.maxplanerate = maxplanerateInput.value;
             this.trailCounter = 0;
             this.trailCounterCap = -1;
             this.waveshimmer = 0;
+            this.W = 0;
         }
 
         Distance(x, y) {
@@ -365,12 +367,12 @@ b.maxplanerate = maxplanerateInput.value;
                   RTSDbutton.addEventListener('click', function() { 
     //console.clear();
     console.log('RTSD clicked!');
-    sim.depthOrder(75);
+    sim.depthOrder('SD');
 }); 
                   RTPDbutton.addEventListener('click', function() { 
     //console.clear();
     //console.log('RTPD clicked!');
-    sim.depthOrder(15);
+    sim.depthOrder('PD');
 });
 UpdatePlantbutton.addEventListener('click',function(){
                     
@@ -969,24 +971,11 @@ UpdatePlantbutton.addEventListener('click',function(){
                     b.ssMY[f] = ssMYdummy;
                   }
                   }
-                  b.ssMY[b.ssMY.length-1] = ssMYmag*(Math.sin((40+b.periodegS)*Math.PI/180)+Math.cos((60+b.periodegC)*Math.PI/180));//b.ssMY[b.ssMY.length-2]+ssMYmag*(Math.random()-0.5)/1; //b.ssMY[b.ssMY.length-2]+
-                  
-                  /*
-                  let seaDist = b.xi[3]-10;
-                  if (seaDist < 1){
-                    seaDist = 1;
-                  }
-                  */
+                  b.ssMY[b.ssMY.length-1] = ssMYmag*(Math.sin((40+b.periodegS)*Math.PI/180)+Math.cos((60+b.periodegC)*Math.PI/180));
                   let seaDist = Math.max(Math.min((Math.pow(b.xi[3]/20,-1.2)-0.1),1),0);
                   
                   b.waveHeight = seaDist*(-1)*b.ssFZ[b.ssFZ.length/2]/((2/b.SF)*b.SeaForcePerScreenUnit)/b.SF;
-                  //readoutThing.innerHTML = 'waveHeight = '+(b.waveHeight).toFixed(3).toString();
-                  //readoutThing.innerHTML = [(b.uint[1]*180/3.1415).toFixed(3),(b.uint[2]*180/3.1415).toFixed(3)];
                   
-                  //Math.ceil(b.ssFZ.length/2)
-                  // old sea force/moment application
-                  //b.ui[3] = b.ssFZ[Math.ceil(b.ssFZ.length/2)]*(1/seaDist);
-                  //b.ui[4] = b.ssMY[Math.ceil(b.ssMY.length/2)]*(1/seaDist);
                   // new attempt (summed force and moment across boat):
                   var vehicleSpan = 124*b.L;//FMdatapoints covering length of boat in screensize
                   let trailUnitsToMetres = (vehicleSpan/(b.L/b.SF));
@@ -1061,13 +1050,32 @@ UpdatePlantbutton.addEventListener('click',function(){
                 }
             }
         }
+      
         depthOrder(z){
           var b;
           for (b of this.subList) {
-            if (z < 5){
-              b.depthDem = 5;
+            if (typeof z === 'string'){
+              function round5(x)
+{
+    return Math.ceil(x / 5) * 5;
+};
+              
+              switch(z) {
+                case "PD":
+                  console.log(z)
+                  b.depthDem = Math.ceil(2.5+(b.h+b.dsl)/b.SF);
+                  break;
+                case "SD":
+                  b.depthDem = round5(b.L/b.SF);
+                  // code block
+                  break;
+              }
             }else{
-              b.depthDem = z;
+              if (z < Math.ceil(0.6*b.h/b.SF)){
+                b.depthDem = Math.ceil(0.6*b.h/b.SF);
+              }else{
+                b.depthDem = z;
+              }
             }
           }
           time = 0;
@@ -1187,7 +1195,11 @@ UpdatePlantbutton.addEventListener('click',function(){
         ResetStates(){
           var b;
           for (b of this.subList) {
-            b.xi = [0,0,0,75,0];
+            function round5(x)
+{
+    return Math.ceil(x / 5) * 5;
+};
+            b.xi = [0,0,0,round5(b.L/b.SF),0];
             b.SeaState = 0;
             b.SeaFixed = false;
             b.depthDem = b.xi[3];
@@ -1221,6 +1233,7 @@ UpdatePlantbutton.addEventListener('click',function(){
               b.L = L*b.SF;
               b.h = r*b.SF;
               b.dsl = Math.max(Math.min(((L+r)/16),25),2.5)*b.SF;
+              b.finH = Math.max((b.dsl+b.h)/2,b.dsl);
               b.PlantUpdatingTimer = 50;
               //console.log('Update');
             }else{
@@ -1447,21 +1460,16 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
                   context.fillText("Sea State: ".concat(b.SeaState.toFixed(0).toString()), ScreenHor(-4),ScreenVer(-0.5));
                 }
               
+                
                 //Waves
                 b.waveshimmer = 90*1/57;//+= SimSpeedSlider.value*0.5*Math.PI/180;
                 if (b.waveshimmer>1*Math.PI){
                   b.waveshimmer = b.waveshimmer-1*Math.PI;
                 }
-                context.lineWidth = 1;
-                context.beginPath();
-                context.moveTo(ScreenHor(-4),ScreenVer(0));
                 
-                for (let i=0; i < (b.ssFZ).length; i++) {
-                  
-                  context.lineTo(ScreenHor(-4+8.1*i/b.ssFZ.length),ScreenVer(0+Math.sin(b.waveshimmer*(5))*b.ssFZ[i]/((2/b.SF)*b.SeaForcePerScreenUnit)));
-                }
-                context.strokeStyle = 'rgba(0,150,180,0.3)';
-                context.stroke();
+                context.lineWidth = 1;
+                
+                /*
                 context.lineWidth = 1;
                 context.beginPath();
                 context.moveTo(ScreenHor(-4),ScreenVer(0));
@@ -1470,9 +1478,12 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
                 }
                 context.strokeStyle = '#129aca';
                 //context.stroke();
+                //*/
                 
                 // wave shading
                 var wavechar;
+              
+                context.beginPath();
               context.moveTo(ScreenHor(-4),ScreenVer(0));
                 for (let i=0; i < (b.ssFZ).length; i++) {
                   wavechar = Math.sin(b.waveshimmer*(5))*b.ssFZ[i]/((2/b.SF)*b.SeaForcePerScreenUnit);
@@ -1496,49 +1507,147 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
                   wavechar = Math.sin(b.waveshimmer*(5))*b.ssFZ[i]/((2/b.SF)*b.SeaForcePerScreenUnit);
                   bgcontext.lineTo(ScreenHor(-4+8.1*i/b.ssFZ.length-(0.5*1e3*(Math.pow(wavechar,2)))-0),ScreenVer(Math.max((2e3*(Math.pow(wavechar,2)))+0-wavechar,-wavechar)));
                 }
-              //0.05*2*(Math.abs(wavechar)<0.1*b.SF)
               const shadowgrd = bgcontext.createLinearGradient(ScreenHor(-4), ScreenVer(-0), ScreenHor(-4), ScreenVer(2.0));
 shadowgrd.addColorStop((15*b.SF)/2.0,'rgba(0,150,130,0.25)');
 shadowgrd.addColorStop((45*b.SF)/2.0, 'rgba(0,160,180,0.2)');
 shadowgrd.addColorStop(1.0, 'rgba(0,200,220,0.1)');
-  bgcontext.fillStyle = shadowgrd;//'rgba(0,150,180,0.2)';
+  bgcontext.fillStyle = shadowgrd;
   bgcontext.fill();
                }
                 
-              
-                //hull bottom
-                context.lineWidth = 1;
+                
+                //fin
+                let FinX = [-0.5,-0.54,-0.55,-0.6,-0.595,-0.6,
+                                -0.6,-0.595,-0.6,-0.55,-0.54,-0.5];
+                let FinY = [0,-1.1,-1.25,-1.25,-0.5,0,
+                                 0,0.5, 1.15, 1.15, 1.05,0];
                 context.beginPath();
-                for (let i=20; i <= 100; i=i+10) {
-                  context.lineTo(ScreenHor(b.h*Math.sin(b.xp[4])+b.x-(0.5-i/100)*b.L*Math.cos(b.xp[4])), ScreenVer(b.h*Math.cos(b.xp[4])+b.xp[3]+(0.5-i/100)*b.L*Math.sin(b.xp[4])));
-                }
-                //hull nose
-                /*
-                context.ellipse(ScreenHor(b.x+0.5*b.L*Math.cos(b.xp[4])), ScreenVer(b.xp[3]-0.5*b.L*Math.sin(b.xp[4])), PixelsPerMeter*0.23, PixelsPerMeter*0.1, -b.xp[4], Math.PI/2, -Math.PI/2, true);
-                */
-                context.ellipse(ScreenHor(b.x+0.5*b.L*Math.cos(b.xp[4])), ScreenVer(b.xp[3]-0.5*b.L*Math.sin(b.xp[4])), ScreenHor(Math.max(0.15*b.L,b.h*1.25))-iOrigin, ScreenVer(b.h)-jOrigin, -b.xp[4], Math.PI/2, -Math.PI/2, true);
+                context.moveTo( ScreenHor(b.x
+                                          +FinX[0]*b.L*Math.cos(b.xp[4])
+                                          +FinY[0]*b.finH*Math.sin(b.xp[4])), 
+                  ScreenVer(b.xp[3]
+                            +FinY[0]*b.finH*Math.cos(b.xp[4])
+                            -FinX[0]*b.L*Math.sin(b.xp[4])));
+                for (var uf=0;uf<FinX.length;uf++){
+                context.lineTo( ScreenHor(b.x
+                                          +FinX[uf]*b.L*Math.cos(b.xp[4])
+                                          +FinY[uf]*b.finH*Math.sin(b.xp[4])), 
+                  ScreenVer(b.xp[3]
+                            +FinY[uf]*b.finH*Math.cos(b.xp[4])
+                            -FinX[uf]*b.L*Math.sin(b.xp[4])));
+                };
+                context.closePath();
+                context.fillStyle = '#ffffff';
+                context.fill();
+                context.strokeStyle = '#00508a';
+                context.stroke();
               
-                //hull conning tower
-                context.lineTo(ScreenHor(-(b.h+0.2*b.dsl)*Math.sin(b.xp[4])+b.x-(0.5-98/100)*b.L*Math.cos(b.xp[4])), ScreenVer(-(b.h+0.2*b.dsl)*Math.cos(b.xp[4])+b.xp[3]+(0.5-98/100)*b.L*Math.sin(b.xp[4])));
-                context.lineTo(ScreenHor(-(b.h+0.9*b.dsl)*Math.sin(b.xp[4])+b.x-(0.5-96/100)*b.L*Math.cos(b.xp[4])), ScreenVer(-(b.h+0.9*b.dsl)*Math.cos(b.xp[4])+b.xp[3]+(0.5-96/100)*b.L*Math.sin(b.xp[4])));
-                context.lineTo(ScreenHor(-(b.h+b.dsl)*Math.sin(b.xp[4])+b.x-(0.5-94/100)*b.L*Math.cos(b.xp[4])), ScreenVer(-(b.h+b.dsl)*Math.cos(b.xp[4])+b.xp[3]+(0.5-94/100)*b.L*Math.sin(b.xp[4])));
-                context.lineTo(ScreenHor(-(b.h+b.dsl)*Math.sin(b.xp[4])+b.x-(0.5-86/100)*b.L*Math.cos(b.xp[4])), ScreenVer(-(b.h+b.dsl)*Math.cos(b.xp[4])+b.xp[3]+(0.5-86/100)*b.L*Math.sin(b.xp[4])));
-                context.lineTo(ScreenHor(-(b.h+0.9*b.dsl)*Math.sin(b.xp[4])+b.x-(0.5-84/100)*b.L*Math.cos(b.xp[4])), ScreenVer(-(b.h+0.9*b.dsl)*Math.cos(b.xp[4])+b.xp[3]+(0.5-84/100)*b.L*Math.sin(b.xp[4])));
-                context.lineTo(ScreenHor(-(b.h+0.2*b.dsl)*Math.sin(b.xp[4])+b.x-(0.5-80/100)*b.L*Math.cos(b.xp[4])), ScreenVer(-(b.h+0.2*b.dsl)*Math.cos(b.xp[4])+b.xp[3]+(0.5-80/100)*b.L*Math.sin(b.xp[4])));
-                //hull top front
-                for (let i=78; i >= 48; i=i-10) {
-                  context.lineTo(ScreenHor(-1.25*b.h*Math.sin(b.xp[4])+b.x-(0.5-i/100)*b.L*Math.cos(b.xp[4])), ScreenVer(-1*b.h*Math.cos(b.xp[4])+b.xp[3]+(0.5-i/100)*b.L*Math.sin(b.xp[4])));
-                }
-                //hull top back
-                for (let i=38; i >= 14; i=i-10) {
-                  context.lineTo(ScreenHor(-0.8*b.h*Math.sin(b.xp[4])+b.x-(0.5-i/100)*b.L*Math.cos(b.xp[4])), ScreenVer(-0.8*b.h*Math.cos(b.xp[4])+b.xp[3]+(0.5-i/100)*b.L*Math.sin(b.xp[4])));
-                }
-                context.lineTo(ScreenHor(-0.4*b.h*Math.sin(b.xp[4])+b.x-(0.5-0/100)*b.L*Math.cos(b.xp[4])), ScreenVer(-0.4*b.h*Math.cos(b.xp[4])+b.xp[3]+(0.5-0/100)*b.L*Math.sin(b.xp[4])));
-                context.lineTo(ScreenHor(0*b.h*Math.sin(b.xp[4])+b.x-(0.5+12/100)*b.L*Math.cos(b.xp[4])), ScreenVer(0*b.h*Math.cos(b.xp[4])+b.xp[3]+(0.5+12/100)*b.L*Math.sin(b.xp[4])));
-                context.lineTo(ScreenHor(0.2*b.h*Math.sin(b.xp[4])+b.x-(0.5+12/100)*b.L*Math.cos(b.xp[4])), ScreenVer(0.2*b.h*Math.cos(b.xp[4])+b.xp[3]+(0.5+12/100)*b.L*Math.sin(b.xp[4])));
-                context.lineTo(ScreenHor(0.6*b.h*Math.sin(b.xp[4])+b.x-(0.5-0/100)*b.L*Math.cos(b.xp[4])), ScreenVer(0.6*b.h*Math.cos(b.xp[4])+b.xp[3]+(0.5-0/100)*b.L*Math.sin(b.xp[4])));
-
-                //context.fillStyle = '#ffffff';
+              
+                // periscope array
+                b.perH = 5*b.SF*Math.min(1,1/Math.max(1e-15,b.xp[3]/b.SF-(b.h*2+b.dsl)/b.SF));
+                let PerX = [
+                  0.44,
+                  0.44,
+                  0.452,
+                  0.45,
+                  0.445,
+                  0.445,
+                  //
+                  0.422,
+                  0.42,
+                  0.42,
+                  0.425,
+                  0.42,
+                  0.42,
+                  0.415,
+                  0.415,
+                  0.415,
+                  0.41,
+                  0.415,
+                  0.412,
+                  //
+                  0.395,
+                  0.395,
+                  0.39,
+                  0.39,
+                  //
+                  0.375,
+                  0.375,
+                  0.372,
+                  0.37,
+                  0.37,
+                ];
+                let PerY = [
+                  0,
+                  -1.0,
+                  -1.0,
+                  -0.85,
+                  -0.85,
+                  0,
+                  //
+                  0,
+                  -0.6,
+                  -0.6,
+                  -0.95,
+                  -0.95,
+                  -1.3,
+                  -1.3,
+                  -0.95,
+                  -0.95,
+                  -0.6,
+                  -0.6,
+                  0,
+                  //
+                  0,
+                  -0.7,
+                  -0.7,
+                  0,
+                  //
+                  0,
+                  -0.7,
+                  -0.65,
+                  -0.7,
+                  0,
+                ];
+                context.beginPath();
+                context.moveTo( ScreenHor(b.x
+                                          +PerX[0]*b.L*Math.cos(b.xp[4])
+                                          +(-b.h-b.dsl+PerY[0]*b.perH)*Math.sin(b.xp[4])), 
+                  ScreenVer(b.xp[3]
+                            +(-b.h-b.dsl+PerY[0]*b.perH)*Math.cos(b.xp[4])
+                            -PerX[0]*b.L*Math.sin(b.xp[4])));
+                for (var up=0;up<PerX.length;up++){
+                context.lineTo( ScreenHor(b.x
+                                          +PerX[up]*b.L*Math.cos(b.xp[4])
+                                          +(-b.h-b.dsl+PerY[up]*b.perH)*Math.sin(b.xp[4])), 
+                  ScreenVer(b.xp[3]
+                            +(-b.h-b.dsl+PerY[up]*b.perH)*Math.cos(b.xp[4])
+                            -PerX[up]*b.L*Math.sin(b.xp[4])));
+                };
+                context.closePath();
+                context.fillStyle = '#666666';
+                context.fill();
+                
+                //hull
+                let HullX = [0.5, -0.3, -0.5, -0.62, -0.62, -0.5, -0.32, -0.12, -0.03, 0.28, 0.3, 0.34,0.36,0.44,0.46,0.48,0.5];
+                let HullY = [b.h, b.h, 0.6*b.h, 0.2*b.h, 0,-0.4*b.h, -0.8*b.h, -0.8*b.h, -b.h,-b.h,-(b.h+0.2*b.dsl),-(b.h+0.9*b.dsl),-(b.h+b.dsl),-(b.h+b.dsl),-(b.h+0.9*b.dsl),-(b.h+0.2*b.dsl),-b.h];
+                
+                context.beginPath();
+                context.moveTo( ScreenHor(b.x
+                                          +HullX[0]*b.L*Math.cos(b.xp[4])
+                                          +HullY[0]*Math.sin(b.xp[4])), 
+                  ScreenVer(b.xp[3]
+                            +HullY[0]*Math.cos(b.xp[4])
+                            -HullX[0]*b.L*Math.sin(b.xp[4])));
+                for (var uh=0;uh<HullX.length;uh++){
+                  context.lineTo( ScreenHor(b.x
+                                            +HullX[uh]*b.L*Math.cos(b.xp[4])
+                                            +HullY[uh]*Math.sin(b.xp[4])), 
+                    ScreenVer(b.xp[3]
+                              +HullY[uh]*Math.cos(b.xp[4])
+                              -HullX[uh]*b.L*Math.sin(b.xp[4])));
+                };
+                context.ellipse(ScreenHor(b.x+0.5*b.L*Math.cos(b.xp[4])), ScreenVer(b.xp[3]-0.5*b.L*Math.sin(b.xp[4])),ScreenHor(Math.max(0.15*b.L,b.h*1.25))-iOrigin, ScreenVer(b.h)-jOrigin, -b.xp[4], -Math.PI/2, Math.PI/2, false);
                 context.fillStyle = 'rgba(255,255,255,1)';
                 context.fill();
                 //fill hull according to trim
@@ -1556,72 +1665,8 @@ shadowgrd.addColorStop(1.0, 'rgba(0,200,220,0.1)');
                 context.closePath();
                 context.strokeStyle = '#00508a';
                 context.stroke();
-                
-                //upper fin
-                context.beginPath();
               
-                context.moveTo(
-                  ScreenHor(b.x-(0.5+10.5/100)*b.L*Math.cos(b.xp[4])-0*b.h*Math.sin(b.xp[4])), 
-                  ScreenVer(b.xp[3]+(0.5+10.5/100)*b.L*Math.sin(b.xp[4]))-0*b.dsl*Math.cos(b.xp[4]));
               
-                context.lineTo(
-                  ScreenHor(-1.2*b.h*Math.sin(b.xp[4])+b.x-(0.5+10/100)*b.L*Math.cos(b.xp[4])), 
-                  ScreenVer(-1.2*b.dsl*Math.cos(b.xp[4])+b.xp[3]+(0.5+10/100)*b.L*Math.sin(b.xp[4])));
-              
-                context.lineTo(
-                  ScreenHor(-1.25*b.h*Math.sin(b.xp[4])+b.x-(0.5+5/100)*b.L*Math.cos(b.xp[4])), 
-                  ScreenVer(-1.25*b.dsl*Math.cos(b.xp[4])+b.xp[3]+(0.5+5/100)*b.L*Math.sin(b.xp[4])));
-              
-                context.lineTo(
-                  ScreenHor(-1.2*b.h*Math.sin(b.xp[4])+b.x-(0.5+4/100)*b.L*Math.cos(b.xp[4])), 
-                  ScreenVer(-1.2*b.dsl*Math.cos(b.xp[4])+b.xp[3]+(0.5+4/100)*b.L*Math.sin(b.xp[4])));
-              
-                context.lineTo(
-                  ScreenHor(-0.5*b.h*Math.sin(b.xp[4])+b.x-(0.5+3/100)*b.L*Math.cos(b.xp[4])), 
-                  ScreenVer(-0.5*b.dsl*Math.cos(b.xp[4])+b.xp[3]+(0.5+3/100)*b.L*Math.sin(b.xp[4])));
-              
-                context.lineTo(
-                  ScreenHor(-0.3*b.h*Math.sin(b.xp[4])+b.x-(0.5+2/100)*b.L*Math.cos(b.xp[4])), 
-                  ScreenVer(-0.3*b.dsl*Math.cos(b.xp[4])+b.xp[3]+(0.5+2/100)*b.L*Math.sin(b.xp[4])));
-              
-                context.closePath();
-                context.fillStyle = '#ffffff';
-                context.fill();
-                context.strokeStyle = '#00508a';
-                context.stroke();
-              
-                //lower fin
-                context.beginPath();
-              
-                context.moveTo(
-                  ScreenHor(0.2*b.h*Math.sin(b.xp[4])+b.x-(0.5+10.5/100)*b.L*Math.cos(b.xp[4])), 
-                  ScreenVer(0.2*b.dsl*Math.cos(b.xp[4])+b.xp[3]+(0.5+10.5/100)*b.L*Math.sin(b.xp[4])));
-              
-                context.lineTo(
-                  ScreenHor(1.2*b.h*Math.sin(b.xp[4])+b.x-(0.5+10/100)*b.L*Math.cos(b.xp[4])), 
-                  ScreenVer(1.2*b.dsl*Math.cos(b.xp[4])+b.xp[3]+(0.5+10/100)*b.L*Math.sin(b.xp[4])));
-              
-                context.lineTo(
-                  ScreenHor(1.25*b.h*Math.sin(b.xp[4])+b.x-(0.5+5/100)*b.L*Math.cos(b.xp[4])), 
-                  ScreenVer(1.25*b.dsl*Math.cos(b.xp[4])+b.xp[3]+(0.5+5/100)*b.L*Math.sin(b.xp[4])));
-              
-                context.lineTo(
-                  ScreenHor(1.2*b.h*Math.sin(b.xp[4])+b.x-(0.5+4/100)*b.L*Math.cos(b.xp[4])), 
-                  ScreenVer(1.2*b.dsl*Math.cos(b.xp[4])+b.xp[3]+(0.5+4/100)*b.L*Math.sin(b.xp[4])));
-              
-                context.lineTo(
-                  ScreenHor(0.6*b.h*Math.sin(b.xp[4])+b.x-(0.5+3/100)*b.L*Math.cos(b.xp[4])),
-                  ScreenVer(0.6*b.dsl*Math.cos(b.xp[4])+b.xp[3]+(0.5+3/100)*b.L*Math.sin(b.xp[4])));
-              
-                context.lineTo(
-                  ScreenHor(0.5*b.h*Math.sin(b.xp[4])+b.x-(0.5+2/100)*b.L*Math.cos(b.xp[4])), 
-                  ScreenVer(0.5*b.dsl*Math.cos(b.xp[4])+b.xp[3]+(0.5+2/100)*b.L*Math.sin(b.xp[4])));
-              
-                context.closePath();
-                context.fillStyle = '#ffffff';
-                context.fill();
-                context.strokeStyle = '#00508a';
-                context.stroke();
               
                 /*
                 context.beginPath();
@@ -1630,16 +1675,16 @@ shadowgrd.addColorStop(1.0, 'rgba(0,200,220,0.1)');
                 context.lineTo(ScreenHor(b.x+0.5*b.L*Math.cos(b.xp[4])), ScreenVer(b.xp[3]-0.5*b.L*Math.sin(b.xp[4])));
                 //context.fill();
                 context.strokeStyle = '#000000';
-                context.stroke();*/
+                context.stroke();//*/
               
               // trim compensation tank
               let tankH = 0.7; 
               context.beginPath();
                 context.moveTo(
                   ScreenHor(+b.x
-+((0.5-50/100)*b.L*Math.cos(b.xp[4])-tankH*b.h*Math.sin(b.xp[4]))),
++((0.0)*b.L*Math.cos(b.xp[4])-tankH*b.h*Math.sin(b.xp[4]))),
                   ScreenVer(+b.xp[3]
-+((0.5-50/100)*b.L*Math.sin(b.xp[4]))-tankH*b.h*Math.cos(b.xp[4])));
++((0.0)*b.L*Math.sin(b.xp[4]))-tankH*b.h*Math.cos(b.xp[4])));
               
                 context.lineTo(
                   ScreenHor(+b.x
@@ -1655,9 +1700,9 @@ shadowgrd.addColorStop(1.0, 'rgba(0,200,220,0.1)');
               
                 context.lineTo(
                   ScreenHor(+b.x
-+((0.5-50/100)*b.L*Math.cos(b.xp[4])+tankH*b.h*Math.sin(b.xp[4]))),
++((0.0)*b.L*Math.cos(b.xp[4])+tankH*b.h*Math.sin(b.xp[4]))),
                   ScreenVer(+b.xp[3]
-+(-(0.5-50/100)*b.L*Math.sin(b.xp[4]))+tankH*b.h*Math.cos(b.xp[4])));
++(-(0.0)*b.L*Math.sin(b.xp[4]))+tankH*b.h*Math.cos(b.xp[4])));
               
                 context.closePath();
                 context.fillStyle = '#ffffff';
@@ -1671,9 +1716,9 @@ shadowgrd.addColorStop(1.0, 'rgba(0,200,220,0.1)');
               context.beginPath();
                 context.moveTo(
                   ScreenHor(+b.x
-+((0.5-50/100)*b.L*Math.cos(b.xp[4])-filledTankH*b.h*Math.sin(b.xp[4]))),
++((0.0)*b.L*Math.cos(b.xp[4])-filledTankH*b.h*Math.sin(b.xp[4]))),
                   ScreenVer(+b.xp[3]
-+((0.5-50/100)*b.L*Math.sin(b.xp[4]))-filledTankH*b.h*Math.cos(b.xp[4])));
++((0.0)*b.L*Math.sin(b.xp[4]))-filledTankH*b.h*Math.cos(b.xp[4])));
               
                 context.lineTo(
                   ScreenHor(+b.x
@@ -1689,9 +1734,9 @@ shadowgrd.addColorStop(1.0, 'rgba(0,200,220,0.1)');
               
                 context.lineTo(
                   ScreenHor(+b.x
-+((0.5-50/100)*b.L*Math.cos(b.xp[4])+tankH*b.h*Math.sin(b.xp[4]))),
++((0.0)*b.L*Math.cos(b.xp[4])+tankH*b.h*Math.sin(b.xp[4]))),
                   ScreenVer(+b.xp[3]
-+(-(0.5-50/100)*b.L*Math.sin(b.xp[4]))+tankH*b.h*Math.cos(b.xp[4])));
++(-(0.0)*b.L*Math.sin(b.xp[4]))+tankH*b.h*Math.cos(b.xp[4])));
               
                 context.closePath();
                 context.fillStyle = '#019aca';
@@ -1755,6 +1800,18 @@ shadowgrd.addColorStop(1.0, 'rgba(0,200,220,0.1)');
                 context.beginPath();
                 context.arc(ScreenHor(0.1*b.h*Math.sin(b.xp[4])+b.x-0.5*b.L*Math.cos(b.xp[4])), ScreenVer(0.1*b.h*Math.cos(b.xp[4])+b.xp[3]+0.5*b.L*Math.sin(b.xp[4])), pixelRadius, 0, 2*Math.PI, true);
                 context.fill();
+                context.stroke();
+              
+              // waves in front of boat
+              
+              context.beginPath();
+                context.moveTo(ScreenHor(-4),ScreenVer(0));
+              var frontwavechar
+                for (let i=0; i < (b.ssFZ).length; i++) {
+                  frontwavechar = Math.sin(b.waveshimmer*(5))*b.ssFZ[i]/((2/b.SF)*b.SeaForcePerScreenUnit);
+                  context.lineTo(ScreenHor(-4+8.1*i/b.ssFZ.length),ScreenVer(0+frontwavechar));
+                }
+                context.strokeStyle = 'rgba(0,150,180,1)';
                 context.stroke();
               
             } else {
