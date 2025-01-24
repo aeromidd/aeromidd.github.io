@@ -199,7 +199,7 @@ b.maxplanerate = maxplanerateInput.value;
   
 <button id="PlantPhysicsToggle" style="position:absolute;left:5px;top:81px;width:200px;height:25px;" onClick="TogglePlantPhysicsTable();">Edit Submarine Plant</button>
   
-<button id="readoutThing" style="position:absolute;left:25px;top:181px;width:284px;height:25px;" onClick="">READOUT</button>
+<button id="readoutThing" style="position:absolute;left:25px;top:125px;width:200px;height:25px;" onClick="">READOUT</button>
   
 <button id="FreezeDepthToggle" style="position:absolute;left:425px;top:130px;width:114px;height:25px;" onClick="ToggleFreezeDepth();">Freeze Depth</button>
   
@@ -1529,7 +1529,7 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
                 }
                 for (let i=(b.ssFZ).length-1; i >= 0; i=i-1) {
                   wavechar = Math.sin(b.waveshimmer*(5))*b.ssMoving[i]/((2/b.SF)*b.SeaForcePerScreenUnit);
-                  context.lineTo(ScreenHor(-4+8.1*i/b.ssFZ.length),ScreenVer(Math.max(wavechar,Math.max(wavechar+1*b.SF,0))));
+                  context.lineTo(ScreenHor(-4+8.1*i/b.ssFZ.length),ScreenVer(Math.max(wavechar,Math.max(wavechar+1*b.SF,1*b.SF))));
                 }
   context.fillStyle = 'rgba(0,150,130,0.2)';
   context.fill();
@@ -1879,7 +1879,7 @@ shadowgrd2.addColorStop(1.0, 'rgba(0,230,250,0.05)');
                 }
                 for (let i=(b.ssFZ).length-1; i >= 0; i=i-1) {
                   wavechar = Math.sin(b.waveshimmer*(5))*b.ssMoving2[i]/((2/b.SF)*b.SeaForcePerScreenUnit);
-                  context.lineTo(ScreenHor(-4+8.1*i/b.ssFZ.length),ScreenVer(Math.max(wavechar,Math.max(wavechar+1*b.SF,0))));
+                  context.lineTo(ScreenHor(-4+8.1*i/b.ssFZ.length),ScreenVer(Math.max(wavechar,Math.max(wavechar+1*b.SF,1*b.SF))));
                 }
   context.fillStyle = 'rgba(0,155,205,0.2)';//'rgba(0,150,130,0.2)';
   context.fill();
