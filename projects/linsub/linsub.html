@@ -5,8 +5,10 @@
 <title>JSub</title>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.2.1/math.js">
   //TO DO:
-  // fix trim compensator
-  // add plant customization options. Requires some matrix maths so recommend not updating live like ctrl, but rather submitting after changing.
+  //add sliders to control bowplane and sternplane manually
+  //add a switch to link or unlink bowplane slider and sternplane slider (disables interactivity of latter)
+  //add a ratio input box determining ratio linking sternplane slider to bowplane slider
+  //package this into a show/hide thing "manual controls" a bit like the control gains option.
 </script>
   <style>
     table, th, td {
@@ -170,6 +172,14 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
   <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Use Pitch for Depth Changes</td>
 </tr>
 <tr>
+  <td><input id="SliderControlMaintainPitchInput" type="checkbox" style="width:60px;" checked>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Maintain Pitch During Slider Control</td>
+</tr>
+<tr>
+  <td><input id="SliderControlRatioInput" value="-0.25" step="0.05" max="2.0" min="-2.0" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Slider Control Sternplane Ratio</td>
+</tr>
+<tr>
   <td><input id="maxplanerateInput" value="15.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
   <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Max. Hydroplane Slew Rate</td>
 </tr>
@@ -212,6 +222,10 @@ b.maxplanerate = maxplanerateInput.value;
 <button id="Timerbutton" style="position:absolute;left:50px;top:150px;width:163px;height:25px;" value="false" >0</button>
 
 <input type="checkbox" style="position:absolute;left:5px;top:90px;" id="NiceGraphicsON" checked>
+
+  <input type="range" min="-45" max="45" step="0.1" value="0" class="slider" id="BPrange" style="position:absolute;left:600px;top:200px;width:50px;writing-mode: vertical-lr;direction: rtl;">
+<input type="range" min="-45" max="45" step="0.1" value="0" class="slider" id="SPrange" style="position:absolute;left:150px;top:200px;width:50px;writing-mode: vertical-lr;direction: rtl;">
+
 
 <script type="text/javascript">
 'use strict';
@@ -273,6 +287,10 @@ b.maxplanerate = maxplanerateInput.value;
             this.tui = [0,0];
             this.PlantUpdatingPrev = 0;
             this.PlantUpdatingTimer = 50;
+          
+            this.SliderControl = false;
+            this.SliderControlMaintainPitch = true;
+          
             //plant matrices
             this.A = [[0,0,0,0,0,0,0],
             [0,-0.333,-9.63,0,-1.51,0,0],
@@ -378,6 +396,16 @@ b.maxplanerate = maxplanerateInput.value;
     //console.log('RTPD clicked!');
     sim.depthOrder('PD');
 });
+
+BPrange.addEventListener('mousedown',function(){
+  sim.AssumeSliderControl();
+  console.log('BPrangeON');
+});
+BPrange.addEventListener('mouseup',function(){
+  sim.ReleaseSliderControl();
+  console.log('BPrangeOFF');
+});
+  
 UpdatePlantbutton.addEventListener('click',function(){
                     
   var Ukts = 10;
@@ -698,7 +726,7 @@ UpdatePlantbutton.addEventListener('click',function(){
                   let maxPitch = b.maxPitch;
                   var useZdErr;
                   if (b.AP[1] == 1 && b.AP[2] == 1){
-                  if (Math.abs(zErr)>[b.h*5/b.SF] && maxPitch != 0 && b.UsePitchForDepthChanges){
+                  if (Math.abs(zErr)>[b.h*5/b.SF] && maxPitch != 0 && b.UsePitchForDepthChanges && !b.SliderControl){
                       b.pitchDem = Math.min(Math.max(-maxPitch*0.8*(zErr/30)*Math.PI/180,-maxPitch*Math.PI/180),maxPitch*Math.PI/180);
                       zdErr = -10*0.51444*Math.sin(b.pitchDem)-b.xi[1];
                       qErr = 0*dt*b.pitchDem-b.xi[2];
@@ -832,8 +860,14 @@ UpdatePlantbutton.addEventListener('click',function(){
                     b.teint = 0;
                     b.resetInt = 0;
                   }else{
-                    b.xeint[1] += zdErr*dt; //obsolete
-                    b.xeint[2] += thtErr*dt; //obsolete
+                    if (b.SliderControl == true){
+                      //(FreezeIntegrators)
+                      b.xeint[1] += 0;
+                      b.xeint[2] += 0;
+                    }else{
+                      b.xeint[1] += zdErr*dt; //obsolete
+                      b.xeint[2] += thtErr*dt; //obsolete
+                    }
                     b.teint += b.trimErr*dt;
                   }
                   
@@ -862,30 +896,54 @@ UpdatePlantbutton.addEventListener('click',function(){
                   }else{
                       intZErr = zErr;
                   }
+                  var BPintZeroMod
+                  var SPintZeroMod
+                  if (b.SliderControl){
+                    BPintZeroMod = 0;
+                    if (b.SliderControlMaintainPitch){
+                      SPintZeroMod = 1;
+                    }else{
+                      SPintZeroMod = 0;
+                    }
+                  }else{
+                    BPintZeroMod = 1;
+                    SPintZeroMod = 1;
+                  }
                   
+                  b.uint[1] = Math.max(Math.min(b.uint[1]+BPintZeroMod*dbG[5]*intZErr*dt+BPintZeroMod*dbG[6]*thtErr*dt,b.maxBowplaneAngle*Math.PI/180),-b.maxBowplaneAngle*Math.PI/180);
                   
-                  b.uint[1] = Math.max(Math.min(b.uint[1]+dbG[5]*intZErr*dt+dbG[6]*thtErr*dt,b.maxBowplaneAngle*Math.PI/180),-b.maxBowplaneAngle*Math.PI/180);
-                  
-                    b.uint[2] = Math.max(Math.min(b.uint[2]+dsG[5]*intZErr*dt+dsG[6]*thtErr*dt,b.maxSternplaneAngle*Math.PI/180),-b.maxSternplaneAngle*Math.PI/180);
+                    b.uint[2] = Math.max(Math.min(b.uint[2]+BPintZeroMod*dsG[5]*intZErr*dt+SPintZeroMod*dsG[6]*thtErr*dt,b.maxSternplaneAngle*Math.PI/180),-b.maxSternplaneAngle*Math.PI/180);
                   
                   if (b.AP[1] == 1){
                     b.uiprev[1] = b.ui[1];
                     b.ui[1] = zdErr*dbG[1]+qErr*dbG[2]+zErr*dbG[3]+thtErr*dbG[4];
-                    b.ui[1] += b.uint[1];
+                    if (b.SliderControl){
+                      b.ui[1] = BPrange.value*Math.PI/180;
+                    }else{
+                      b.ui[1] += b.uint[1];
+                    }
                     
                     if (Math.abs(b.ui[1]-b.uiprev[1])>b.maxplanerate*(Math.PI/180)*dt){
                       b.ui[1] = b.uiprev[1]+Math.sign(b.ui[1]-b.uiprev[1])*b.maxplanerate*(Math.PI/180)*dt;
+                    }
+                    if (!b.SliderControl){
+                      BPrange.value = b.ui[1]*180/Math.PI;
                     }
                   }
                   
                   if (b.AP[2] == 1){
                     b.uiprev[2] = b.ui[2];
                     b.ui[2] = zdErr*dsG[1]+qErr*dsG[2]+zErr*dsG[3]+thtErr*dsG[4];
-                    b.ui[2] += b.uint[2];
+                    if (b.SliderControl && !b.SliderControlMaintainPitch){
+                      b.ui[2] = (-0.05)*BPrange.value*Math.PI/180;
+                    }else{
+                      b.ui[2] += b.uint[2];
+                    }
                     
                     if (Math.abs(b.ui[2]-b.uiprev[2])>b.maxplanerate*(Math.PI/180)*dt){
                       b.ui[2] = b.uiprev[2]+Math.sign(b.ui[2]-b.uiprev[2])*b.maxplanerate*(Math.PI/180)*dt;
                     }
+                    SPrange.value = b.ui[2]*180/Math.PI;
                   }
               
                   if (Math.abs(b.ui[1]) >= b.maxBowplaneAngle*Math.PI/180){
@@ -1113,6 +1171,21 @@ UpdatePlantbutton.addEventListener('click',function(){
           }
           time = 0;
         }
+        
+        AssumeSliderControl(){
+          var b;
+          for (b of this.subList) {
+            b.SliderControl = true;
+          };
+        }
+      
+        ReleaseSliderControl(){
+          var b;
+          for (b of this.subList) {
+            b.SliderControl = false;
+          };
+        }
+        
         APall(){
           var b;
           for (b of this.subList) {
