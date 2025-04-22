@@ -1,0 +1,824 @@
+ <!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>convE⇄X</title>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.2.1/math.js">
+</script>
+  <style>
+  </style>
+</head>
+<body>
+  <p style="position:absolute; left:5px; top:-25px; width:200px; font-family:Garamond; color:#00508a; font-size:30px">convE⇄X</p>
+  <p style="position:absolute; left:660px; top:-5px; width:400px; font-family:Garamond; color:#00508a; font-size:14px; align=right">Michael Middleton 2025</p>
+<canvas id="SimCanvas" tabindex='0' style="position:absolute;top:0px;left:0px;"></canvas>
+<div class="check"><label for="NiceGraphicsON" style="position:absolute;left:655px;top:580px; display:none"><input type="checkbox" id="NiceGraphicsON" unchecked>Dynamic Graphics</label><div>
+<div class="slidecontainer">
+  <input type="range" min="20" max="70" step="1" value="45" class="slider" id="XupperSplaySlider" style="position:absolute; left:-50px; top:220px; width: 120px;writing-mode: vertical-lr;direction: ltr;" oninput="this.nextElementSibling.value = this.value +'°';AnimationFrame();">
+<output style="position:absolute; left:25px; top:280px; font-family:Courier New; color:#00508a" >45°</output>
+<output style="position:absolute; left:25px; top:300px; font-family:Courier New; color:#019aca" >upper<br>splay</output>
+<div class="slidecontainer">
+  <output style="position:absolute; left:25px; top:400px; font-family:Courier New; color:#019aca" >lower<br>splay</output>
+  <input type="range" min="20" max="70" step="1" value="45" class="slider" id="XlowerSplaySlider" style="position:absolute; left:-50px; top:380px; width: 120px;writing-mode: vertical-lr;direction: rtl" oninput="this.nextElementSibling.value = this.value +'°';AnimationFrame();">
+<output style="position:absolute; left:25px; top:440px; font-family:Courier New; color:#00508a" >45°</output>
+  <input id="US_defInput" value="0.0" step="0.5" max="25" min="-25" type="number" style="position:absolute;top:660px;left:410px;width:50px;text-align:right" onkeypress="return isNumberKey(event);" onChange="this.value=Math.max(Math.min(this.value,this.max),this.min);sim.EXAorder(1e3,1e3,1,0,0,1,0,0,0); AnimationFrame();"/>
+  <input id="LS_defInput" value="0.0" step="0.5" max="25" min="-25" type="number" style="position:absolute;top:690px;left:410px;width:50px;text-align:right" onkeypress="return isNumberKey(event)" onChange="this.value=Math.max(Math.min(this.value,this.max),this.min);sim.EXAorder(1e3,1e3,1,0,0,0,1,0,0); AnimationFrame();"/>
+  <input id="LP_defInput" value="0.0" step="0.5" max="25" min="-25" type="number" style="position:absolute;top:690px;left:335px;width:50px;text-align:right" onkeypress="return isNumberKey(event)" onChange="this.value=Math.max(Math.min(this.value,this.max),this.min);sim.EXAorder(1e3,1e3,1,0,0,0,0,1,0); AnimationFrame();"/>
+  <input id="UP_defInput" value="0.0" step="0.5" max="25" min="-25" type="number" style="position:absolute;top:660px;left:335px;width:50px;text-align:right" onkeypress="return isNumberKey(event)" onChange="this.value=Math.max(Math.min(this.value,this.max),this.min);sim.EXAorder(1e3,1e3,1,0,0,0,0,0,1); AnimationFrame();"/>
+  <input id="ESA_defInput" value="0.0" step="0.5" max="25" min="-25" type="number" style="position:absolute;top:350px;left:725px;width:50px;text-align:right" onkeypress="return isNumberKey(event)" onChange="this.value=Math.max(Math.min(this.value,this.max),this.min);sim.EXAorder(ERA_defInput.value*5.5,this.value*5.5,1,0,1,0,0,0,0); AnimationFrame();"/>
+  <input id="ERA_defInput" value="0.0" step="0.5" max="25" min="-25" type="number" style="position:absolute;top:380px;left:725px;width:50px;text-align:right" onkeypress="return isNumberKey(event)" onChange="this.value=Math.max(Math.min(this.value,this.max),this.min);sim.EXAorder(this.value*5.5,ESA_defInput.value*5.5,1,1,0,0,0,0,0); AnimationFrame();"/>
+  <output style="position:absolute; left:690px; top:352px; font-family:Courier New; color:#019aca" >ESA</output>
+  <output style="position:absolute; left:690px; top:382px; font-family:Courier New; color:#019aca" >ERA</output>
+  <p style="position:absolute; left:727px; top:400px; width:70px; font-family:Courier New; color:#757575; font-size:11px">(0 Roll)</p>
+  <output style="position:absolute; left:355px; top:640px; font-family:Courier New; color:#019aca" >UP</output>
+  <output style="position:absolute; left:355px; top:715px; font-family:Courier New; color:#019aca" >LP</output>
+  <output style="position:absolute; left:430px; top:640px; font-family:Courier New; color:#019aca" >US</output>
+  <output style="position:absolute; left:430px; top:715px; font-family:Courier New; color:#019aca" >LS</output>
+  
+      <div class="check"><label for="InvertERAcheckbox" style="position:absolute;left:741px;top:430px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="InvertERAcheckbox" style='position:absolute;top:-3.5px;left:-20px' onclick="AnimationFrame();" unchecked><i> Invert ERA </label><div>
+  <output style="position:absolute; left:5px; top:717px; width:799px; font-family:Garamond; color:#757575; font-size: 12px" > A tool visualising submarine x-plane configurations and <br> their cruciform-equivalent rudder / sternplane / roll angle contributions. <br>Note that the background vehicle motion is a visual aid <i> only </i> of (uncoupled) total roll, pitch, yaw <i><b> reaction directions </b></i> imparted by the control surfaces, and should not be conflated with nor used to verify any resulting vehicle orientation/attitude in conventional reference frames. <span style="color: #019aca"><b> Visualise:</b></span><span style="color: #00508a"><br><b>Instructions:</b> Alter xplane Splay angles with the sliders on the left. Click/Drag in the central circle to assign cruciform-equivalent angles (zero roll solution), or Click+Drag individual xplanes to assign their angles. Alternatively, type + enter these values in the input boxes. Xplanes are coloured darker when trailing edge <u>up.</u></span>
+    <div class="check"><label for="ShowRollContrib" style="position:absolute;left:630px;top:42px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="ShowRollContrib" style='position:absolute;top:-3.5px;left:-20px' onclick="AnimationFrame();" checked><i> Roll </label><div>
+    <div class="check"><label for="ShowRollContrib" style="position:absolute;left:690px;top:42px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="ShowPitchContrib" style='position:absolute;top:-3.5px;left:-20px' onclick="AnimationFrame();" checked><i> Pitch </label><div>
+    <div class="check"><label for="ShowRollContrib" style="position:absolute;left:750px;top:42px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="ShowYawContrib" style='position:absolute;top:-3.5px;left:-20px' onclick="AnimationFrame();" checked><i> Yaw </label><div>
+  </output>
+</div>
+<script type="text/javascript">
+'use strict';
+
+    // Rendering constants
+    const PixelsPerMeter = 1;
+    const iOrigin = 400;                // hor location of world origin on canvas [pixels]
+    const jOrigin = 375;                // ver location of world origin on canvas [pixels]
+    
+    var sim;
+
+    class Sub {
+        constructor(anchor, x, y, xi) {
+            this.anchor = anchor;   // 0=mobile, positive=fixed in place
+            this.SF = 5.5; //length scale factor for screen
+            this.MaxX = 25; //Xplane max angle
+            this.Eradius = this.MaxX*this.SF; //Equivalents diagram radius
+            this.Kradius = 0*this.SF; // Roll knuckle radius
+            this.Cradius = 0; // Center
+            this.Fradius = this.Eradius*1.1; //Fuselage or hull radius
+            this.XL = 32*this.SF; // Xplane length
+            this.XW = 7.5*this.SF; // Xplane width (chord)
+            this.UXA = 90-45;//90-UpperSplay; //deg
+            this.LXA = 90-45;//90-LowerSplay; //deg
+            //
+            this.EKA = 0;
+            this.ERA = 0;
+            this.ESA = -15;
+            this.EKA_act = 0;
+            this.ERA_act = 0;
+            this.ESA_act = 0;
+            //
+            this.US = this.ESA/this.MaxX;
+            this.LS = this.ESA/this.MaxX;
+            this.LP = -this.ESA/this.MaxX;
+            this.UP = -this.ESA/this.MaxX;
+            //
+            this.xi = [0,0,0,0,0,0];
+            this.Roll = 0;
+            this.Pitch = 0;
+            this.Yaw = 0;
+            //
+            this.ClickFuselage = false;
+            this.ClickUS = false;
+            this.ClickLS = false;
+            this.ClickLP = false;
+            this.ClickUP = false;
+            //
+            this.InvertERA = false;
+            //
+            this.DynamicsOn = false;
+        }
+
+        Distance(x, y) {
+            const dx = this.x - x;
+            const dy = this.y - y;
+            return Math.sqrt(dx*dx + dy*dy);
+        }
+    }
+
+    class Simulation {
+        constructor() {
+            this.subList = [];
+            this.springList = [];
+
+            
+            this.gravity = -9.81;
+
+            this.grabbedSub = null;
+        }
+
+        AddSub(sub) {
+            this.subList.push(sub);
+            return sub;
+        }
+
+        Update(dt) {
+            var b, s;
+
+            for (b of this.subList) {
+                b.InvertERA = InvertERAcheckbox.checked;
+                //console.log(b.InvertERA)
+                b.DynamicsOn = NiceGraphicsON.checked;
+                b.UXA = 90-XupperSplaySlider.value; 
+                b.LXA = 90-XlowerSplaySlider.value;
+              
+                if (b.DynamicsOn){
+                
+                var xdi = [];
+                //first order response
+                xdi[0] = (-1*Math.sign(b.EKA_act)*Math.sqrt(Math.abs(b.EKA_act)/b.MaxX)-b.xi[0])/3.0;
+                xdi[1] = (-1*Math.sign(b.ERA_act)*Math.sqrt(Math.abs(b.ERA_act)/b.MaxX)-b.xi[1])/3.0;
+                xdi[2] = (-1*Math.sign(b.ESA_act)*Math.sqrt(Math.abs(b.ESA_act)/b.MaxX)-b.xi[2])/3.0;
+                //xdi[3] = (b.ERA-b.xi[3])/1.0;
+                //xdi[4] = (b.ESA-b.xi[4])/1.0;
+                //xdi[5] = (b.EKA-b.xi[5])/1.0;
+                  
+                // Integrate
+                for (var f = 0; f< b.xi.length; f++){
+                    b.xi[f] += dt*xdi[f];
+                }
+                  
+                } else{
+                  b.xi[0] = +1*Math.sign(b.EKA)*Math.sqrt(Math.abs(b.EKA)/b.MaxX);
+                  b.xi[1] = -1*Math.sign(b.ERA)*Math.sqrt(Math.abs(b.ERA)/b.MaxX);
+                  b.xi[2] = -1*Math.sign(b.ESA)*Math.sqrt(Math.abs(b.ESA)/b.MaxX);
+                }
+                
+                b.Roll = b.xi[0]*0.3;
+                b.Yaw = b.xi[1];
+                b.Pitch = b.xi[2];
+                b.ERA_act = b.ERA;
+                b.ESA_act = b.ESA;
+                b.EKA_act = b.EKA;
+                
+                if (b.ClickFuselage == true){
+                    // Basic Sunny Day Zero Roll Solution:
+                    b.US = (-b.ERA_act+b.ESA_act)/b.MaxX;
+                    b.LS = (+b.ERA_act+b.ESA_act)/b.MaxX;
+                    b.LP = (+b.ERA_act-b.ESA_act)/b.MaxX;
+                    b.UP = (-b.ERA_act-b.ESA_act)/b.MaxX;
+					
+                }else{
+                }
+              
+                  var EXA_act = X2E(b.US*b.MaxX,b.LS*b.MaxX,b.LP*b.MaxX,b.UP*b.MaxX);
+                    b.EKA = EXA_act[2][0];
+                    b.ERA = EXA_act[1][0];
+                    b.ESA = EXA_act[0][0];
+              
+                ERA_defInput.value = b.ERA;
+                ESA_defInput.value = b.ESA;
+                US_defInput.value = b.US*b.MaxX;
+                LS_defInput.value = b.LS*b.MaxX;
+                LP_defInput.value = b.LP*b.MaxX;
+                UP_defInput.value = b.UP*b.MaxX;
+              
+                  
+                  var RollKnuckle1 = X2E(-b.MaxX,+b.MaxX,+b.MaxX,+b.MaxX);
+                  var RollKnuckle2 = X2E(+b.MaxX,+b.MaxX,-b.MaxX,+b.MaxX);
+                    
+                  b.KradiusR = Math.max(Math.abs(RollKnuckle1[1][0]),Math.abs(RollKnuckle2[1][0]))*b.SF;
+                  b.KradiusS = Math.max(Math.abs(RollKnuckle1[0][0]),Math.abs(RollKnuckle2[0][0]))*b.SF;
+                
+            }
+
+            function X2E(US,LS,LP,UP){
+                      var M1 = [
+                                [Math.sin((90-b.UXA)*Math.PI/180)],
+                                [Math.sin((90-b.LXA)*Math.PI/180)],
+                                [-Math.sin((90-b.LXA)*Math.PI/180)],
+                                [-Math.sin((90-b.UXA)*Math.PI/180)],
+                               ];
+                      var M2 = 1/(Math.sin((90-b.UXA)*Math.PI/180)+
+                               Math.sin((90-b.UXA)*Math.PI/180)+
+                               Math.sin((90-b.LXA)*Math.PI/180)+
+                               Math.sin((90-b.LXA)*Math.PI/180));
+
+                      var M3 = math.multiply(M1,M2);
+                      var M = math.transpose(M3);
+                      //
+                      var N1 = [
+                                [-Math.cos((90-b.UXA)*Math.PI/180)],
+                                [Math.cos((90-b.LXA)*Math.PI/180)],
+                                [Math.cos((90-b.LXA)*Math.PI/180)],
+                                [-Math.cos((90-b.UXA)*Math.PI/180)],
+                               ];
+                      var N2 = 1/(Math.cos((90-b.UXA)*Math.PI/180)+
+                               Math.cos((90-b.UXA)*Math.PI/180)+
+                               Math.cos((90-b.LXA)*Math.PI/180)+
+                               Math.cos((90-b.LXA)*Math.PI/180));
+
+                      var N3 = math.multiply(N1,N2);
+                      var N = math.transpose(N3);
+                      
+                      var K1 = [
+                                [-1],
+                                [-1],
+                                [-1],
+                                [-1],
+                               ];
+                      var K2 = 1/4;
+                      var K3 = math.multiply(K1,K2);
+                      var K = math.transpose(K3);
+                      
+                      var A = math.concat(M,N,K,0);
+                      
+                      var X = [
+                               [US],
+                               [LS],
+                               [LP],
+                               [UP],
+                              ];
+                      //
+                      var EXA = math.multiply(A,X);
+                      /*
+                      if (b.InvertERA){
+                        EXA[1] = -1*EXA[1];
+                      }
+                      //*/
+                      return EXA
+                    
+                      }
+        }
+      
+        
+        EXAorder(X,Y,firstClick,xR,xS,x1,x2,x3,x4){
+          
+          var b;
+          for (b of this.subList) {
+            function isPointInRotatedRectangle(px, py, cx, cy, width, height, angle) {
+            // Convert angle from degrees to radians if necessary
+              let theta = angle*Math.PI/180; // Ensure it's in radians
+
+              // Translate point to the rectangle's center
+              let dx = px - cx;
+              let dy = py - cy;
+
+              // Rotate the point in the opposite direction (-theta)
+              let rotatedX = dx * Math.cos(theta) + dy * Math.sin(theta);
+              let rotatedY = -dx * Math.sin(theta) + dy * Math.cos(theta);
+
+              // Check if the rotated point is inside the axis-aligned rectangle
+              let halfW = width / 2;
+              let halfH = height / 2;
+
+              return Math.abs(rotatedX) <= halfW && Math.abs(rotatedY) <= halfH;
+            }
+            
+            X = X/b.SF;
+            Y = Y/b.SF;
+            
+            let pointinF = (Math.abs(X)**2+Math.abs(Y)**2)<=((b.Fradius/b.SF)**2);
+            
+            let pointinUS = isPointInRotatedRectangle(X*b.SF, Y*b.SF, (b.Fradius+b.XL/2)*Math.cos((b.UXA)*Math.PI/180), (b.Fradius+b.XL/2)*Math.sin((b.UXA)*Math.PI/180), b.XL, b.XW*2, b.UXA)
+            let pointinLS = isPointInRotatedRectangle(X*b.SF, Y*b.SF, (b.Fradius+b.XL/2)*Math.cos((b.LXA)*Math.PI/180), (-b.Fradius-b.XL/2)*Math.sin((b.LXA)*Math.PI/180), b.XL, b.XW*2, -b.LXA)
+            let pointinLP = isPointInRotatedRectangle(X*b.SF, Y*b.SF, (-b.Fradius-b.XL/2)*Math.cos((b.LXA)*Math.PI/180), (-b.Fradius-b.XL/2)*Math.sin((b.LXA)*Math.PI/180), b.XL, b.XW*2, b.LXA)
+            
+            let pointinUP = isPointInRotatedRectangle(X*b.SF, Y*b.SF, (-b.Fradius-b.XL/2)*Math.cos((b.UXA)*Math.PI/180), (b.Fradius+b.XL/2)*Math.sin((b.UXA)*Math.PI/180), b.XL, b.XW*2, -b.UXA)
+            
+            if (firstClick == 1){
+              b.FirstClickX = X;
+              b.FirstClickY = Y;
+              if(pointinF){
+                b.ClickFuselage = true;
+                b.ClickUS = false;
+                b.ClickLS = false;
+                b.ClickLP = false;
+                b.ClickUP = false;
+              }else if(pointinUS){
+                b.ClickFuselage = false;
+                b.ClickUS = true;
+                b.ClickLS = false;
+                b.ClickLP = false;
+                b.ClickUP = false;
+                console.log('US')
+              }else if(pointinLS){
+                b.ClickFuselage = false;
+                b.ClickUS = false;
+                b.ClickLS = true;
+                b.ClickLP = false;
+                b.ClickUP = false;
+                console.log('LS')
+              }else if(pointinLP){
+                b.ClickFuselage = false;
+                b.ClickUS = false;
+                b.ClickLS = false;
+                b.ClickLP = true;
+                b.ClickUP = false;
+                console.log('LP')
+              }else if(pointinUP){
+                b.ClickFuselage = false;
+                b.ClickUS = false;
+                b.ClickLS = false;
+                b.ClickLP = false;
+                b.ClickUP = true;
+                console.log('UP')
+              }else{
+                b.ClickFuselage = false;
+                b.ClickUS = false;
+                b.ClickLS = false;
+                b.ClickLP = false;
+                b.ClickUP = false;
+              }
+            }
+            let ClickDistX = X-b.FirstClickX;
+            let ClickDistY = Y-b.FirstClickY;
+            if (b.ClickFuselage){
+              if (Math.abs(X)+Math.abs(Y) <= b.MaxX){
+                //within capability (zero roll)
+                if (b.InvertERA){
+                  b.ERA = -X;
+                }else{
+                  b.ERA = X;
+                }
+                b.ESA = Y;
+                b.EKA = 0;
+              }else{
+                //calculate closest point in capability
+                // Calculate the scaling factor
+                let boundaryscale = b.MaxX / (Math.abs(X) + Math.abs(Y));
+                // Scale the point to the boundary
+                if (b.InvertERA){
+                b.ERA = -X * boundaryscale;
+                }else{
+                b.ERA = X * boundaryscale;
+                }
+                b.ESA = Y * boundaryscale;
+                b.EKA = 0;
+              }
+            }else if (b.ClickUS) { //Click is on US
+               b.US = (b.SF*ClickDistX*Math.cos((90-b.UXA)*Math.PI/180)-b.SF*ClickDistY*Math.sin((90-b.UXA)*Math.PI/180))/b.MaxX;
+              b.US = Math.max(Math.min(b.US,1),-1);
+              //
+            }else if (b.ClickLS) { //Click is on LS
+               b.LS = (-b.SF*ClickDistX*Math.cos((90-b.LXA)*Math.PI/180)-b.SF*ClickDistY*Math.sin((90-b.LXA)*Math.PI/180))/b.MaxX;
+              b.LS = Math.max(Math.min(b.LS,1),-1);
+              //
+            }else if (b.ClickLP) { //Click is on LP
+               b.LP = (-b.SF*ClickDistX*Math.cos((90-b.LXA)*Math.PI/180)+b.SF*ClickDistY*Math.sin((90-b.LXA)*Math.PI/180))/b.MaxX;
+              b.LP = Math.max(Math.min(b.LP,1),-1);
+              //
+            }else if (b.ClickUP) { //Click is on UP
+               b.UP = (b.SF*ClickDistX*Math.cos((90-b.UXA)*Math.PI/180)+b.SF*ClickDistY*Math.sin((90-b.UXA)*Math.PI/180))/b.MaxX;
+              b.UP = Math.max(Math.min(b.UP,1),-1);
+              //
+            }else if (x1){
+              b.US = Math.max(Math.min(US_defInput.value/b.MaxX,1),-1);
+            }else if (x2){
+              b.LS = Math.max(Math.min(LS_defInput.value/b.MaxX,1),-1);
+            }else if (x3){
+              b.LP = Math.max(Math.min(LP_defInput.value/b.MaxX,1),-1);
+            }else if (x4){
+              b.UP = Math.max(Math.min(UP_defInput.value/b.MaxX,1),-1);
+            }else if (xR){
+              //b.ERA = Math.max(Math.min(ERA_defInput.value,b.MaxX),-b.MaxX);
+            }else if (xS){
+              //b.ESA = Math.max(Math.min(ESA_defInput.value,b.MaxX),-b.MaxX);
+            }else{
+            }
+            
+          }
+        }
+    }
+    
+    function MakeString(sim) {
+        let anchor1 = sim.AddSub(new Sub(0));
+        let prevSub = anchor1;
+    }
+
+    function InitWorld() {
+        let sim = new Simulation();
+        MakeString(sim);
+        return sim;
+    }
+
+    function ScreenHor(x) {
+        return iOrigin + (PixelsPerMeter * x);
+    }
+
+    function ScreenVer(y) {
+        return jOrigin - (PixelsPerMeter * y); //-
+    }
+
+    function WorldX(hor) {
+        return (hor - iOrigin) / PixelsPerMeter;
+    }
+
+    function WorldY(ver) {
+        return (jOrigin - ver) / PixelsPerMeter;
+    }
+
+    function Render(sim) {
+        const canvas = document.getElementById('SimCanvas');
+        const context = canvas.getContext('2d');
+      
+        // Set display size (css pixels).
+        var xsize = 800;
+        var ysize = 800;
+        canvas.style.width = xsize + "px";
+        canvas.style.height = ysize + "px";
+
+        // Set actual size in memory (scaled to account for extra pixel density).
+        var scale = 2;//window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+        canvas.width = Math.floor(xsize * scale);
+        canvas.height = Math.floor(ysize * scale);
+        canvas.style.border = "2.5px solid #00508a";
+        
+        
+        // Normalize coordinate system to use css pixels.
+        context.scale(scale, scale);
+      
+        context.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+
+        context.strokeStyle = '#000';
+        context.lineWidth = 1;
+        const pixelRadius = 0.01 * PixelsPerMeter;
+        for (let b of sim.subList) {
+            if (b.anchor === 0) {
+              
+              //Xplane Colors:
+              let LightSubColor = "#c7c7e7";
+              let DarkSubColor = "#9797b7";
+              let LightPlaneColor = "#d7d7f7";
+              let DarkPlaneColor = "#8787a7";
+              
+              //Fwd Fuselage
+              var ShiftFuselageX = 1.0*b.Fradius*b.Yaw*(ShowYawContrib.checked);
+              var ShiftFuselageY = 1.0*b.Fradius*b.Pitch*(ShowPitchContrib.checked);
+              var Froll = 1.0*b.Roll*(ShowRollContrib.checked);
+              //
+              const grd = context.createLinearGradient(ScreenHor(b.Cradius), ScreenVer(b.Cradius+b.Fradius*1.25), ScreenHor(b.Cradius), ScreenVer(b.Cradius-b.Fradius*1.25));
+              grd.addColorStop(0.0, '#e7e7f7');
+              grd.addColorStop(1.0, DarkSubColor);
+              context.fillStyle = grd;
+              //fuselageribs
+              var Fribs = 25;
+              var FRradius
+              for (var i=Fribs;i>0;i--){
+                FRradius = b.Fradius*(100-i)/100;
+                context.beginPath();
+                context.ellipse(ScreenHor(b.Cradius+(i/Fribs)*ShiftFuselageX), ScreenVer(b.Cradius+(i/Fribs)*ShiftFuselageY), Math.abs(ScreenHor(FRradius)-iOrigin), Math.abs(ScreenVer(FRradius)-jOrigin), 0, 2*Math.PI, false);
+                context.lineWidth = 1;
+                context.strokeStyle = '#c7c7e7';
+                context.closePath();
+                context.stroke();
+                context.fillStyle = grd;
+                context.fill();
+                
+                // Conning Tower
+                if (i/Fribs > 0.6 && i/Fribs < 0.9){
+                    context.save();
+                    context.translate(ScreenHor(b.Cradius+(i/Fribs)*ShiftFuselageX), ScreenVer(b.Cradius+(i/Fribs)*ShiftFuselageY));
+                    context.rotate(Froll);
+                    context.beginPath();
+                    context.moveTo(ScreenHor(0.4*FRradius)-iOrigin,ScreenVer(0.75*FRradius)-jOrigin);
+                    context.lineTo(ScreenHor(0.25*FRradius)-iOrigin,ScreenVer(1.5*FRradius)-jOrigin);
+                    context.lineTo(ScreenHor(-0.25*FRradius)-iOrigin,ScreenVer(+1.5*FRradius)-jOrigin);
+                    context.lineTo(ScreenHor(-0.4*FRradius)-iOrigin,ScreenVer(+0.75*FRradius)-jOrigin);
+                    context.lineWidth = 1;
+                    context.strokeStyle = DarkSubColor;
+                    context.closePath();
+                    context.stroke();
+                    context.fillStyle = grd;
+                    context.fill();
+                    context.restore();
+                 };
+                
+                 // Bow Planes
+                 if (i == Fribs-4){
+                    context.save();
+                    context.translate(ScreenHor(b.Cradius+(i/Fribs)*ShiftFuselageX), ScreenVer(b.Cradius+(i/Fribs)*ShiftFuselageY));
+                    context.rotate(Froll);
+                    context.beginPath();
+                    context.moveTo(ScreenHor(0*FRradius)-iOrigin,ScreenVer(0.7*FRradius)-jOrigin);
+                    context.lineTo(ScreenHor(1.33*FRradius)-iOrigin,ScreenVer(0.90*FRradius)-jOrigin);
+                    context.lineTo(ScreenHor(1.33*FRradius)-iOrigin,ScreenVer(0.95*FRradius)-jOrigin);
+                    context.lineTo(ScreenHor(-1.33*FRradius)-iOrigin,ScreenVer(+0.95*FRradius)-jOrigin);
+                    context.lineTo(ScreenHor(-1.33*FRradius)-iOrigin,ScreenVer(0.90*FRradius)-jOrigin);
+                    context.lineTo(ScreenHor(-0*FRradius)-iOrigin,ScreenVer(0.7*FRradius)-jOrigin);
+                    context.lineWidth = 1;
+                    context.strokeStyle = DarkSubColor;
+                    context.closePath();
+                    context.stroke();
+                    context.fillStyle = grd;
+                    context.fill();
+                    context.restore();
+                 }
+                 // body markers
+                 if (i > 2 && i < 8){
+                    context.save();
+                    context.translate(ScreenHor(b.Cradius+(i/Fribs)*ShiftFuselageX), ScreenVer(b.Cradius+(i/Fribs)*ShiftFuselageY));
+                    context.rotate(Froll);
+                    context.beginPath();
+                    context.moveTo(ScreenHor(0.2*FRradius)-iOrigin,ScreenVer(0.2*FRradius)-jOrigin);
+                    context.lineTo(ScreenHor(0.05*FRradius)-iOrigin,ScreenVer(1.08*FRradius)-jOrigin);
+                    context.lineTo(ScreenHor(-0.05*FRradius)-iOrigin,ScreenVer(1.08*FRradius)-jOrigin);
+                    context.lineTo(ScreenHor(-0.2*FRradius)-iOrigin,ScreenVer(0.2*FRradius)-jOrigin);
+                    context.lineTo(ScreenHor(-1.08*FRradius)-iOrigin,ScreenVer(0.05*FRradius)-jOrigin);
+                    context.lineTo(ScreenHor(-1.08*FRradius)-iOrigin,ScreenVer(-0.05*FRradius)-jOrigin);
+                    context.lineTo(ScreenHor(-0.2*FRradius)-iOrigin,ScreenVer(-0.2*FRradius)-jOrigin);
+                    context.lineTo(ScreenHor(-0.05*FRradius)-iOrigin,ScreenVer(-1.08*FRradius)-jOrigin);
+                    context.lineTo(ScreenHor(+0.05*FRradius)-iOrigin,ScreenVer(-1.08*FRradius)-jOrigin);
+                    context.lineTo(ScreenHor(+0.2*FRradius)-iOrigin,ScreenVer(-0.2*FRradius)-jOrigin);
+                    context.lineTo(ScreenHor(+1.08*FRradius)-iOrigin,ScreenVer(-0.05*FRradius)-jOrigin);
+                    context.lineTo(ScreenHor(+1.08*FRradius)-iOrigin,ScreenVer(+0.05*FRradius)-jOrigin);
+                    context.lineWidth = 1;
+                    context.strokeStyle = DarkSubColor;
+                    context.closePath();
+                    context.stroke();
+                    context.fillStyle = grd;
+                    context.fill();
+                    context.restore();
+                 }
+                    //*/
+              };
+              
+              // Fuselage Rear Cross Section
+              context.beginPath();
+              context.ellipse(ScreenHor(b.Cradius), ScreenVer(b.Cradius), Math.abs(ScreenHor(b.Fradius)-iOrigin), Math.abs(ScreenVer(b.Fradius)-jOrigin), 0, 2*Math.PI, false);
+              context.lineWidth = 3;
+              context.strokeStyle = '#00508a';
+              context.closePath();
+              context.stroke();
+              context.fillStyle = '#c7c7c7';
+              context.fill();
+              
+              
+              context.lineWidth = 2;
+
+              //Full Capability Region
+              context.beginPath();
+              context.moveTo(ScreenHor(b.Eradius),ScreenVer(b.Cradius));
+              context.lineTo(ScreenHor(b.KradiusR),ScreenVer(b.KradiusS));
+              context.lineTo(ScreenHor(b.Cradius),ScreenVer(b.Eradius));
+              context.lineTo(ScreenHor(-b.KradiusR),ScreenVer(b.KradiusS));
+              context.lineTo(ScreenHor(-b.Eradius),ScreenVer(b.Cradius));
+              context.lineTo(ScreenHor(-b.KradiusR),ScreenVer(-b.KradiusS));
+              context.lineTo(ScreenHor(b.Cradius),ScreenVer(-b.Eradius));
+              context.lineTo(ScreenHor(b.KradiusR),ScreenVer(-b.KradiusS));
+              context.lineTo(ScreenHor(b.Eradius),ScreenVer(b.Cradius));
+              context.strokeStyle = '#019aca';
+              context.closePath();
+              context.stroke();
+              context.fillStyle = '#ffffff';
+              context.fill();
+              
+              // Quadrant Splitter
+              context.beginPath();
+              context.moveTo(ScreenHor(b.Cradius),ScreenVer(b.Cradius));
+              context.lineTo(ScreenHor(b.Cradius),ScreenVer(b.Eradius));
+              context.lineTo(ScreenHor(b.Cradius),ScreenVer(-b.Eradius));
+              context.lineTo(ScreenHor(b.Cradius),ScreenVer(b.Cradius));
+              context.lineTo(ScreenHor(-b.Eradius),ScreenVer(b.Cradius));
+              context.lineTo(ScreenHor(b.Eradius),ScreenVer(b.Cradius));
+              context.strokeStyle = '#e7e7e7';
+              context.closePath();
+              context.stroke();
+              
+              // Zero Roll Region
+              context.beginPath();
+              context.moveTo(ScreenHor(b.Eradius),ScreenVer(b.Cradius));
+              context.lineTo(ScreenHor(b.Cradius),ScreenVer(b.Eradius));
+              context.lineTo(ScreenHor(-b.Eradius),ScreenVer(b.Cradius));
+              context.lineTo(ScreenHor(b.Cradius),ScreenVer(-b.Eradius));
+              context.lineTo(ScreenHor(b.Eradius),ScreenVer(b.Cradius));
+              context.strokeStyle = '#019aca';
+              context.closePath();
+              context.stroke();
+              
+              // Upper STBD Plane
+              //Axis
+              context.beginPath();  context.moveTo(ScreenHor(b.Fradius*Math.cos(b.UXA*Math.PI/180)),ScreenVer(b.Fradius*Math.sin(b.UXA*Math.PI/180)));context.lineTo(ScreenHor((b.XL+b.Fradius)*Math.cos(b.UXA*Math.PI/180)),ScreenVer((b.XL+b.Fradius)*Math.sin(b.UXA*Math.PI/180)));
+              context.lineWidth = 5;
+              context.strokeStyle = '#00508a';
+              context.closePath();
+              context.stroke();
+              // Readout
+              context.font = "14px Courier New";
+              context.fillStyle = "#019aca";
+              context.textAlign = "center";
+              context.fillText('Upper Stbd', ScreenHor((1.1*b.XL+b.Fradius)*Math.cos(b.UXA*Math.PI/180)),ScreenVer(3.5*b.SF+(1.1*b.XL+b.Fradius)*Math.sin(b.UXA*Math.PI/180)));
+              context.fillStyle = '#00508a';//"#ddaa00";
+              context.fillText(((b.US*b.MaxX).toFixed(2).toString()).concat('°'), ScreenHor((1.1*b.XL+b.Fradius)*Math.cos(b.UXA*Math.PI/180)),ScreenVer((1.1*b.XL+b.Fradius)*Math.sin(b.UXA*Math.PI/180)));
+              // Actuator
+              context.beginPath();
+              context.moveTo(ScreenHor((b.XL+b.Fradius)*Math.cos(b.UXA*Math.PI/180)),ScreenVer((b.XL+b.Fradius)*Math.sin(b.UXA*Math.PI/180)));
+              context.lineTo(ScreenHor((0.95*b.XL+b.Fradius)*Math.cos(b.UXA*Math.PI/180)+(b.US*b.XW*0.6)*Math.sin(b.UXA*Math.PI/180)),ScreenVer((0.95*b.XL+b.Fradius)*Math.sin(b.UXA*Math.PI/180)-(b.US*b.XW*0.6)*Math.cos(b.UXA*Math.PI/180)));
+              context.lineTo(ScreenHor((-0.05*b.XL+b.Fradius)*Math.cos(b.UXA*Math.PI/180)+(b.US*b.XW)*Math.sin(b.UXA*Math.PI/180)),ScreenVer((-0.05*b.XL+b.Fradius)*Math.sin(b.UXA*Math.PI/180)-(b.US*b.XW)*Math.cos(b.UXA*Math.PI/180)));
+              context.lineTo(ScreenHor((0.0*b.XL+b.Fradius)*Math.cos(b.UXA*Math.PI/180)),ScreenVer((0.0*b.XL+b.Fradius)*Math.sin(b.UXA*Math.PI/180)));
+              context.lineWidth = 2;
+              context.strokeStyle = '#00508a';
+              context.closePath();
+              if (b.US > 0){
+                context.fillStyle = LightPlaneColor; //TL down - light on top
+              }else{
+                context.fillStyle = DarkPlaneColor; //TL up - light on bottom
+              }
+              context.fill();
+              context.stroke();
+              
+              // Lower STBD Plane
+              //Axis
+              context.beginPath();
+              context.moveTo(ScreenHor(b.Fradius*Math.cos(b.LXA*Math.PI/180)),ScreenVer(-b.Fradius*Math.sin(b.LXA*Math.PI/180)));context.lineTo(ScreenHor((b.XL+b.Fradius)*Math.cos(b.LXA*Math.PI/180)),ScreenVer(-(b.XL+b.Fradius)*Math.sin(b.LXA*Math.PI/180)));
+              context.lineWidth = 5;
+              context.strokeStyle = '#00508a';
+              context.closePath();
+              context.stroke();
+              // Readout
+              context.font = "14px Courier New";
+              context.fillStyle = "#019aca";
+              context.textAlign = "center";
+              context.fillText('Lower Stbd', ScreenHor((1.15*b.XL+b.Fradius)*Math.cos(b.LXA*Math.PI/180)),ScreenVer(-3.5*b.SF-(1.15*b.XL+b.Fradius)*Math.sin(b.LXA*Math.PI/180)));
+              context.fillStyle = '#00508a';//"#ddaa00";
+              context.fillText(((b.LS*b.MaxX).toFixed(2).toString()).concat('°'), ScreenHor((1.15*b.XL+b.Fradius)*Math.cos(b.LXA*Math.PI/180)),ScreenVer(-(1.15*b.XL+b.Fradius)*Math.sin(b.LXA*Math.PI/180)));
+              // Actuator
+              context.beginPath();
+              context.moveTo(ScreenHor((b.XL+b.Fradius)*Math.cos(b.LXA*Math.PI/180)),ScreenVer(-(b.XL+b.Fradius)*Math.sin(b.LXA*Math.PI/180)));
+              context.lineTo(ScreenHor((0.95*b.XL+b.Fradius)*Math.cos(b.LXA*Math.PI/180)-(b.LS*b.XW*0.6)*Math.sin(b.LXA*Math.PI/180)),ScreenVer(-(0.95*b.XL+b.Fradius)*Math.sin(b.LXA*Math.PI/180)-(b.LS*b.XW*0.6)*Math.cos(b.LXA*Math.PI/180)));
+              context.lineTo(ScreenHor((-0.05*b.XL+b.Fradius)*Math.cos(b.LXA*Math.PI/180)-(b.LS*b.XW)*Math.sin(b.LXA*Math.PI/180)),ScreenVer(-(-0.05*b.XL+b.Fradius)*Math.sin(b.LXA*Math.PI/180)-(b.LS*b.XW)*Math.cos(b.LXA*Math.PI/180)));
+              context.lineTo(ScreenHor((0.0*b.XL+b.Fradius)*Math.cos(b.LXA*Math.PI/180)),ScreenVer(-(0.0*b.XL+b.Fradius)*Math.sin(b.LXA*Math.PI/180)));
+              context.lineWidth = 2;
+              context.strokeStyle = '#00508a';
+              context.closePath();
+              if (b.LS > 0){
+                context.fillStyle = LightPlaneColor; //TL down - light on top
+              }else{
+                context.fillStyle = DarkPlaneColor; //TL up - light on bottom
+              }
+              context.fill();
+              context.stroke();
+              
+              // Lower PORT Plane
+              //Axis
+              context.beginPath();
+              context.moveTo(ScreenHor(-b.Fradius*Math.cos(b.LXA*Math.PI/180)),ScreenVer(-b.Fradius*Math.sin(b.LXA*Math.PI/180)));context.lineTo(ScreenHor(-(b.XL+b.Fradius)*Math.cos(b.LXA*Math.PI/180)),ScreenVer(-(b.XL+b.Fradius)*Math.sin(b.LXA*Math.PI/180)));
+              context.lineWidth = 5;
+              context.strokeStyle = '#00508a';
+              context.closePath();
+              context.stroke();
+              // Readout
+              context.font = "14px Courier New";
+              context.fillStyle = "#019aca";
+              context.textAlign = "center";
+              context.fillText('Lower Port', ScreenHor(-(1.15*b.XL+b.Fradius)*Math.cos(b.LXA*Math.PI/180)),ScreenVer(-3.5*b.SF-(1.15*b.XL+b.Fradius)*Math.sin(b.LXA*Math.PI/180)));
+              context.fillStyle = '#00508a';//"#ddaa00";
+              context.fillText(((b.LP*b.MaxX).toFixed(2).toString()).concat('°'), ScreenHor(-(1.15*b.XL+b.Fradius)*Math.cos(b.LXA*Math.PI/180)),ScreenVer(-(1.15*b.XL+b.Fradius)*Math.sin(b.LXA*Math.PI/180)));
+              // Actuator
+              context.beginPath();
+              context.moveTo(ScreenHor(-(b.XL+b.Fradius)*Math.cos(b.LXA*Math.PI/180)),ScreenVer(-(b.XL+b.Fradius)*Math.sin(b.LXA*Math.PI/180)));
+              context.lineTo(ScreenHor(-(0.95*b.XL+b.Fradius)*Math.cos(b.LXA*Math.PI/180)-(b.LP*b.XW*0.6)*Math.sin(b.LXA*Math.PI/180)),ScreenVer(-(0.95*b.XL+b.Fradius)*Math.sin(b.LXA*Math.PI/180)+(b.LP*b.XW*0.6)*Math.cos(b.LXA*Math.PI/180)));
+              context.lineTo(ScreenHor(-(-0.05*b.XL+b.Fradius)*Math.cos(b.LXA*Math.PI/180)-(b.LP*b.XW)*Math.sin(b.LXA*Math.PI/180)),ScreenVer(-(-0.05*b.XL+b.Fradius)*Math.sin(b.LXA*Math.PI/180)+(b.LP*b.XW)*Math.cos(b.LXA*Math.PI/180)));
+              context.lineTo(ScreenHor(-(0.0*b.XL+b.Fradius)*Math.cos(b.LXA*Math.PI/180)),ScreenVer(-(0.0*b.XL+b.Fradius)*Math.sin(b.LXA*Math.PI/180)));
+              context.lineWidth = 2;
+              context.strokeStyle = '#00508a';
+              context.closePath();
+              if (b.LP < 0){
+                context.fillStyle = LightPlaneColor; //TL down - light on top
+              }else{
+                context.fillStyle = DarkPlaneColor; //TL up - light on bottom
+              }
+              context.fill();
+              context.stroke();
+              
+              // Upper PORT Plane
+              //Axis
+              context.beginPath();
+              context.moveTo(ScreenHor(-b.Fradius*Math.cos(b.UXA*Math.PI/180)),ScreenVer(b.Fradius*Math.sin(b.UXA*Math.PI/180)));context.lineTo(ScreenHor(-(b.XL+b.Fradius)*Math.cos(b.UXA*Math.PI/180)),ScreenVer((b.XL+b.Fradius)*Math.sin(b.UXA*Math.PI/180)));
+              context.lineWidth = 5;
+              context.strokeStyle = '#00508a';
+              context.closePath();
+              context.stroke();
+              // Readout
+              context.font = "14px Courier New";
+              context.fillStyle = "#019aca";
+              context.textAlign = "center";
+              context.fillText('Upper Port', ScreenHor(-(1.1*b.XL+b.Fradius)*Math.cos(b.UXA*Math.PI/180)),ScreenVer(3.5*b.SF+(1.1*b.XL+b.Fradius)*Math.sin(b.UXA*Math.PI/180)));
+              context.fillStyle = '#00508a';
+              context.fillText(((b.UP*b.MaxX).toFixed(2).toString()).concat('°'), ScreenHor(-(1.1*b.XL+b.Fradius)*Math.cos(b.UXA*Math.PI/180)),ScreenVer((1.1*b.XL+b.Fradius)*Math.sin(b.UXA*Math.PI/180)));
+              // Actuator
+              context.beginPath();
+              context.moveTo(ScreenHor(-(b.XL+b.Fradius)*Math.cos(b.UXA*Math.PI/180)),ScreenVer((b.XL+b.Fradius)*Math.sin(b.UXA*Math.PI/180)));
+              context.lineTo(ScreenHor(-(0.95*b.XL+b.Fradius)*Math.cos(b.UXA*Math.PI/180)+(b.UP*b.XW*0.6)*Math.sin(b.UXA*Math.PI/180)),ScreenVer((0.95*b.XL+b.Fradius)*Math.sin(b.UXA*Math.PI/180)+(b.UP*b.XW*0.6)*Math.cos(b.UXA*Math.PI/180)));
+              context.lineTo(ScreenHor(-(-0.05*b.XL+b.Fradius)*Math.cos(b.UXA*Math.PI/180)+(b.UP*b.XW)*Math.sin(b.UXA*Math.PI/180)),ScreenVer((-0.05*b.XL+b.Fradius)*Math.sin(b.UXA*Math.PI/180)+(b.UP*b.XW)*Math.cos(b.UXA*Math.PI/180)));
+              context.lineTo(ScreenHor(-(0.0*b.XL+b.Fradius)*Math.cos(b.UXA*Math.PI/180)),ScreenVer((0.0*b.XL+b.Fradius)*Math.sin(b.UXA*Math.PI/180)));
+              context.lineWidth = 2;
+              context.strokeStyle = '#00508a';
+              context.closePath();
+              if (b.UP < 0){
+                context.fillStyle = LightPlaneColor; //TL down - light on top
+              }else{
+                context.fillStyle = DarkPlaneColor; //TL up - light on bottom
+              }
+              context.fill();
+              context.stroke();
+              
+              // ERA ESA Marker
+              context.beginPath();
+              if (b.InvertERA){
+              context.ellipse(ScreenHor(-b.ERA*b.SF), ScreenVer(b.ESA*b.SF), Math.abs(ScreenHor(2*b.SF)-iOrigin), Math.abs(ScreenVer(2*b.SF)-jOrigin), 0, 2*Math.PI, false);
+              }else{
+              context.ellipse(ScreenHor(b.ERA*b.SF), ScreenVer(b.ESA*b.SF), Math.abs(ScreenHor(2*b.SF)-iOrigin), Math.abs(ScreenVer(2*b.SF)-jOrigin), 0, 2*Math.PI, false);
+              }
+              context.lineWidth = 2;
+              context.strokeStyle = '#ddaa00';
+              context.closePath();
+              context.stroke();
+              
+              // ERA ESA actuator Marker
+              context.beginPath();
+              if (b.InvertERA){
+              context.ellipse(ScreenHor(-b.ERA_act*b.SF), ScreenVer(b.ESA_act*b.SF), Math.abs(ScreenHor(.5*b.SF)-iOrigin), Math.abs(ScreenVer(.5*b.SF)-jOrigin), 0, 2*Math.PI, false);
+              }else{
+              context.ellipse(ScreenHor(b.ERA_act*b.SF), ScreenVer(b.ESA_act*b.SF), Math.abs(ScreenHor(.5*b.SF)-iOrigin), Math.abs(ScreenVer(.5*b.SF)-jOrigin), 0, 2*Math.PI, false);
+              }
+              context.lineWidth = 2;
+              context.strokeStyle = '#0000ff';
+              context.closePath();
+              context.stroke();
+              
+              context.font = "14px Courier New";
+              context.fillStyle = "#019aca";
+              context.textAlign = "center";
+              context.fillText('EKA', ScreenHor(b.Cradius-0.25*b.MaxX*b.SF),ScreenVer(b.Cradius-0.155*b.MaxX*b.SF));
+              context.fillText('ERA', ScreenHor(b.Cradius+0.45*b.MaxX*b.SF),ScreenVer(b.Cradius-0.08*b.MaxX*b.SF));
+              context.fillText('ESA', ScreenHor(b.Cradius-0.18*b.MaxX*b.SF),ScreenVer(b.Cradius+0.455*b.MaxX*b.SF));
+              context.fillStyle = '#00508a';//"#ddaa00";
+			  context.textAlign = "right";
+              context.fillText(((b.EKA_act).toFixed(2).toString()).concat('°'), ScreenHor(b.Cradius-0.05*b.MaxX*b.SF),ScreenVer(b.Cradius-0.25*b.MaxX*b.SF));
+              context.fillText(((b.ERA_act).toFixed(2).toString()).concat('°'), ScreenHor(b.Cradius+0.63*b.MaxX*b.SF),ScreenVer(b.Cradius-0.18*b.MaxX*b.SF));
+			  context.fillText(((b.ESA_act).toFixed(2).toString()).concat('°'), ScreenHor(b.Cradius-0.0*b.MaxX*b.SF),ScreenVer(b.Cradius+0.35*b.MaxX*b.SF));
+              
+            } else {
+            }
+        }
+    }
+    let isMouseDown = false; // Track if mouse is pressed
+
+    function OnMouseDown(e) {
+        isMouseDown = true;
+        handleMouseEvent(e,1);
+    }
+    function OnMouseMove(e) {
+        if (isMouseDown) {
+            handleMouseEvent(e,0);
+        }
+    }
+    function OnMouseUp() {
+        isMouseDown = false;
+    }
+    function handleMouseEvent(e,f) {
+      canvas = document.getElementById('SimCanvas');
+      const hor = e.pageX - canvas.offsetLeft;
+      const ver = e.pageY - canvas.offsetTop;
+      const Y = WorldY(ver);
+      const X = WorldX(hor);
+      sim.EXAorder(X,Y,f);
+      AnimationFrame();
+      
+    }
+    var time = 0;
+    function AnimationFrame() {
+        // Physics constants
+    let SimStepsPerFrame = 2;
+    const FrameDelayMillis = SimStepsPerFrame*10;//10;
+        const dt = 1;//(0.00125 * FrameDelayMillis) / SimStepsPerFrame; //0.0025
+        
+        for (let i=0; i < SimStepsPerFrame; ++i) {
+            sim.Update(dt);
+            //time = time+dt;
+        }
+        Render(sim);
+        
+        
+        //*/
+        //window.setTimeout(AnimationFrame, 25); //FrameDelayMillis
+    }
+    var lastDownTarget, canvas;
+    window.onload = function() {
+        sim = InitWorld();
+        const canvas = document.getElementById('SimCanvas');
+        canvas.addEventListener('mousedown', OnMouseDown);
+        canvas.addEventListener('mousemove', OnMouseMove);
+        canvas.addEventListener('mouseup', OnMouseUp);
+        canvas.addEventListener('mouseleave', OnMouseUp); // Stops tracking if mouse leaves canvas
+        //sim.Update(1);
+        //Render(sim);
+        AnimationFrame();
+    }
+//})();
+function isNumberKey(evt) {
+  var charCode = (evt.which) ? evt.which : evt.keyCode
+  if (charCode > 31 && (charCode != 46 && charCode != 45 &&(charCode < 48 || charCode > 57)))
+    return false;
+  return true;
+}
+
+</script> 
+</body>
+</html>
