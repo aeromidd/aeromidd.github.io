@@ -123,11 +123,11 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
 </tr>
 <tr>
   <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Z_UW [-]</td>
-  <td><input id="Plant_Z_UW" value="-24.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="Plant_Z_UW" value="-36.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
 </tr>
 <tr>
   <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Z_UQ [-]</td>
-  <td><input id="Plant_Z_UQ" value="-36.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="Plant_Z_UQ" value="-12.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
 </tr>
 <tr>
   <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">M_UW [-]</td>
@@ -143,19 +143,19 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
 </tr>
 <tr>
   <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Z_UU: Bow  [-]</td>
-  <td><input id="Plant_Z_UUdb" value="-12.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="Plant_Z_UUdb" value="-0.80" step="0.01" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
 </tr>
 <tr>
   <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Z_UU: Stern [-]</td>
-  <td><input id="Plant_Z_UUds" value="-24.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="Plant_Z_UUds" value="-1.00" step="0.01" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
 </tr>
 <tr>
   <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">M_UU: Bow [-]</td>
-  <td><input id="Plant_M_UUdb" value="3.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="Plant_M_UUdb" value="0.20" step="0.01" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
 </tr>
 <tr>
   <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">M_UU: Stern [-]</td>
-  <td><input id="Plant_M_UUds" value="-18.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td><input id="Plant_M_UUds" value="-0.30" step="0.01" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
 </tr>
 </table>
 
@@ -223,8 +223,8 @@ b.maxplanerate = maxplanerateInput.value;
 
 <input type="checkbox" style="position:absolute;left:5px;top:90px;" id="NiceGraphicsON" checked>
 
-  <input type="range" min="-45" max="45" step="0.1" value="0" class="slider" id="BPrange" style="position:absolute;left:590px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;">
-<input type="range" min="-45" max="45" step="0.1" value="0" class="slider" id="SPrange" style="position:absolute;left:170px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;">
+  <input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="BPrange" style="position:absolute;left:590px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;">
+<input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="SPrange" style="position:absolute;left:170px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;">
 
 
 <script type="text/javascript">
@@ -260,11 +260,12 @@ b.maxplanerate = maxplanerateInput.value;
             this.x = x;
             this.y = y;
             this.xi = [0,0,0,this.L/this.SF,0];
+            this.yi = [...this.xi];
             this.ui = [0,0,0,0,0];
             this.uiprev = [0,0,0,0,0];
             this.xeint = [0,0,0];
             this.uint = [0,0,0];
-            this.depthDem = this.xi[3];
+            this.depthDem = this.yi[3];
             this.pitchDem = 0;
             this.pitchSP = 0;
             this.freezeDepth = 0;
@@ -276,11 +277,11 @@ b.maxplanerate = maxplanerateInput.value;
             this.UsePitchForDepthChanges = true;
           
             this.Compressibility = 1;
-            this.compFactor = 5e-3;
+            this.compFactor = 1e-3;
             this.TrimTarget = 'order';//'order' or 'measurement';
             this.TrimCompensator = 1;
             this.compzd = 0;
-            this.trimz = this.xi[3];
+            this.trimz = this.yi[3];
             this.trimEffort = 0;
             this.trimErr = (this.compzd/this.compFactor); 
             this.txi = [0,0,0];
@@ -292,6 +293,7 @@ b.maxplanerate = maxplanerateInput.value;
             this.SliderControlMaintainPitch = true;
           
             //plant matrices
+            /*
             this.A = [[0,0,0,0,0,0,0],
             [0,-0.333,-9.63,0,-1.51,0,0],
             [0,0.00837,-0.507,0,0.0333,0,0],
@@ -308,9 +310,37 @@ b.maxplanerate = maxplanerateInput.value;
             [0,0,0,0,0],
             [0,0,0,0,0],
             ];
+            //*/
+          ///*
+          this.A = [[0,0,0,0,0,0,0],
+[0,-0.0989,-0.717,0,-0.423,0,0],
+[0,0.00182,-0.319,0,-0.00164,0,0],
+[0,1,0,0,0,0,0],
+[0,0,1,0,0,0,0],
+[0,0,0,1,0,0,0],
+[0,0,0,0,1,0,0],
+];
+          let dimp = 0.1;
+this.B = [[0,0,0,0,0],
+[0,-0.0131,-0.00905,1.71e-07,-2.31e-09],
+[0,0.000437,-0.000396,-1.54e-09,2.99e-10],
+[0,0,0,0,0],
+[0,0,0,0,0],
+[0,0,0,0,0],
+[0,0,0,0,0],
+];
+          //*/
             //CARE:
+            /*
             this.dbG = [0, -0.5, 13, -0.15, 2.5, -1e-03, 0.01];
             this.dsG = [0, -0.2, -120, -0.01, -42, -1e-03, -0.4];
+            //*/
+            //
+this.dbG = [0, -0.474, 7.01, -0.0446, 2.44, -0.000745, 0.00324];
+this.dsG = [0, -0.112, -1.61, -0.00402, -0.498, -9.57e-05, -0.0126];
+this.dbG = [0, -3.59, 69.5, -0.565, 23.8, -0.00232, 0.00444];
+this.dsG = [0, -0.954, -17.2, -0.127, -5.01, -0.000586, -0.0176];
+            //*/
             ctrldb_zD.value = this.dbG[1];
             ctrldb_zP.value = this.dbG[3];
             ctrldb_zI.value = this.dbG[5];
@@ -336,21 +366,22 @@ b.maxplanerate = maxplanerateInput.value;
             this.periodegInc2 = 12;
           
             this.SeaState = 0.49;
-            this.SeaFixed = 0;
+            this.SeaFixed = 1;
             
             this.zDem = new Array(650);
             this.zDem.fill(this.depthDem*this.SF)
   
-            this.AP = [0,1,1];
+            this.AP = [0,1,1];//[0,1,1];
+            this.APprev = this.AP;
           
-            this.resetInt = 0;
+            this.resetInt = 1;
           
             //trim compensation response
             this.tcr = new Array(500);
-            this.tcr.fill(this.xi[3]*this.SF)
+            this.tcr.fill(this.yi[3]*this.SF)
           
             this.zh = new Array(500);
-            this.zh.fill(this.xi[3]*this.SF)
+            this.zh.fill(this.yi[3]*this.SF)
             
             this.ssFZ = new Array(1250);
             this.ssFZ.fill(0);
@@ -573,14 +604,23 @@ UpdatePlantbutton.addEventListener('click',function(){
                     // dv = dt * F/m
                     let xdi = [];
                     var Dived = !b.surfaced;
+                    
+                    if (b.AP[1] != b.APprev[1]){
+                      b.resetInt = 1;
+                    }
+                    if (b.AP[2] != b.APprev[2]){
+                      b.resetInt = 1;
+                    }
+                    b.APprev = b.AP;
+                  
                     var CompensationTarget
                     if (b.TrimTarget == 'measurement'){
-                      CompensationTarget = b.xi[3];
+                      CompensationTarget = b.yi[3];
                     }else if (b.TrimTarget == 'order'){
                       CompensationTarget = b.depthDem;
                     }
                     
-                    b.compzd = b.Compressibility*b.compFactor*(b.xi[3]);
+                    b.compzd = b.Compressibility*b.compFactor*(b.yi[3]);
                     b.trimzd = b.Compressibility*b.compFactor*(b.trimz);
                     //trim error in m
                     b.trimErrPrev = b.trimErr;
@@ -662,11 +702,11 @@ UpdatePlantbutton.addEventListener('click',function(){
                     readoutThing.innerHTML = (b.A[2][2]);
                     //*/
                     
-                    //readoutThing.innerHTML = b.surfaced;//b.xi[3].toFixed(15);
-                    //b.xi[3]=b.xi[3]*50;
+                    //readoutThing.innerHTML = b.surfaced;//b.yi[3].toFixed(15);
+                    //b.yi[3]=b.yi[3]*50;0
                     
                     xdi[0] = 0;
-                    xdi[1] = (b.A[1][1])*b.xi[1]+(b.A[1][2])*b.xi[2]+(b.A[1][4])*b.xi[4]+ b.compzd-b.trimzd + (b.B[1][1])*Dived*b.ui[1]+(b.B[1][2])*Dived*b.ui[2]+(b.B[1][3])*b.ui[3]+(b.B[1][4])*b.ui[4];
+                    xdi[1] = (b.A[1][1])*b.xi[1]+(b.A[1][2])*b.xi[2]+(b.A[1][4])*b.xi[4]+ 1*(b.compzd-b.trimzd) + (b.B[1][1])*Dived*b.ui[1]+(b.B[1][2])*Dived*b.ui[2]+(b.B[1][3])*b.ui[3]+(b.B[1][4])*b.ui[4];
                     xdi[2] = (b.A[2][1])*b.xi[1]+(b.A[2][2])*b.xi[2]+(b.A[2][4])*b.xi[4]  + (b.B[2][1])*Dived*b.ui[1]+(b.B[2][2])*Dived*b.ui[2]+(b.B[2][3])*b.ui[3]+(b.B[2][4])*b.ui[4];
                     xdi[3] = (1)*b.xi[1];
                     xdi[4] = (1)*b.xi[2];
@@ -683,7 +723,48 @@ UpdatePlantbutton.addEventListener('click',function(){
                   for (var f = 0; f< b.xi.length; f++){
                     b.xi[f] += dt*xdi[f];
                   }
-                  //b.xi[3]=b.xi[3]/50;
+                  
+                  //hard limit on pitch.
+                  
+                  if (b.xi[4] > 60*Math.PI/180){
+                    b.xi[4] = 60*Math.PI/180;
+                  }else if(b.xi[4]<-60*Math.PI/180){
+                    b.xi[4] = -60*Math.PI/180;
+                  }
+                  //console.log(b.xi[3])
+                  var tailz = b.xi[3]+0.5*(b.L/b.SF)*Math.sin(-b.xi[4]);
+                  var nosez = b.xi[3]-0.5*(b.L/b.SF)*Math.sin(b.xi[4]);
+                  
+                  // surfaced dynamics
+                  if (b.xi[3] < 0.5 || tailz < -5 || nosez < -5){
+                    //if (b.surfaced == false){
+                      //b.ui[4] = b.ui[4]-9.81*1e4;
+                      if (b.surfaced == false){
+                        b.xi[1] = b.xi[1]*0.5;
+                        b.xi[2] = b.xi[2]-b.xi[4]*0.5;
+                        b.ui[3] = b.ui[3]+500*9.81*1e3+(Math.abs(b.xi[4])*1e3);
+                        b.ui[4] = b.ui[4]-Math.sign(b.xi[4])*250*9.81*1e4;
+                      }
+                      b.ui[3] = b.ui[3]+250*9.81*1e3;
+                      b.ui[4] = b.ui[4]-Math.sign(b.xi[4])*10*9.81*1e4;
+                      b.surfaced = true;
+                    //}
+                  }else{
+                      if (b.surfaced == true){
+                        //b.xi[1] = b.xi[1]*0.3;
+                        b.ui[3] = -0.5*b.ui[3];
+                        b.ui[4] = -0.5*b.ui[4];
+                      }
+                      b.surfaced = false;
+                  }
+                  //*/
+                  // C matrix application
+                  b.yi = [...b.xi]
+                  b.yi[0] = b.yi[0];
+                  b.yi[1] = b.yi[1];
+                  b.yi[2] = b.yi[2]*180/Math.PI;
+                  b.yi[3] = b.yi[3];
+                  b.yi[4] = b.yi[4]*180/Math.PI;
                   
                   
                   
@@ -702,7 +783,7 @@ UpdatePlantbutton.addEventListener('click',function(){
                     zhdummy = b.zh[f+1];
                     b.zh[f] = zhdummy;
                   }
-                  b.zh[b.zh.length-1] = b.xi[3]*b.SF+(0.5+15/100)*b.L*Math.sin(b.xi[4]);
+                  b.zh[b.zh.length-1] = b.yi[3]*b.SF+(0.5+15/100)*b.L*Math.sin(b.yi[4]*Math.PI/180);
                   //console.log(b.zh.length)
                   
                   var zDemdummy;
@@ -721,11 +802,11 @@ UpdatePlantbutton.addEventListener('click',function(){
                   
                   
                   
-                  //let depthDem = 3; //b.xi[3]
+                  //let depthDem = 3; //b.yi[3]
                   
-                  let zErr = (b.depthDem-(b.xi[3]+b.waveHeight)); // depth error + wave height sensor noise
+                  let zErr = (b.depthDem-(b.yi[3]+b.waveHeight)); // depth error + wave height sensor noise
                   
-                  //let zdErr = 0.2*5*0.8*(zErr)*Math.PI/180-b.xi[1];
+                  //let zdErr = 0.2*5*0.8*(zErr)*Math.PI/180-b.yi[1];
                   
                   var zdErr = 0;
                   var qErr = 0;
@@ -734,35 +815,36 @@ UpdatePlantbutton.addEventListener('click',function(){
                   
                   let maxPitch = b.maxPitch;
                   var useZdErr;
+                  
                   if (b.AP[1] == 1 && b.AP[2] == 1){
                   if (Math.abs(zErr)>[b.h*5/b.SF] && maxPitch != 0 && b.UsePitchForDepthChanges && !b.SliderControl){
-                      b.pitchDem = Math.min(Math.max(-maxPitch*0.8*(zErr/30)*Math.PI/180,-maxPitch*Math.PI/180),maxPitch*Math.PI/180);
-                      zdErr = -10*0.51444*Math.sin(b.pitchDem)-b.xi[1];
-                      qErr = 0*dt*b.pitchDem-b.xi[2];
-                      thtErr = b.pitchDem-b.xi[4];
+                      b.pitchDem = -Math.sign(zErr)*maxPitch;//Math.min(Math.max(-maxPitch*0.8*(zErr/30)*Math.PI/180,-maxPitch*Math.PI/180),maxPitch*Math.PI/180);
+                      zdErr = -10*0.51444*Math.sin(b.pitchDem*Math.PI/180)-b.yi[1];
+                      qErr = 0*dt*b.pitchDem-b.yi[2];
+                      thtErr = b.pitchDem-b.yi[4];
                       useZdErr = true;
                   }else{
                       b.pitchDem = b.pitchSP;
-                      zdErr = 5*(zErr)*Math.PI/180-b.xi[1];
-                      qErr = 0-b.xi[2];
-                      thtErr = b.pitchDem-b.xi[4];
+                      zdErr = 5*(zErr)*Math.PI/180-b.yi[1];
+                      qErr = 0-b.yi[2];
+                      thtErr = b.pitchDem-b.yi[4];
                       useZdErr = false;
                   }
                   }
-                  if (b.pitchDem < -maxPitch*Math.PI/180){
-                    b.pitchDem = -maxPitch*Math.PI/180;
+                  if (b.pitchDem < -maxPitch){
+                    b.pitchDem = -maxPitch;
                   }
-                  if (b.pitchSP > maxPitch*Math.PI/180){
-                    b.pitchSP = maxPitch*Math.PI/180;
+                  if (b.pitchSP > maxPitch){
+                    b.pitchSP = maxPitch;
                   }
-                  if (b.pitchSP < -maxPitch*Math.PI/180){
-                    b.pitchSP = -maxPitch*Math.PI/180;
+                  if (b.pitchSP < -maxPitch){
+                    b.pitchSP = -maxPitch;
                   }
                   
                   //readoutThing.innerHTML = zErr;
                   
-                  //let qErr = 0.05*b.pitchDem-b.xi[2];
-                  //let thtErr = b.pitchDem-b.xi[4];
+                  //let qErr = 0.05*b.pitchDem-b.yi[2];
+                  //let thtErr = b.pitchDem-b.yi[4];
                   
                   //db
                   /*
@@ -871,11 +953,15 @@ UpdatePlantbutton.addEventListener('click',function(){
                   }else{
                     if (b.SliderControl == true){
                       //(FreezeIntegrators)
-                      b.xeint[1] += 0;
-                      b.xeint[2] += 0;
+                      b.uint[1] += 0;
+                      b.uint[2] += 0;
+                      //b.xeint[1] += 0;
+                      //b.xeint[2] += 0;
                     }else{
-                      b.xeint[1] += zdErr*dt; //obsolete
-                      b.xeint[2] += thtErr*dt; //obsolete
+                      b.uint[1] += 0;
+                      b.uint[2] += 0;
+                      //b.xeint[1] += 0;zdErr*dt; //obsolete
+                      //b.xeint[2] += 0;thtErr*dt; //obsolete
                     }
                     b.teint += b.trimErr*dt;
                   }
@@ -918,25 +1004,24 @@ UpdatePlantbutton.addEventListener('click',function(){
                     BPintZeroMod = 1;
                     SPintZeroMod = 1;
                   }
-                  
-                  b.uint[1] = Math.max(Math.min(b.uint[1]+BPintZeroMod*dbG[5]*intZErr*dt+BPintZeroMod*dbG[6]*thtErr*dt,b.maxBowplaneAngle*Math.PI/180),-b.maxBowplaneAngle*Math.PI/180);
-                  
-                    b.uint[2] = Math.max(Math.min(b.uint[2]+BPintZeroMod*dsG[5]*intZErr*dt+SPintZeroMod*dsG[6]*thtErr*dt,b.maxSternplaneAngle*Math.PI/180),-b.maxSternplaneAngle*Math.PI/180);
+                  if (b.AP[1] == 1){
+                  b.uint[1] = Math.max(Math.min(b.uint[1]+BPintZeroMod*dbG[5]*intZErr*dt+BPintZeroMod*dbG[6]*thtErr*dt,b.maxBowplaneAngle),-b.maxBowplaneAngle);
+                  }
+                  if (b.AP[2] == 1){
+                    b.uint[2] = Math.max(Math.min(b.uint[2]+SPintZeroMod*dsG[5]*intZErr*dt+SPintZeroMod*dsG[6]*thtErr*dt,b.maxSternplaneAngle),-b.maxSternplaneAngle);
+                  }
                   
                   if (b.AP[1] == 1){
                     b.uiprev[1] = b.ui[1];
                     b.ui[1] = zdErr*dbG[1]+qErr*dbG[2]+zErr*dbG[3]+thtErr*dbG[4];
                     if (b.SliderControl){
-                      b.ui[1] = BPrange.value*Math.PI/180;
+                      b.ui[1] = Math.min(Math.max(BPrange.value,-b.maxBowplaneAngle),+b.maxBowplaneAngle);
                     }else{
                       b.ui[1] += b.uint[1];
                     }
                     
-                    if (Math.abs(b.ui[1]-b.uiprev[1])>b.maxplanerate*(Math.PI/180)*dt){
-                      b.ui[1] = b.uiprev[1]+Math.sign(b.ui[1]-b.uiprev[1])*b.maxplanerate*(Math.PI/180)*dt;
-                    }
-                    if (!b.SliderControl){
-                      BPrange.value = b.ui[1]*180/Math.PI;
+                    if (Math.abs(b.ui[1]-b.uiprev[1])>b.maxplanerate*dt){
+                      b.ui[1] = b.uiprev[1]+Math.sign(b.ui[1]-b.uiprev[1])*b.maxplanerate*dt;
                     }
                   }
                   
@@ -944,24 +1029,29 @@ UpdatePlantbutton.addEventListener('click',function(){
                     b.uiprev[2] = b.ui[2];
                     b.ui[2] = zdErr*dsG[1]+qErr*dsG[2]+zErr*dsG[3]+thtErr*dsG[4];
                     if (b.SliderControl && !b.SliderControlMaintainPitch){
-                      b.ui[2] = (SliderControlRatioInput.value)*BPrange.value*Math.PI/180;
+                      b.ui[2] = Math.min(Math.max((SliderControlRatioInput.value)*BPrange.value,-b.maxSternplaneAngle),+b.maxSternplaneAngle);
                     }else{
                       b.ui[2] += b.uint[2];
                     }
                     
-                    if (Math.abs(b.ui[2]-b.uiprev[2])>b.maxplanerate*(Math.PI/180)*dt){
-                      b.ui[2] = b.uiprev[2]+Math.sign(b.ui[2]-b.uiprev[2])*b.maxplanerate*(Math.PI/180)*dt;
+                    if (Math.abs(b.ui[2]-b.uiprev[2])>b.maxplanerate*dt){
+                      b.ui[2] = b.uiprev[2]+Math.sign(b.ui[2]-b.uiprev[2])*b.maxplanerate*dt;
                     }
-                    SPrange.value = b.ui[2]*180/Math.PI;
                   }
               
-                  if (Math.abs(b.ui[1]) >= b.maxBowplaneAngle*Math.PI/180){
-                    b.ui[1] =  Math.sign(b.ui[1])*b.maxBowplaneAngle*Math.PI/180;
+                  if (Math.abs(b.ui[1]) >= b.maxBowplaneAngle){
+                    b.ui[1] =  Math.sign(b.ui[1])*b.maxBowplaneAngle;
                   }
-                  if (Math.abs(b.ui[2]) >= b.maxSternplaneAngle*Math.PI/180){
-                    b.ui[2] =  Math.sign(b.ui[2])*b.maxSternplaneAngle*Math.PI/180;
+                  if (Math.abs(b.ui[2]) >= b.maxSternplaneAngle){
+                    b.ui[2] =  Math.sign(b.ui[2])*b.maxSternplaneAngle;
                   }
                   
+                  if (!b.SliderControl){
+                    BPrange.value = b.ui[1];
+                  }
+                  SPrange.value = b.ui[2];
+                  
+                  
                   //Sea Forces
                   
                   var SeaState
@@ -1072,7 +1162,7 @@ UpdatePlantbutton.addEventListener('click',function(){
                   };
                   //*/
                   
-                  let seaDist = Math.max(Math.min((Math.pow(b.xi[3]/20,-1.2)-0.1),1),0);
+                  let seaDist = Math.max(Math.min((Math.pow(b.yi[3]/20,-1.2)-0.1),1),0);
                   
                   b.waveHeight = seaDist*(-1)*b.ssMoving[b.ssMoving.length/2]/((2/b.SF)*b.SeaForcePerScreenUnit)/b.SF;
                   
@@ -1099,38 +1189,6 @@ UpdatePlantbutton.addEventListener('click',function(){
                   b.ui[4] = (seaDist)*allMomentChunks.reduce((partialSum, a) => partialSum + a, 0);
                   //readoutThing.innerHTML = [b.ui[3].toFixed(3),b.ui[4].toFixed(3)];
                   
-                  //hard limit on pitch.
-                  if (b.xi[4] > 60*Math.PI/180){
-                    b.xi[4] = 60*Math.PI/180;
-                  }else if(b.xi[4]<-60*Math.PI/180){
-                    b.xi[4] = -60*Math.PI/180;
-                  }
-                  //console.log(b.xi[3])
-                  var tailz = b.xi[3]+0.5*(b.L/b.SF)*Math.sin(-b.xi[4]);
-                  var nosez = b.xi[3]-0.5*(b.L/b.SF)*Math.sin(b.xi[4]);
-                  
-                  if (b.xi[3] < 0.5 || tailz < -5 || nosez < -5){
-                    //if (b.surfaced == false){
-                      //b.ui[4] = b.ui[4]-9.81*1e4;
-                      if (b.surfaced == false){
-                        b.xi[1] = b.xi[1]*0.5;
-                        b.xi[2] = b.xi[2]-b.xi[4]*0.5;
-                        b.ui[3] = b.ui[3]+500*9.81*1e3+(Math.abs(b.xi[4])*1e3);
-                        b.ui[4] = b.ui[4]-Math.sign(b.xi[4])*250*9.81*1e4;
-                      }
-                      b.ui[3] = b.ui[3]+250*9.81*1e3;
-                      b.ui[4] = b.ui[4]-Math.sign(b.xi[4])*10*9.81*1e4;
-                      b.surfaced = true;
-                    //}
-                  }else{
-                      if (b.surfaced == true){
-                        //b.xi[1] = b.xi[1]*0.3;
-                        b.ui[3] = -0.5*b.ui[3];
-                        b.ui[4] = -0.5*b.ui[4];
-                      }
-                      b.surfaced = false;
-                  }
-                  //*/
                   
                  //sea wave height noise on depth sensor
                  
@@ -1210,9 +1268,9 @@ UpdatePlantbutton.addEventListener('click',function(){
           var b;
           for (b of this.subList) {
             b.AP[1] = 0;
-            b.ui[1] += manualDBinc*Math.PI/180;
-                  if (Math.abs(b.ui[1]) >= b.maxBowplaneAngle*Math.PI/180){
-                    b.ui[1] =  Math.sign(b.ui[1])*b.maxBowplaneAngle*Math.PI/180;
+            b.ui[1] += manualDBinc;
+                  if (Math.abs(b.ui[1]) >= b.maxBowplaneAngle){
+                    b.ui[1] =  Math.sign(b.ui[1])*b.maxBowplaneAngle;
                   }
           }
         }
@@ -1221,9 +1279,9 @@ UpdatePlantbutton.addEventListener('click',function(){
           var b;
           for (b of this.subList) {
             b.AP[1] = 0;
-            b.ui[1] -= manualDBinc*Math.PI/180;
-                  if (Math.abs(b.ui[1]) >= b.maxBowplaneAngle*Math.PI/180){
-                    b.ui[1] =  Math.sign(b.ui[1])*b.maxBowplaneAngle*Math.PI/180;
+            b.ui[1] -= manualDBinc;
+                  if (Math.abs(b.ui[1]) >= b.maxBowplaneAngle){
+                    b.ui[1] =  Math.sign(b.ui[1])*b.maxBowplaneAngle;
                   }
           }
         }
@@ -1232,9 +1290,9 @@ UpdatePlantbutton.addEventListener('click',function(){
           var b;
           for (b of this.subList) {
             b.AP[2] = 0;
-            b.ui[2] += manualDSinc*Math.PI/180;
-                  if (Math.abs(b.ui[2]) >= b.maxSternplaneAngle*Math.PI/180){
-                    b.ui[2] =  Math.sign(b.ui[2])*b.maxSternplaneAngle*Math.PI/180;
+            b.ui[2] += manualDSinc;
+                  if (Math.abs(b.ui[2]) >= b.maxSternplaneAngle){
+                    b.ui[2] =  Math.sign(b.ui[2])*b.maxSternplaneAngle;
                   }
           }
         }
@@ -1243,9 +1301,9 @@ UpdatePlantbutton.addEventListener('click',function(){
           var b;
           for (b of this.subList) {
             b.AP[2] = 0;
-            b.ui[2] -= manualDSinc*Math.PI/180;
-                  if (Math.abs(b.ui[2]) >= b.maxSternplaneAngle*Math.PI/180){
-                    b.ui[2] =  Math.sign(b.ui[2])*b.maxSternplaneAngle*Math.PI/180;
+            b.ui[2] -= manualDSinc;
+                  if (Math.abs(b.ui[2]) >= b.maxSternplaneAngle){
+                    b.ui[2] =  Math.sign(b.ui[2])*b.maxSternplaneAngle;
                   }
           }
         }
@@ -1262,19 +1320,19 @@ UpdatePlantbutton.addEventListener('click',function(){
         pitchSP_up(){
           var b;
           for (b of this.subList) {
-            b.pitchSP += 2*Math.PI/180;
+            b.pitchSP += 2;
           }
         }
         pitchSP_down(){
           var b;
           for (b of this.subList) {
-            b.pitchSP -= 2*Math.PI/180;
+            b.pitchSP -= 2;
           }
         }
         pitchSP_level(){
           var b;
           for (b of this.subList) {
-            b.pitchSP = 0*Math.PI/180;
+            b.pitchSP = 0;
           }
         }
         toggleCompressibility(){
@@ -1315,21 +1373,25 @@ UpdatePlantbutton.addEventListener('click',function(){
     return Math.ceil(x / 5) * 5;
 };
             b.xi = [0,0,0,round5(b.L/b.SF),0];
+            b.yi = [...b.xi];
+            b.uint = [0,0,0];
+            b.ui = [0,0,0];
+            b.uprev = [0,0,0];
             b.SeaState = 0;
-            b.SeaFixed = false;
-            b.depthDem = b.xi[3];
-            b.zh.fill(b.xi[3]*b.SF)
-            b.zDem.fill(b.xi[3]*b.SF)
-            b.AP[1] = 1;
-            b.AP[2] = 1;
+            b.SeaFixed = true;
+            b.depthDem = b.yi[3];
+            b.zh.fill(b.yi[3]*b.SF)
+            b.zDem.fill(b.yi[3]*b.SF)
+            b.AP[1] = 0;
+            b.AP[2] = 0;
             b.surfaced = false;
-            b.Compressibility = 1;
+            b.Compressibility = 0;
             b.TrimCompensator = 1;
             b.TrimTarget = 'order';
-            b.trimz = b.xi[3];
+            b.trimz = b.yi[3];
             b.trimErrPrev = 0;
             b.trimErr = 0;
-            b.tcr.fill(b.xi[3]*b.SF)
+            b.tcr.fill(b.yi[3]*b.SF)
             b.txi[1] = 0;
             b.txi[2] = 0;
             b.tui[1] = 0;
@@ -1338,6 +1400,7 @@ UpdatePlantbutton.addEventListener('click',function(){
             b.ssMoving.fill(0);
             b.ssMoving2.fill(0);
             //b.ssMY.fill(0);
+            b.xi = [0,0,0,round5(b.L/b.SF),0];
           }
           
         }
@@ -1451,9 +1514,11 @@ UpdatePlantbutton.addEventListener('click',function(){
         context.lineWidth = 1;
         const pixelRadius = SubRadiusMeters * PixelsPerMeter;
         for (let b of sim.subList) {
-            b.xp = [...b.xi];
-            b.xp[1] = b.xi[1]*b.SF;
-            b.xp[3] = b.xi[3]*b.SF;
+            b.xp = [...b.yi];
+            b.xp[1] = b.yi[1]*b.SF;
+            b.xp[2] = b.yi[2]*Math.PI/180;
+            b.xp[3] = b.yi[3]*b.SF;
+            b.xp[4] = b.yi[4]*Math.PI/180;
             if (b.anchor === 0) {
                 //sea background
                 context.lineWidth = 1;
@@ -1528,12 +1593,12 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
                 context.setLineDash([]);
                 context.beginPath();
                 context.moveTo(ScreenHor(b.x),ScreenVer(b.xp[3]))
-                context.lineTo(ScreenHor(b.x+0.8*b.L*Math.cos(b.pitchSP)),ScreenVer(b.xp[3]-0.8*b.L*Math.sin(b.pitchSP)))
+                context.lineTo(ScreenHor(b.x+0.8*b.L*Math.cos(b.pitchSP*Math.PI/180)),ScreenVer(b.xp[3]-0.8*b.L*Math.sin(b.pitchSP*Math.PI/180)))
                 context.strokeStyle = '#a7a7a7';
                 context.stroke();
                 context.beginPath();
                 context.moveTo(ScreenHor(b.x),ScreenVer(b.xp[3]))
-                context.lineTo(ScreenHor(b.x+0.77*b.L*Math.cos(b.pitchDem)),ScreenVer(b.xp[3]-0.77*b.L*Math.sin(b.pitchDem)))
+                context.lineTo(ScreenHor(b.x+0.77*b.L*Math.cos(b.pitchDem*Math.PI/180)),ScreenVer(b.xp[3]-0.77*b.L*Math.sin(b.pitchDem*Math.PI/180)))
                 context.strokeStyle = '#009900';
                 context.stroke();
                 context.beginPath();
@@ -1886,19 +1951,19 @@ shadowgrd2.addColorStop(1.0, 'rgba(0,230,250,0.05)');
                 //ds
                 ///*
                 context.beginPath();
-                context.moveTo(ScreenHor(0.1*b.h*Math.sin(b.xp[4])+b.dsl*Math.cos(-b.ui[2]-b.xp[4])+b.x-0.5*b.L*Math.cos(b.xp[4])), ScreenVer(0.1*b.h*Math.cos(b.xp[4])+b.dsl*Math.sin(-b.ui[2]-b.xp[4])+b.xp[3]+0.5*b.L*Math.sin(b.xp[4])));
+                context.moveTo(ScreenHor(0.1*b.h*Math.sin(b.xp[4])+b.dsl*Math.cos(-b.ui[2]*Math.PI/180-b.xp[4])+b.x-0.5*b.L*Math.cos(b.xp[4])), ScreenVer(0.1*b.h*Math.cos(b.xp[4])+b.dsl*Math.sin(-b.ui[2]*Math.PI/180-b.xp[4])+b.xp[3]+0.5*b.L*Math.sin(b.xp[4])));
                 context.lineTo(ScreenHor(0.1*b.h*Math.sin(b.xp[4])+b.x-0.5*b.L*Math.cos(b.xp[4])), ScreenVer(0.1*b.h*Math.cos(b.xp[4])+b.xp[3]+0.5*b.L*Math.sin(b.xp[4])));
-                context.lineTo(ScreenHor(0.1*b.h*Math.sin(b.xp[4])+-b.dsl*Math.cos(-b.ui[2]-b.xp[4])+b.x-0.5*b.L*Math.cos(b.xp[4])), ScreenVer(0.1*b.h*Math.cos(b.xp[4])-b.dsl*Math.sin(-b.ui[2]-b.xp[4])+b.xp[3]+0.5*b.L*Math.sin(b.xp[4])));
+                context.lineTo(ScreenHor(0.1*b.h*Math.sin(b.xp[4])+-b.dsl*Math.cos(-b.ui[2]*Math.PI/180-b.xp[4])+b.x-0.5*b.L*Math.cos(b.xp[4])), ScreenVer(0.1*b.h*Math.cos(b.xp[4])-b.dsl*Math.sin(-b.ui[2]*Math.PI/180-b.xp[4])+b.xp[3]+0.5*b.L*Math.sin(b.xp[4])));
                 context.strokeStyle = '#ff0000';
                 context.stroke();
                 //*/
                 let pTh = b.dsl/5;
                 context.beginPath();
-                context.lineTo(ScreenHor(0.1*b.h*Math.sin(b.xp[4])+0*b.dsl*Math.cos(-b.ui[2]-b.xp[4])+b.x-0.5*b.L*Math.cos(b.xp[4])), ScreenVer(0.1*b.h*Math.cos(b.xp[4])+0*b.dsl*Math.sin(-b.ui[2]-b.xp[4])+b.xp[3]+0.5*b.L*Math.sin(b.xp[4])));
-                context.lineTo(ScreenHor(0.1*b.h*Math.sin(b.xp[4])+0*b.dsl*Math.cos(-b.ui[2]-b.xp[4])+pTh*Math.sin(-b.ui[2]-b.xp[4])+b.x-0.5*b.L*Math.cos(b.xp[4])), ScreenVer(0.1*b.h*Math.cos(b.xp[4])+0*b.dsl*Math.sin(-b.ui[2]-b.xp[4])-pTh*Math.cos(-b.ui[2]-b.xp[4])+b.xp[3]+0.5*b.L*Math.sin(b.xp[4])));
-                context.lineTo(ScreenHor(0.1*b.h*Math.sin(b.xp[4])+-1.5*b.dsl*Math.cos(-b.ui[2]-b.xp[4])+b.x-0.5*b.L*Math.cos(b.xp[4])), ScreenVer(0.1*b.h*Math.cos(b.xp[4])-1.5*b.dsl*Math.sin(-b.ui[2]-b.xp[4])+b.xp[3]+0.5*b.L*Math.sin(b.xp[4])));
-                context.lineTo(ScreenHor(0.1*b.h*Math.sin(b.xp[4])+0*b.dsl*Math.cos(-b.ui[2]-b.xp[4])-pTh*Math.sin(-b.ui[2]-b.xp[4])+b.x-0.5*b.L*Math.cos(b.xp[4])), ScreenVer(0.1*b.h*Math.cos(b.xp[4])+0*b.dsl*Math.sin(-b.ui[2]-b.xp[4])+pTh*Math.cos(-b.ui[2]-b.xp[4])+b.xp[3]+0.5*b.L*Math.sin(b.xp[4])));
-                context.ellipse(ScreenHor(0.1*b.h*Math.sin(b.xp[4])+0*b.dsl*Math.cos(-b.ui[2]-b.xp[4])+b.x-0.5*b.L*Math.cos(b.xp[4])), ScreenVer(0.1*b.h*Math.cos(b.xp[4])+0*b.dsl*Math.sin(-b.ui[2]-b.xp[4])+b.xp[3]+0.5*b.L*Math.sin(b.xp[4])), 0*PixelsPerMeter*0.02+ScreenHor(b.dsl*1/5)-iOrigin, 0*PixelsPerMeter*0.019+ScreenVer(b.dsl*0.95/5)-jOrigin, -b.ui[2]-b.xp[4], Math.PI/2, -Math.PI/2, true);
+                context.lineTo(ScreenHor(0.1*b.h*Math.sin(b.xp[4])+0*b.dsl*Math.cos(-b.ui[2]*Math.PI/180-b.xp[4])+b.x-0.5*b.L*Math.cos(b.xp[4])), ScreenVer(0.1*b.h*Math.cos(b.xp[4])+0*b.dsl*Math.sin(-b.ui[2]*Math.PI/180-b.xp[4])+b.xp[3]+0.5*b.L*Math.sin(b.xp[4])));
+                context.lineTo(ScreenHor(0.1*b.h*Math.sin(b.xp[4])+0*b.dsl*Math.cos(-b.ui[2]*Math.PI/180-b.xp[4])+pTh*Math.sin(-b.ui[2]*Math.PI/180-b.xp[4])+b.x-0.5*b.L*Math.cos(b.xp[4])), ScreenVer(0.1*b.h*Math.cos(b.xp[4])+0*b.dsl*Math.sin(-b.ui[2]*Math.PI/180-b.xp[4])-pTh*Math.cos(-b.ui[2]*Math.PI/180-b.xp[4])+b.xp[3]+0.5*b.L*Math.sin(b.xp[4])));
+                context.lineTo(ScreenHor(0.1*b.h*Math.sin(b.xp[4])+-1.5*b.dsl*Math.cos(-b.ui[2]*Math.PI/180-b.xp[4])+b.x-0.5*b.L*Math.cos(b.xp[4])), ScreenVer(0.1*b.h*Math.cos(b.xp[4])-1.5*b.dsl*Math.sin(-b.ui[2]*Math.PI/180-b.xp[4])+b.xp[3]+0.5*b.L*Math.sin(b.xp[4])));
+                context.lineTo(ScreenHor(0.1*b.h*Math.sin(b.xp[4])+0*b.dsl*Math.cos(-b.ui[2]*Math.PI/180-b.xp[4])-pTh*Math.sin(-b.ui[2]*Math.PI/180-b.xp[4])+b.x-0.5*b.L*Math.cos(b.xp[4])), ScreenVer(0.1*b.h*Math.cos(b.xp[4])+0*b.dsl*Math.sin(-b.ui[2]*Math.PI/180-b.xp[4])+pTh*Math.cos(-b.ui[2]*Math.PI/180-b.xp[4])+b.xp[3]+0.5*b.L*Math.sin(b.xp[4])));
+                context.ellipse(ScreenHor(0.1*b.h*Math.sin(b.xp[4])+0*b.dsl*Math.cos(-b.ui[2]*Math.PI/180-b.xp[4])+b.x-0.5*b.L*Math.cos(b.xp[4])), ScreenVer(0.1*b.h*Math.cos(b.xp[4])+0*b.dsl*Math.sin(-b.ui[2]*Math.PI/180-b.xp[4])+b.xp[3]+0.5*b.L*Math.sin(b.xp[4])), 0*PixelsPerMeter*0.02+ScreenHor(b.dsl*1/5)-iOrigin, 0*PixelsPerMeter*0.019+ScreenVer(b.dsl*0.95/5)-jOrigin, -b.ui[2]*Math.PI/180-b.xp[4], Math.PI/2, -Math.PI/2, true);
                 context.strokeStyle = '#ffffff'//'#00508a';
                 context.stroke();
                 context.fillStyle = '#00508a';
@@ -1907,9 +1972,9 @@ shadowgrd2.addColorStop(1.0, 'rgba(0,230,250,0.05)');
                 ///db
                 ///*
                 context.beginPath();
-                context.moveTo(ScreenHor(-0.7*b.h*Math.sin(b.xp[4])+b.dsl*Math.cos(-b.ui[1]+b.xp[4])+b.x+0.5*b.L*Math.cos(b.xp[4])), ScreenVer(-0.7*b.h*Math.cos(b.xp[4])+b.dsl*Math.sin(-b.ui[1]-b.xp[4])+b.xp[3]-0.5*b.L*Math.sin(b.xp[4])));
+                context.moveTo(ScreenHor(-0.7*b.h*Math.sin(b.xp[4])+b.dsl*Math.cos(-b.ui[1]*Math.PI/180+b.xp[4])+b.x+0.5*b.L*Math.cos(b.xp[4])), ScreenVer(-0.7*b.h*Math.cos(b.xp[4])+b.dsl*Math.sin(-b.ui[1]*Math.PI/180-b.xp[4])+b.xp[3]-0.5*b.L*Math.sin(b.xp[4])));
                 context.lineTo(ScreenHor(-0.7*b.h*Math.sin(b.xp[4])+b.x+0.5*b.L*Math.cos(b.xp[4])), ScreenVer(-0.7*b.h*Math.cos(b.xp[4])+b.xp[3]-0.5*b.L*Math.sin(b.xp[4])));
-                context.lineTo(ScreenHor(-0.7*b.h*Math.sin(b.xp[4])+-b.dsl*Math.cos(-b.ui[1]+b.xp[4])+b.x+0.5*b.L*Math.cos(b.xp[4])), ScreenVer(-0.7*b.h*Math.cos(b.xp[4])+-b.dsl*Math.sin(-b.ui[1]-b.xp[4])+b.xp[3]-0.5*b.L*Math.sin(b.xp[4])));
+                context.lineTo(ScreenHor(-0.7*b.h*Math.sin(b.xp[4])+-b.dsl*Math.cos(-b.ui[1]*Math.PI/180+b.xp[4])+b.x+0.5*b.L*Math.cos(b.xp[4])), ScreenVer(-0.7*b.h*Math.cos(b.xp[4])+-b.dsl*Math.sin(-b.ui[1]*Math.PI/180-b.xp[4])+b.xp[3]-0.5*b.L*Math.sin(b.xp[4])));
                 //context.fill();
                 context.strokeStyle = '#ff0000';
                 context.stroke();
@@ -1917,11 +1982,11 @@ shadowgrd2.addColorStop(1.0, 'rgba(0,230,250,0.05)');
                 //*/
                 pTh = b.dsl/5;
                 context.beginPath();
-                context.lineTo(ScreenHor(-0.7*b.h*Math.sin(b.xp[4])+0*b.dsl*Math.cos(-b.ui[1]-b.xp[4])+b.x+0.5*b.L*Math.cos(b.xp[4])), ScreenVer(-0.7*b.h*Math.cos(b.xp[4])+0*b.dsl*Math.sin(-b.ui[1]-b.xp[4])+b.xp[3]-0.5*b.L*Math.sin(b.xp[4])));
-                context.lineTo(ScreenHor(-0.7*b.h*Math.sin(b.xp[4])+0*b.dsl*Math.cos(-b.ui[1]-b.xp[4])+pTh*Math.sin(-b.ui[1]-b.xp[4])+b.x+0.5*b.L*Math.cos(b.xp[4])), ScreenVer(-0.7*b.h*Math.cos(b.xp[4])+0*b.dsl*Math.sin(-b.ui[1]-b.xp[4])-pTh*Math.cos(-b.ui[1]-b.xp[4])+b.xp[3]-0.5*b.L*Math.sin(b.xp[4])));
-                context.lineTo(ScreenHor(-0.7*b.h*Math.sin(b.xp[4])+-1.5*b.dsl*Math.cos(-b.ui[1]-b.xp[4])+b.x+0.5*b.L*Math.cos(b.xp[4])), ScreenVer(-0.7*b.h*Math.cos(b.xp[4])-1.5*b.dsl*Math.sin(-b.ui[1]-b.xp[4])+b.xp[3]-0.5*b.L*Math.sin(b.xp[4])));
-                context.lineTo(ScreenHor(-0.7*b.h*Math.sin(b.xp[4])+0*b.dsl*Math.cos(-b.ui[1]-b.xp[4])-pTh*Math.sin(-b.ui[1]-b.xp[4])+b.x+0.5*b.L*Math.cos(b.xp[4])), ScreenVer(-0.7*b.h*Math.cos(b.xp[4])+0*b.dsl*Math.sin(-b.ui[1]-b.xp[4])+pTh*Math.cos(-b.ui[1]-b.xp[4])+b.xp[3]-0.5*b.L*Math.sin(b.xp[4])));
-                context.ellipse(ScreenHor(-0.7*b.h*Math.sin(b.xp[4])+0*b.dsl*Math.cos(-b.ui[1]-b.xp[4])+b.x+0.5*b.L*Math.cos(b.xp[4])), ScreenVer(-0.7*b.h*Math.cos(b.xp[4])+0*b.dsl*Math.sin(-b.ui[1]-b.xp[4])+b.xp[3]-0.5*b.L*Math.sin(b.xp[4])), 0*PixelsPerMeter*0.016+ScreenHor(b.dsl*1/5)-iOrigin, 0*PixelsPerMeter*0.016+ScreenVer(b.dsl*1/5)-jOrigin, -b.ui[1]-b.xp[4], Math.PI/2, -Math.PI/2, true);
+                context.lineTo(ScreenHor(-0.7*b.h*Math.sin(b.xp[4])+0*b.dsl*Math.cos(-b.ui[1]*Math.PI/180-b.xp[4])+b.x+0.5*b.L*Math.cos(b.xp[4])), ScreenVer(-0.7*b.h*Math.cos(b.xp[4])+0*b.dsl*Math.sin(-b.ui[1]*Math.PI/180-b.xp[4])+b.xp[3]-0.5*b.L*Math.sin(b.xp[4])));
+                context.lineTo(ScreenHor(-0.7*b.h*Math.sin(b.xp[4])+0*b.dsl*Math.cos(-b.ui[1]*Math.PI/180-b.xp[4])+pTh*Math.sin(-b.ui[1]*Math.PI/180-b.xp[4])+b.x+0.5*b.L*Math.cos(b.xp[4])), ScreenVer(-0.7*b.h*Math.cos(b.xp[4])+0*b.dsl*Math.sin(-b.ui[1]*Math.PI/180-b.xp[4])-pTh*Math.cos(-b.ui[1]*Math.PI/180-b.xp[4])+b.xp[3]-0.5*b.L*Math.sin(b.xp[4])));
+                context.lineTo(ScreenHor(-0.7*b.h*Math.sin(b.xp[4])+-1.5*b.dsl*Math.cos(-b.ui[1]*Math.PI/180-b.xp[4])+b.x+0.5*b.L*Math.cos(b.xp[4])), ScreenVer(-0.7*b.h*Math.cos(b.xp[4])-1.5*b.dsl*Math.sin(-b.ui[1]*Math.PI/180-b.xp[4])+b.xp[3]-0.5*b.L*Math.sin(b.xp[4])));
+                context.lineTo(ScreenHor(-0.7*b.h*Math.sin(b.xp[4])+0*b.dsl*Math.cos(-b.ui[1]*Math.PI/180-b.xp[4])-pTh*Math.sin(-b.ui[1]*Math.PI/180-b.xp[4])+b.x+0.5*b.L*Math.cos(b.xp[4])), ScreenVer(-0.7*b.h*Math.cos(b.xp[4])+0*b.dsl*Math.sin(-b.ui[1]*Math.PI/180-b.xp[4])+pTh*Math.cos(-b.ui[1]*Math.PI/180-b.xp[4])+b.xp[3]-0.5*b.L*Math.sin(b.xp[4])));
+                context.ellipse(ScreenHor(-0.7*b.h*Math.sin(b.xp[4])+0*b.dsl*Math.cos(-b.ui[1]*Math.PI/180-b.xp[4])+b.x+0.5*b.L*Math.cos(b.xp[4])), ScreenVer(-0.7*b.h*Math.cos(b.xp[4])+0*b.dsl*Math.sin(-b.ui[1]*Math.PI/180-b.xp[4])+b.xp[3]-0.5*b.L*Math.sin(b.xp[4])), 0*PixelsPerMeter*0.016+ScreenHor(b.dsl*1/5)-iOrigin, 0*PixelsPerMeter*0.016+ScreenVer(b.dsl*1/5)-jOrigin, -b.ui[1]*Math.PI/180-b.xp[4], Math.PI/2, -Math.PI/2, true);
                 context.strokeStyle = '#ffffff'//'#00508a';
                 context.stroke();
                 context.fillStyle = '#00508a';
@@ -1939,19 +2004,6 @@ shadowgrd2.addColorStop(1.0, 'rgba(0,230,250,0.05)');
                 context.arc(ScreenHor(0.1*b.h*Math.sin(b.xp[4])+b.x-0.5*b.L*Math.cos(b.xp[4])), ScreenVer(0.1*b.h*Math.cos(b.xp[4])+b.xp[3]+0.5*b.L*Math.sin(b.xp[4])), pixelRadius, 0, 2*Math.PI, true);
                 context.fill();
                 context.stroke();
-              
-              // waves in front of boat
-              /*
-              context.beginPath();
-                context.moveTo(ScreenHor(-4),ScreenVer(0));
-              var frontwavechar
-                for (let i=0; i < (b.ssMoving2).length; i++) {
-                  frontwavechar = Math.sin(b.waveshimmer*(5))*b.ssMoving2[i]/((2/b.SF)*b.SeaForcePerScreenUnit);
-                  context.lineTo(ScreenHor(-4+8.1*i/b.ssMoving2.length),ScreenVer(0+frontwavechar));
-                }
-                context.strokeStyle = 'rgba(0,150,180,1)';
-                context.stroke();
-                */
               
               context.beginPath();
               context.moveTo(ScreenHor(-4),ScreenVer(0));
@@ -2022,9 +2074,9 @@ shadowgrd2.addColorStop(1.0, 'rgba(0,230,250,0.05)');
         sim.toggleTrimTarget();
       }
       if (e.keyCode == 82){
-        sim.ResetStates();
-        sim.intReset();
         sim.pitchSP_level();
+        sim.intReset();
+        sim.ResetStates();
       }
       if (e.keyCode == 83){
         sim.SeaToggle();
