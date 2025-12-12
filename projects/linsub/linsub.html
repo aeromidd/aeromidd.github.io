@@ -1,14 +1,10 @@
  <!DOCTYPE html>
 <html>
 <head>
-<meta charset=utf-8 />
-<title>JSub</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width">
+      <title>LinSub</title>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.2.1/math.js">
-  //TO DO:
-  //add sliders to control bowplane and sternplane manually
-  //add a switch to link or unlink bowplane slider and sternplane slider (disables interactivity of latter)
-  //add a ratio input box determining ratio linking sternplane slider to bowplane slider
-  //package this into a show/hide thing "manual controls" a bit like the control gains option.
 </script>
   <style>
     table, th, td {
@@ -17,6 +13,49 @@
   </style>
 </head>
 <body>
+<canvas id="BorderCanvas"></canvas>
+      <script type="text/javascript">
+         var canvas = document.getElementById('BorderCanvas');
+         if (canvas.getContext) {
+           var context = canvas.getContext('2d');
+           var xsize = 880;
+           var ysize = 1000;
+           canvas.style.width = xsize + "px";
+           canvas.style.height = ysize + "px";
+           // Set actual size in memory (scaled to account for extra pixel density).
+           var scale = 2; //window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+           canvas.width = Math.floor(xsize * scale);
+           canvas.height = Math.floor(ysize * scale);
+           // Normalize coordinate system to use css pixels.
+           context.scale(scale, scale);
+           context.clearRect(0, 0, canvas.width / scale, canvas.height / scale);
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(0, 0);
+           context.lineTo(canvas.width / scale, 0);
+           context.strokeStyle = '#00508a';
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(0, 0);
+           context.lineTo(0, canvas.height / scale);
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(canvas.width / scale, canvas.height / scale);
+           context.lineTo(canvas.width / scale, 0);
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(canvas.width / scale, canvas.height / scale);
+           context.lineTo(0, canvas.height / scale);
+           context.stroke();
+           ////
+         }
+      </script>
 A/Z: manual sternplane | K/M: manual bowplane | T: toggle depth autopilot | I = reset integrators
 <br>
 Click: depth setpoint | P/L: steady pitch setpoint | O: reset steady pitch
@@ -26,7 +65,7 @@ C: toggle compressibility | V: toggle active trim compensator | B: toggle trim t
 S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
 <br>
 <canvas id="BlurredSimCanvas" tabindex='0'></canvas>
-<canvas id="SimCanvas" tabindex='0' style="position:absolute;top:75px;left:5px;"></canvas>
+<canvas id="SimCanvas" tabindex='0' style="position:absolute;top:75px;left:15px;"></canvas>
 <div class="slidecontainer">
   <input type="range" min="0" max="10" step="1" value="1" class="slider" id="SimSpeedSlider" style="position:absolute; left:650px; top:50px; width: 120px;" oninput="this.nextElementSibling.value = this.value +'x'">
 <output style="position:absolute; left:775px; top:50px;" >1x</output>
@@ -236,10 +275,9 @@ b.maxplanerate = maxplanerateInput.value;
 
     // Rendering constants
     const PixelsPerMeter = 100.0;       // rendering zoom factor
-    const iOrigin = 400;                // hor location of world origin on canvas [pixels]
+    const iOrigin = 865/2;                // hor location of world origin on canvas [pixels]
     const jOrigin = 100;                // ver location of world origin on canvas [pixels]
     const SubRadiusMeters = 0.01;
-    const GrabDistanceLimit = 2.0;
     
     const manualDBinc = 15; //deg
   
@@ -1480,8 +1518,9 @@ UpdatePlantbutton.addEventListener('click',function(){
         BlurredSimCanvas.style.webkitFilter = 'blur(5px)';
         };
         // Set display size (css pixels).
-        var xsize = 800;
+        var xsize = 865;
         var ysize = 800;
+        canvas.style.outline = "1px solid red";
         canvas.style.width = xsize + "px";
         canvas.style.height = ysize + "px";
         blurredcanvas.style.width = xsize + "px";
@@ -1523,12 +1562,13 @@ UpdatePlantbutton.addEventListener('click',function(){
                 //sea background
                 context.lineWidth = 1;
                 context.beginPath();
-                context.moveTo(ScreenHor(-4),ScreenVer(0));
-                context.lineTo(ScreenHor(4),ScreenVer(0));
-                context.lineTo(ScreenHor(4),ScreenVer(8));
-                context.lineTo(ScreenHor(-4),ScreenVer(8));
-                //context.strokeStyle = '#129aca';
-                const grd = context.createLinearGradient(ScreenHor(-4), ScreenVer(-0.2), ScreenHor(-4), ScreenVer(8));
+                context.moveTo(ScreenHor(-5),ScreenVer(0));
+                context.lineTo(ScreenHor(4.5),ScreenVer(0));
+                context.lineTo(ScreenHor(4.5),ScreenVer(8));
+                context.lineTo(ScreenHor(-4.5),ScreenVer(8));
+                context.strokeStyle = '#129aca';
+              //context.stroke(); //uncomment if want to show border around sea background
+                const grd = context.createLinearGradient(ScreenHor(-4.5), ScreenVer(-0.2), ScreenHor(-4.5), ScreenVer(8));
               if (b.Compressibility == 1){
 grd.addColorStop(0.01, "rgba(255,255,255,0.0)");
 grd.addColorStop(0.06, "rgba(0,150,140,0.1)");
@@ -1555,19 +1595,19 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
                 }
                 context.lineWidth = 1;
                 context.beginPath();
-                context.moveTo(ScreenHor(-4),ScreenVer(b.zDem[0]));
+                context.moveTo(ScreenHor(-4.5),ScreenVer(b.zDem[0]));
                 for (let i=0; i <= (b.zDem).length; i++) {
-                  context.lineTo(ScreenHor(-4+3.5*b.L*i/b.zDem.length),ScreenVer(b.zDem[i]));
+                  context.lineTo(ScreenHor(-4.5+3.5*b.L*i/b.zDem.length),ScreenVer(b.zDem[i]));
                 }
-                context.lineTo(ScreenHor(4.1),ScreenVer(b.depthDem*b.SF));
+                context.lineTo(ScreenHor(4.6),ScreenVer(b.depthDem*b.SF));
                 context.stroke();
                 context.setLineDash([]);
               
                 context.lineWidth = 1;
                 context.beginPath();
-                context.moveTo(ScreenHor(-4),ScreenVer(b.zh[0]));
+                context.moveTo(ScreenHor(-4.5),ScreenVer(b.zh[0]));
                 for (let i=1; i <= (b.tcr).length; i++) {
-                  context.lineTo(ScreenHor(-4+2*b.L*i/b.tcr.length),ScreenVer(b.tcr[i]));
+                  context.lineTo(ScreenHor(-4.5+2*b.L*i/b.tcr.length),ScreenVer(b.tcr[i]));
                 }
                 context.strokeStyle = '#ff9aca';//'#a7a7a7';
                 context.stroke();
@@ -1576,9 +1616,9 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
                 
                 context.lineWidth = 1;
                 context.beginPath();
-                context.moveTo(ScreenHor(-4),ScreenVer(b.zh[0]));
+                context.moveTo(ScreenHor(-4.5),ScreenVer(b.zh[0]));
                 for (let i=1; i <= (b.zh).length; i++) {
-                  context.lineTo(ScreenHor(-4+2*b.L*i/b.zh.length),ScreenVer(b.zh[i]));
+                  context.lineTo(ScreenHor(-4.5+2*b.L*i/b.zh.length),ScreenVer(b.zh[i]));
                 }
                 context.strokeStyle = '#119aca';//'#a7a7a7';
                 context.stroke();
@@ -1638,9 +1678,9 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
                 context.fillStyle = "#00508a";
                 context.textAlign = "left";
                 if (b.SeaFixed == 1){
-                  context.fillText("Sea State: ".concat(b.SeaState.toFixed(0).toString()," (fixed)"), ScreenHor(-4),ScreenVer(-0.5));
+                  context.fillText("Sea State: ".concat(b.SeaState.toFixed(0).toString()," (fixed)"), ScreenHor(-4.5),ScreenVer(-0.5));
                 }else{
-                  context.fillText("Sea State: ".concat(b.SeaState.toFixed(0).toString()), ScreenHor(-4),ScreenVer(-0.5));
+                  context.fillText("Sea State: ".concat(b.SeaState.toFixed(0).toString()), ScreenHor(-4.5),ScreenVer(-0.5));
                 }
               
                 
@@ -1669,30 +1709,30 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
                 var wavechar;
               
                 context.beginPath();
-              context.moveTo(ScreenHor(-4),ScreenVer(0));
+              context.moveTo(ScreenHor(-4.5),ScreenVer(0));
                 for (let i=0; i < (b.ssFZ).length; i++) {
                   wavechar = Math.sin(b.waveshimmer*(5))*b.ssMoving[i]/((2/b.SF)*b.SeaForcePerScreenUnit);
-                  context.lineTo(ScreenHor(-4+8.1*i/b.ssFZ.length),ScreenVer(0+wavechar));
+                  context.lineTo(ScreenHor(-4.5+9.1*i/b.ssFZ.length),ScreenVer(0+wavechar));
                 }
                 for (let i=(b.ssFZ).length-1; i >= 0; i=i-1) {
                   wavechar = Math.sin(b.waveshimmer*(5))*b.ssMoving[i]/((2/b.SF)*b.SeaForcePerScreenUnit);
-                  context.lineTo(ScreenHor(-4+8.1*i/b.ssFZ.length),ScreenVer(Math.max(wavechar,Math.max(wavechar+1*b.SF,1*b.SF))));
+                  context.lineTo(ScreenHor(-4.5+9.1*i/b.ssFZ.length),ScreenVer(Math.max(wavechar,Math.max(wavechar+1*b.SF,1*b.SF))));
                 }
   context.fillStyle = 'rgba(0,150,130,0.2)';
   context.fill();
               
               //blurred deep wave shadows:
                if (NiceGraphicsON.checked == true){
-                 bgcontext.moveTo(ScreenHor(-4),ScreenVer(0));
+                 bgcontext.moveTo(ScreenHor(-4.5),ScreenVer(0));
                 for (let i=0; i < (b.ssFZ).length; i++) {
                   wavechar = Math.sin(b.waveshimmer*(5))*b.ssMoving[i]/((2/b.SF)*b.SeaForcePerScreenUnit);
-                  bgcontext.lineTo(ScreenHor(-4+8.1*i/b.ssFZ.length),ScreenVer(0+wavechar));
+                  bgcontext.lineTo(ScreenHor(-4.5+9.1*i/b.ssFZ.length),ScreenVer(0+wavechar));
                 }
                 for (let i=(b.ssFZ).length-1; i >= 0; i=i-1) {
                   wavechar = Math.sin(b.waveshimmer*(5))*b.ssMoving[i]/((2/b.SF)*b.SeaForcePerScreenUnit);
-                  bgcontext.lineTo(ScreenHor(-4+8.1*i/b.ssFZ.length-(0.5*1e3*(Math.pow(wavechar,2)))-0),ScreenVer(Math.max((2e3*(Math.pow(wavechar,2)))+0-wavechar,-wavechar)));
+                  bgcontext.lineTo(ScreenHor(-4.5+9.1*i/b.ssFZ.length-(0.5*1e3*(Math.pow(wavechar,2)))-0),ScreenVer(Math.max((2e3*(Math.pow(wavechar,2)))+0-wavechar,-wavechar)));
                 }
-              const shadowgrd = bgcontext.createLinearGradient(ScreenHor(-4), ScreenVer(-0), ScreenHor(-4), ScreenVer(2.0));
+              const shadowgrd = bgcontext.createLinearGradient(ScreenHor(-4.5), ScreenVer(-0), ScreenHor(-4.5), ScreenVer(2.0));
 shadowgrd.addColorStop((15*b.SF)/2.0,'rgba(0,150,130,0.25)');
 shadowgrd.addColorStop((45*b.SF)/2.0, 'rgba(0,160,180,0.2)');
 shadowgrd.addColorStop(1.0, 'rgba(0,200,220,0.1)');
@@ -2006,14 +2046,14 @@ shadowgrd2.addColorStop(1.0, 'rgba(0,230,250,0.05)');
                 context.stroke();
               
               context.beginPath();
-              context.moveTo(ScreenHor(-4),ScreenVer(0));
+              context.moveTo(ScreenHor(-4.5),ScreenVer(0));
                 for (let i=0; i < (b.ssFZ).length; i++) {
                   wavechar = Math.sin(b.waveshimmer*(5))*b.ssMoving2[i]/((2/b.SF)*b.SeaForcePerScreenUnit);
-                  context.lineTo(ScreenHor(-4+8.1*i/b.ssFZ.length),ScreenVer(0+wavechar));
+                  context.lineTo(ScreenHor(-4.5+9.1*i/b.ssFZ.length),ScreenVer(0+wavechar));
                 }
                 for (let i=(b.ssFZ).length-1; i >= 0; i=i-1) {
                   wavechar = Math.sin(b.waveshimmer*(5))*b.ssMoving2[i]/((2/b.SF)*b.SeaForcePerScreenUnit);
-                  context.lineTo(ScreenHor(-4+8.1*i/b.ssFZ.length),ScreenVer(Math.max(wavechar,Math.max(wavechar+1*b.SF,1*b.SF))));
+                  context.lineTo(ScreenHor(-4.5+9.1*i/b.ssFZ.length),ScreenVer(Math.max(wavechar,Math.max(wavechar+1*b.SF,1*b.SF))));
                 }
   context.fillStyle = 'rgba(0,155,205,0.2)';//'rgba(0,150,130,0.2)';
   context.fill();
