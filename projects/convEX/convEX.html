@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 <meta charset=utf-8 />
@@ -15,7 +15,7 @@
          if (canvas.getContext) {
            var context = canvas.getContext('2d');
            var xsize = 880;
-           var ysize = 1425;
+           var ysize = 850;
            canvas.style.width = xsize + "px";
            canvas.style.height = ysize + "px";
            // Set actual size in memory (scaled to account for extra pixel density).
@@ -56,12 +56,12 @@
 <canvas id="SimCanvas" tabindex='0' style="position:absolute;top:15px;left:45px;"></canvas>
 <div class="check"><label for="NiceGraphicsON" style="position:absolute;left:700px;top:595px; display:none"><input type="checkbox" id="NiceGraphicsON" unchecked>Dynamic Graphics</label><div>
 <div class="slidecontainer">
-  <input type="range" min="20" max="70" step="1" value="45" class="slider" id="XupperSplaySlider" style="position:absolute; left:-5px; top:235px; width: 120px;writing-mode: vertical-lr;direction: ltr;" oninput="this.nextElementSibling.value = this.value +'°';AnimationFrame();">
+  <input type="range" min="25" max="65" step="1" value="45" class="slider" id="XupperSplaySlider" style="position:absolute; left:-5px; top:235px; width: 120px;writing-mode: vertical-lr;direction: ltr;" oninput="this.nextElementSibling.value = this.value +'°';AnimationFrame();">
 <output style="position:absolute; left:70px; top:295px; font-family:Courier New; color:#00508a" >45°</output>
 <output style="position:absolute; left:70px; top:315px; font-family:Courier New; color:#019aca" >upper<br>splay</output>
 <div class="slidecontainer">
   <output style="position:absolute; left:70px; top:415px; font-family:Courier New; color:#019aca" >lower<br>splay</output>
-  <input type="range" min="20" max="70" step="1" value="45" class="slider" id="XlowerSplaySlider" style="position:absolute; left:-5px; top:395px; width: 120px;writing-mode: vertical-lr;direction: rtl" oninput="this.nextElementSibling.value = this.value +'°';AnimationFrame();">
+  <input type="range" min="25" max="65" step="1" value="45" class="slider" id="XlowerSplaySlider" style="position:absolute; left:-5px; top:395px; width: 120px;writing-mode: vertical-lr;direction: rtl" oninput="this.nextElementSibling.value = this.value +'°';AnimationFrame();">
 <output style="position:absolute; left:70px; top:455px; font-family:Courier New; color:#00508a" >45°</output>
   <input id="US_defInput" value="0.0" step="0.5" max="25" min="-25" type="number" style="position:absolute;top:660px;left:455px;width:50px;text-align:right" onkeypress="return isNumberKey(event);" onChange="this.value=Math.max(Math.min(this.value,this.max),this.min);sim.EXAorder(1e3,1e3,1,0,0,1,0,0,0); AnimationFrame();"/>
   <input id="LS_defInput" value="0.0" step="0.5" max="25" min="-25" type="number" style="position:absolute;top:690px;left:455px;width:50px;text-align:right" onkeypress="return isNumberKey(event)" onChange="this.value=Math.max(Math.min(this.value,this.max),this.min);sim.EXAorder(1e3,1e3,1,0,0,0,1,0,0); AnimationFrame();"/>
@@ -79,9 +79,9 @@
   
       <div class="check"><label for="InvertERAcheckbox" style="position:absolute;left:715px;top:430px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="InvertERAcheckbox" style='position:absolute;top:-3.5px;left:95px' onclick="AnimationFrame();" unchecked><i> Invert Rudder Input </label>
         
-    <div class="check"><label for="ShowRollContrib" style="position:absolute;left:700px;top:773px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="ShowRollContrib" style='position:absolute;top:-3.5px;left:-20px' onclick="AnimationFrame();" checked><i> Roll </label><div>
-    <div class="check"><label for="ShowRollContrib" style="position:absolute;left:760px;top:773px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="ShowPitchContrib" style='position:absolute;top:-3.5px;left:-20px' onclick="AnimationFrame();" checked><i> Pitch </label><div>
-    <div class="check"><label for="ShowRollContrib" style="position:absolute;left:820px;top:773px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="ShowYawContrib" style='position:absolute;top:-3.5px;left:-20px' onclick="AnimationFrame();" checked><i> Yaw </label><div>
+    <div class="check"><label for="ShowRollContrib" style="position:absolute;left:700px;top:775px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="ShowRollContrib" style='position:absolute;top:-3.5px;left:-20px' onclick="AnimationFrame();" checked><i><strong> Roll </strong></label><div>
+    <div class="check"><label for="ShowRollContrib" style="position:absolute;left:760px;top:775px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="ShowPitchContrib" style='position:absolute;top:-3.5px;left:-20px' onclick="AnimationFrame();" checked><i><strong> Pitch </strong></label><div>
+    <div class="check"><label for="ShowRollContrib" style="position:absolute;left:820px;top:775px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="ShowYawContrib" style='position:absolute;top:-3.5px;left:-20px' onclick="AnimationFrame();" checked><i><strong> Yaw </strong></label><div>
   </output>
 </div><div>
   <output style="position:absolute; left:50px; top:730px; width:799px; font-family:Garamond; color:#757575; font-size: 12px"><span style="font-size: 15px">A tool visualising submarine x-plane configurations and their cruciform-equivalent Diveplane / Rudder / Roll angle contributions.</span><br style="line-height: 30px" />Note that the background vehicle motion is a visual aid <i> only </i> of (uncoupled) total roll, pitch, yaw <i><b> reaction directions </b></i> imparted by the control surfaces, <br> and should not be conflated with nor used to verify any resulting vehicle orientation in conventional reference frames.<span style="color: #019aca"><b> Visualise:</b></span><span style="color: #00508a"><br><b>Instructions:</b> Alter xplane Splay angles with the sliders on the left. Click/Drag in the central circle to assign cruciform-equivalent angles (zero roll solution), or Click+Drag individual xplanes to assign their angles. Alternatively, type + enter these values in the input boxes. Xplanes are coloured darker when trailing edge <u>up.</u></span>
