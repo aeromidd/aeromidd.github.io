@@ -9,39 +9,82 @@
   </style>
 </head>
 <body>
-  <p style="position:absolute; left:5px; top:-25px; width:200px; font-family:Garamond; color:#00508a; font-size:30px">convE⇄X</p>
-  <p style="position:absolute; left:660px; top:-5px; width:400px; font-family:Garamond; color:#00508a; font-size:14px; align=right">Michael Middleton 2025</p>
-<canvas id="SimCanvas" tabindex='0' style="position:absolute;top:0px;left:0px;"></canvas>
-<div class="check"><label for="NiceGraphicsON" style="position:absolute;left:655px;top:580px; display:none"><input type="checkbox" id="NiceGraphicsON" unchecked>Dynamic Graphics</label><div>
+  <canvas id="BorderCanvas"></canvas>
+      <script type="text/javascript">
+         var canvas = document.getElementById('BorderCanvas');
+         if (canvas.getContext) {
+           var context = canvas.getContext('2d');
+           var xsize = 880;
+           var ysize = 1425;
+           canvas.style.width = xsize + "px";
+           canvas.style.height = ysize + "px";
+           // Set actual size in memory (scaled to account for extra pixel density).
+           var scale = 2; //window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+           canvas.width = Math.floor(xsize * scale);
+           canvas.height = Math.floor(ysize * scale);
+           // Normalize coordinate system to use css pixels.
+           context.scale(scale, scale);
+           context.clearRect(0, 0, canvas.width / scale, canvas.height / scale);
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(0, 0);
+           context.lineTo(canvas.width / scale, 0);
+           context.strokeStyle = '#00508a';
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(0, 0);
+           context.lineTo(0, canvas.height / scale);
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(canvas.width / scale, canvas.height / scale);
+           context.lineTo(canvas.width / scale, 0);
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(canvas.width / scale, canvas.height / scale);
+           context.lineTo(0, canvas.height / scale);
+           context.stroke();
+           ////
+         }
+      </script>
+  <p style="position:absolute; left:50px; top:-17px; width:200px; font-family:Garamond; color:#00508a; font-size:30px">convE⇄X</p>
+<canvas id="SimCanvas" tabindex='0' style="position:absolute;top:15px;left:45px;"></canvas>
+<div class="check"><label for="NiceGraphicsON" style="position:absolute;left:700px;top:595px; display:none"><input type="checkbox" id="NiceGraphicsON" unchecked>Dynamic Graphics</label><div>
 <div class="slidecontainer">
-  <input type="range" min="20" max="70" step="1" value="45" class="slider" id="XupperSplaySlider" style="position:absolute; left:-50px; top:220px; width: 120px;writing-mode: vertical-lr;direction: ltr;" oninput="this.nextElementSibling.value = this.value +'°';AnimationFrame();">
-<output style="position:absolute; left:25px; top:280px; font-family:Courier New; color:#00508a" >45°</output>
-<output style="position:absolute; left:25px; top:300px; font-family:Courier New; color:#019aca" >upper<br>splay</output>
+  <input type="range" min="20" max="70" step="1" value="45" class="slider" id="XupperSplaySlider" style="position:absolute; left:-5px; top:235px; width: 120px;writing-mode: vertical-lr;direction: ltr;" oninput="this.nextElementSibling.value = this.value +'°';AnimationFrame();">
+<output style="position:absolute; left:70px; top:295px; font-family:Courier New; color:#00508a" >45°</output>
+<output style="position:absolute; left:70px; top:315px; font-family:Courier New; color:#019aca" >upper<br>splay</output>
 <div class="slidecontainer">
-  <output style="position:absolute; left:25px; top:400px; font-family:Courier New; color:#019aca" >lower<br>splay</output>
-  <input type="range" min="20" max="70" step="1" value="45" class="slider" id="XlowerSplaySlider" style="position:absolute; left:-50px; top:380px; width: 120px;writing-mode: vertical-lr;direction: rtl" oninput="this.nextElementSibling.value = this.value +'°';AnimationFrame();">
-<output style="position:absolute; left:25px; top:440px; font-family:Courier New; color:#00508a" >45°</output>
-  <input id="US_defInput" value="0.0" step="0.5" max="25" min="-25" type="number" style="position:absolute;top:660px;left:410px;width:50px;text-align:right" onkeypress="return isNumberKey(event);" onChange="this.value=Math.max(Math.min(this.value,this.max),this.min);sim.EXAorder(1e3,1e3,1,0,0,1,0,0,0); AnimationFrame();"/>
-  <input id="LS_defInput" value="0.0" step="0.5" max="25" min="-25" type="number" style="position:absolute;top:690px;left:410px;width:50px;text-align:right" onkeypress="return isNumberKey(event)" onChange="this.value=Math.max(Math.min(this.value,this.max),this.min);sim.EXAorder(1e3,1e3,1,0,0,0,1,0,0); AnimationFrame();"/>
-  <input id="LP_defInput" value="0.0" step="0.5" max="25" min="-25" type="number" style="position:absolute;top:690px;left:335px;width:50px;text-align:right" onkeypress="return isNumberKey(event)" onChange="this.value=Math.max(Math.min(this.value,this.max),this.min);sim.EXAorder(1e3,1e3,1,0,0,0,0,1,0); AnimationFrame();"/>
-  <input id="UP_defInput" value="0.0" step="0.5" max="25" min="-25" type="number" style="position:absolute;top:660px;left:335px;width:50px;text-align:right" onkeypress="return isNumberKey(event)" onChange="this.value=Math.max(Math.min(this.value,this.max),this.min);sim.EXAorder(1e3,1e3,1,0,0,0,0,0,1); AnimationFrame();"/>
-  <input id="ESA_defInput" value="0.0" step="0.5" max="25" min="-25" type="number" style="position:absolute;top:350px;left:725px;width:50px;text-align:right" onkeypress="return isNumberKey(event)" onChange="this.value=Math.max(Math.min(this.value,this.max),this.min);sim.EXAorder(ERA_defInput.value*5.5,this.value*5.5,1,0,1,0,0,0,0); AnimationFrame();"/>
-  <input id="ERA_defInput" value="0.0" step="0.5" max="25" min="-25" type="number" style="position:absolute;top:380px;left:725px;width:50px;text-align:right" onkeypress="return isNumberKey(event)" onChange="this.value=Math.max(Math.min(this.value,this.max),this.min);sim.EXAorder(this.value*5.5,ESA_defInput.value*5.5,1,1,0,0,0,0,0); AnimationFrame();"/>
-  <output style="position:absolute; left:690px; top:352px; font-family:Courier New; color:#019aca" >ESA</output>
-  <output style="position:absolute; left:690px; top:382px; font-family:Courier New; color:#019aca" >ERA</output>
-  <p style="position:absolute; left:727px; top:400px; width:70px; font-family:Courier New; color:#757575; font-size:11px">(0 Roll)</p>
-  <output style="position:absolute; left:355px; top:640px; font-family:Courier New; color:#019aca" >UP</output>
-  <output style="position:absolute; left:355px; top:715px; font-family:Courier New; color:#019aca" >LP</output>
-  <output style="position:absolute; left:430px; top:640px; font-family:Courier New; color:#019aca" >US</output>
-  <output style="position:absolute; left:430px; top:715px; font-family:Courier New; color:#019aca" >LS</output>
+  <output style="position:absolute; left:70px; top:415px; font-family:Courier New; color:#019aca" >lower<br>splay</output>
+  <input type="range" min="20" max="70" step="1" value="45" class="slider" id="XlowerSplaySlider" style="position:absolute; left:-5px; top:395px; width: 120px;writing-mode: vertical-lr;direction: rtl" oninput="this.nextElementSibling.value = this.value +'°';AnimationFrame();">
+<output style="position:absolute; left:70px; top:455px; font-family:Courier New; color:#00508a" >45°</output>
+  <input id="US_defInput" value="0.0" step="0.5" max="25" min="-25" type="number" style="position:absolute;top:660px;left:455px;width:50px;text-align:right" onkeypress="return isNumberKey(event);" onChange="this.value=Math.max(Math.min(this.value,this.max),this.min);sim.EXAorder(1e3,1e3,1,0,0,1,0,0,0); AnimationFrame();"/>
+  <input id="LS_defInput" value="0.0" step="0.5" max="25" min="-25" type="number" style="position:absolute;top:690px;left:455px;width:50px;text-align:right" onkeypress="return isNumberKey(event)" onChange="this.value=Math.max(Math.min(this.value,this.max),this.min);sim.EXAorder(1e3,1e3,1,0,0,0,1,0,0); AnimationFrame();"/>
+  <input id="LP_defInput" value="0.0" step="0.5" max="25" min="-25" type="number" style="position:absolute;top:690px;left:380px;width:50px;text-align:right" onkeypress="return isNumberKey(event)" onChange="this.value=Math.max(Math.min(this.value,this.max),this.min);sim.EXAorder(1e3,1e3,1,0,0,0,0,1,0); AnimationFrame();"/>
+  <input id="UP_defInput" value="0.0" step="0.5" max="25" min="-25" type="number" style="position:absolute;top:660px;left:380px;width:50px;text-align:right" onkeypress="return isNumberKey(event)" onChange="this.value=Math.max(Math.min(this.value,this.max),this.min);sim.EXAorder(1e3,1e3,1,0,0,0,0,0,1); AnimationFrame();"/>
+  <input id="ESA_defInput" value="0.0" step="0.5" max="25" min="-25" type="number" style="position:absolute;top:350px;left:770px;width:50px;text-align:right" onkeypress="return isNumberKey(event)" onChange="this.value=Math.max(Math.min(this.value,this.max),this.min);sim.EXAorder(ERA_defInput.value*5.5,this.value*5.5,1,0,1,0,0,0,0); AnimationFrame();"/>
+  <input id="ERA_defInput" value="0.0" step="0.5" max="25" min="-25" type="number" style="position:absolute;top:380px;left:770px;width:50px;text-align:right" onkeypress="return isNumberKey(event)" onChange="this.value=Math.max(Math.min(this.value,this.max),this.min);sim.EXAorder(this.value*5.5,ESA_defInput.value*5.5,1,1,0,0,0,0,0); AnimationFrame();"/>
+  <output style="position:absolute; left:725px; top:352px; font-family:Courier New; color:#019aca" >Dive</output>
+  <output style="position:absolute; left:705px; top:382px; font-family:Courier New; color:#019aca" >Rudder</output>
+  <p style="position:absolute; left:772px; top:400px; width:70px; font-family:Courier New; color:#757575; font-size:11px">(0 Roll)</p>
+  <output style="position:absolute; left:400px; top:640px; font-family:Courier New; color:#019aca" >UP</output>
+  <output style="position:absolute; left:400px; top:715px; font-family:Courier New; color:#019aca" >LP</output>
+  <output style="position:absolute; left:475px; top:640px; font-family:Courier New; color:#019aca" >US</output>
+  <output style="position:absolute; left:475px; top:715px; font-family:Courier New; color:#019aca" >LS</output>
   
-      <div class="check"><label for="InvertERAcheckbox" style="position:absolute;left:741px;top:430px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="InvertERAcheckbox" style='position:absolute;top:-3.5px;left:-20px' onclick="AnimationFrame();" unchecked><i> Invert ERA </label><div>
-  <output style="position:absolute; left:5px; top:717px; width:799px; font-family:Garamond; color:#757575; font-size: 12px" > A tool visualising submarine x-plane configurations and <br> their cruciform-equivalent rudder / sternplane / roll angle contributions. <br>Note that the background vehicle motion is a visual aid <i> only </i> of (uncoupled) total roll, pitch, yaw <i><b> reaction directions </b></i> imparted by the control surfaces, and should not be conflated with nor used to verify any resulting vehicle orientation/attitude in conventional reference frames. <span style="color: #019aca"><b> Visualise:</b></span><span style="color: #00508a"><br><b>Instructions:</b> Alter xplane Splay angles with the sliders on the left. Click/Drag in the central circle to assign cruciform-equivalent angles (zero roll solution), or Click+Drag individual xplanes to assign their angles. Alternatively, type + enter these values in the input boxes. Xplanes are coloured darker when trailing edge <u>up.</u></span>
-    <div class="check"><label for="ShowRollContrib" style="position:absolute;left:630px;top:42px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="ShowRollContrib" style='position:absolute;top:-3.5px;left:-20px' onclick="AnimationFrame();" checked><i> Roll </label><div>
-    <div class="check"><label for="ShowRollContrib" style="position:absolute;left:690px;top:42px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="ShowPitchContrib" style='position:absolute;top:-3.5px;left:-20px' onclick="AnimationFrame();" checked><i> Pitch </label><div>
-    <div class="check"><label for="ShowRollContrib" style="position:absolute;left:750px;top:42px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="ShowYawContrib" style='position:absolute;top:-3.5px;left:-20px' onclick="AnimationFrame();" checked><i> Yaw </label><div>
+      <div class="check"><label for="InvertERAcheckbox" style="position:absolute;left:715px;top:430px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="InvertERAcheckbox" style='position:absolute;top:-3.5px;left:95px' onclick="AnimationFrame();" unchecked><i> Invert Rudder Input </label>
+        
+    <div class="check"><label for="ShowRollContrib" style="position:absolute;left:700px;top:773px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="ShowRollContrib" style='position:absolute;top:-3.5px;left:-20px' onclick="AnimationFrame();" checked><i> Roll </label><div>
+    <div class="check"><label for="ShowRollContrib" style="position:absolute;left:760px;top:773px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="ShowPitchContrib" style='position:absolute;top:-3.5px;left:-20px' onclick="AnimationFrame();" checked><i> Pitch </label><div>
+    <div class="check"><label for="ShowRollContrib" style="position:absolute;left:820px;top:773px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="ShowYawContrib" style='position:absolute;top:-3.5px;left:-20px' onclick="AnimationFrame();" checked><i> Yaw </label><div>
   </output>
-</div>
+</div><div>
+  <output style="position:absolute; left:50px; top:730px; width:799px; font-family:Garamond; color:#757575; font-size: 12px"><span style="font-size: 15px">A tool visualising submarine x-plane configurations and their cruciform-equivalent Diveplane / Rudder / Roll angle contributions.</span><br style="line-height: 30px" />Note that the background vehicle motion is a visual aid <i> only </i> of (uncoupled) total roll, pitch, yaw <i><b> reaction directions </b></i> imparted by the control surfaces, <br> and should not be conflated with nor used to verify any resulting vehicle orientation in conventional reference frames.<span style="color: #019aca"><b> Visualise:</b></span><span style="color: #00508a"><br><b>Instructions:</b> Alter xplane Splay angles with the sliders on the left. Click/Drag in the central circle to assign cruciform-equivalent angles (zero roll solution), or Click+Drag individual xplanes to assign their angles. Alternatively, type + enter these values in the input boxes. Xplanes are coloured darker when trailing edge <u>up.</u></span>
 <script type="text/javascript">
 'use strict';
 
@@ -745,9 +788,9 @@
               context.font = "14px Courier New";
               context.fillStyle = "#019aca";
               context.textAlign = "center";
-              context.fillText('EKA', ScreenHor(b.Cradius-0.25*b.MaxX*b.SF),ScreenVer(b.Cradius-0.155*b.MaxX*b.SF));
-              context.fillText('ERA', ScreenHor(b.Cradius+0.45*b.MaxX*b.SF),ScreenVer(b.Cradius-0.08*b.MaxX*b.SF));
-              context.fillText('ESA', ScreenHor(b.Cradius-0.18*b.MaxX*b.SF),ScreenVer(b.Cradius+0.455*b.MaxX*b.SF));
+              context.fillText('Roll', ScreenHor(b.Cradius-0.23*b.MaxX*b.SF),ScreenVer(b.Cradius-0.155*b.MaxX*b.SF));
+              context.fillText('Rudder', ScreenHor(b.Cradius+0.45*b.MaxX*b.SF),ScreenVer(b.Cradius-0.08*b.MaxX*b.SF));
+              context.fillText('Dive', ScreenHor(b.Cradius-0.19*b.MaxX*b.SF),ScreenVer(b.Cradius+0.455*b.MaxX*b.SF));
               context.fillStyle = '#00508a';//"#ddaa00";
 			  context.textAlign = "right";
               context.fillText(((b.EKA_act).toFixed(2).toString()).concat('°'), ScreenHor(b.Cradius-0.05*b.MaxX*b.SF),ScreenVer(b.Cradius-0.25*b.MaxX*b.SF));
