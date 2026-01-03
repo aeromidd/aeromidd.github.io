@@ -280,6 +280,27 @@
             <input type="checkbox" id="Brazil" checked= true onchange="VehicleChangeFunction();" style=" position:absolute; left:775px; top:558px;">
          </form>
       </div>
+     <script type="text/javascript">
+  const trajCanvas = document.getElementById("TrajCanvas");
+
+  trajCanvas.addEventListener("wheel", function (e) {
+    e.preventDefault(); // prevent page scrolling
+
+    const step = 5; // zoom step per wheel notch
+    const direction = Math.sign(e.deltaY); // +1 = down, -1 = up
+
+    let current = Number(zoomInput.value);
+    let newValue = current - direction * step;
+
+    // clamp to allowed range
+    newValue = Math.min(zoomInput.max, Math.max(zoomInput.min, newValue));
+
+    zoomInput.value = newValue;
+    zoomSlider.value = newValue;
+
+    ZoomChangeFunction(newValue);
+  }, { passive: false });
+</script>
       <script type="text/javascript">
          console.clear();
          
