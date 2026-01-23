@@ -19,7 +19,7 @@
          if (canvas.getContext) {
            var context = canvas.getContext('2d');
            var xsize = 880;
-           var ysize = 1000;
+           var ysize = 1200;
            canvas.style.width = xsize + "px";
            canvas.style.height = ysize + "px";
            // Set actual size in memory (scaled to account for extra pixel density).
@@ -65,12 +65,12 @@ C: toggle compressibility | V: toggle active trim compensator | B: toggle trim t
 S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
 <br>
 <canvas id="BlurredSimCanvas" tabindex='0'></canvas>
-<canvas id="SimCanvas" tabindex='0' style="position:absolute;top:75px;left:15px;"></canvas>
+<canvas id="SimCanvas" tabindex='0' style="position:absolute;top:40px;left:15px;"></canvas>
 <div class="slidecontainer">
   <input type="range" min="0" max="10" step="1" value="1" class="slider" id="SimSpeedSlider" style="position:absolute; left:650px; top:50px; width: 120px;" oninput="this.nextElementSibling.value = this.value +'x'">
 <output style="position:absolute; left:775px; top:50px;" >1x</output>
 </div>
-<table id="AftPlaneGainsTable" style="position:absolute; left:8px; top:200px; display:none">
+<table id="AftPlaneGainsTable" style="position:absolute; left:15px; top:190px; display:none">
 <tr>
   <td style="width:45px;text-align:center;font-family:'Garamond';font-size: 14px;background:#00508a;color:#ffffff">Sternplane Control</td>
   <td style="width:45px;text-align:center">P</td>
@@ -91,7 +91,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
 </tr>
 </table>
   
-  <table id="FwdPlaneGainsTable" style="position:absolute; left:563px; top:200px; display:none">
+  <table id="FwdPlaneGainsTable" style="position:absolute; left:641px; top:190px; display:none">
 <tr>
   <td style="width:45px;text-align:center">P</td>
   <td style="width:45px;text-align:center">I</td>
@@ -112,7 +112,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
 </tr>
 </table>
 
-<table id="PlantPhysicsTable" style="position:absolute; left:8px; top:300px; display:none">
+<table id="PlantPhysicsTable" style="position:absolute; left:15px; top:380px; display:none">
 <tr>
   <td colspan="2" style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;background:#00508a;color:#ffffff">Submarine Plant</td>
 </tr>
@@ -141,7 +141,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
   <td><input id="Plant_zcb" value="-1.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
 </tr>
 <tr>
-  <td colspan="2" style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;font-weight:bold;">Hull Hydrodynamics</td>
+  <td colspan="2" style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;font-weight:bold;">Hull Hydrodynamics*</td>
   </td>
 </tr>
 <tr>
@@ -177,7 +177,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
   <td><input id="Plant_M_UQ" value="-12.0" step="0.1" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
 </tr>
 <tr>
-  <td colspan="2" style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;font-weight:bold;">Hydroplane Hydrodynamics</td>
+  <td colspan="2" style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;font-weight:bold;">Diveplane Hydrodynamics*</td>
   </td>
 </tr>
 <tr>
@@ -198,7 +198,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
 </tr>
 </table>
 
-<table id="CtrlSettingsTable" style="position:absolute; left:622px; top:450px; width:180px; display:none;">
+<table id="CtrlSettingsTable" style="position:absolute; left:700px; top:450px; width:180px; display:none;">
 <tr>
   <td colspan="2" style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;background:#00508a;color:#ffffff">Controller Settings</td>
 </tr>
@@ -244,26 +244,29 @@ b.maxplanerate = maxplanerateInput.value;
                     */
   </script>
   
-<button id="PlaneGainsToggle" style="position:absolute;left:625px;top:81px;width:184px;height:25px;" onClick="TogglePlaneGainsTable();">Edit Hydroplane Controller</button>
+<button id="PlaneGainsToggle" style="position:absolute;left:696px;top:81px;width:184px;height:25px;" onClick="TogglePlaneGainsTable();">Edit Diveplane Controller</button>
   
-<button id="PlantPhysicsToggle" style="position:absolute;left:5px;top:81px;width:200px;height:25px;" onClick="TogglePlantPhysicsTable();">Edit Submarine Plant</button>
+<button id="PlantPhysicsToggle" style="position:absolute;left:15px;top:41px;width:200px;height:25px;" onClick="TogglePlantPhysicsTable();">Edit Submarine Plant</button>
   
 <button id="readoutThing" style="position:absolute;left:25px;top:125px;width:200px;height:25px;" onClick="">READOUT</button>
   
-<button id="FreezeDepthToggle" style="position:absolute;left:425px;top:130px;width:114px;height:25px;" onClick="ToggleFreezeDepth();">Freeze Depth</button>
+<button id="FreezeDepthToggle" style="position:absolute;left:15px;top:300px;width:114px;height:25px;" onClick="ToggleFreezeDepth();">Freeze Depth</button>
   
 
-  <button id="UpdatePlantbutton" style="position:absolute;left:195.5px;top:302.5px;width:54px;height:19px;text-align:center;font-family:'Garamond';font-size: 14px;border: 1px solid #00508a;display:none;" value="false" onClick="">Update</button>
+  <button id="UpdatePlantbutton" style="position:absolute;left:201.5px;top:383px;width:54px;height:19px;text-align:center;font-family:'Garamond';font-size: 14px;border: 1px solid #00508a;display:none;" value="false" onClick="">Update</button>
   
-<button id="RTPDbutton" style="position:absolute;left:625px;top:105px;width:163px;height:25px;" value="false" onClick="RTPD();">Order Periscope Depth</button>
+<button id="RTPDbutton" style="position:absolute;left:717px;top:300px;width:163px;height:25px;" value="false" onClick="RTPD();">Order Periscope Depth</button>
   
-<button id="RTSDbutton" style="position:absolute;left:625px;top:130px;width:163px;height:25px;" value="false"  onClick="RTSD();">Order Standard Depth</button>
+<button id="RTSDbutton" style="position:absolute;left:717px;top:325px;width:163px;height:25px;" value="false"  onClick="RTSD();">Order Standard Depth</button>
+
+<button id="RTDDbutton" style="position:absolute;left:717px;top:350px;width:163px;height:25px;" value="false"  onClick="RTDD();">Order Deep Ops Depth</button>
+
 <button id="Timerbutton" style="position:absolute;left:50px;top:150px;width:163px;height:25px;" value="false" >0</button>
 
 <input type="checkbox" style="position:absolute;left:5px;top:90px;" id="NiceGraphicsON" checked>
 
-  <input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="BPrange" style="position:absolute;left:590px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;">
-<input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="SPrange" style="position:absolute;left:170px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;">
+  <input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="BPrange" style="position:absolute;left:600px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;">
+<input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="SPrange" style="position:absolute;left:250px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;" disabled>
 
 
 <script type="text/javascript">
@@ -467,6 +470,11 @@ this.dsG = [0, -2.36, -16.5, -0.185, -4.31, -0.00247, -0.0171];
     //console.log('RTPD clicked!');
     sim.depthOrder('PD');
 });
+  RTDDbutton.addEventListener('click', function() { 
+    //console.clear();
+    console.log('RTDD clicked!');
+    sim.depthOrder('DD');
+}); 
 
 BPrange.addEventListener('mousedown',function(){
   sim.AssumeSliderControl();
@@ -1265,8 +1273,11 @@ UpdatePlantbutton.addEventListener('click',function(){
                   break;
                 case "SD":
                   b.depthDem = round5(b.L/b.SF);
+                break;
+                case "DD":
+                  b.depthDem = round5(250);
                   // code block
-                  break;
+                break;
               }
             }else{
               if (z < Math.ceil(0.6*b.h/b.SF)){
@@ -1521,8 +1532,8 @@ UpdatePlantbutton.addEventListener('click',function(){
         };
         // Set display size (css pixels).
         var xsize = 865;
-        var ysize = 800;
-        canvas.style.outline = "1px solid red";
+        var ysize = 1200;
+        canvas.style.outline = "1px solid #00508a";
         canvas.style.width = xsize + "px";
         canvas.style.height = ysize + "px";
         blurredcanvas.style.width = xsize + "px";
@@ -1599,28 +1610,31 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
                 context.beginPath();
                 context.moveTo(ScreenHor(-4.5),ScreenVer(b.zDem[0]));
                 for (let i=0; i <= (b.zDem).length; i++) {
-                  context.lineTo(ScreenHor(-4.5+3.5*b.L*i/b.zDem.length),ScreenVer(b.zDem[i]));
+                  context.lineTo(ScreenHor(-4.5+(4.5+0.5*b.L+0.25)*i/b.zDem.length),ScreenVer(b.zDem[i]));
+                  //context.lineTo(ScreenHor(-4.5+3.5*b.L*i/b.zDem.length),ScreenVer(b.zDem[i]));
                 }
                 context.lineTo(ScreenHor(4.6),ScreenVer(b.depthDem*b.SF));
                 context.stroke();
                 context.setLineDash([]);
               
+               //TrimLine / trail
                 context.lineWidth = 1;
                 context.beginPath();
                 context.moveTo(ScreenHor(-4.5),ScreenVer(b.zh[0]));
                 for (let i=1; i <= (b.tcr).length; i++) {
-                  context.lineTo(ScreenHor(-4.5+2*b.L*i/b.tcr.length),ScreenVer(b.tcr[i]));
+                  context.lineTo(ScreenHor(-4.5+(4.5-0.5*b.L-0.25)*i/b.tcr.length),ScreenVer(b.tcr[i]));
                 }
                 context.strokeStyle = '#ff9aca';//'#a7a7a7';
                 context.stroke();
               
-                //TrackLine
+                //TrackLine / trail
                 
                 context.lineWidth = 1;
                 context.beginPath();
                 context.moveTo(ScreenHor(-4.5),ScreenVer(b.zh[0]));
                 for (let i=1; i <= (b.zh).length; i++) {
-                  context.lineTo(ScreenHor(-4.5+2*b.L*i/b.zh.length),ScreenVer(b.zh[i]));
+                  context.lineTo(ScreenHor(-4.5+(4.5-0.5*b.L-0.25)*i/b.zh.length),ScreenVer(b.zh[i]));
+                  //context.lineTo(ScreenHor(-4.5+2*b.L*i/b.zh.length),ScreenVer(b.zh[i]));
                 }
                 context.strokeStyle = '#119aca';//'#a7a7a7';
                 context.stroke();
@@ -2057,6 +2071,9 @@ shadowgrd.addColorStop(1.0, 'rgba(0,200,220,0.1)');
       RTPDbutton.style.backgroundColor="#f0f0f0";
       RTSDbutton.value="false";
       RTSDbutton.style.backgroundColor="#f0f0f0";
+      
+      RTDDbutton.value="false";
+      RTDDbutton.style.backgroundColor="#f0f0f0";
     }
     function doKeyDown(e) {
       //console.log(e.keyCode)
@@ -2147,8 +2164,8 @@ function isNumberKey(evt) {
   return true;
 }
 function TogglePlaneGainsTable(){
-  if(AftPlaneGainsTable.style.display=='none'){AftPlaneGainsTable.style.display='';FwdPlaneGainsTable.style.display='';PlaneGainsToggle.innerHTML="Close Hydroplane Controller";CtrlSettingsTable.style.display='';
-                                              }else{AftPlaneGainsTable.style.display='none';FwdPlaneGainsTable.style.display='none';PlaneGainsToggle.innerHTML="Edit Hydroplane Controller";CtrlSettingsTable.style.display='none';};
+  if(AftPlaneGainsTable.style.display=='none'){AftPlaneGainsTable.style.display='';FwdPlaneGainsTable.style.display='';PlaneGainsToggle.innerHTML="Close Diveplane Controller";CtrlSettingsTable.style.display='';
+                                              }else{AftPlaneGainsTable.style.display='none';FwdPlaneGainsTable.style.display='none';PlaneGainsToggle.innerHTML="Edit Diveplane Controller";CtrlSettingsTable.style.display='none';};
   
   console.log('togglePlaneCtrl');
 }
@@ -2174,6 +2191,8 @@ function ToggleFreezeDepth(){
         RTPDbutton.style.backgroundColor= '#ffca01';
         RTSDbutton.value="false";
         RTSDbutton.style.backgroundColor= '#f0f0f0';
+        RTDDbutton.value="false";
+        RTDDbutton.style.backgroundColor= '#f0f0f0';
       }else{
         //RTPDbutton.value="false";
         //RTPDbutton.style.backgroundColor= '#f0f0f0';
@@ -2186,6 +2205,22 @@ function ToggleFreezeDepth(){
         RTSDbutton.style.backgroundColor= '#ffca01';
         RTPDbutton.value="false";
         RTPDbutton.style.backgroundColor= '#f0f0f0';
+        RTDDbutton.value="false";
+        RTDDbutton.style.backgroundColor= '#f0f0f0';
+      }else{
+        //RTSDbutton.value="false";
+        //RTSDbutton.style.backgroundColor= '#f0f0f0';
+      }
+      //console.log(RTSDbutton.value);
+    }
+      function RTDD(){
+      if (RTDDbutton.value=="false"){
+        RTDDbutton.value="true";
+        RTDDbutton.style.backgroundColor= '#ffca01';
+        RTPDbutton.value="false";
+        RTPDbutton.style.backgroundColor= '#f0f0f0';
+        RTSDbutton.value="false";
+        RTSDbutton.style.backgroundColor= '#f0f0f0';
       }else{
         //RTSDbutton.value="false";
         //RTSDbutton.style.backgroundColor= '#f0f0f0';
