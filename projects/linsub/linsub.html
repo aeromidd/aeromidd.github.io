@@ -273,6 +273,92 @@ b.maxplanerate = maxplanerateInput.value;
 'use strict';
 (function(){
     
+    const DOM = (() => {
+const $ = id => document.getElementById(id);
+return {
+BPrange: $('BPrange'),
+SPrange: $('SPrange'),
+
+
+RTPDbutton: $('RTPDbutton'),
+RTSDbutton: $('RTSDbutton'),
+RTDDbutton: $('RTDDbutton'),
+FreezeDepthToggle: $('FreezeDepthToggle'),
+UpdatePlantbutton: $('UpdatePlantbutton'),
+readoutThing: $('readoutThing'),
+
+
+maxplanerateInput: $('maxplanerateInput'),
+maxpitchInput: $('maxpitchInput'),
+maxBowplaneAngleInput: $('maxBowplaneAngleInput'),
+maxSternplaneAngleInput: $('maxSternplaneAngleInput'),
+
+
+UsePitchForDepthChangesInput: $('UsePitchForDepthChangesInput'),
+SliderControlMaintainPitchInput: $('SliderControlMaintainPitchInput'),
+SliderControlRatioInput: $('SliderControlRatioInput'),
+
+
+ctrldb_zP: $('ctrldb_zP'),
+ctrldb_zI: $('ctrldb_zI'),
+ctrldb_zD: $('ctrldb_zD'),
+ctrldb_thtP: $('ctrldb_thtP'),
+ctrldb_thtI: $('ctrldb_thtI'),
+ctrldb_thtD: $('ctrldb_thtD'),
+
+
+ctrlds_zP: $('ctrlds_zP'),
+ctrlds_zI: $('ctrlds_zI'),
+ctrlds_zD: $('ctrlds_zD'),
+ctrlds_thtP: $('ctrlds_thtP'),
+ctrlds_thtI: $('ctrlds_thtI'),
+ctrlds_thtD: $('ctrlds_thtD')
+};
+})();
+
+const clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi);
+
+
+function readUIState() {
+return {
+limits: {
+maxPlaneRate: clamp(+DOM.maxplanerateInput.value || 0, 0, 45),
+maxPitch: clamp(+DOM.maxpitchInput.value || 0, 0, 20),
+maxBow: clamp(+DOM.maxBowplaneAngleInput.value || 0, 0, 45),
+maxStern: clamp(+DOM.maxSternplaneAngleInput.value || 0, 0, 45)
+},
+options: {
+usePitchForDepth: DOM.UsePitchForDepthChangesInput.checked,
+sliderMaintainPitch: DOM.SliderControlMaintainPitchInput.checked,
+sliderRatio: clamp(
++DOM.SliderControlRatioInput.value || 0,
++DOM.SliderControlRatioInput.min,
++DOM.SliderControlRatioInput.max
+)
+},
+gains: {
+db: [
+0,
++DOM.ctrldb_zD.value || 0,
++DOM.ctrldb_thtD.value || 0,
++DOM.ctrldb_zP.value || 0,
++DOM.ctrldb_thtP.value || 0,
++DOM.ctrldb_zI.value || 0,
++DOM.ctrldb_thtI.value || 0
+],
+ds: [
+0,
++DOM.ctrlds_zD.value || 0,
++DOM.ctrlds_thtD.value || 0,
++DOM.ctrlds_zP.value || 0,
++DOM.ctrlds_thtP.value || 0,
++DOM.ctrlds_zI.value || 0,
++DOM.ctrlds_thtI.value || 0
+]
+}
+};
+}
+  
     const FrictionHalfLifeSeconds = 0.1;//1.5 //not used currently
     const SubMass = 50e3; //not used currently
 
@@ -459,7 +545,10 @@ this.dsG = [0, -2.36, -16.5, -0.185, -4.31, -0.00247, -0.0171];
         }
     }
 
-    
+DOM.RTPDbutton.addEventListener('click', () => sim.depthOrder('PD'));
+DOM.RTSDbutton.addEventListener('click', () => sim.depthOrder('SD'));
+DOM.RTDDbutton.addEventListener('click', () => sim.depthOrder('DD'));
+  /*
                   RTSDbutton.addEventListener('click', function() { 
     //console.clear();
     console.log('RTSD clicked!');
@@ -474,7 +563,8 @@ this.dsG = [0, -2.36, -16.5, -0.185, -4.31, -0.00247, -0.0171];
     //console.clear();
     console.log('RTDD clicked!');
     sim.depthOrder('DD');
-}); 
+});
+*/
 
 BPrange.addEventListener('mousedown',function(){
   sim.AssumeSliderControl();
@@ -625,26 +715,11 @@ UpdatePlantbutton.addEventListener('click',function(){
         }
 
         Update(dt) {
+          
+            const ui = readUIState();
+          
             var b, s;
 
-            // Calculate the force vectors acting on all the subs:
-            // both from springs and from gravity.
-
-            // Start out with just the gravitational force on each sub.
-            for (b of this.subList) {
-                //b.fx = 0.0;
-                //b.fy = b.mass * this.gravity;
-            }
-
-            // Go through all the springs and calculate
-            // the forces on the subs connected to their endpoints.
-            // There will be equal and opposite forces on each pair.
-            //for (s of this.springList) {
-            //    s.AddForce();
-            //}
-
-            // Now all the forces are correct.
-            // Use the forces to update the position and speed of each sub.
             const friction = Math.pow(0.5, dt / FrictionHalfLifeSeconds);
             for (b of this.subList) {
                 if (b.anchor === 0) {       // skip anchors, because they don't move
@@ -676,24 +751,24 @@ UpdatePlantbutton.addEventListener('click',function(){
                   
                     b.trimOffset = (b.compzd-b.trimzd)/b.compFactor;
                     
-                    maxplanerateInput.value = Math.max(Math.min(45,maxplanerateInput.value),0);
-                    b.maxplanerate = maxplanerateInput.value;
-                    maxpitchInput.value = Math.max(Math.min(20,maxpitchInput.value),0);
-                    b.maxPitch = maxpitchInput.value;
-                    maxBowplaneAngleInput.value = Math.max(Math.min(45,maxBowplaneAngleInput.value),0);
-                    b.maxBowplaneAngle = maxBowplaneAngleInput.value;
-                    maxSternplaneAngleInput.value = Math.max(Math.min(45,maxSternplaneAngleInput.value),0);
-                    b.maxSternplaneAngle = maxSternplaneAngleInput.value;
-                    b.UsePitchForDepthChanges = UsePitchForDepthChangesInput.checked;
+                    //ui.limits.maxPlaneRate = Math.max(Math.min(45,ui.limits.maxPlaneRate),0);
+                    b.maxplanerate = ui.limits.maxPlaneRate;
+                    //ui.limits.maxPitch = Math.max(Math.min(20,ui.limits.maxPitch),0);
+                    b.maxPitch = ui.limits.maxPitch;
+                    //ui.limits.maxBow = Math.max(Math.min(45,ui.limits.maxBow),0);
+                    b.maxBowplaneAngle = ui.limits.maxBow;
+                    //ui.limits.maxStern = Math.max(Math.min(45,ui.limits.maxStern),0);
+                    b.maxSternplaneAngle = ui.limits.maxStern;
+                    b.UsePitchForDepthChanges = ui.options.usePitchForDepth;
                   
-                    b.SliderControlMaintainPitch = SliderControlMaintainPitchInput.checked;
+                    b.SliderControlMaintainPitch = ui.options.sliderMaintainPitch;
                   
                     if (b.SliderControlMaintainPitch){
                       SliderControlRatioInput.disabled = true;
                     }else{
                       SliderControlRatioInput.disabled = false;
                     }
-                    SliderControlRatioInput.value = Math.max(Math.min(SliderControlRatioInput.value,SliderControlRatioInput.max),SliderControlRatioInput.min);
+                    //ui.options.sliderRatio = Math.max(Math.min(ui.options.sliderRatio,SliderControlRatioInput.max),SliderControlRatioInput.min);
                   
                     //zd q z tht
                     //xdi = [0,b.compzd-b.trimzd+0.0,0,0,0];
@@ -752,7 +827,7 @@ UpdatePlantbutton.addEventListener('click',function(){
                     
                     //readoutThing.innerHTML = b.surfaced;//b.yi[3].toFixed(15);
                     //b.yi[3]=b.yi[3]*50;0
-                    
+                    //boat differential equations
                     xdi[0] = 0;
                     xdi[1] = (b.A[1][1])*b.xi[1]+(b.A[1][2])*b.xi[2]+(b.A[1][4])*b.xi[4]+ 1*(b.compzd-b.trimzd) + (b.B[1][1])*Dived*b.ui[1]+(b.B[1][2])*Dived*b.ui[2]+(b.B[1][3])*b.ui[3]+(b.B[1][4])*b.ui[4];
                     xdi[2] = (b.A[2][1])*b.xi[1]+(b.A[2][2])*b.xi[2]+(b.A[2][4])*b.xi[4]  + (b.B[2][1])*Dived*b.ui[1]+(b.B[2][2])*Dived*b.ui[2]+(b.B[2][3])*b.ui[3]+(b.B[2][4])*b.ui[4];
@@ -767,7 +842,7 @@ UpdatePlantbutton.addEventListener('click',function(){
                     xdi[4] = (1)*b.xi[2];
                     */
                     
-                    
+                  //boat state calcs
                   for (var f = 0; f< b.xi.length; f++){
                     b.xi[f] += dt*xdi[f];
                   }
@@ -815,7 +890,7 @@ UpdatePlantbutton.addEventListener('click',function(){
                   b.yi[4] = b.yi[4]*180/Math.PI;
                   
                   
-                  
+                  // trim state calcs
                   let txdi = [];
                   txdi[0] = 0;
                   txdi[1] = (-2.8886)*b.txi[1]+(-1)*b.txi[2]+b.tui[1]; //-2.8886
@@ -823,31 +898,17 @@ UpdatePlantbutton.addEventListener('click',function(){
                   for (var f = 0; f< b.txi.length; f++){
                     b.txi[f] += dt*txdi[f];
                   }
-                  b.trimz = Math.max(b.minTrimz,Math.min(b.maxTrimz,b.trimz+b.txi[1]));//b.trimEffort*dt;
+                  b.trimz = Math.max(b.minTrimz,Math.min(b.maxTrimz,b.trimz+b.txi[1]));
                   
+                  b.zh.copyWithin(0, 1);
+                  b.zh[b.zh.length - 1] = b.yi[3]*b.SF+(0.5+15/100)*b.L*Math.sin(b.yi[4]*Math.PI/180);
                   
-                  var zhdummy;
-                  for (var f = 0; f< b.zh.length-1; f++){
-                    zhdummy = b.zh[f+1];
-                    b.zh[f] = zhdummy;
-                  }
-                  b.zh[b.zh.length-1] = b.yi[3]*b.SF+(0.5+15/100)*b.L*Math.sin(b.yi[4]*Math.PI/180);
-                  //console.log(b.zh.length)
-                  
-                  var zDemdummy;
-                  for (var f = 0; f< b.zDem.length-1; f++){
-                    zDemdummy = b.zDem[f+1];
-                    b.zDem[f] = zDemdummy;
-                  }
-                  b.zDem[b.zDem.length-1] = b.depthDem*b.SF;
+                  b.zDem.copyWithin(0, 1);
+                  b.zDem[b.zDem.length - 1] = b.depthDem*b.SF;
                   
-                  var tcrdummy;
-                  for (var f = 0; f< b.tcr.length-1; f++){
-                    tcrdummy = b.tcr[f+1];
-                    b.tcr[f] = tcrdummy;
-                  }
-                  b.tcr[b.tcr.length-1] = b.trimz*b.SF;
                   
+                  b.tcr.copyWithin(0, 1);
+                  b.tcr[b.tcr.length - 1] = b.trimz*b.SF;
                   
                   
                   //let depthDem = 3; //b.yi[3]
@@ -1159,10 +1220,7 @@ UpdatePlantbutton.addEventListener('click',function(){
                   var ssFZB;
                   var sharpness_factor = 0.02;
                   if (b.trailCounter > b.trailCounterCap){
-                  for (var f = 0; f< b.ssFZ.length-1; f++){
-                    ssFZdummy = b.ssFZ[f+1];
-                    b.ssFZ[f] = ssFZdummy;
-                  }
+                  b.ssFZ.copyWithin(0, 1);
                   }
                   ssFZB = 2.5*ssFZmag*(0.3*Math.sin(0.3*b.periodegS*Math.PI/180)+0.2*Math.sin(0.3*(57+b.periodegS2)*Math.PI/180)+0.5*Math.cos(0.3*(12+b.periodegC)*Math.PI/180));
                   
@@ -1178,10 +1236,7 @@ UpdatePlantbutton.addEventListener('click',function(){
                   var ssAltB;
                   var ssAltdummy;
                   if (b.trailCounter > b.trailCounterCap){
-                  for (var f = 0; f< b.ssAlt.length-1; f++){
-                    ssAltdummy = b.ssAlt[f+1];
-                    b.ssAlt[f] = ssAltdummy;
-                  }
+                  b.ssAlt.copyWithin(0, 1);
                   }
                   ssAltB = 2.0*ssAltmag*(0.3*Math.sin((180+0.3*b.periodegS)*Math.PI/180)+0.2*Math.sin(0.3*(180+57+b.periodegS2)*Math.PI/180)+0.5*Math.cos(0.3*(180+12+b.periodegC)*Math.PI/180));
                   
@@ -1197,11 +1252,12 @@ UpdatePlantbutton.addEventListener('click',function(){
                   var waveswitch
                   var waveswitch2
                   var wavelength
+                  
                   b.W = b.W+1;
                   if (b.W>=(360*50)){
                     b.W = 0;
                   }
-                  readoutThing.innerHTML = b.W.toFixed(3);
+                  //readoutThing.innerHTML = b.W.toFixed(3);
                   for (var ws = 0; ws< ((b.ssMoving).length-1); ws++){
                   waveswitch = 0.5+0.5*Math.sin((5.5*ws+1.5*b.W)*Math.PI/180);
                   waveswitch2 = 0.5+0.5*Math.sin((20+6.4*ws+1.3*b.W)*Math.PI/180);
