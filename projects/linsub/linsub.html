@@ -248,11 +248,18 @@ b.maxplanerate = maxplanerateInput.value;
   
 <button id="PlantPhysicsToggle" style="position:absolute;left:15px;top:41px;width:200px;height:25px;" onClick="TogglePlantPhysicsTable();">Edit Sim / Plant Settings</button>
   
-<button id="readoutThing" style="position:absolute;left:25px;top:125px;width:200px;height:25px;" onClick="">READOUT</button>
+<button id="readoutThing" style="position:absolute;left:425px;top:60px;width:200px;height:25px;" onClick="">READOUT</button>
   
-<button id="FreezeDepthToggle" style="position:absolute;left:15px;top:300px;width:114px;height:25px;" onClick="ToggleFreezeDepth();">Freeze Depth</button>
+<p style="position:absolute;left:15px;top:290px;font-family:Arial;font-size:15px" >Reset:</p>
 
-<button id="ResetSimButton" style="position:absolute;left:15px;top:325px;width:114px;height:25px;" onClick="false">Reset Sim</button>
+<button id="ResetALLButton" style="position:absolute;left:60px;top:300px;width:35px;height:25px;background:orange" onClick="false">ALL</button>
+<button id="ResetStatesButton" style="position:absolute;left:95px;top:300px;width:70px;height:25px;" onClick="false">Dynamics</button>
+<button id="ResetPlantButton" style="position:absolute;left:165px;top:300px;width:50px;height:25px;" onClick="false">Plant</button>
+<button id="ResetCtrlButton" style="position:absolute;left:215px;top:300px;width:35px;height:25px;" onClick="false">Ctrl</button>
+
+<button id="ToggleCompressibility" style="position:absolute;left:15px;top:325px;width:165px;height:25px;" onClick="ToggleCompressibilityFnc();">Disable Compressibility</button>
+
+<button id="FreezeDepthToggle" style="position:absolute;left:15px;top:350px;width:114px;height:25px;" onClick="ToggleFreezeDepth();">Freeze Depth</button>
 
   <button id="UpdatePlantbutton" style="position:absolute;left:201.5px;top:383px;width:54px;height:19px;text-align:center;font-family:'Garamond';font-size: 14px;border: 1px solid #00508a;display:none;" value="false" onClick="">Update</button>
   
@@ -262,12 +269,16 @@ b.maxplanerate = maxplanerateInput.value;
 
 <button id="RTDDbutton" style="position:absolute;left:717px;top:350px;width:163px;height:25px;" value="false"  onClick="RTDD();">Order Deep Ops Depth</button>
 
-<button id="Timerbutton" style="position:absolute;left:50px;top:150px;width:163px;height:25px;" value="false" >0</button>
+<button id="Timerbutton" style="position:absolute;left:450px;top:80px;width:100px;height:25px;" value="false" >0</button>
 
 <input type="checkbox" style="position:absolute;left:5px;top:90px;" id="NiceGraphicsON" checked>
 
+
+  <input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="BPINTrange" style="position:absolute;left:615px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;" disabled>
+<input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="SPINTrange" style="position:absolute;left:250px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;" disabled>
+
   <input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="BPrange" style="position:absolute;left:600px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;">
-<input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="SPrange" style="position:absolute;left:250px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;" disabled>
+<input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="SPrange" style="position:absolute;left:265px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;" disabled>
 
 
 <script type="text/javascript">
@@ -286,7 +297,11 @@ RTSDbutton: $('RTSDbutton'),
 RTDDbutton: $('RTDDbutton'),
 FreezeDepthToggle: $('FreezeDepthToggle'),
 UpdatePlantbutton: $('UpdatePlantbutton'),
-ResetSimButton: $('ResetSimButton'),
+ToggleCompressibility: $('ToggleCompressibility'),
+ResetAllButton: $('ResetAllButton'),
+ResetStatesButton: $('ResetStatesButton'),
+ResetPlantButton: $('ResetPlantButton'),
+ResetCtrlButton: $('ResetCtrlButton'),
 readoutThing: $('readoutThing'),
 
 
@@ -442,23 +457,25 @@ ds: [
             //*/
           ///*
           this.A = [[0,0,0,0,0,0,0],
-[0,-0.0993,-0.711,0,-0.397,0,0],
-[0,0.00183,-0.32,0,-0.00524,0,0],
-[0,1,0,0,0,0,0],
-[0,0,1,0,0,0,0],
-[0,0,0,1,0,0,0],
-[0,0,0,0,1,0,0],
-];
-this.B = [[0,0,0,0,0],
-[0,-0.0131,-0.00908,1.71e-07,-2.32e-09],
-[0,0.000439,-0.000397,-1.55e-09,2.99e-10],
-[0,0,0,0,0],
-[0,0,0,0,0],
-[0,0,0,0,0],
-[0,0,0,0,0],
-];
-this.dbG = [0, -5.9, 64.1, -0.663, 22.1, -0.00711, 0.00621];
-this.dsG = [0, -2.35, -6.36, -0.201, -1.14, -0.0026, -0.017];
+            [0,-0.0993,-0.711,0,-0.397,0,0],
+            [0,0.00183,-0.32,0,-0.00524,0,0],
+            [0,1,0,0,0,0,0],
+            [0,0,1,0,0,0,0],
+            [0,0,0,1,0,0,0],
+            [0,0,0,0,1,0,0],
+            ];
+            this.B = [[0,0,0,0,0],
+            [0,-0.0131,-0.00908,1.71e-07,-2.32e-09],
+            [0,0.000439,-0.000397,-1.55e-09,2.99e-10],
+            [0,0,0,0,0],
+            [0,0,0,0,0],
+            [0,0,0,0,0],
+            [0,0,0,0,0],
+            ];
+            this.dbG = [0, -5.9, 64.1, -0.663, 22.1, -0.00711, 0.00621];
+            this.dsG = [0, -2.35, -6.36, -0.201, -1.14, -0.0026, -0.017];
+            this.dbG_Original = this.dbG;
+            this.dsG_Original = this.dsG;
             //*/
             ctrldb_zD.value = this.dbG[1];
             ctrldb_zP.value = this.dbG[3];
@@ -530,6 +547,7 @@ this.dsG = [0, -2.35, -6.36, -0.201, -1.14, -0.0026, -0.017];
 DOM.RTPDbutton.addEventListener('click', () => sim.depthOrder('PD'));
 DOM.RTSDbutton.addEventListener('click', () => sim.depthOrder('SD'));
 DOM.RTDDbutton.addEventListener('click', () => sim.depthOrder('DD'));
+DOM.ResetStatesButton.addEventListener('click', () => sim.ResetStates());
   /*
                   RTSDbutton.addEventListener('click', function() { 
     //console.clear();
@@ -555,10 +573,6 @@ BPrange.addEventListener('mousedown',function(){
 BPrange.addEventListener('mouseup',function(){
   sim.ReleaseSliderControl();
   console.log('BPrangeOFF');
-});
-  
-ResetSimButton.addEventListener('click',function(){
-  sim.ResetStates();
 });
   
 UpdatePlantbutton.addEventListener('click',function(){
@@ -1144,6 +1158,8 @@ UpdatePlantbutton.addEventListener('click',function(){
                     BPrange.value = b.ui[1];
                   }
                   SPrange.value = b.ui[2];
+                  BPINTrange.value = b.uint[1];
+                  SPINTrange.value = b.uint[2];
                   
                   
                   //Sea Forces
@@ -1301,8 +1317,8 @@ UpdatePlantbutton.addEventListener('click',function(){
                   // Geometry / constants (should be defined once, not per step)
                   const rho = 1030; // seawater density (kg/m^3)
                   const g = 9.81; // m/s^2
-                  const D = 5.0; // hull diameter (m)
-                  const L = 75.0; // hull length (m)
+                  const D = 2*b.h/b.SF; // hull diameter (m)
+                  const L = b.L/b.SF; // hull length (m)
 
                   // Hull volume (fully submerged)
                   const C_v = 0.85;
@@ -1363,6 +1379,11 @@ UpdatePlantbutton.addEventListener('click',function(){
                     if (FreezeDepthToggle.innerHTML == 'Unfreeze Depth'){
                       b.xi[1] = 0;
                       b.xi[3] = b.xi[3];
+                    }
+                  if (ToggleCompressibility.innerHTML == 'Enable Compressibility'){
+                      b.Compressibility = 0;
+                    }else{
+                      b.Compressibility = 1;
                     }
                   
                   if (b.trailCounter > b.trailCounterCap){
@@ -1509,8 +1530,10 @@ UpdatePlantbutton.addEventListener('click',function(){
           for (b of this.subList) {
             if (b.Compressibility == 1){
               b.Compressibility = 0;
+              ToggleCompressibility.innerHTML = 'Enable Compressibility';
             }else{
               b.Compressibility = 1;
+              ToggleCompressibility.innerHTML = 'Disable Compressibility';
             }
           }
         }
@@ -1574,11 +1597,23 @@ UpdatePlantbutton.addEventListener('click',function(){
             b.ssMoving2.fill(0);
             //b.ssMY.fill(0);
             b.xi = [0,0,0,round5(b.L/b.SF),0];
-            
-            readoutThing.innerHTML = b.TrimTarget;
           }
           
         }
+      ResetCtrl(){
+            ctrldb_zD.value = b.dbGdsG_Original[1];
+            ctrldb_zP.value = b.dbGdsG_Original[3];
+            ctrldb_zI.value = b.dbGdsG_Original[5];
+            ctrldb_thtD.value = b.dbGdsG_Original[2];
+            ctrldb_thtP.value = b.dbGdsG_Original[4];
+            ctrldb_thtI.value = b.dbGdsG_Original[6];
+            ctrlds_zD.value = b.dsG_Original[1];
+            ctrlds_zP.value = b.dsG_Original[3];
+            ctrlds_zI.value = b.dsG_Original[5];
+            ctrlds_thtD.value = b.dsG_Original[2];
+            ctrlds_thtP.value = b.dsG_Original[4];
+            ctrlds_thtI.value = b.dsG_Original[6];
+      }
       UpdatePlant(A,B,L,r){
           var b;
           for (b of this.subList) {
@@ -1817,9 +1852,9 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
                 context.fillStyle = "#00508a";
                 context.textAlign = "left";
                 if (b.SeaFixed == 1){
-                  context.fillText("Sea State: ".concat(b.SeaState.toFixed(0).toString()," (fixed)"), ScreenHor(-4.0),ScreenVer(-0.5));
+                  context.fillText("Sea State: ".concat(b.SeaState.toFixed(0).toString()," (fixed)"), ScreenHor(-4.2),ScreenVer(-0.5));
                 }else{
-                  context.fillText("Sea State: ".concat(b.SeaState.toFixed(0).toString()), ScreenHor(-4.5),ScreenVer(-0.5));
+                  context.fillText("Sea State: ".concat(b.SeaState.toFixed(0).toString()), ScreenHor(-4.2),ScreenVer(-0.5));
                 }
               
                 
@@ -2306,6 +2341,13 @@ function ToggleFreezeDepth(){
     FreezeDepthToggle.innerHTML = 'Freeze Depth';
   }else{
     FreezeDepthToggle.innerHTML = 'Unfreeze Depth';
+  }
+}
+function ToggleCompressibilityFnc(){
+  if (ToggleCompressibility.innerHTML == 'Disable Compressibility'){
+    ToggleCompressibility.innerHTML = 'Enable Compressibility';
+  }else{
+    ToggleCompressibility.innerHTML = 'Disable Compressibility';
   }
 }
     function RTPD(){
