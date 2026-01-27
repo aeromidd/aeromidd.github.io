@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset=utf-8 />
+  <title>DeltaV-map-extended</title>
+  <style>
+    /*html, body {margin: 0; height: 100%; overflow: hidden}*/
+    input[type='number']::-webkit-inner-spin-button,
+    input[type='number']::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      appearance: none;
+      margin: 0;
+    }
+
+    .sliderInput {
+      -webkit-appearance: none;
+      appearance: none;
+      position: absolute;
+      height: 12px;
+      width: 50px;
+      border-radius: 5px;
+      text-align: center;
+      font-family: Courier New, serif;
+      font-weight: bold;
+      color: #00508a;
+    }
+
+    .slider {
+      -webkit-appearance: none;
+      appearance: none;
+      position: absolute;
+      width: 200px;
+      height: 15px;
+      border-radius: 15px;
+      background: #d3d3d3;
+      outline: none;
+      opacity: 0.8;
+      -webkit-transition: .2s;
+      transition: opacity .2s;
+    }
+    
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      perspective: 1px;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #00508a;
+      border-collapse: separate;
+      border-radius: 20px;
+      background: #ffffff;
+      opacity: 1;
+      cursor: grab;
+    }
+
+    .slider:hover {
+      opacity: 1;
+      /* Fully shown on mouse-over */
+      background: #189aca;
+      cursor: pointer;
+    }
+
+    .OutputLabel {
+      -webkit-appearance: none;
+      position: absolute;
+      font-family: Garamond, serif;
+      font-size: 14px;
+      color: #757575;
+    }
+    .OutputData{
+      -webkit-appearance: none;
+      appearance: none;
+      position: absolute;
+      height: 18px;
+      width: 113px;
+      font-family: Courier New, serif;
+      font-size: 16px;
+      font-weight: bold;
+      color: #189aca;
+      text-align: right;
+      background-color: #ffffff;
+      border: 1px solid #00508a;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      -khtml-border-radius: 5px;
+      border-radius: 5px;
+      border-collapse: separate;
+      transform: translateZ(0);
+    }
+    .unitdropdown{
+      font-family: Garamond, serif;
+      font-size: 15px;
+      text-align: right;
+      color: #00508a;
+      border: 0px;
+    }
+    
+     /* The container */
+    .container {
+      /*display: block;*/
+      position: absolute;
+      cursor: pointer;
+      font-family: Garamond, serif;
+      font-size: 14px;
+      color: #00508a;
+      /*
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;*/
+    }
+
+    /* Hide the browser's default radio button */
+    .container input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      color: #ff0000;
+    }
+
+    /* Create a custom radio button */
+    .checkmark {
+      
+      appearance: none;
+      
+      position: absolute;
+      height: 21px;
+      width: 21Px;
+      border-radius: 50%;
+      cursor: pointer;
+      color: #ff0000;
+    }
+
+    /* On mouse-over, add a grey background color */
+    .container:hover input ~ .checkmark {
+      position: absolute;
+      color: #189aca;
+    }
+
+    /* When the radio button is checked, add a blue background */
+    .container input:checked ~ .checkmark {
+      position: absolute;
+      background-color: #ff0000;
+      color: #ff0000;
+    }
+
+    /* Create the indicator (the dot/circle - hidden when not checked) */
+    .checkmark:after {
+      content: "";
+      position: absolute;
+      display: none;
+      color: #ff0000;
+    }
+
+    /* Show the indicator (dot/circle) when checked */
+    .container input:checked ~ .checkmark:after {
+      /*display: block;*/
+      color: #ff0000;
+    }
+
+    /* Style the indicator (dot/circle) */
+    .container .checkmark:after {
+      height: 21px;
+      width: 21Px;
+      border-radius: 50%;
+      color: #ff0000;
+    }
+
+  </style>
+</head>
+
+<body>
+  <canvas id="BorderCanvas"></canvas>
+  <script type="text/javascript">
+    var canvas = document.getElementById('BorderCanvas');
+    if (canvas.getContext) {
+      var context = canvas.getContext('2d');
+      var xsize = 880;
+      var ysize = 1425;
+      canvas.style.width = xsize + "px";
+      canvas.style.height = ysize + "px";
+      // Set actual size in memory (scaled to account for extra pixel density).
+      var scale = 2; //window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+      canvas.width = Math.floor(xsize * scale);
+      canvas.height = Math.floor(ysize * scale);
+      // Normalize coordinate system to use css pixels.
+      context.scale(scale, scale);
+      context.clearRect(0, 0, canvas.width / scale, canvas.height / scale);
+      context.beginPath();
+      context.lineJoin = "round";
+      context.moveTo(0, 0);
+      context.lineTo(canvas.width / scale, 0);
+      context.strokeStyle = '#00508a';
+      context.stroke();
+      ////
+      context.beginPath();
+      context.lineJoin = "round";
+      context.moveTo(0, 0);
+      context.lineTo(0, canvas.height / scale);
+      context.stroke();
+      ////
+      context.beginPath();
+      context.lineJoin = "round";
+      context.moveTo(canvas.width / scale, canvas.height / scale);
+      context.lineTo(canvas.width / scale, 0);
+      context.stroke();
+      ////
+      context.beginPath();
+      context.lineJoin = "round";
+      context.moveTo(canvas.width / scale, canvas.height / scale);
+      context.lineTo(0, canvas.height / scale);
+      context.stroke();
+      ////
+    }
+  </script>
+  <div class="ISPLabel1" z-index: 1; style="position:absolute; left:120px; top:139px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
+    ISP
+  </div>
+  <div class="FLabel1" z-index: 1; style="position:absolute; left:74px; top:350px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
+    Thrust per engine
+  </div>
+  <div class="IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII"> </div>
+    <div id="Foutput" class="OutputData" z-index: 1 style="position:absolute; left:241px; top:95px;">
+      F
+    </div>
+    <div id="Flabel" class="OutputLabel" z-index: 1 style="position:absolute; left:278px; top:75px;">
+      Thrust
+    </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:361px; top:97px; text-align: left; width: 25px;">
+      N
+  </div>
+    <div id="ISPoutput" class="OutputData" z-index: 1 style="position:absolute; left:408px; top:95px;">
+      ISP
+    </div>
+    <div id="ISPlabel1" class="OutputLabel" z-index: 1 style="position:absolute; left:411px; top:75px; font-size: 14px;">
+      I
+    </div>
+    <div id="ISPlabel2" class="OutputLabel" z-index: 1 style="position:absolute; left:416px; top:80px; font-size: 11px;">
+      SP
+    </div>
+    <div id="ISPlabel3" class="OutputLabel" z-index: 1 style="position:absolute; left:431px; top:75px; font-size: 12px;">
+      (Specific Impulse)
+    </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:528px; top:97px; text-align: left; width: 25px;">
+      s
+  </div>
+    <div id="Mdotoutput" class="OutputData" z-index: 1 style="position:absolute; left:575px; top:95px;">
+      mdot
+    </div>
+    <div id="Mdotlabel" class="OutputLabel" z-index: 1 style="position:absolute; left:586px; top:75px;">
+      Mass Flow Rate
+    </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:695px; top:97px; text-align: left; width: 25px;">
+      kg/s
+  </div>
+    <div id="Veoutput" class="OutputData" z-index: 1 style="position:absolute; left:715px; top:390px;">
+      VE
+    </div>
+    <div id="Velabel" class="OutputLabel" z-index: 1 style="position:absolute; left:720px; top:370px; text-align: center; width: 100px;">
+      Exit Velocity
+    </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:835px; top:392px; text-align: left; width: 25px;">
+      m/s
+  </div>
+  
+    <div id="ISP2output" class="OutputData" z-index: 1 style="position:absolute; left:715px; top:773px;">
+      ISP2
+    </div>
+    <div id="ISP2label1" class="OutputLabel" z-index: 1 style="position:absolute; left:718px; top:753px; font-size: 14px;">
+      I
+    </div>
+    <div id="ISP2label2" class="OutputLabel" z-index: 1 style="position:absolute; left:723px; top:758px; font-size: 11px;">
+      SP
+    </div>
+    <div id="ISP2label3" class="OutputLabel" z-index: 1 style="position:absolute; left:738px; top:753px; font-size: 12px;">
+      (Specific Impulse)
+    </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:835px; top:775px; text-align: left; width: 25px;">
+      s
+    </div>
+  
+    <div id="FTotaloutput" class="OutputData" z-index: 1 style="position:absolute; left:715px; top:840px;">
+      FTotal
+    </div>
+    <div id="FTotallabel" class="OutputLabel" z-index: 1 style="position:absolute; left:722px; top:820px; text-align: center; width: 100px;">
+      Total Thrust
+    </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:835px; top:842px; text-align: left; width: 25px;">
+      N
+    </div>
+  
+    <div id="TWRoutput" class="OutputData" z-index: 1 style="position:absolute; left:715px; top:900px;">
+      TWR
+    </div>
+    <div id="TWRlabel" class="OutputLabel" z-index: 1 style="position:absolute; left:722px; top:880px; text-align: center; width: 100px;">
+      TWR
+    </div>
+  
+    <div id="DVoutput" class="OutputData" z-index: 1 style="position:absolute; left:715px; top:960px;">
+      DV
+    </div>
+    <div id="DVlabel" class="OutputLabel" z-index: 1 style="position:absolute; left:722px; top:940px; text-align: center; width: 100px;">
+      ∆V
+    </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:835px; top:962px; text-align: left; width: 25px;">
+      km/s
+    </div>
+
+    <div class="slidecontainer">
+      <form>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:187px; top:99px; text-align: right; width: 25px;">
+      s
+  </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:200px; top:140px; text-align: right; width: 25px;">
+      900
+  </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:22px; top:140px; text-align: left; width: 25px;">
+      1
+  </div>
+        <input id="ISPslider" class="slider" type="range" name="ISPslider" min="1" max="900" step="0.01" value="200" oninput="this.form.ISPinput.value=this.value;ISPChangeFunction(this.value);" />
+        <input id="ISPinput" class="sliderInput" type="number" name="ISPInput" min="1" max="900" value="200" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.ISPslider.value=this.value;ISPChangeFunction(this.value);"/>
+      </form>
+      <form>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:198px; top:309px; text-align: right; width: 25px;">
+      N
+  </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:197px; top:352px; text-align: right; width: 25px;">
+      1e10
+  </div>
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:22px; top:352px; text-align: left; width: 25px;">
+      1e1
+  </div>
+        <input id="FSlider" class="slider" type="range" name="FSlider" min="1e1" max="1e8" step="10" value="5e6" oninput="this.form.FInput.value=this.value;FChangeFunction(this.value);" />
+        <input id="FInput" class="sliderInput" type="number" name="FInput" min="0.001" max="1" value="5e6" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.FSlider.value=this.value;FChangeFunction(this.value);" />
+      </form>
+    
+    <div class="slidecontainer">
+      <form>
+        <input id="engNoSlider" class="slider" type="range" name="engNoSlider" min="1" max="9" step="1" value="5" oninput="this.form.engNoInput.value=this.value;engNoChangeFunction(this.value);" style="position:absolute; top:773px; left:52px; width: 140px;"/>
+        <input id="engNoInput" class="sliderInput" type="number" name="engNoInput" min="1" max="9" value="5" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.engNoSlider.value=this.value;engNoChangeFunction(this.value);" style="position:absolute; top:752px; left:95.3px; border: 1px solid #00508a;"/>
+      </form>
+  </div>
+  <div class="engNoLabel" z-index: 1; style="position:absolute; top:794px; left:68.7px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
+    Number of Engines
+  </div>
+  
+   <div class="slidecontainer">
+      <form>
+        <input id="engMassSlider" class="slider" type="range" name="engMassSlider" min="1" max="1000" step="0.1" value="8" oninput="this.form.engMassInput.value=this.value;engMassChangeFunction(this.value);" style="position:absolute; top:843px; left:52px; width: 140px;"/>
+        <input id="engMassInput" class="sliderInput" type="number" name="engMassInput" min="1" max="1000" value="8" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.engMassSlider.value=this.value;engMassChangeFunction(this.value);" style="position:absolute; top:822px; left:95.3px; border: 1px solid #00508a;"/>
+      </form>
+      <select id="engMassUnit" class="unitdropdown" style="position:absolute; top:819px; left:164.7px" oninput="engMassUnitChangeFunction();">
+        <option value="kg">kg</option>
+        <option value="t" selected>t</option>
+      </select>
+  </div>
+  <div class="engMassLabel" z-index: 1; style="position:absolute; top:864px; left:68.7px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
+    Engine Unit Mass
+  </div>
+  
+    <div class="slidecontainer">
+      <form>
+        <input id="fuelMassSlider" class="slider" type="range" name="fuelMassSlider" min="1" max="3000" step="0.1" value="2077" oninput="this.form.fuelMassInput.value=this.value;fuelMassChangeFunction(this.value);" style="position:absolute; top:773px; left:238px;"/>
+        <input id="fuelMassInput" class="sliderInput" type="number" name="fuelMassInput" min="1" max="3000" value="2077" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.fuelMassSlider.value=this.value;fuelMassChangeFunction(this.value);" style="position:absolute; top:752px; left:311px; border: 1px solid #00508a;"/>
+      </form>
+      <select id="fuelMassUnit" class="unitdropdown" style="position:absolute; top:749px; left:410px" oninput="fuelMassUnitChangeFunction();">
+        <option value="kg">kg</option>
+        <option value="t" selected>t</option>
+      </select>
+  </div>
+  <div class="fuelMassLabel" z-index: 1; style="position:absolute; top:794px; left:310px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
+    Fuel Mass
+  </div>
+  
+  <div class="slidecontainer">
+      <form>
+        <input id="payloadMassSlider" class="slider" type="range" name="payloadMassSlider" min="1" max="3000" step="0.1" value="850" oninput="this.form.payloadMassInput.value=this.value;payloadMassChangeFunction(this.value);" style="position:absolute; top:773px; left:488px;"/>
+        <input id="payloadMassInput" class="sliderInput" type="number" name="payloadMassInput" min="1" max="3000" value="850" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.payloadMassSlider.value=this.value;payloadMassChangeFunction(this.value);" style="position:absolute; top:752px; left:561px; border: 1px solid #00508a;"/>
+      </form>
+      <select id="payloadMassUnit" class="unitdropdown" style="position:absolute; top:749px; left:660px" oninput="payloadMassUnitChangeFunction();">
+        <option value="kg">kg</option>
+        <option value="t" selected>t</option>
+      </select>
+  </div>
+  <div class="payloadMassLabel" z-index: 1; style="position:absolute; top:794px; left:552px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
+    Payload Mass
+  </div>
+    <canvas id="VehicleCanvas"></canvas>
+    <canvas id="DVMapCanvas"></canvas>
+  <div>
+    <form>
+  <input type="radio" id="EarthButton" name = "mapstarter" class="checkmark" value="0" checked="checked" style="position:absolute;top:840.5px;left:287.5px" onchange="DVcheckchange(this.value);">
+  <label for="EarthButton" class="container" style="position:absolute;top:845px;left:253px">Earth</label>
+      
+  <input type="radio" id="LEOButton" name = "mapstarter" class="checkmark" value="1" style="position:absolute;top:840.5px;left:444.5px" onchange="DVcheckchange(this.value);">
+  <label for="LEOButton" class="container" style="position:absolute;top:830px;left:470px">Low Earth Orbit</label>
+      
+  <input type="radio" id="GTOButton" name = "mapstarter" class="checkmark" value="2" style="position:absolute;top:863.5px;left:524.5px" onchange="DVcheckchange(this.value);">
+  <label for="GTOButton" class="container" style="position:absolute;top:867.5px;left:555px">GTO</label>
+      
+  <input type="radio" id="GEOButton" name = "mapstarter" class="checkmark" value="3" style="position:absolute;top:928.5px;left:454.5px" onchange="DVcheckchange(this.value);">
+  <label for="GEOButton" class="container" style="position:absolute;top:953.5px;left:454px">GEO</label>
+      
+  <input type="radio" id="L45Button" name = "mapstarter" class="checkmark" value="4" style="position:absolute;top:948.5px;left:384.5px" onchange="DVcheckchange(this.value);">
+  <label for="L45Button" class="container" style="position:absolute;top:953.5px;left:355px">L4/5</label>
+      
+  <input type="radio" id="EC3Button" name = "mapstarter" class="checkmark" value="5" style="position:absolute;top:948.5px;left:524.5px" onchange="DVcheckchange(this.value);">
+  <label for="EC3Button" class="container" style="position:absolute;top:953.5px;left:555px">Earth C3</label>
+      
+  <input type="radio" id="LUOButton" name = "mapstarter" class="checkmark" value="6" style="position:absolute;top:988.5px;left:454.5px" onchange="DVcheckchange(this.value);">
+  <label for="LUOButton" class="container" style="position:absolute;top:1013.5px;left:464px">Lunar Orbit</label>
+      
+  <input type="radio" id="LUNButton" name = "mapstarter" class="checkmark" value="7" style="position:absolute;top:1058.5px;left:374.5px" onchange="DVcheckchange(this.value);">
+  <label for="LUNButton" class="container" style="position:absolute;top:1063.5px;left:313px">The Moon</label>
+      
+  <input type="radio" id="MTRButton" name = "mapstarter" class="checkmark" value="8" style="position:absolute;top:1028.5px;left:574.5px" onchange="DVcheckchange(this.value);">
+  <label for="MTRButton" class="container" style="position:absolute;top:1033.5px;left:605px">Mars Transfer</label>
+      
+  <input type="radio" id="MC3Button" name = "mapstarter" class="checkmark" value="9" style="position:absolute;top:1088.5px;left:574.5px" onchange="DVcheckchange(this.value);">
+  <label for="MC3Button" class="container" style="position:absolute;top:1093.5px;left:605px">Mars C3</label>
+      
+  <input type="radio" id="DTRButton" name = "mapstarter" class="checkmark" value="10" style="position:absolute;top:1128.5px;left:544.5px" onchange="DVcheckchange(this.value);">
+  <label for="DTRButton" class="container" style="position:absolute;top:1128.5px;left:575px">Deimos</label>
+  <label for="DTRButton" class="container" style="position:absolute;top:1139.5px;left:575px">Transfer</label>
+      
+  <input type="radio" id="DEIButton" name = "mapstarter" class="checkmark" value="11" style="position:absolute;top:1128.5px;left:484.5px" onchange="DVcheckchange(this.value);">
+  <label for="DEIButton" class="container" style="position:absolute;top:1133.5px;left:440px">Deimos</label>
+      
+  <input type="radio" id="PTRButton" name = "mapstarter" class="checkmark" value="12" style="position:absolute;top:1178.5px;left:544.5px" onchange="DVcheckchange(this.value);">
+  <label for="PTRButton" class="container" style="position:absolute;top:1178.5px;left:575px">Phobos</label>
+  <label for="PTRButton" class="container" style="position:absolute;top:1189.5px;left:575px">Transfer</label>
+      
+  <input type="radio" id="PHOButton" name = "mapstarter" class="checkmark" value="13" style="position:absolute;top:1178.5px;left:484.5px" onchange="DVcheckchange(this.value);">
+  <label for="PHOButton" class="container" style="position:absolute;top:1183.5px;left:443px">Phobos</label>
+      
+  <input type="radio" id="LMOButton" name = "mapstarter" class="checkmark" value="14" style="position:absolute;top:1258.5px;left:464.5px" onchange="DVcheckchange(this.value);">
+  <label for="LMOButton" class="container" style="position:absolute;top:1263.5px;left:495px">Low Mars Orbit</label>
+      
+  <input type="radio" id="MARButton" name = "mapstarter" class="checkmark" value="15" style="position:absolute;top:1258.5px;left:324.5px" onchange="DVcheckchange(this.value);">
+  <label for="MARButton" class="container" style="position:absolute;top:1263.5px;left:293px">Mars</label>
+      
+    </form>
+  </div>
+  <div style="position:absolute; top:920px; left: 25px; width: 205px; margin: auto;border: 1px solid #fff; font-family: Helvetica, serif; font-size: 13px; color: #757575;">
+Click a starting point on the Delta-V map to predict the range of paths achievable by the above rocket engine and vehicle configuration, travelling between some of the nearer parts of the Solar System.
+<br>
+Default start: Earth.
+<br>
+<br>
+Note: This Delta-V budget map does not take rocket-staging into account, nor does it facilitate boosters (hence why some of the presets fail to lift off from earth when in reality they are able to).
+    <br>
+    <br>
+    The calculation also freezes the above engine ISP at its design ambient pressure/altitude, so atmospheres of destinations/origins don't alter the engine performance like they would in real life.
+<br>
+It also assumes that at each subsequent waypoint after the original launch point, the vehicle has a sufficient thrust to weight ratio (TWR) to lift off again.
+  </div>
+  <div>
+    <label for="enginePresetList" style="position:absolute;top:28px;left:250px;font-family:Garamond,serif;font-size:16px;color:#757575;">Engine Preset:</label>
+    <select name="enginePresetList" id="enginePresetList" style="position:absolute;top:28px;left:355px;width:335px;font-family:Garamond,serif;font-size:14px;color:#00508a;"onchange="enginePresetChange(this.value);">
+      <option value="custom">Custom</option>
+      <option value="saturnv">Rocketdyne F-1, Saturn V 1st Stage (LOX + RP-1)</option>
+      <option value="falcon9">Merlin 1D, Falcon 9 1st Stage (LOX + RP-1)</option>
+      <option value="ariane5">Vulcain 2, Ariane 5/6 Core Stage (LOX + LH2)</option>
+      <option value="soyuz2">RD-107A (Soyuz-2 1st Stage, LOX + Kerosene)</option>
+      <option value="autophage">Autophage hybrid prototype (N2H4O3 + C2H4)</option>
+    </select>
+  </div>
+    <script type="text/javascript">
+      var ISPslider = document.getElementById("ISPslider");
+      ISPslider.style.top = "120px";
+      ISPslider.style.left = "22px";
+      var ISPinput = document.getElementById("ISPinput");
+      ISPinput.style.top = "99px";
+      ISPinput.style.left = 22 + 100 - 27 + "px";
+      ISPinput.style.border = "1px solid #00508a";
+      var FSlider = document.getElementById("FSlider");
+      FSlider.style.top = "330px";
+      FSlider.style.left = "22px";
+      //DtSlider.style.oninput = DtChangeFunction(DtSlider.value);
+      var FInput = document.getElementById("FInput");
+      FInput.style.top = "309px";
+      FInput.style.left = 22 + 100 - 27 + "px";
+      FInput.style.border = "1px solid #00508a";
+      var vcan = document.getElementById('VehicleCanvas');
+      vcan.style.position = 'absolute';
+      vcan.style.top = "620px";
+      vcan.style.left = "25px";
+      var dcan = document.getElementById('DVMapCanvas');
+      dcan.style.position = 'absolute';
+      dcan.style.top = "822px";
+      dcan.style.left = "240px";
+      ////comment the following out before inserting to site
+      
+      enginePresetList.value = "saturnv";
+      globals = [];
+      globals['ISP'] = 254.77;
+      globals['F'] = 5.9056e+6;
+      
+      globals['engineNo'] = 5;
+      globals['fuelmass'] = 2077e3;
+      globals['payloadmass'] = 850e3;
+      globals['enginemass'] = 8e3;
+      
+      globals['select'] = 0;
+      globals['dv'] = 15.3;
+      globals['twr'] = 1.4;
+      
+      CalculateN();
+      
+      function enginePresetChange(value) {
+        let EPchoice = value;
+        if (EPchoice.includes("saturnv")) {
+          //Saturn V 1st Stage (Rocketdyne F-1)
+          FInput.value = 1.2;
+          FInput.oninput();
+          ISPinput.value = 397;
+          ISPinput.oninput();
+          //
+          fuelMassUnit.value = 't';
+          fuelMassUnit.oninput();
+          payloadMassUnit.value = 't';
+          payloadMassUnit.oninput();
+          engMassUnit.value = 't';
+          engMassUnit.oninput();
+          fuelMassInput.value = 2077;
+          fuelMassInput.oninput();
+          payloadMassInput.value = 850;
+          payloadMassInput.oninput();
+          engMassInput.value = 8;
+          engMassInput.oninput();
+          engNoInput.value = 5;
+          engNoInput.oninput();
+          enginePresetList.value = "saturnv";
+        }else if (EPchoice.includes("autophage")) {
+          //Autophage
+          FInput.value = 1.2;
+          FInput.oninput();
+          ISPinput.value = 397;
+          ISPinput.oninput();
+          //
+          fuelMassUnit.value = 'kg';
+          fuelMassUnit.oninput();
+          payloadMassUnit.value = 'kg';
+          payloadMassUnit.oninput();
+          engMassUnit.value = 'kg';
+          engMassUnit.oninput();
+          fuelMassInput.value = 1;
+          fuelMassInput.oninput();
+          payloadMassInput.value = 1;
+          payloadMassInput.oninput();
+          engMassInput.value = 1;
+          engMassInput.oninput();
+          engNoInput.value = 1;
+          engNoInput.oninput();
+          enginePresetList.value = "autophage";
+        } else if (EPchoice.includes("falcon9")) {
+          //Falcon 9 1st Stage (Merlin 1D)
+          FInput.value = 1.2;
+          FInput.oninput();
+          ISPinput.value = 397;
+          ISPinput.oninput();
+          //
+          fuelMassUnit.value = 't';
+          fuelMassUnit.oninput();
+          payloadMassUnit.value = 't';
+          payloadMassUnit.oninput();
+          engMassUnit.value = 'kg';
+          engMassUnit.oninput();
+          fuelMassInput.value = 396;
+          fuelMassInput.oninput();
+          payloadMassInput.value = 153;
+          payloadMassInput.oninput();
+          engMassInput.value = 490;
+          engMassInput.oninput();
+          engNoInput.value = 9;
+          engNoInput.oninput();
+          enginePresetList.value = "falcon9";
+        } else if (EPchoice.includes("ariane5")) {
+          //Ariane 5/6 Core Stage (Vulcain 1 or 2?)
+          FInput.value = 1.2;
+          FInput.oninput();
+          ISPinput.value = 397;
+          ISPinput.oninput();
+          //
+          fuelMassUnit.value = 't';
+          fuelMassUnit.oninput();
+          payloadMassUnit.value = 't';
+          payloadMassUnit.oninput();
+          engMassUnit.value = 't';
+          engMassUnit.oninput();
+          fuelMassInput.value = 170;
+          fuelMassInput.oninput();
+          payloadMassInput.value = 607;
+          payloadMassInput.oninput();
+          engMassInput.value = 1.686;
+          engMassInput.oninput();
+          engNoInput.value = 1;
+          engNoInput.oninput();
+          enginePresetList.value = "ariane5";
+        } else if (EPchoice.includes("soyuz2")) {
+          //Soyuz-2 1st Stage (RD-107A)
+          FInput.value = 1.2;
+          FInput.oninput();
+          ISPinput.value = 398;
+          ISPinput.oninput();
+          //
+          fuelMassUnit.value = 't';
+          fuelMassUnit.oninput();
+          payloadMassUnit.value = 't';
+          payloadMassUnit.oninput();
+          engMassUnit.value = 't';
+          engMassUnit.oninput();
+          fuelMassInput.value = 154;
+          fuelMassInput.oninput();
+          payloadMassInput.value = 157.660;
+          payloadMassInput.oninput();
+          engMassInput.value = 1.190;
+          engMassInput.oninput();
+          engNoInput.value = 4;
+          engNoInput.oninput();
+          enginePresetList.value = "soyuz2";
+        }else {
+          enginePresetList.Value = "custom";
+          CalculateN();
+        }
+      }
+
+      function ISPChangeFunction(val) {
+        globals['ISP'] = Number(val);
+        let F = FSlider.value;
+        F = Math.min(F,6e13*Math.pow(Number(val),-2.5));
+        FInput.value = F;
+        globals['F'] = F;
+        enginePresetList.value = "custom";
+        CalculateN();
+      }
+
+      function FChangeFunction(val) {
+        globals['F'] = Number(val);
+        let isp = Math.min(ISPslider.value,Math.pow(6e13 / globals['F'],1/2.5));
+        ISPinput.value = isp;
+        globals['ISP'] = isp;
+        enginePresetList.value = "custom";
+        CalculateN();
+      }
+      
+      function engNoChangeFunction(val){
+        globals['engineNo'] = Number(val);
+        CalculateN();
+      }
+      function engMassChangeFunction(val){
+        var emu = document.getElementById('engMassUnit').value;
+        if (emu == "kg"){
+          emu = 1;
+        }else{
+          emu = 1000;
+        }
+        globals['enginemass'] = Number(val)*emu;
+        CalculateN();
+      }
+      function engMassUnitChangeFunction(val){
+        var emv = document.getElementById('engMassSlider').value;
+        engMassChangeFunction(emv);
+      }
+      function fuelMassChangeFunction(val){
+        var fmu = document.getElementById('fuelMassUnit').value;
+        if (fmu == "kg"){
+          fmu = 1;
+        }else{
+          fmu = 1000;
+        }
+        globals['fuelmass'] = Number(val)*fmu;
+        CalculateN();
+      }
+      function fuelMassUnitChangeFunction(val){
+        var fmv = document.getElementById('fuelMassSlider').value;
+        fuelMassChangeFunction(fmv);
+      }
+      function payloadMassChangeFunction(val){
+        var pmu = document.getElementById('payloadMassUnit').value;
+        if (pmu == "kg"){
+          pmu = 1;
+        }else{
+          pmu = 1000;
+        }
+        globals['payloadmass'] = Number(val)*pmu;
+        CalculateN();
+      }
+      function payloadMassUnitChangeFunction(val){
+        var pmv = document.getElementById('payloadMassSlider').value;
+        payloadMassChangeFunction(pmv);
+      }
+      
+      function DVcheckchange(val){
+        globals['select'] = val;
+        CalculateN();
+      }
+//////////////////////////////////////////////////////
+////////////CALCULATE NOZZLE//////////////////////////
+//////////////////////////////////////////////////////
+      function CalculateN() {
+        
+        let g0 = 9.80665;
+        
+        let F = globals['F'];//mdot * Ve + ((Pe - Ph) * Math.sqrt(Aratio * Astar) / Math.PI);
+        
+        let isp = globals['ISP'];
+        
+        //globals['FORCE'] = F;
+        //$w('#thrusttext').text = F.toPrecision(5).toString();
+        
+        //F=6.0e13*Isp.^(-2.5)
+        
+        //F = Math.min(F,6e13*Math.pow(isp,-2.5));
+        //isp = Math.min(isp,Math.pow(6e13 / F,0.4));
+        
+        
+        if (isp < 0) {
+          isp = 0;
+        }
+        
+        Foutput.textContent = F.toPrecision(5).toString();
+        ISPoutput.textContent = isp.toPrecision(5).toString();
+        ISP2output.textContent = isp.toPrecision(5).toString();
+        FSlider.value = F;
+        ISPslider.value = isp;
+        //drawNozzle();
+        drawRVehicle();
+        /////////////////
+        /*
+        let engineNo = 5; //$w('#engineNoSlider').value;
+        */
+        let engineNo = globals['engineNo'];
+        //$w('#engineNotext').text = engineNo.toPrecision(1).toString()
+        /*
+        let fuelUnitchoice = 't'; //$w('#fuelUnitdropdown').value;
+        var fuelUnit;
+        if (fuelUnitchoice.includes("kg")) {
+          fuelUnit = 1;
+        } else if (fuelUnitchoice.includes("t")) {
+          fuelUnit = 1e3;
+        }
+        let fuelMass = 100 * fuelUnit;
+        */
+        let fuelMass = globals['fuelmass'];
+        //$w('#fuelmassSlider').value*fuelUnit;
+        //$w('#fuelmasstext').text = $w('#fuelmassSlider').value.toPrecision(5).toString()
+        /*
+        let payloadUnitchoice = 't'; //$w('#payloadunitdropdown').value;
+        var payloadUnit
+        if (payloadUnitchoice.includes("kg")) {
+          payloadUnit = 1;
+        } else if (fuelUnitchoice.includes("t")) {
+          payloadUnit = 1e3;
+        }
+        let payloadMass = 100 * payloadUnit;
+        */
+        let payloadMass = globals['payloadmass'];
+        
+        //$w('#PayloadmassSlider').value*payloadUnit;
+        //$w('#payloadmasstext').text = $w('#PayloadmassSlider').value.toPrecision(5).toString()
+        /*
+        let engineUnitchoice = 't'; //$w('#engineUnitdropdown').value;
+        var engineUnit
+        if (engineUnitchoice.includes("kg")) {
+          engineUnit = 1;
+        } else if (engineUnitchoice.includes("t")) {
+          engineUnit = 1e3;
+        }
+        let engineMass = 1 * engineUnit * engineNo;
+        */
+        let engineMass = globals['enginemass']*engineNo;
+        //$w('#enginemassSlider').value*engineUnit*engineNo;
+        //$w('#enginemassText').text = $w('#enginemassSlider').value.toPrecision(5).toString()
+        var localgrav
+        localgrav = 0;
+        
+        if (globals['select'] == 0){
+          localgrav = 9.80665; //earth
+        }else if (globals['select'] == 7){
+          localgrav = 1.625; //moon //7
+        }else if (globals['select'] == 15){
+          localgrav = 3.72076; //mars //16
+        }else if (globals['select'] == 11){
+          localgrav = 0.003; //deimos //12
+        }else if (globals['select'] == 13){
+          localgrav = 0.0057; //phobos //14
+        }else {
+          localgrav = 0;
+        }
+        
+        let TotalThrust = F * engineNo;
+        
+        FTotaloutput.textContent = TotalThrust.toPrecision(5).toString();
+        
+        var TWR
+        if (localgrav == 0) {
+          TWR = '---';
+          //$w('#TWRtext').text = TWR;
+        TWRoutput.textContent = 'weightless';
+        } else {
+          TWR = TotalThrust / ((payloadMass + fuelMass + engineMass) * localgrav);
+        TWRoutput.textContent = TWR.toPrecision(5).toString();
+          //$w('#TWRtext').text = TWR.toPrecision(5).toString()
+        }
+        //delta V in km/s
+        let deltaV = isp * g0 * Math.log((payloadMass + fuelMass + engineMass) / (payloadMass + engineMass)) / 1e3;
+        DVoutput.textContent = deltaV.toPrecision(5).toString();
+        //$w('#deltaVtext').text = deltaV.toPrecision(3).toString();
+        globals['dv'] = deltaV;
+        globals['twr'] = TWR;
+        
+        
+        drawDVmap(); //$w("#htmlVehicle").postMessage([Dt,De,Ln,engineNo,fuelMass,payloadMass]);
+        //computeDVmap_click();
+      }
+      /////////////////////////////////////////////////////////////////////////////
+      ////////////////////////////DRAW NOZZLE//////////////////////////////////////
+      /////////////////////////////////////////////////////////////////////////////
+      
+      
+function drawRVehicle(){//triggered when msg recieved
+  //console.log(DT);
+  //do other stuff
+  
+  var canvas = document.getElementById('VehicleCanvas');
+  if (canvas.getContext)
+   {
+    var context = canvas.getContext('2d');
+     
+    var xsize = 840;
+    var ysize = 125;
+    canvas.style.width = xsize + "px";
+    canvas.style.height = ysize + "px";
+
+    // Set actual size in memory (scaled to account for extra pixel density).
+    var scale = 2;//window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+    canvas.width = Math.floor(xsize * scale);
+    canvas.height = Math.floor(ysize * scale);
+      
+
+    // Normalize coordinate system to use css pixels.
+    context.scale(scale, scale);
+    
+     
+    // Reset the current path
+    let cx = (canvas.width/scale)/2;
+    let cy = (canvas.height/scale)/2;
+    
+    context.lineWidth = 1;
+    context.clearRect(0, 0, canvas.width/scale, canvas.height/scale);
+    context.beginPath();
+    context.lineJoin = "round";
+    context.moveTo(0,0);
+    context.lineTo(canvas.width/scale,0);
+    context.strokeStyle = '#00508a';
+    context.stroke();
+    ////
+    context.beginPath();
+    context.lineJoin = "round";
+    context.moveTo(0,0);
+    context.lineTo(0,canvas.height/scale);
+    context.stroke();
+    ////
+    context.beginPath();
+    context.lineJoin = "round";
+    context.moveTo(canvas.width/scale,canvas.height/scale);
+    context.lineTo(canvas.width/scale,0);
+    context.stroke();
+    ////
+    context.beginPath();
+    context.lineJoin = "round";
+    context.moveTo(canvas.width/scale,canvas.height/scale);
+    context.lineTo(0,canvas.height/scale);
+    context.stroke();
+    ////
+    //
+    let dt = 0.72;//globals['DT'];
+    let dE = 2.53;//globals['DE'];
+    let Ln = 2.49;//globals['LN'];
+    
+    //ratio for screen
+    let Lnc = (Ln/(Ln+dE))*(canvas.width/scale)/10;
+    let dEc = (dE/(Ln+dE))*(canvas.width/scale)/10;
+    let dtc = (dt/(Ln+dE))*(canvas.width/scale)/10;
+
+    let dty = cy-150;
+    let dtxL = cx-dtc/2;
+    let dtxR = cx+dtc/2;
+    let dExL = -dEc/2;
+    let dExR = +dEc/2;
+    let dR = dEc/dtc;
+     
+    
+    let fuelmass = globals['fuelmass'];
+    let payloadmass = globals['payloadmass'];
+    let wetmass = fuelmass+payloadmass;
+    
+    
+    VehicleL = (canvas.width/scale)*0.5*Math.pow(wetmass/3120000,0.05);
+    VehicleW = (canvas.height/scale)*0.065/Math.pow(wetmass/3120000,0.13);
+    
+    //Fuel Tank Dimensions
+    let fuelW = VehicleW;//*1*payloadmass/wetmass;//*fuelmass/wetmass;
+    let fuelL = VehicleL*1*fuelmass/wetmass;
+    let fuelBx = cx-180+fuelL/5;
+    
+    context.beginPath();
+    context.moveTo(fuelBx,cy+fuelW*.7)
+    context.lineTo(fuelBx,cy)
+    context.lineTo(fuelBx+fuelL,cy)
+    context.lineTo(fuelBx+fuelL,cy+fuelW*.7)
+    context.lineTo(fuelBx,cy+fuelW*.7)
+    context.fillStyle = '#189ACA'
+    context.fill()
+    
+    context.beginPath();
+    context.moveTo(fuelBx,cy-fuelW*.7)
+    context.lineTo(fuelBx,cy)
+    context.lineTo(fuelBx+fuelL,cy)
+    context.lineTo(fuelBx+fuelL,cy-fuelW*.7)
+    context.lineTo(fuelBx,cy-fuelW*.7)
+    context.fillStyle = '#a5d5f5'
+    context.fill()
+    
+    context.beginPath();
+    context.moveTo(fuelBx,cy+fuelW)
+    context.lineTo(fuelBx,cy-fuelW)
+    context.lineTo(fuelBx+fuelL,cy-fuelW)
+    context.lineTo(fuelBx+fuelL,cy+fuelW)
+    context.lineTo(fuelBx,cy+fuelW)
+    context.strokeStyle = '#00508a';
+    context.stroke();
+    
+    
+    //Payload Dimensions
+    let Pload1W = VehicleW*1;//*1*payloadmass/wetmass;
+    let Pload1Bx = fuelBx+fuelL;
+    let Pload1L = VehicleL*1*payloadmass/wetmass;
+    
+    
+    context.lineWidth = 2;
+    context.beginPath();
+    context.moveTo(2+Pload1Bx,cy+Pload1W)
+    context.lineTo(2+Pload1Bx,cy-Pload1W)
+    context.lineTo(2+Pload1Bx+Pload1L/1,cy-Pload1W)
+    context.lineTo(2+Pload1Bx+Pload1L/1,cy+Pload1W)
+    context.lineTo(2+Pload1Bx,cy+Pload1W)
+    context.strokeStyle = '#00508a';
+    context.stroke();
+    
+    context.beginPath();
+    context.moveTo(2+Pload1Bx,cy+Pload1W*.7)
+    context.lineTo(2+Pload1Bx,cy-Pload1W*.7)
+    context.lineTo(2+Pload1Bx+Pload1L/1,cy-Pload1W*.7)
+    context.lineTo(2+Pload1Bx+Pload1L/1,cy+Pload1W*.7)
+    context.lineTo(2+Pload1Bx,cy+Pload1W*.7)
+    context.strokeStyle = '#ffffff';
+    context.stroke();
+    context.fillStyle = '#a5a5a5'; //2.76; 00508a
+    context.fill();
+     
+    context.lineWidth = 1.5;
+    context.beginPath();
+    context.moveTo(2+Pload1Bx,cy+Pload1W)
+    context.lineTo(2+Pload1Bx,cy-Pload1W)
+    context.lineTo(2+Pload1Bx+Pload1L/1,cy-Pload1W)
+    context.lineTo(2+Pload1Bx+Pload1L/1,cy+Pload1W)
+    context.lineTo(2+Pload1Bx,cy+Pload1W)
+    context.strokeStyle = '#00508a';
+    context.stroke();
+    
+    context.lineWidth = 1;
+    nL = Pload1L+(fuelL+Pload1L)/9;//2+Math.log(fuelmass/wetmass);
+    //console.log(nL)
+    //Pload1L*
+    context.beginPath();
+    context.moveTo(4+Pload1Bx+nL,cy+Pload1W/2)
+    context.bezierCurveTo(4+Pload1Bx+nL,cy+Pload1W/2,4+Pload1Bx+nL+VehicleL/VehicleW,cy,4+Pload1Bx+nL,cy-Pload1W/2)
+    context.lineTo(4+Pload1Bx+nL,cy-Pload1W/2)
+    context.lineTo(4+Pload1Bx+Pload1L/1,cy-Pload1W)
+    context.lineTo(4+Pload1Bx+Pload1L/1,cy+Pload1W)
+    context.lineTo(4+Pload1Bx+nL,cy+Pload1W/2)
+    context.strokeStyle = '#00508a';
+    context.stroke();
+    
+    let engineBx = fuelBx-fuelW/3;
+     
+    context.beginPath();
+    context.moveTo(engineBx,cy+fuelW)
+    context.lineTo(engineBx,cy-fuelW)
+    context.lineTo(fuelBx-2,cy-fuelW)
+    context.lineTo(fuelBx-2,cy+fuelW)
+    context.lineTo(engineBx,cy+fuelW)
+    context.strokeStyle = '#00508a';
+    context.stroke();
+    
+    let LL = 1;
+    
+    let ncx = cx/4.25;
+    let nbk2L = .9*LL;
+    let nbk1L = .85*LL;
+    let nmidL = .8*LL;
+    let nfd1L = .75*LL;
+    let nfd2L = .7*LL;
+    let nRdtW = LL*dtc/2000;
+    let nRdEW = LL*dEc/2000;
+     
+    let engineNo = globals['engineNo'];
+    if (engineNo == 1){
+        engrad = 35;
+        context.beginPath();
+        context.ellipse(ncx, cy, 60, 60, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#757575';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy, engrad, engrad, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+      
+        let ecy = [cy];
+
+        let eLfrac = [nmidL];
+
+        for (i = 0; i < engineNo; i++) {
+
+          context.beginPath()
+          context.moveTo(engineBx,ecy[i]+fuelW*nRdtW*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]+fuelW*nRdEW*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]-fuelW*nRdEW*engrad)
+          context.lineTo(engineBx,ecy[i]-fuelW*nRdtW*engrad)
+          context.strokeStyle = '#ffffff'
+          context.lineWidth = 2;
+          context.stroke();
+          context.fillStyle = '#00508a'
+          context.fill()
+
+        }
+      
+    }else if (engineNo == 2){
+        engrad = 25;
+        context.beginPath();
+        context.ellipse(ncx, cy, 60, 60, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#757575';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy+engrad*1.1, engrad, engrad, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy-engrad*1.1, engrad, engrad, 1, 0, 2*Math.PI)
+        context.stroke();
+        
+        let kf = 1.25;
+      
+        let ecy = [cy+fuelW/3*kf*1.1,
+                  cy-fuelW/3*kf*1.1];
+
+        let eLfrac = [nmidL,
+                     nmidL];
+
+        for (i = 0; i < engineNo; i++) {
+
+          context.beginPath()
+          context.moveTo(engineBx,ecy[i]+fuelW*nRdtW*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]+fuelW*nRdEW*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]-fuelW*nRdEW*engrad)
+          context.lineTo(engineBx,ecy[i]-fuelW*nRdtW*engrad)
+          context.strokeStyle = '#ffffff'
+          context.lineWidth = 2;
+          context.stroke();
+          context.fillStyle = '#00508a'
+          context.fill()
+
+        }
+      
+     }else if (engineNo == 3){
+        engrad = 23;
+        context.beginPath();
+        context.ellipse(ncx, cy, 60, 60, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#757575';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy-engrad*1.28, engrad, engrad, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx+engrad*1.14, cy+engrad/Math.sqrt(2), engrad, engrad, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx-engrad*1.14, cy+engrad/Math.sqrt(2), engrad, engrad, 1, 0, 2*Math.PI)
+        context.stroke();
+       
+        let kf = 1.19;
+       
+        let ecy = [cy+fuelW/3*kf*1/Math.sqrt(2),
+                  cy-fuelW/3*kf*1.28,
+                  cy+fuelW/3*kf*1/Math.sqrt(2)];
+
+        let eLfrac = [nbk1L,
+                     nmidL,
+                     nfd1L];
+
+        for (i = 0; i < engineNo; i++) {
+
+          context.beginPath()
+          context.moveTo(engineBx,ecy[i]+fuelW*nRdtW*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]+fuelW*nRdEW*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]-fuelW*nRdEW*engrad)
+          context.lineTo(engineBx,ecy[i]-fuelW*nRdtW*engrad)
+          context.strokeStyle = '#ffffff'
+          context.lineWidth = 2;
+          context.stroke();
+          context.fillStyle = '#00508a'
+          context.fill()
+
+        }
+       
+     }else if (engineNo == 4){
+        engrad = 20;
+        context.beginPath();
+        context.ellipse(ncx, cy, 60, 60, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#757575';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy+engrad*1.65, engrad, engrad, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy-engrad*1.65, engrad, engrad, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx+engrad*1.65, cy, engrad, engrad, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx-engrad*1.65, cy, engrad, engrad, 1, 0, 2*Math.PI)
+        context.stroke();
+       
+        let ecy = [cy,
+                  cy+fuelW/3*1.65,
+                  cy-fuelW/3*1.65,
+                  cy];
+
+        let eLfrac = [nbk1L,
+                     nmidL,
+                     nmidL,
+                     nfd1L];
+
+        for (i = 0; i < engineNo; i++) {
+
+          context.beginPath()
+          context.moveTo(engineBx,ecy[i]+fuelW*nRdtW*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]+fuelW*nRdEW*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]-fuelW*nRdEW*engrad)
+          context.lineTo(engineBx,ecy[i]-fuelW*nRdtW*engrad)
+          context.strokeStyle = '#ffffff'
+          context.lineWidth = 2;
+          context.stroke();
+          context.fillStyle = '#00508a'
+          context.fill()
+
+        }
+       
+      }else if (engineNo == 5){
+        engrad = 17;
+        context.beginPath();
+        context.ellipse(ncx, cy, 60, 60, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#757575';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx-engrad*2.2/Math.sqrt(2), cy+engrad*2.2/Math.sqrt(2), engrad, engrad, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx+engrad*2.2/Math.sqrt(2), cy+engrad*2.2/Math.sqrt(2), engrad, engrad, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx+engrad*2.2/Math.sqrt(2), cy-engrad*2.2/Math.sqrt(2), engrad, engrad, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx-engrad*2.2/Math.sqrt(2), cy-engrad*2.2/Math.sqrt(2), engrad, engrad, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy, engrad, engrad, 1, 0, 2*Math.PI)
+        context.stroke();
+        
+        let kf = 1/1.14;
+
+        let ecy = [cy-fuelW/3*kf*2.2/Math.sqrt(2),
+                  cy+fuelW/3*kf*2.2/Math.sqrt(2),
+                  cy,
+                  cy-fuelW/3*kf*2.2/Math.sqrt(2),
+                  cy+fuelW/3*kf*2.2/Math.sqrt(2)];
+
+        let eLfrac = [nbk1L,
+                     nbk1L,
+                     nmidL,
+                     nfd1L,
+                     nfd1L];
+
+        for (i = 0; i < engineNo; i++) {
+
+          context.beginPath()
+          context.moveTo(engineBx,ecy[i]+fuelW*nRdtW*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]+fuelW*nRdEW*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]-fuelW*nRdEW*engrad)
+          context.lineTo(engineBx,ecy[i]-fuelW*nRdtW*engrad)
+          context.strokeStyle = '#ffffff'
+          context.lineWidth = 2;
+          context.stroke();
+          context.fillStyle = '#00508a'
+          context.fill()
+
+        }
+      
+      }else if (engineNo == 6){
+        engrad = 28;
+        context.beginPath();
+        context.ellipse(ncx, cy, 60, 60, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#757575';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx+engrad*2/Math.sqrt(3), cy+engrad*1.14/Math.sqrt(3), engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx-engrad*2/Math.sqrt(3), cy+engrad*1.14/Math.sqrt(3), engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy-engrad*1.33, engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy+engrad*1.33, engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx+engrad*2/Math.sqrt(3), cy-engrad*1.14/Math.sqrt(3), engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx-engrad*2/Math.sqrt(3), cy-engrad*1.14/Math.sqrt(3), engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        
+        let kf = 1.36;
+        
+        let ecy = [cy-fuelW/3*kf*1.14/Math.sqrt(3),
+                  cy+fuelW/3*kf*1.14/Math.sqrt(3),
+                  cy-fuelW/3*kf*1.33,
+                  cy+fuelW/3*kf*1.33,
+                  cy-fuelW/3*kf*1.14/Math.sqrt(3),
+                  cy+fuelW/3*kf*1.14/Math.sqrt(3)];
+
+        let eLfrac = [nbk1L,
+                     nbk1L,
+                     nmidL,
+                     nmidL,
+                     nfd1L,
+                     nfd1L];
+
+        for (i = 0; i < engineNo; i++) {
+
+          context.beginPath()
+          context.moveTo(engineBx,ecy[i]+fuelW*nRdtW*0.6*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]+fuelW*nRdEW*0.6*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]-fuelW*nRdEW*0.6*engrad)
+          context.lineTo(engineBx,ecy[i]-fuelW*nRdtW*0.6*engrad)
+          context.strokeStyle = '#ffffff'
+          context.lineWidth = 2;
+          context.stroke();
+          context.fillStyle = '#00508a'
+          context.fill()
+
+        }
+        
+      }else if (engineNo == 7){
+      engrad = 27;
+        context.beginPath();
+        context.ellipse(ncx, cy, 60, 60, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#757575';
+        context.stroke();
+      context.beginPath();
+      context.ellipse(ncx-engrad*1.28, cy, engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+      context.strokeStyle = '#00508a';
+      context.stroke();
+      context.beginPath();
+      context.ellipse(ncx+engrad*1.14/Math.sqrt(3), cy+engrad*2/Math.sqrt(3), engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+      context.stroke();
+      context.beginPath();
+      context.ellipse(ncx-engrad*1.14/Math.sqrt(3), cy+engrad*2/Math.sqrt(3), engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+      context.stroke();
+      context.beginPath();
+      context.ellipse(ncx+engrad*1.28, cy, engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+      context.strokeStyle = '#00508a';
+      context.stroke();
+      context.beginPath();
+      context.ellipse(ncx+engrad*1.14/Math.sqrt(3), cy-engrad*2/Math.sqrt(3), engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+      context.stroke();
+      context.beginPath();
+      context.ellipse(ncx-engrad*1.14/Math.sqrt(3), cy-engrad*2/Math.sqrt(3), engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+      context.stroke();
+      context.beginPath();
+      context.ellipse(ncx, cy, engrad*0.6, engrad*0.6, 1, 0, 2*Math.PI)
+      context.stroke();
+        
+        let kf = 2.4;
+        
+        let ecy = [cy,
+                  cy-fuelW/3*kf*1.14/Math.sqrt(3),
+                  cy+fuelW/3*kf*1.14/Math.sqrt(3),
+                  cy,
+                  cy+fuelW/3*kf*1.14/Math.sqrt(3),
+                  cy-fuelW/3*kf*1.14/Math.sqrt(3),
+                  cy];
+
+        let eLfrac = [nbk2L,
+                     nbk1L,
+                     nbk1L,
+                     nmidL,
+                     nfd1L,
+                     nfd1L,
+                     nfd2L];
+
+        for (i = 0; i < engineNo; i++) {
+
+          context.beginPath()
+          context.moveTo(engineBx,ecy[i]+fuelW*nRdtW*0.6*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]+fuelW*nRdEW*0.6*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]-fuelW*nRdEW*0.6*engrad)
+          context.lineTo(engineBx,ecy[i]-fuelW*nRdtW*0.6*engrad)
+          context.strokeStyle = '#ffffff'
+          context.lineWidth = 2;
+          context.stroke();
+          context.fillStyle = '#00508a'
+          context.fill()
+
+        }
+        
+      }else if (engineNo == 8){
+        engrad = 17;
+        context.beginPath();
+        context.ellipse(ncx, cy, 60, 60, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#757575';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy+engrad*2.5, engrad*0.85, engrad*0.85, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy-engrad*2.5, engrad*0.85, engrad*0.85, 1, 0, 2*Math.PI)
+        context.stroke();
+         context.beginPath();
+        context.ellipse(ncx+engrad*2.5, cy, engrad*0.85, engrad*0.85, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx-engrad*2.5, cy, engrad*0.85, engrad*0.85, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx-engrad*1.3/Math.sqrt(2), cy+engrad*1.3/Math.sqrt(2), engrad*0.85, engrad*0.85, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx-engrad*1.3/Math.sqrt(2), cy-engrad*1.3/Math.sqrt(2), engrad*0.85, engrad*0.85, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx+engrad*1.3/Math.sqrt(2), cy+engrad*1.3/Math.sqrt(2), engrad*0.85, engrad*0.85, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx+engrad*1.3/Math.sqrt(2), cy-engrad*1.3/Math.sqrt(2), engrad*0.85, engrad*0.85, 1, 0, 2*Math.PI)
+        context.stroke();
+        
+        let kf = 1/1.18;
+        
+        let ecy = [cy,
+                  cy-fuelW/3*kf*1.3/Math.sqrt(2),
+                  cy+fuelW/3*kf*1.3/Math.sqrt(2),
+                  cy+fuelW/3*kf*2.5,
+                  cy-fuelW/3*kf*2.5,
+                  cy-fuelW/3*kf*1.3/Math.sqrt(2),
+                  cy+fuelW/3*kf*1.3/Math.sqrt(2),
+                  cy];
+
+        let eLfrac = [nbk2L,
+                     nbk1L,
+                     nbk1L,
+                     nmidL,
+                     nmidL,
+                     nfd1L,
+                     nfd1L,
+                     nfd2L];
+
+        for (i = 0; i < engineNo; i++) {
+
+          context.beginPath()
+          context.moveTo(engineBx,ecy[i]+fuelW*nRdtW*0.85*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]+fuelW*nRdEW*0.85*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]-fuelW*nRdEW*0.85*engrad)
+          context.lineTo(engineBx,ecy[i]-fuelW*nRdtW*0.85*engrad)
+          context.strokeStyle = '#ffffff'
+          context.lineWidth = 2;
+          context.stroke();
+          context.fillStyle = '#00508a'
+          context.fill()
+
+        }
+        
+      }else if (engineNo == 9){
+        engrad = 16;
+        context.beginPath();
+        context.ellipse(ncx, cy, 60, 60, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#757575';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy+engrad*2.5, engrad*0.9, engrad*0.9, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy-engrad*2.5, engrad*0.9, engrad*0.9, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx+engrad*2.5, cy, engrad*0.9, engrad*0.9, 1, 0, 2*Math.PI)
+        context.strokeStyle = '#00508a';
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx-engrad*2.5, cy, engrad*0.9, engrad*0.9, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx-engrad*2.5/Math.sqrt(2), cy+engrad*2.5/Math.sqrt(2), engrad*0.9, engrad*0.9, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx-engrad*2.5/Math.sqrt(2), cy-engrad*2.5/Math.sqrt(2), engrad*0.9, engrad*0.9, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx+engrad*2.5/Math.sqrt(2), cy+engrad*2.5/Math.sqrt(2), engrad*0.9, engrad*0.9, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx+engrad*2.5/Math.sqrt(2), cy-engrad*2.5/Math.sqrt(2), engrad*0.9, engrad*0.9, 1, 0, 2*Math.PI)
+        context.stroke();
+        context.beginPath();
+        context.ellipse(ncx, cy, engrad*0.95, engrad*0.95, 1, 0, 2*Math.PI)
+        context.stroke();
+        
+        let kf = 1/1.28;
+        
+        let ecy = [cy,
+                  cy-fuelW/3*kf*2.5/Math.sqrt(2),
+                  cy+fuelW/3*kf*2.5/Math.sqrt(2),
+                  cy+fuelW/3*kf*2.5,
+                  cy,
+                  cy-fuelW/3*kf*2.5,
+                  cy-fuelW/3*kf*2.5/Math.sqrt(2),
+                  cy+fuelW/3*kf*2.5/Math.sqrt(2),
+                  cy];
+
+        let eLfrac = [nbk2L,
+                     nbk1L,
+                     nbk1L,
+                     nmidL,
+                     nmidL,
+                     nmidL,
+                     nfd1L,
+                     nfd1L,
+                     nfd2L];
+
+        for (i = 0; i < engineNo; i++) {
+
+          context.beginPath()
+          context.moveTo(engineBx,ecy[i]+fuelW*nRdtW*0.9*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]+fuelW*nRdEW*0.9*engrad)
+          context.lineTo(engineBx-fuelW*eLfrac[i],ecy[i]-fuelW*nRdEW*0.9*engrad)
+          context.lineTo(engineBx,ecy[i]-fuelW*nRdtW*0.9*engrad)
+          context.strokeStyle = '#ffffff'
+          context.lineWidth = 2;
+          context.stroke();
+          context.fillStyle = '#00508a'
+          context.fill()
+
+        }
+        
+    }
+    
+    
+     }
+ }
+ function drawDVmap(){//triggered when msg recieved
+                  //do other stuff
+                  
+                  var canvas = document.getElementById('DVMapCanvas');
+                  if (canvas.getContext)
+                   {
+                    var context = canvas.getContext('2d');
+                     
+                    var xsize = 450;
+                    var ysize = 500;
+                    canvas.style.width = xsize + "px";
+                    canvas.style.height = ysize + "px";
+
+                    // Set actual size in memory (scaled to account for extra pixel density).
+                    var scale = 4;//window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+                    canvas.width = Math.floor(xsize * scale);
+                    canvas.height = Math.floor(ysize * scale);
+                      
+
+                    // Normalize coordinate system to use css pixels.
+                    context.scale(scale, scale);
+                     
+                     
+                    // Reset the current path
+                    let cx = (canvas.width/scale)/2;
+                    let cy = (canvas.height/scale)/2;
+                    
+                    context.lineWidth = 1;
+                    context.clearRect(0, 0, canvas.width/scale, canvas.height/scale);
+                    context.beginPath();
+                    context.lineJoin = "round";
+                    context.moveTo(0,0);
+                    context.lineTo(canvas.width/scale,0);
+                    context.strokeStyle = '#00508a';
+                    context.stroke();
+                    ////
+                    context.beginPath();
+                    context.lineJoin = "round";
+                    context.moveTo(0,0);
+                    context.lineTo(0,canvas.height/scale);
+                    context.stroke();
+                    ////
+                    context.beginPath();
+                    context.lineJoin = "round";
+                    context.moveTo(canvas.width/scale,canvas.height/scale);
+                    context.lineTo(canvas.width/scale,0);
+                    context.stroke();
+                    ////
+                    context.beginPath();
+                    context.lineJoin = "round";
+                    context.moveTo(canvas.width/scale,canvas.height/scale);
+                    context.lineTo(0,canvas.height/scale);
+                    context.stroke();
+                    ////
+                    //
+                    let select = globals['select'];
+                    let dv = globals['dv'];
+                    let twr = globals['twr'];
+                    let XXX = NaN;
+                    
+                    function multvector(a,b){
+                        return a.map((e,i) => e * b[i]);
+                    }
+                    function divvector(a,b){
+                        return a.map((e,i) => e / b[i]);
+                    }
+                     
+                     
+                    // flags for enabling aero-braking?
+                    let aeroETH = globals['aeroETH'];
+                    let aeroMAR = globals['aeroMAR'];
+                    
+                    /*
+                    var
+                    if (aeroETH==1){}
+                    */
+                     
+                    let pdv = [
+                     //ETH,LEO,GTO,GEO,L45,EC3,LUO,LUN,MTR,MC3,DTR,DEI,PTR,PHO,LMO,MAR
+                      [XXX,9.8,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //ETH
+                      [9.8,XXX,2.5,3.8,4.1,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LEO
+                      [NaN,2.5,XXX,1.6,NaN,0.7,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //GTO
+                      [NaN,3.8,1.6,XXX,1.7,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //GEO
+                      [NaN,4.1,NaN,1.7,XXX,NaN,0.7,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //L45
+                      [NaN,NaN,0.7,NaN,NaN,XXX,0.7,NaN,0.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //EC3
+                      [NaN,NaN,1.6,NaN,0.7,0.7,XXX,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LUO
+                      [NaN,NaN,NaN,NaN,NaN,NaN,1.6,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LUN
+                      [NaN,NaN,NaN,NaN,NaN,0.6,NaN,NaN,XXX,0.9,NaN,NaN,NaN,NaN,NaN,NaN], //MTR
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,XXX,0.2,NaN,NaN,NaN,NaN,NaN], //MC3
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.2,XXX,0.7,0.3,NaN,NaN,NaN], //DTR
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.7,XXX,NaN,NaN,NaN,NaN], //DEI
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.3,NaN,XXX,0.5,0.9,NaN], //PTR
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.5,XXX,NaN,NaN], //PHO
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,NaN,XXX,4.1], //LMO
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,4.1,XXX], //MAR
+                      ];
+                    
+                    let p = [
+                      [63,32], //ETH
+                      [220,32], //LEO
+                      [300,55], //GTO
+                      [230,120], //GEO
+                      [160,140], //L45
+                      [300,140], //EC3
+                      [230,180], //LUO
+                      [150,250], //LUN
+                      [350,220], //MTR
+                      [350,280], //MC3
+                      [320,320], //DTR
+                      [260,320],
+                      [320,370],
+                      [260,370],
+                      [240,450],
+                      [100,450]
+                      ];
+                     
+                    /* // OBSOLUTE PSHORT CODE
+                    let pshort = [
+                            [1,NaN,NaN,NaN], //ETH 0
+                            [2,3,4,0], //LEO 1
+                            [5,3,6,1], //GTO 2
+                            [2,4,1,NaN], //GEO 3
+                            [6,3,1,NaN], //L45 4
+                            [8,2,6,NaN], //EC3 5
+                            [5,4,2,7], //LUO 6
+                            [6,NaN,NaN,NaN], //LUN 7
+                            [5,9,NaN,NaN], //MTR 8
+                            [10,8,NaN,NaN], //MC3 9
+                            [9,12,11,NaN], //DTR 10
+                            [10,NaN,NaN,NaN], //DEI 11
+                            [10,13,14,NaN], //PTR 12
+                            [12,NaN,NaN,NaN], //PHO 13
+                            [12,15,NaN,NaN], //LMO 14
+                            [14,NaN,NaN,NaN], //MAR 15
+                            ];
+                    */
+                   
+                   // pshort: sort rows to ensure shortest distances are traveled along first.
+                   var pdvrow
+                   var indices
+                   var pshort = new Array(p.length)
+                   for (i = 0; i < p.length; i++) {
+                    pdvrow = pdv[i].slice();
+                    indices = new Array(p.length);
+                    for (var j = 0; j < p.length; ++j) indices[j] = j;
+                    indices.sort(function(a,b){
+                        if( !isFinite(pdvrow[a]) && !isFinite(pdvrow[b]) ) {
+                            return 0;
+                        }
+                        if( !isFinite(pdvrow[a]) ) {
+                            return 1;
+                        }
+                        if( !isFinite(pdvrow[b]) ) {
+                            return -1;
+                        }
+                        return pdvrow[a] < pdvrow[b] ? -1 : pdvrow[a] > pdvrow[b] ? 1 : 0;
+                    });
+                    pshort[i] = multvector(indices,divvector(pdvrow.sort(),pdvrow.sort()));
+                   }
+                   //console.log(pshort)
+                     
+                     
+                    
+                     
+                     
+                    let pRad = 10.5;
+                     
+                     
+                    // points
+                    for (i = 0; i < p.length; i++) {
+                        //plot(p(i,1),p(i,2),'x')
+                        context.beginPath();
+                        context.ellipse(p[i][0],p[i][1], pRad, pRad, 1, 0, 2*Math.PI)
+                        context.strokeStyle = '#c0c0c0';
+                        context.lineWidth = 3;
+                        context.stroke();
+                    }
+                    
+                    // lines
+                    for (i = 0; i < pdv.length; i++) {
+                        for (j = 0; j < pdv[0].length; j++) {
+                            if (!isNaN(pdv[i][j])) {
+                              context.beginPath()
+                              context.moveTo(p[i][0],p[i][1])
+                              context.lineTo(p[j][0],p[j][1])
+                              context.strokeStyle = '#c0c0c0'
+                              context.lineWidth = 2;
+                              context.stroke();
+                            }
+                        }
+                    }
+                     
+
+                     
+                     var N
+                     let selectM = [select];
+                     let dvR = [dv];
+                     let RM = [];
+                     let iS = [NaN];
+                     let spdv = [];
+                     let xpdv = [];
+                     let xspdv = [];
+                     let cspdv = [];
+                     let sp = [];
+                     let RMg = [];
+                     let dvi = [];
+                     let selectx = [];
+                     let pvisits = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+                     let completecol = '#00508a';
+                     
+                     if (twr <= 1){
+                        context.font = "15px Baskerville";
+                        context.fillStyle = "red";
+                        context.textAlign = "right";
+                        context.fillText("Thrust to Weight Ratio",(canvas.width/scale)-5, 85);
+                        context.fillText("insufficient for lift-off!",(canvas.width/scale)-5, 102);
+                       
+                       context.beginPath();
+                       context.ellipse(p[select][0],p[select][1], pRad, pRad, 1, 0, 2*Math.PI)
+                       context.strokeStyle = '#c50000';
+                       context.lineWidth = 7;
+                       context.stroke();
+                     }else {
+                       
+                     while (dvR.length < pdv.length*pdv[0].length*2 && iS.length !=0){
+                       spdv = [];
+                       cspdv = [];
+                       xpdv = [];
+                       xspdv = [];
+                       iS = [];
+                       selectx = [];
+                       N = 0;
+                       
+                       for (k = 0; k < selectM.length; k++){
+                         selectx = selectM[k];
+                         dvi = dvR[k];
+                         
+                         for (f = 0; f < pdv[selectx].length; f++){
+                           spdv[f] = pdv[selectx][f]-dvi;
+                         }
+                         
+                         xspdv = pshort[selectx];
+
+                           for (i = 0; i < xspdv.length; i++){
+                             N = xspdv[i];
+                             if (spdv[N] <= 0){
+                                 
+                                 if (isNaN(pdv[N][selectx])){
+                                        completecol = '#6350f1';
+                                 }else{
+                                        completecol = '#00508a';
+                                 }
+                                 
+                               RMg = 0;
+                               for (g = 0; g < RM.length; g++){
+                                 if (RM[g] == selectx){
+                                   RMg = RMg+1;
+                                 }
+                               }
+                               if (RMg == 0){
+                                 context.beginPath()
+                                 context.moveTo(p[selectx][0],p[selectx][1])
+                                 context.lineTo(p[N][0],p[N][1])
+                                 context.strokeStyle = completecol;
+                                 context.setLineDash([0])
+                                 context.lineWidth = 2;
+                                 context.stroke();
+
+                                 context.beginPath();
+                                 context.ellipse(p[N][0],p[N][1], pRad, pRad, 1, 0, 2*Math.PI)
+                                 context.strokeStyle = completecol;
+                                 context.lineWidth = 5;
+                                 context.stroke();
+                               
+                                 pvisits[N] = pvisits[N]+1;
+                                 pdv[selectx][N] = NaN;
+                                 pshort[selectx][i] = NaN;
+
+                                 iS.push(N)
+                                 dvR.push(Math.abs(spdv[N]))
+                               }
+                               
+                             }else if (!isNaN(spdv[N]) && pvisits[N] < 1){
+                               //
+                               pdiv = 1-(spdv[N]/pdv[selectx][N]);
+                               //
+                               RMg = 0;
+                               for (g = 0; g < RM.length; g++){
+                                 if (RM[g] == selectx){
+                                   RMg = RMg+1;
+                                 }
+                               }
+                               if (RMg == 0){
+                                 let brdmgn = 2.5; //account for thickness
+                                 let nodeA = [p[selectx][0],p[selectx][1]];
+                                 let nodeB = [p[N][0],p[N][1]];
+                                 let nodeSep = [nodeB[0]-nodeA[0],nodeB[1]-nodeA[1]];
+                                 
+                                 let node_angle = Math.atan2(nodeSep[1],nodeSep[0]);
+                                 nodeA = [nodeA[0]+(pRad+brdmgn)*Math.cos(node_angle),nodeA[1]+(pRad+brdmgn)*Math.sin(node_angle)]
+                                 nodeB = [nodeB[0]+(pRad+brdmgn)*Math.cos(Math.PI+node_angle),nodeB[1]+(pRad+brdmgn)*Math.sin(Math.PI+node_angle)]
+                                 
+                                 nodeSep = [nodeB[0]-nodeA[0],nodeB[1]-nodeA[1]];
+                                 
+                                 context.beginPath()
+                                 context.moveTo(nodeA[0],nodeA[1])
+                                 context.lineTo(nodeA[0]+nodeSep[0]*pdiv,nodeA[1]+nodeSep[1]*pdiv)
+                                 
+                                 context.strokeStyle = '#00c0fa'
+                                 //context.setLineDash([3, 3])
+                                 context.lineWidth = 2;
+                                 context.stroke();
+                               }
+
+                             }
+                         }
+                       }
+                        RM.push(selectx);
+                        if (dvR.length < 2){
+                            dvR.push(0);
+                        }
+                        if (iS.length > 0){
+                          for (g = 0; g < iS.length; g++){
+                            selectM.push(iS[g]);
+                          }
+                        }
+                     } //end of while loop
+                       
+                       // highlight start point ring
+                       context.beginPath();
+                       context.ellipse(p[select][0],p[select][1], pRad, pRad, 1, 0, 2*Math.PI)
+                       context.strokeStyle = '#00908a';
+                       context.lineWidth = 5;
+                       context.stroke();
+                     }
+                     
+                       for (i = 0; i < p.length; i++){
+                       context.beginPath();
+                       context.ellipse(p[i][0],p[i][1], pRad, pRad, 1, 0, 2*Math.PI)
+                       context.fillStyle = '#ffffff';
+                       context.fill();
+                       }
+                     
+                       context.beginPath();
+                       context.ellipse(p[select][0],p[select][1], pRad/2.5, pRad/2.5, 1, 0, 2*Math.PI)
+                       context.fillStyle = '#00508a';
+                       context.fill();
+                     //console.log(pvisits)
+                     context.restore;
+                     }
+                 }
+      
+    </script>
+</body>
+
+</html>
