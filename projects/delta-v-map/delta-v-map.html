@@ -124,7 +124,7 @@
     .checkmark {
       /* remove the 'background-color: #ff0000;' line below to make them invisible */
       appearance: none;/**/
-      background-color: #ff0000;/**/
+      /*background-color: #ff0000;/**/
       /* */
       position: absolute;
       height: 21px;
@@ -364,57 +364,7 @@ pointer-events: none;
     <canvas id="VehicleCanvas"></canvas>
     <canvas id="DVMapCanvas"></canvas>
   <div>
-    <form>
-  <input type="radio" id="EarthButton" name = "mapstarter" class="checkmark" value="0" checked="checked" style="position:absolute;top:840.5px;left:287.5px" onchange="DVcheckchange(this.value);">
-  <label id="EarthButtonLabel" for="EarthButton" class="container" style="position:absolute;top:845px;left:253px">Earth</label>
-      
-  <input type="radio" id="LEOButton" name = "mapstarter" class="checkmark" value="1" style="position:absolute;top:840.5px;left:444.5px" onchange="DVcheckchange(this.value);">
-  <label id="LEOButtonLabel" for="LEOButton" class="container" style="position:absolute;top:830px;left:470px">LEO</label>
-      
-  <input type="radio" id="GTOButton" name = "mapstarter" class="checkmark" value="2" style="position:absolute;top:863.5px;left:524.5px" onchange="DVcheckchange(this.value);">
-  <label id="GTOButtonLabel"for="GTOButton" class="container" style="position:absolute;top:867.5px;left:555px">GTO</label>
-      
-  <input type="radio" id="GEOButton" name = "mapstarter" class="checkmark" value="3" style="position:absolute;top:928.5px;left:454.5px" onchange="DVcheckchange(this.value);">
-  <label id="GEOButtonLabel" for="GEOButton" class="container" style="position:absolute;top:953.5px;left:454px">GEO</label>
-      
-  <input type="radio" id="L4L5Button" name = "mapstarter" class="checkmark" value="4" style="position:absolute;top:948.5px;left:384.5px" onchange="DVcheckchange(this.value);">
-  <label id="L4L5ButtonLabel" for="L4L5Button" class="container" style="position:absolute;top:953.5px;left:355px">L4/5</label>
-      
-  <input type="radio" id="EC3Button" name = "mapstarter" class="checkmark" value="5" style="position:absolute;top:948.5px;left:524.5px" onchange="DVcheckchange(this.value);">
-  <label id="EC3ButtonLabel" for="EC3Button" class="container" style="position:absolute;top:953.5px;left:555px">Earth C3</label>
-      
-  <input type="radio" id="LUOButton" name = "mapstarter" class="checkmark" value="6" style="position:absolute;top:988.5px;left:454.5px" onchange="DVcheckchange(this.value);">
-  <label id="LUOButtonLabel" for="LUOButton" class="container" style="position:absolute;top:1013.5px;left:464px">Lunar Orbit</label>
-      
-  <input type="radio" id="MoonButton" name = "mapstarter" class="checkmark" value="7" style="position:absolute;top:1058.5px;left:374.5px" onchange="DVcheckchange(this.value);">
-  <label id="MoonButtonLabel" for="MoonButton" class="container" style="position:absolute;top:1063.5px;left:313px">The Moon</label>
-      
-  <input type="radio" id="MTRButton" name = "mapstarter" class="checkmark" value="8" style="position:absolute;top:1028.5px;left:574.5px" onchange="DVcheckchange(this.value);">
-  <label for="MTRButton" class="container" style="position:absolute;top:1033.5px;left:605px">Mars Transfer</label>
-      
-  <input type="radio" id="MC3Button" name = "mapstarter" class="checkmark" value="9" style="position:absolute;top:1088.5px;left:574.5px" onchange="DVcheckchange(this.value);">
-  <label for="MC3Button" class="container" style="position:absolute;top:1093.5px;left:605px">Mars C3</label>
-      
-  <input type="radio" id="DTRButton" name = "mapstarter" class="checkmark" value="10" style="position:absolute;top:1128.5px;left:544.5px" onchange="DVcheckchange(this.value);">
-  <label for="DTRButton" class="container" style="position:absolute;top:1128.5px;left:575px">Deimos</label>
-  <label for="DTRButton" class="container" style="position:absolute;top:1139.5px;left:575px">Transfer</label>
-      
-  <input type="radio" id="DEIButton" name = "mapstarter" class="checkmark" value="11" style="position:absolute;top:1128.5px;left:484.5px" onchange="DVcheckchange(this.value);">
-  <label for="DEIButton" class="container" style="position:absolute;top:1133.5px;left:440px">Deimos</label>
-      
-  <input type="radio" id="PTRButton" name = "mapstarter" class="checkmark" value="12" style="position:absolute;top:1178.5px;left:544.5px" onchange="DVcheckchange(this.value);">
-  <label for="PTRButton" class="container" style="position:absolute;top:1178.5px;left:575px">Phobos</label>
-  <label for="PTRButton" class="container" style="position:absolute;top:1189.5px;left:575px">Transfer</label>
-      
-  <input type="radio" id="PHOButton" name = "mapstarter" class="checkmark" value="13" style="position:absolute;top:1178.5px;left:484.5px" onchange="DVcheckchange(this.value);">
-  <label for="PHOButton" class="container" style="position:absolute;top:1183.5px;left:443px">Phobos</label>
-      
-  <input type="radio" id="LMOButton" name = "mapstarter" class="checkmark" value="14" style="position:absolute;top:1258.5px;left:464.5px" onchange="DVcheckchange(this.value);">
-  <label for="LMOButton" class="container" style="position:absolute;top:1263.5px;left:495px">Low Mars Orbit</label>
-      
-  <input type="radio" id="MARButton" name = "mapstarter" class="checkmark" value="15" style="position:absolute;top:1258.5px;left:324.5px" onchange="DVcheckchange(this.value);">
-  <label for="MARButton" class="container" style="position:absolute;top:1263.5px;left:293px">Mars</label>
-      
+    <form id="DVmapButtons">
     </form>
   </div>
       
@@ -486,6 +436,148 @@ It also assumes that at each subsequent waypoint after the original launch point
       globals['select'] = 0;
       globals['dv'] = 15.3;
       globals['twr'] = 1.4;
+      
+      function getPDV() {
+                    let XXX = NaN;
+                    let pdv = [
+                     //ETH,LEO,GTO,GEO,L45,EC3,LUO,LUN,MTR,MC3,DTR,DEI,PTR,PHO,LMO,MAR
+                      [XXX,9.3,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //ETH
+                      [1.0,XXX,2.5,3.8,4.1,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LEO
+                      [NaN,2.5,XXX,1.6,NaN,0.7,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //GTO
+                      [NaN,3.8,1.6,XXX,1.7,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //GEO
+                      [NaN,4.1,NaN,1.7,XXX,NaN,0.7,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //L45
+                      [NaN,NaN,0.7,NaN,NaN,XXX,0.7,NaN,0.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //EC3
+                      [NaN,NaN,1.6,NaN,0.7,0.7,XXX,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LUO
+                      [NaN,NaN,NaN,NaN,NaN,NaN,1.6,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LUN
+                      [NaN,NaN,NaN,NaN,NaN,0.6,NaN,NaN,XXX,0.9,NaN,NaN,NaN,NaN,NaN,NaN], //MTR
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,XXX,0.2,NaN,NaN,NaN,NaN,NaN], //MC3
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.2,XXX,0.7,0.3,NaN,NaN,NaN], //DTR
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.7,XXX,NaN,NaN,NaN,NaN], //DEI
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.3,NaN,XXX,0.5,0.9,NaN], //PTR
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.5,XXX,NaN,NaN], //PHO
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,NaN,XXX,4.1], //LMO
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,4.1,XXX], //MAR
+                      ];
+                    
+                    // node positions
+                    let p = [
+                      [63,32, 'Earth','W','Earth','Our Planet!'], //ETH
+                      [220,32,'LEO', 'N','LEO','Low Earth Orbit'], //LEO
+                      [300,55,'GTO', 'E','GTO','Geostationary Transfer Orbit'], //GTO
+                      [230,120,'GEO','S','GEO','Geostationary Orbit'], //GEO
+                      [160,140,'L4L5','W','L4/L5','Stable Lagrange Points'], //L45
+                      [300,140,'EC3','E','Earth C3','Earth Capture/Escape'], //EC3
+                      [230,180,'LUO','S','LUO','Lunar Orbit'], //LUO
+                      [150,250,'Moon','W','Moon','The Moon'], //LUN
+                      [350,220,'MTR','E','Mars Tr.','Mars Transfer'], //MTR
+                      [350,280,'MC3','E','Mars C3','Mars Capture/Escape'], //MC3
+                      [320,320,'DTR','S','Deimos Tr.','Deimos Transfer'], //DTR
+                      [260,320,'DEI','S','Deimos','Deimos (moon of Mars)'],
+                      [320,370,'PTR','S','Phobos Tr.','Phobos Transfer'],
+                      [260,370,'PHO','S','Phobos','Phobos (moon of Mars)'],
+                      [240,450,'LMO','S','LMO','Low Mars Orbit'],
+                      [100,450,'Mars','S','Mars','The Red Planet']
+                      ];
+        
+      return {
+      XXX: XXX,
+      pdv: pdv,
+      p: p,
+      };
+      };
+      
+      const {XXX,pdv,p} = getPDV();
+      
+
+                      const canvasTop = Number(DVMapCanvas.style.top.replace('px',''));
+                      const canvasLeft = Number(DVMapCanvas.style.left.replace('px',''));
+                     
+                      p.forEach((q, i) => {
+                        const container = document.getElementById("DVmapButtons");
+                        
+                        const btn = document.createElement("input");
+                        btn.type = "radio";
+                        btn.id = p[i][2] + '_button';
+                        btn.name = "DVnodeButton";
+                        btn.style.position="absolute";
+                        btn.className = "checkmark";
+                        btn.value = i;
+                        if (i==0){
+                        btn.checked="checked";
+                        }else{
+                        }
+                        //btn.onchange="DVcheckchange(this.value)";
+                        btn.addEventListener("change", function () {
+                        DVcheckchange(this.value);
+                        });
+                        container.appendChild(btn);
+                        const lbl = document.createElement("label");
+                        lbl.id = p[i][2] + '_buttonLabel'
+                        lbl.labelFor = btn.id;
+                        lbl.className = "container";
+                        lbl.textContent = p[i][4];
+                        lbl.style.position="absolute";
+                        //lbl.title = "Earth orbit option";
+                        container.appendChild(lbl);
+                        const LABEL_WIDTH = 30; // px – controls wrapping consistency
+                        const LABEL_GAP = 0; // distance from button center
+                     let xshift = -15.5;
+                     let yshift = -13.5;
+                      var lbly = 0;
+                      var lblx = 0;
+                      var align = "left";
+                      switch (p[i][3]) {
+                        case 'N':
+                          lblx = 0;
+                          lbly = +12.5;
+                          align = 'center';
+                          break;
+                        case 'S':
+                          lblx = 0;
+                          lbly = -25;
+                          align = 'center';
+                          break;
+                        case 'W':
+                          lblx = -LABEL_GAP - LABEL_WIDTH;
+                          lbly = -5;
+                          align = "right";
+                          break;
+                        case 'E':
+                          lblx = LABEL_GAP+LABEL_WIDTH;
+                          lbly = -5;
+                          align = "left";
+                          break;
+                      }
+                        
+                      //if (!btn || !lbl || !p[i]) return;
+
+                      btn.style.top = (p[i][1] + yshift + canvasTop) + 'px';
+                      btn.style.left = (p[i][0] + xshift + canvasLeft) + 'px';
+                      lbl.style.display = "inline-block";
+                      lbl.style.width = LABEL_WIDTH + "px";
+                      lbl.style.whiteSpace = "normal";
+                      lbl.style.textAlign = align;
+                      lbl.style.top = (p[i][1] + yshift - lbly + canvasTop) + 'px';
+                      lbl.style.left = (p[i][0] + xshift + lblx + canvasLeft) + 'px';
+                      
+                      lbl.innerHTML = p[i][4];
+                      
+                      const tooltip = document.getElementById("tooltip");
+
+                      lbl.addEventListener("mouseenter", e => {
+                      tooltip.textContent = p[i][5];
+                      tooltip.style.left = e.pageX + "px";
+                      tooltip.style.top = e.pageY + "px";
+                      tooltip.style.display = "block";
+                      });
+
+                      lbl.addEventListener("mouseleave", () => {
+                      tooltip.style.display = "none";
+                      });
+                      });
+      
+      
+      
       
       CalculateN();
       
@@ -1428,8 +1520,8 @@ function drawRVehicle(){//triggered when msg recieved
                    {
                     var context = canvas.getContext('2d');
                      
-                    var xsize = 450;
-                    var ysize = 500;
+                    var xsize = 800;
+                    var ysize = 800;
                     canvas.style.width = xsize + "px";
                     canvas.style.height = ysize + "px";
 
@@ -1475,10 +1567,12 @@ function drawRVehicle(){//triggered when msg recieved
                     context.stroke();
                     ////
                     //
+                     
+                    const {XXX,pdv,p} = getPDV();
                     let select = globals['select'];
                     let dv = globals['dv'];
                     let twr = globals['twr'];
-                    let XXX = NaN;
+                    //let XXX = NaN;
                     
                     function multvector(a,b){
                         return a.map((e,i) => e * b[i]);
@@ -1497,134 +1591,6 @@ function drawRVehicle(){//triggered when msg recieved
                     if (aeroETH==1){}
                     */
                      
-                    let pdv = [
-                     //ETH,LEO,GTO,GEO,L45,EC3,LUO,LUN,MTR,MC3,DTR,DEI,PTR,PHO,LMO,MAR
-                      [XXX,9.3,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //ETH
-                      [1.0,XXX,2.5,3.8,4.1,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LEO
-                      [NaN,2.5,XXX,1.6,NaN,0.7,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //GTO
-                      [NaN,3.8,1.6,XXX,1.7,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //GEO
-                      [NaN,4.1,NaN,1.7,XXX,NaN,0.7,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //L45
-                      [NaN,NaN,0.7,NaN,NaN,XXX,0.7,NaN,0.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //EC3
-                      [NaN,NaN,1.6,NaN,0.7,0.7,XXX,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LUO
-                      [NaN,NaN,NaN,NaN,NaN,NaN,1.6,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LUN
-                      [NaN,NaN,NaN,NaN,NaN,0.6,NaN,NaN,XXX,0.9,NaN,NaN,NaN,NaN,NaN,NaN], //MTR
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,XXX,0.2,NaN,NaN,NaN,NaN,NaN], //MC3
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.2,XXX,0.7,0.3,NaN,NaN,NaN], //DTR
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.7,XXX,NaN,NaN,NaN,NaN], //DEI
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.3,NaN,XXX,0.5,0.9,NaN], //PTR
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.5,XXX,NaN,NaN], //PHO
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,NaN,XXX,4.1], //LMO
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,4.1,XXX], //MAR
-                      ];
-                    
-                    // node positions
-                    let p = [
-                      [63,32, 'Earth','W','Our Planet!'], //ETH
-                      [220,32,'LEO', 'N','Low Earth Orbit'], //LEO
-                      [300,55,'GTO', 'E','Geostationary Transfer Orbit'], //GTO
-                      [230,120,'GEO','S','Geostationary Orbit'], //GEO
-                      [160,140,'L45','W','Stable Lagrange Points'], //L45
-                      [300,140,'EC3','E','Earth C3'], //EC3
-                      [230,180,'LUO','S','Lunar Orbit'], //LUO
-                      [150,250,'Moon','W','The Moon'], //LUN
-                      [350,220,'MTR','E','Mars Transfer'], //MTR
-                      [350,280,'MC3','S','Mars C3'], //MC3
-                      [320,320,'DTR','S','Deimos Transfer'], //DTR
-                      [260,320,'DEI','S','Deimos (moon of Mars)'],
-                      [320,370,'PTR','S','Phobos Transfer'],
-                      [260,370,'PHO','S','Phobos (moon of Mars)'],
-                      [240,450,'LMO','S','Low Mars Orbit'],
-                      [100,450,'Mars','S','The Red Planet']
-                      ];
-                     let xshift = -15.5;
-                     let yshift = -13.5;
-
-                      const canvasTop = Number(DVMapCanvas.style.top.replace('px',''));
-                      const canvasLeft = Number(DVMapCanvas.style.left.replace('px',''));
-                     
-                     
-                     const labels = ['Earth', 'LEO', 'GTO', 'GEO','L4/L5'];
-                     const lblDirs =['a',     'w',   'd',   's',  'a'];
-                     const lblTTs = ['Our planet!','Low Earth Orbit','Geostationary Transfer Orbit','Geostationary Orbit','Stable Lagrange Points'];
-
-
-                      p.forEach((q, i) => {
-                      const btn = document.getElementById(p[i][2].replace('/', '') + 'Button');
-                      const lbl = document.getElementById(p[i][2].replace('/', '') + 'ButtonLabel');
-                      var lbly = 0;
-                      var lblx = 0;
-                      var align = "left";
-                      switch (p[i][3]) {
-                        case 'N':
-                          lbly = 12.5;
-                          align = 'center';
-                          break;
-                        case 'S':
-                          lbly = -25;
-                          align = 'center';
-                          break;
-                        case 'W':
-                          lblx = -30;
-                          lbly = -5;
-                          align = "right";
-                          break;
-                        case 'E':
-                          lblx = +30;
-                          lbly = -5;
-                          align = "left";
-                          break;
-                      }
-                        
-                      if (!btn || !lbl || !p[i]) return;
-
-                      btn.style.top = (p[i][1] + yshift + canvasTop) + 'px';
-                      btn.style.left = (p[i][0] + xshift + canvasLeft) + 'px';
-                      lbl.style.display = "inline-block"; // or "block"
-                      lbl.style.width = "30px"; // required for visible alignment
-                      lbl.style.textAlign = align;
-                      lbl.style.top = (p[i][1] + yshift - lbly + canvasTop) + 'px';
-                      lbl.style.left = (p[i][0] + xshift + lblx + canvasLeft) + 'px';
-                        const tooltip = document.getElementById("tooltip");
-
-                      lbl.addEventListener("mouseenter", e => {
-                      tooltip.textContent = lblTTs[i];
-                      tooltip.style.left = e.pageX + "px";
-                      tooltip.style.top = e.pageY + "px";
-                      tooltip.style.display = "block";
-                      });
-
-                      lbl.addEventListener("mouseleave", () => {
-                      tooltip.style.display = "none";
-                      });
-                      });
-                      /*
-                      buttonMap.forEach((btn, i) => {
-                      if (!btn || !p[i]) return;
-                      btn.style.top = (p[i][1] + yshift + canvasTop) + 'px';
-                      btn.style.left = (p[i][0] + xshift + canvasLeft) + 'px';
-                      });
-                      */
-                     
-                    /* // OBSOLUTE PSHORT CODE
-                    let pshort = [
-                            [1,NaN,NaN,NaN], //ETH 0
-                            [2,3,4,0], //LEO 1
-                            [5,3,6,1], //GTO 2
-                            [2,4,1,NaN], //GEO 3
-                            [6,3,1,NaN], //L45 4
-                            [8,2,6,NaN], //EC3 5
-                            [5,4,2,7], //LUO 6
-                            [6,NaN,NaN,NaN], //LUN 7
-                            [5,9,NaN,NaN], //MTR 8
-                            [10,8,NaN,NaN], //MC3 9
-                            [9,12,11,NaN], //DTR 10
-                            [10,NaN,NaN,NaN], //DEI 11
-                            [10,13,14,NaN], //PTR 12
-                            [12,NaN,NaN,NaN], //PHO 13
-                            [12,15,NaN,NaN], //LMO 14
-                            [14,NaN,NaN,NaN], //MAR 15
-                            ];
-                    */
                    
                    // pshort: sort rows to ensure shortest distances are traveled along first.
                    var pdvrow
