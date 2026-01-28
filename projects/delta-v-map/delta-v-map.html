@@ -381,13 +381,13 @@ pointer-events: none;
   <label id="L4L5ButtonLabel" for="L4L5Button" class="container" style="position:absolute;top:953.5px;left:355px">L4/5</label>
       
   <input type="radio" id="EC3Button" name = "mapstarter" class="checkmark" value="5" style="position:absolute;top:948.5px;left:524.5px" onchange="DVcheckchange(this.value);">
-  <label for="EC3Button" class="container" style="position:absolute;top:953.5px;left:555px">Earth C3</label>
+  <label id="EC3ButtonLabel" for="EC3Button" class="container" style="position:absolute;top:953.5px;left:555px">Earth C3</label>
       
   <input type="radio" id="LUOButton" name = "mapstarter" class="checkmark" value="6" style="position:absolute;top:988.5px;left:454.5px" onchange="DVcheckchange(this.value);">
-  <label for="LUOButton" class="container" style="position:absolute;top:1013.5px;left:464px">Lunar Orbit</label>
+  <label id="LUOButtonLabel" for="LUOButton" class="container" style="position:absolute;top:1013.5px;left:464px">Lunar Orbit</label>
       
-  <input type="radio" id="LUNButton" name = "mapstarter" class="checkmark" value="7" style="position:absolute;top:1058.5px;left:374.5px" onchange="DVcheckchange(this.value);">
-  <label for="LUNButton" class="container" style="position:absolute;top:1063.5px;left:313px">The Moon</label>
+  <input type="radio" id="MoonButton" name = "mapstarter" class="checkmark" value="7" style="position:absolute;top:1058.5px;left:374.5px" onchange="DVcheckchange(this.value);">
+  <label id="MoonButtonLabel" for="MoonButton" class="container" style="position:absolute;top:1063.5px;left:313px">The Moon</label>
       
   <input type="radio" id="MTRButton" name = "mapstarter" class="checkmark" value="8" style="position:absolute;top:1028.5px;left:574.5px" onchange="DVcheckchange(this.value);">
   <label for="MTRButton" class="container" style="position:absolute;top:1033.5px;left:605px">Mars Transfer</label>
@@ -1499,8 +1499,8 @@ function drawRVehicle(){//triggered when msg recieved
                      
                     let pdv = [
                      //ETH,LEO,GTO,GEO,L45,EC3,LUO,LUN,MTR,MC3,DTR,DEI,PTR,PHO,LMO,MAR
-                      [XXX,9.8,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //ETH
-                      [9.8,XXX,2.5,3.8,4.1,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LEO
+                      [XXX,9.3,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //ETH
+                      [1.0,XXX,2.5,3.8,4.1,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LEO
                       [NaN,2.5,XXX,1.6,NaN,0.7,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //GTO
                       [NaN,3.8,1.6,XXX,1.7,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //GEO
                       [NaN,4.1,NaN,1.7,XXX,NaN,0.7,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //L45
@@ -1519,22 +1519,22 @@ function drawRVehicle(){//triggered when msg recieved
                     
                     // node positions
                     let p = [
-                      [63,32], //ETH
-                      [220,32], //LEO
-                      [300,55], //GTO
-                      [230,120], //GEO
-                      [160,140], //L45
-                      [300,140], //EC3
-                      [230,180], //LUO
-                      [150,250], //LUN
-                      [350,220], //MTR
-                      [350,280], //MC3
-                      [320,320], //DTR
-                      [260,320],
-                      [320,370],
-                      [260,370],
-                      [240,450],
-                      [100,450]
+                      [63,32, 'Earth','W','Our Planet!'], //ETH
+                      [220,32,'LEO', 'N','Low Earth Orbit'], //LEO
+                      [300,55,'GTO', 'E','Geostationary Transfer Orbit'], //GTO
+                      [230,120,'GEO','S','Geostationary Orbit'], //GEO
+                      [160,140,'L45','W','Stable Lagrange Points'], //L45
+                      [300,140,'EC3','E','Earth C3'], //EC3
+                      [230,180,'LUO','S','Lunar Orbit'], //LUO
+                      [150,250,'Moon','W','The Moon'], //LUN
+                      [350,220,'MTR','E','Mars Transfer'], //MTR
+                      [350,280,'MC3','S','Mars C3'], //MC3
+                      [320,320,'DTR','S','Deimos Transfer'], //DTR
+                      [260,320,'DEI','S','Deimos (moon of Mars)'],
+                      [320,370,'PTR','S','Phobos Transfer'],
+                      [260,370,'PHO','S','Phobos (moon of Mars)'],
+                      [240,450,'LMO','S','Low Mars Orbit'],
+                      [100,450,'Mars','S','The Red Planet']
                       ];
                      let xshift = -15.5;
                      let yshift = -13.5;
@@ -1548,27 +1548,27 @@ function drawRVehicle(){//triggered when msg recieved
                      const lblTTs = ['Our planet!','Low Earth Orbit','Geostationary Transfer Orbit','Geostationary Orbit','Stable Lagrange Points'];
 
 
-                      labels.forEach((label, i) => {
-                      const btn = document.getElementById(label.replace('/', '') + 'Button');
-                      const lbl = document.getElementById(label.replace('/', '') + 'ButtonLabel');
+                      p.forEach((q, i) => {
+                      const btn = document.getElementById(p[i][2].replace('/', '') + 'Button');
+                      const lbl = document.getElementById(p[i][2].replace('/', '') + 'ButtonLabel');
                       var lbly = 0;
                       var lblx = 0;
                       var align = "left";
-                      switch (lblDirs[i]) {
-                        case 'w':
+                      switch (p[i][3]) {
+                        case 'N':
                           lbly = 12.5;
                           align = 'center';
                           break;
-                        case 's':
+                        case 'S':
                           lbly = -25;
                           align = 'center';
                           break;
-                        case 'a':
+                        case 'W':
                           lblx = -30;
                           lbly = -5;
                           align = "right";
                           break;
-                        case 'd':
+                        case 'E':
                           lblx = +30;
                           lbly = -5;
                           align = "left";
