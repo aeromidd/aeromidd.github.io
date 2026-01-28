@@ -393,6 +393,9 @@ It also assumes that at each subsequent waypoint after the original launch point
       <option value="autophage">Autophage hybrid prototype (N2H4O3 + C2H4)</option>
     </select>
   </div>
+      <script src="https://d3js.org/d3.v7.min.js"></script>
+      <script>
+</script>
     <script type="text/javascript">
       var ISPslider = document.getElementById("ISPslider");
       ISPslider.style.top = "85px";
@@ -445,9 +448,9 @@ It also assumes that at each subsequent waypoint after the original launch point
                       [1.0,XXX,2.5,3.8,4.1,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LEO
                       [NaN,2.5,XXX,1.6,NaN,0.7,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //GTO
                       [NaN,3.8,1.6,XXX,1.7,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //GEO
-                      [NaN,4.1,NaN,1.7,XXX,NaN,0.7,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //L45
+                      [NaN,4.1,NaN,1.7,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //L45
                       [NaN,NaN,0.7,NaN,NaN,XXX,0.7,NaN,0.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //EC3
-                      [NaN,NaN,1.6,NaN,0.7,0.7,XXX,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LUO
+                      [NaN,NaN,1.6,NaN,NaN,0.7,XXX,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LUO
                       [NaN,NaN,NaN,NaN,NaN,NaN,1.6,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LUN
                       [NaN,NaN,NaN,NaN,NaN,0.6,NaN,NaN,XXX,0.9,NaN,NaN,NaN,NaN,NaN,NaN], //MTR
                       [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,XXX,0.2,NaN,NaN,NaN,NaN,NaN], //MC3
@@ -455,28 +458,28 @@ It also assumes that at each subsequent waypoint after the original launch point
                       [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.7,XXX,NaN,NaN,NaN,NaN], //DEI
                       [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.3,NaN,XXX,0.5,0.9,NaN], //PTR
                       [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.5,XXX,NaN,NaN], //PHO
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,NaN,XXX,4.1], //LMO
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,NaN,XXX,1.0], //LMO
                       [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,4.1,XXX], //MAR
                       ];
                     
                     // node positions
                     let p = [
-                      [63,32, 'Earth','W','Earth','Our Planet!'], //ETH
-                      [220,32,'LEO', 'N','LEO','Low Earth Orbit'], //LEO
-                      [300,55,'GTO', 'E','GTO','Geostationary Transfer Orbit'], //GTO
-                      [230,120,'GEO','S','GEO','Geostationary Orbit'], //GEO
-                      [160,140,'L4L5','W','L4/L5','Stable Lagrange Points'], //L45
-                      [300,140,'EC3','E','Earth C3','Earth Capture/Escape'], //EC3
-                      [230,180,'LUO','S','LUO','Lunar Orbit'], //LUO
-                      [150,250,'Moon','W','Moon','The Moon'], //LUN
-                      [350,220,'MTR','E','Mars Tr.','Mars Transfer'], //MTR
-                      [350,280,'MC3','E','Mars C3','Mars Capture/Escape'], //MC3
-                      [320,320,'DTR','S','Deimos Tr.','Deimos Transfer'], //DTR
-                      [260,320,'DEI','S','Deimos','Deimos (moon of Mars)'],
-                      [320,370,'PTR','S','Phobos Tr.','Phobos Transfer'],
-                      [260,370,'PHO','S','Phobos','Phobos (moon of Mars)'],
-                      [240,450,'LMO','S','LMO','Low Mars Orbit'],
-                      [100,450,'Mars','S','Mars','The Red Planet']
+                      [0,0, 'Earth','W','Earth','Our Planet!'], //ETH
+                      [0,0,'LEO', 'N','LEO','Low Earth Orbit'], //LEO
+                      [0,0,'GTO', 'E','GTO','Geostationary Transfer Orbit'], //GTO
+                      [0,0,'GEO','S','GEO','Geostationary Orbit'], //GEO
+                      [0,0,'L4L5','W','L4/L5','Stable Lagrange Points'], //L45
+                      [0,0,'EC3','E','Earth C3','Earth Capture/Escape'], //EC3
+                      [0,0,'LUO','S','LUO','Lunar Orbit'], //LUO
+                      [0,0,'Moon','W','Moon','The Moon'], //LUN
+                      [0,0,'MTR','E','Mars Tr.','Mars Transfer'], //MTR
+                      [0,0,'MC3','E','Mars C3','Mars Capture/Escape'], //MC3
+                      [0,0,'DTR','S','Deimos Tr.','Deimos Transfer'], //DTR
+                      [0,0,'DEI','S','Deimos','Deimos (moon of Mars)'],
+                      [0,0,'PTR','S','Phobos Tr.','Phobos Transfer'],
+                      [0,0,'PHO','S','Phobos','Phobos (moon of Mars)'],
+                      [0,0,'LMO','S','LMO','Low Mars Orbit'],
+                      [0,0,'Mars','S','Mars','The Red Planet']
                       ];
         
       return {
@@ -487,6 +490,118 @@ It also assumes that at each subsequent waypoint after the original launch point
       };
       
       const {XXX,pdv,p} = getPDV();
+      
+      function computeNodeLayout(pdv, p) {
+          const MIN_D = 80;
+          const MAX_D = 300;
+          const SCALE = 0.1; // pixels per km/s (tune this)
+          const ITERATIONS = 100;
+
+          
+          // Nodes
+        /*
+          const nodes = p.map((_, i) => ({
+          id: i,
+          x: Math.random() * 1,
+          y: Math.random() * 1
+          }));
+          */
+        function forceBoundingBox(width, height, padding = 20) {
+          return function () {
+          nodes.forEach(n => {
+          // Only adjust free nodes (ignore pinned nodes)
+          if (n.fx == null) {
+          n.x = Math.max(padding, Math.min(width - padding, n.x));
+          }
+          if (n.fy == null) {
+          n.y = Math.max(padding, Math.min(height - padding, n.y));
+          }
+          });
+          };
+          }
+        const nodes = p.map((node, i) => {
+          
+          
+          
+          const n = { id: i };
+
+
+          // Pin Earth
+          if (i === 0) {
+          n.fx = 53; 
+          n.fy = 22;
+          }
+          // Pin Mars
+          if (i === 15) {
+          n.fx = 750;
+          n.fy = 100;
+          }
+          return n;
+          });
+
+
+          // Links from pdv
+          const links = [];
+          for (let i = 0; i < pdv.length; i++) {
+          for (let j = i + 1; j < pdv[i].length; j++) {
+            
+          const a = pdv[i][j];
+          const b = pdv[j][i];
+
+          // choose the larger finite delta-v
+          let dv = NaN;
+
+
+          if (Number.isFinite(a) && Number.isFinite(b)) {
+          dv = Math.max(a, b);
+          } else if (Number.isFinite(a)) {
+          dv = a;
+          } else if (Number.isFinite(b)) {
+          dv = b;
+          }
+            
+            
+            
+          if (Number.isFinite(pdv[i][j])) {
+          links.push({
+          source: i,
+          target: j,
+          distance: Math.max(MIN_D,Math.min(MAX_D, dv))* SCALE
+          }); 
+          }
+          }
+          }
+          //console.log("d3:", d3)
+
+          const sim = d3.forceSimulation(nodes)
+          .force(
+          "link",
+          d3.forceLink(links)
+          .id(d => d.id)
+          .distance(d => d.distance)
+          .strength(0.8)
+          )
+          .force("charge", d3.forceManyBody().strength(-520))
+          //.force("center", d3.forceCenter(400, 400))
+          .force("bounding", forceBoundingBox(800, 800, 20)) // <-- clamp
+          .stop();
+
+
+          for (let i = 0; i < ITERATIONS; i++) sim.tick();
+
+          //console.log(nodes.map(n => [n.x, n.y]));
+          // Write positions back into p
+          nodes.forEach((n, i) => {
+          p[i][0] = n.x;
+          p[i][1] = n.y;
+          });
+          console.log('simulation done')
+          
+      }
+      
+      computeNodeLayout(pdv, p);
+      //p = data.p;
+      //pdv = data.pdv;
       
 
                       const canvasTop = Number(DVMapCanvas.style.top.replace('px',''));
@@ -1568,7 +1683,7 @@ function drawRVehicle(){//triggered when msg recieved
                     ////
                     //
                      
-                    const {XXX,pdv,p} = getPDV();
+                    const {XXX,pdv,p_old} = getPDV();
                     let select = globals['select'];
                     let dv = globals['dv'];
                     let twr = globals['twr'];
@@ -1634,6 +1749,101 @@ function drawRVehicle(){//triggered when msg recieved
                     }
                     
                     // lines
+                     for (let i = 0; i < pdv.length; i++) {
+  for (let j = i + 1; j < pdv[i].length; j++) {
+    const dvAtoB = pdv[i][j];
+    const dvBtoA = pdv[j][i];
+
+    if (!Number.isFinite(dvAtoB) && !Number.isFinite(dvBtoA)) continue;
+
+    const x1 = p[i][0], y1 = p[i][1];
+    const x2 = p[j][0], y2 = p[j][1];
+
+    // Draw the line
+    context.beginPath();
+    context.moveTo(x1, y1);
+    context.lineTo(x2, y2);
+    context.strokeStyle = '#c0c0c0';
+    context.lineWidth = 2;
+    context.stroke();
+
+    // Vector along the line
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const len = Math.hypot(dx, dy);
+    const ux = dx / len;
+    const uy = dy / len;
+
+    // Perpendicular vector for offset
+    const px = -uy;
+    const py = ux;
+
+    // Midpoint of line
+    const midX = (x1 + x2) / 2;
+    const midY = (y1 + y2) / 2;
+
+    context.font = '12px Arial';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+
+    const bothFinite = Number.isFinite(dvAtoB) && Number.isFinite(dvBtoA);
+    const equal = bothFinite && dvAtoB === dvBtoA;
+    const offset = 12; // distance from the line
+
+    if (equal || !Number.isFinite(dvBtoA)) {
+      // Single value in gray
+      context.fillStyle = '#c0c0c0';
+      context.fillText(dvAtoB.toFixed(1), midX + px * offset, midY + py * offset);
+    } else {
+      const maxDV = Math.max(dvAtoB, dvBtoA);
+      const minDV = Math.min(dvAtoB, dvBtoA);
+
+      // Larger delta-v in gray above line
+      context.fillStyle = '#c0c0c0';
+      context.fillText(maxDV.toFixed(1), midX + px * offset, midY + py * offset);
+
+      // Smaller delta-v in green below line
+      context.fillStyle = 'lightgreen';
+      context.fillText(minDV.toFixed(1), midX - px * offset, midY - py * offset);
+
+      // Arrow along smaller delta-v
+      const arrowLength = 10;
+      let fromX, fromY, toX, toY;
+
+      if (dvAtoB < dvBtoA) {
+        fromX = x1; fromY = y1; toX = x2; toY = y2;
+      } else {
+        fromX = x2; fromY = y2; toX = x1; toY = y1;
+      }
+
+      const arrowDX = toX - fromX;
+      const arrowDY = toY - fromY;
+      const arrowLen = Math.hypot(arrowDX, arrowDY);
+      const uxArrow = arrowDX / arrowLen;
+      const uyArrow = arrowDY / arrowLen;
+
+      const tipX = fromX + uxArrow * (arrowLen * 0.75);
+      const tipY = fromY + uyArrow * (arrowLen * 0.75);
+
+      const arrowAngle = Math.PI / 8;
+
+      context.beginPath();
+      context.moveTo(tipX, tipY);
+      context.lineTo(
+        tipX - arrowLength * (uxArrow * Math.cos(arrowAngle) + uyArrow * Math.sin(arrowAngle)),
+        tipY - arrowLength * (uyArrow * Math.cos(arrowAngle) - uxArrow * Math.sin(arrowAngle))
+      );
+      context.lineTo(
+        tipX - arrowLength * (uxArrow * Math.cos(arrowAngle) - uyArrow * Math.sin(arrowAngle)),
+        tipY - arrowLength * (uyArrow * Math.cos(arrowAngle) + uxArrow * Math.sin(arrowAngle))
+      );
+      context.closePath();
+      context.fillStyle = 'lightgreen';
+      context.fill();
+    }
+  }
+}
+                    /*
                     for (i = 0; i < pdv.length; i++) {
                         for (j = 0; j < pdv[0].length; j++) {
                             if (!isNaN(pdv[i][j])) {
@@ -1646,6 +1856,7 @@ function drawRVehicle(){//triggered when msg recieved
                             }
                         }
                     }
+                    */
                      
 
                      
