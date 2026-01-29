@@ -442,36 +442,44 @@ It also assumes that at each subsequent waypoint after the original launch point
       
       function getPDV() {
                     let XXX = NaN;
-                    let pdv = [
                      //ETH,LEO,GTO,GEO,L45,EC3,LUO,LUN,MTR,MC3,DTR,DEI,PTR,PHO,LMO,MAR
-                      [XXX,9.3,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //ETH
-                      [1.0,XXX,2.5,3.8,4.1,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LEO
-                      [NaN,2.5,XXX,1.6,NaN,0.7,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //GTO
-                      [NaN,3.8,1.6,XXX,1.7,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //GEO
-                      [NaN,4.1,NaN,1.7,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //L45
-                      [NaN,NaN,0.7,NaN,NaN,XXX,0.7,NaN,0.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //EC3
-                      [NaN,NaN,1.6,NaN,NaN,0.7,XXX,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LUO
-                      [NaN,NaN,NaN,NaN,NaN,NaN,1.6,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LUN
-                      [NaN,NaN,NaN,NaN,NaN,0.6,NaN,NaN,XXX,0.9,NaN,NaN,NaN,NaN,NaN,NaN], //MTR
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,XXX,0.2,NaN,NaN,NaN,NaN,NaN], //MC3
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.2,XXX,0.7,0.3,NaN,NaN,NaN], //DTR
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.7,XXX,NaN,NaN,NaN,NaN], //DEI
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.3,NaN,XXX,0.5,0.9,NaN], //PTR
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.5,XXX,NaN,NaN], //PHO
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,NaN,XXX,1.0], //LMO
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,4.1,XXX], //MAR
+                    let pdv = [
+                      [XXX,9.3,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //ETH
+                      [1.0,XXX,2.5,3.8,4.1,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LEO
+                      [NaN,2.5,XXX,1.6,NaN,0.7,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //GTO
+                      [NaN,3.8,1.6,XXX,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //GEO
+                      [NaN,4.1,NaN,XXX,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //L45
+                      [NaN,NaN,0.7,NaN,NaN,XXX,XXX,NaN,0.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.3,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //EC3
+                      [NaN,NaN,1.6,NaN,NaN,XXX,XXX,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LUO
+                      [NaN,NaN,NaN,NaN,NaN,NaN,1.6,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LUN
+                      [NaN,NaN,NaN,NaN,NaN,0.6,NaN,NaN,XXX,0.9,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //MTR
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,XXX,0.2,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //MC3
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.2,XXX,0.7,0.3,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //DTR
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.7,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //DEI
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.3,NaN,XXX,0.5,0.9,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //PTR
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.5,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //PHO
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,NaN,XXX,1.0,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LMO
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,4.1,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //MAR
+                      [NaN,NaN,NaN,NaN,NaN,0.3,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,XXX,0.4,NaN,NaN,2.1,NaN,NaN,NaN], //Venus Transfer
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.4,XXX,3.0,NaN,NaN,NaN,NaN,NaN], //Venus C3
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,3.0,XXX,29.7,NaN,NaN,NaN,NaN], //Low Venus Orbit
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,29.7,XXX,NaN,NaN,NaN,NaN], //Venus
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,2.1,NaN,NaN, NaN,XXX,6.3,NaN,NaN], //Mercury Transfer
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,6.3,XXX,1.2,NaN], //Mercury C3
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,1.2,XXX,3.1], //Low Merc. Orbit
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,3.1,XXX], //Mercury
                       ];
                     
                     // node positions
                     let p = [
-                      [0,0, 'Earth','W','Earth','Our Planet!'], //ETH
-                      [0,0,'LEO', 'N','LEO','Low Earth Orbit'], //LEO
-                      [0,0,'GTO', 'E','GTO','Geostationary Transfer Orbit'], //GTO
+                      [0,0, 'Earth','W','Earth','Our Planet!',             0,0], //ETH
+                      [0,0,'LEO', 'N','LEO','Low Earth Orbit',             0,NaN], //LEO
+                      [0,0,'GTO', 'E','GTO','Geostationary Transfer Orbit',0,NaN], //GTO
                       [0,0,'GEO','S','GEO','Geostationary Orbit'], //GEO
                       [0,0,'L4L5','W','L4/L5','Stable Lagrange Points'], //L45
-                      [0,0,'EC3','E','Earth C3','Earth Capture/Escape'], //EC3
+                      [0,0,'EC3','E','Earth C3','Earth Capture/Escape',0,NaN], //EC3
                       [0,0,'LUO','S','LUO','Lunar Orbit'], //LUO
-                      [0,0,'Moon','W','Moon','The Moon'], //LUN
+                      [0,0,'Moon','W','Moon','The Moon',0.925,0], //LUN
                       [0,0,'MTR','E','Mars Tr.','Mars Transfer'], //MTR
                       [0,0,'MC3','E','Mars C3','Mars Capture/Escape'], //MC3
                       [0,0,'DTR','S','Deimos Tr.','Deimos Transfer'], //DTR
@@ -479,7 +487,15 @@ It also assumes that at each subsequent waypoint after the original launch point
                       [0,0,'PTR','S','Phobos Tr.','Phobos Transfer'],
                       [0,0,'PHO','S','Phobos','Phobos (moon of Mars)'],
                       [0,0,'LMO','S','LMO','Low Mars Orbit'],
-                      [0,0,'Mars','S','Mars','The Red Planet']
+                      [0,0,'Mars','S','Mars','The Red Planet',0.925,NaN],
+                      [0,0,'VTR','E','Venus Tr.','Venus Transfer'], //16
+                      [0,0,'VC3','E','Venus C3','Venus Capture'], //17
+                      [0,0,'LVO','E','Low Venus Orbit','Low Venus Orbit'], //18
+                      [0,0,'Venus','S','Venus','The Planet Venus',-0.925,0.3], //19
+                      [0,0,'MeTR','E','Mercury Tr.','Mercury Transfer'], //20
+                      [0,0,'MeC3','E','Mercury C3','Mercury Capture'], //20
+                      [0,0,'LowMeO','S','Low Merc. Orbit','Mercury Capture'], //20
+                      [0,0,'Mercury','S','Mercury','The Planet Mercury',NaN,NaN], //20
                       ];
         
       return {
@@ -493,19 +509,15 @@ It also assumes that at each subsequent waypoint after the original launch point
       
       function computeNodeLayout(pdv, p) {
           const MIN_D = 80;
-          const MAX_D = 300;
-          const SCALE = 0.1; // pixels per km/s (tune this)
-          const ITERATIONS = 100;
+          const MAX_D = 200;
+          const SCALE = 1; // pixels per km/s (tune this)
+          //
+          const Strength = 1.0;
+          const forceManyBodyStrength = -800;//0.1*p.length * Strength * (MAX_D+MIN_D)/2;
+          const distanceRepulsionStrength = 50;
+          //
+          const ITERATIONS = 500;
 
-          
-          // Nodes
-        /*
-          const nodes = p.map((_, i) => ({
-          id: i,
-          x: Math.random() * 1,
-          y: Math.random() * 1
-          }));
-          */
         function forceBoundingBox(width, height, padding = 20) {
           return function () {
           nodes.forEach(n => {
@@ -519,6 +531,35 @@ It also assumes that at each subsequent waypoint after the original launch point
           });
           };
           }
+        function distanceRepulsion(nodes, minDistance = 50, strength = 0.5) {
+        return (alpha) => {
+        for (let i = 0; i < nodes.length; i++) {
+        const n1 = nodes[i];
+        for (let j = i + 1; j < nodes.length; j++) {
+        const n2 = nodes[j];
+
+
+        const dx = n1.x - n2.x;
+        const dy = n1.y - n2.y;
+        const dist = Math.sqrt(dx*dx + dy*dy) || 0.1;
+
+
+        if (dist < minDistance) {
+        const repulse = (minDistance - dist) / dist * strength * alpha;
+
+
+        // push nodes apart proportionally
+        const vx = dx * repulse;
+        const vy = dy * repulse;
+        n1.vx += vx;
+        n1.vy += vy;
+        n2.vx -= vx;
+        n2.vy -= vy;
+        }
+        }
+        }
+        };
+        }
         const nodes = p.map((node, i) => {
           
           
@@ -526,16 +567,15 @@ It also assumes that at each subsequent waypoint after the original launch point
           const n = { id: i };
 
 
-          // Pin Earth
-          if (i === 0) {
-          n.fx = 53; 
-          n.fy = 22;
+          // Pin Nodes
+          
+          if (Number.isFinite(p[i][6])){
+            n.fx = 420+420*p[i][6]; 
           }
-          // Pin Mars
-          if (i === 15) {
-          n.fx = 750;
-          n.fy = 100;
+          if (Number.isFinite(p[i][7])){
+            n.fy = 30+420*p[i][7];
           }
+          
           return n;
           });
 
@@ -566,7 +606,7 @@ It also assumes that at each subsequent waypoint after the original launch point
           links.push({
           source: i,
           target: j,
-          distance: Math.max(MIN_D,Math.min(MAX_D, dv))* SCALE
+          distance: Math.max(MIN_D,Math.min(MAX_D, dv* SCALE))
           }); 
           }
           }
@@ -579,11 +619,12 @@ It also assumes that at each subsequent waypoint after the original launch point
           d3.forceLink(links)
           .id(d => d.id)
           .distance(d => d.distance)
-          .strength(0.8)
+          .strength(Strength)
           )
-          .force("charge", d3.forceManyBody().strength(-520))
-          //.force("center", d3.forceCenter(400, 400))
-          .force("bounding", forceBoundingBox(800, 800, 20)) // <-- clamp
+          .force("charge", d3.forceManyBody().strength(forceManyBodyStrength))
+          //.force("center", d3.forceCenter(420, 420))
+          .force("bounding", forceBoundingBox(840, 840, 30)) // <-- clamp
+          .force("distanceRepel", distanceRepulsion(nodes, MIN_D, distanceRepulsionStrength))
           .stop();
 
 
@@ -926,6 +967,8 @@ It also assumes that at each subsequent waypoint after the original launch point
           localgrav = 0.003; //deimos //12
         }else if (globals['select'] == 13){
           localgrav = 0.0057; //phobos //14
+        }else if (globals['select'] == 19){
+          localgrav = 8.87; //venus //19
         }else {
           localgrav = 0;
         }
@@ -1635,8 +1678,8 @@ function drawRVehicle(){//triggered when msg recieved
                    {
                     var context = canvas.getContext('2d');
                      
-                    var xsize = 800;
-                    var ysize = 800;
+                    var xsize = 840;
+                    var ysize = 840;
                     canvas.style.width = xsize + "px";
                     canvas.style.height = ysize + "px";
 
@@ -1873,7 +1916,7 @@ function drawRVehicle(){//triggered when msg recieved
                      let RMg = [];
                      let dvi = [];
                      let selectx = [];
-                     let pvisits = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+                     let pvisits = pdv.map(() => 0);//[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
                      let completecol = '#00508a';
                      
                      if (twr <= 1){
