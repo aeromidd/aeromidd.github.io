@@ -442,27 +442,27 @@ It also assumes that at each subsequent waypoint after the original launch point
       
       function getPDV() {
                     let XXX = NaN;
-                     //ETH,LEO,GTO,GEO,L45,EC3,LUO,LUN,MTR,MC3,DTR,DEI,PTR,PHO,LMO,MAR
                     let pdv = [
-                      [XXX,9.3,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //ETH
-                      [1.0,XXX,2.5,3.8,4.1,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LEO
-                      [NaN,2.5,XXX,1.6,NaN,0.7,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //GTO
-                      [NaN,3.8,1.6,XXX,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //GEO
-                      [NaN,4.1,NaN,XXX,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //L45
-                      [NaN,NaN,0.7,NaN,NaN,XXX,XXX,NaN,0.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.3,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //EC3
-                      [NaN,NaN,1.6,NaN,NaN,XXX,XXX,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LUO
-                      [NaN,NaN,NaN,NaN,NaN,NaN,1.6,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LUN
-                      [NaN,NaN,NaN,NaN,NaN,0.6,NaN,NaN,XXX,0.9,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //MTR
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,XXX,0.2,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //MC3
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.2,XXX,0.7,0.3,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //DTR
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.7,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //DEI
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.3,NaN,XXX,0.5,0.9,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //PTR
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.5,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //PHO
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,NaN,XXX,1.0,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LMO
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,4.1,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //MAR
-                      [NaN,NaN,NaN,NaN,NaN,0.3,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,XXX,0.4,NaN,NaN,2.1,NaN,NaN,NaN], //Venus Transfer
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.4,XXX,3.0,NaN,NaN,NaN,NaN,NaN], //Venus C3
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,3.0,XXX,29.7,NaN,NaN,NaN,NaN], //Low Venus Orbit
+                     //ETH,LEO,GTO,GEO,L45,EC3,LUO,LUN,MTR,MC3,DTR,DEI,PTR,PHO,LMO,MAR,VTR,VC3,LVO, VEN,MeT,MC3,LMe,Mer, 
+                      [XXX,9.3,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //ETH
+                      [1.0,XXX,2.5,3.8,4.1,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //LEO
+                      [NaN,2.5,XXX,1.6,NaN,0.7,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //GTO
+                      [NaN,3.8,1.6,XXX,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //GEO
+                      [NaN,4.1,NaN,XXX,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //L45
+                      [NaN,NaN,0.7,NaN,NaN,XXX,XXX,NaN,0.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.3,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //EC3
+                      [NaN,NaN,1.6,NaN,NaN,XXX,XXX,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //LUO
+                      [NaN,NaN,NaN,NaN,NaN,NaN,1.6,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //LUN
+                      [NaN,NaN,NaN,NaN,NaN,0.6,NaN,NaN,XXX,0.9,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //MTR
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,XXX,0.2,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //MC3
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.2,XXX,0.7,0.3,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //DTR
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.7,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //DEI
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.3,NaN,XXX,0.5,0.9,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //PTR
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.5,XXX,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //PHO
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,NaN,XXX,2.0,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //LMO
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,4.1,XXX,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //MAR
+                      [NaN,NaN,NaN,NaN,NaN,0.3,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,XXX,0.4,NaN, NaN,2.1,NaN,NaN,NaN], //Venus Transfer
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.4,XXX,3.0, NaN,NaN,NaN,NaN,NaN], //Venus C3
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,3.0,XXX, 0.5,NaN,NaN,NaN,NaN], //Low Venus Orbit
                       [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,29.7,XXX,NaN,NaN,NaN,NaN], //Venus
                       [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,2.1,NaN,NaN, NaN,XXX,6.3,NaN,NaN], //Mercury Transfer
                       [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,6.3,XXX,1.2,NaN], //Mercury C3
@@ -472,30 +472,30 @@ It also assumes that at each subsequent waypoint after the original launch point
                     
                     // node positions
                     let p = [
-                      [0,0, 'Earth','W','Earth','Our Planet!',             0,0], //ETH
-                      [0,0,'LEO', 'N','LEO','Low Earth Orbit',             0,NaN], //LEO
-                      [0,0,'GTO', 'E','GTO','Geostationary Transfer Orbit',0,NaN], //GTO
-                      [0,0,'GEO','S','GEO','Geostationary Orbit'], //GEO
-                      [0,0,'L4L5','W','L4/L5','Stable Lagrange Points'], //L45
-                      [0,0,'EC3','E','Earth C3','Earth Capture/Escape',0,NaN], //EC3
-                      [0,0,'LUO','S','LUO','Lunar Orbit'], //LUO
-                      [0,0,'Moon','W','Moon','The Moon',0.925,0], //LUN
-                      [0,0,'MTR','E','Mars Tr.','Mars Transfer'], //MTR
-                      [0,0,'MC3','E','Mars C3','Mars Capture/Escape'], //MC3
-                      [0,0,'DTR','S','Deimos Tr.','Deimos Transfer'], //DTR
-                      [0,0,'DEI','S','Deimos','Deimos (moon of Mars)'],
-                      [0,0,'PTR','S','Phobos Tr.','Phobos Transfer'],
-                      [0,0,'PHO','S','Phobos','Phobos (moon of Mars)'],
-                      [0,0,'LMO','S','LMO','Low Mars Orbit'],
-                      [0,0,'Mars','S','Mars','The Red Planet',0.925,NaN],
-                      [0,0,'VTR','E','Venus Tr.','Venus Transfer'], //16
-                      [0,0,'VC3','E','Venus C3','Venus Capture'], //17
-                      [0,0,'LVO','E','Low Venus Orbit','Low Venus Orbit'], //18
-                      [0,0,'Venus','S','Venus','The Planet Venus',-0.925,0.3], //19
-                      [0,0,'MeTR','E','Mercury Tr.','Mercury Transfer'], //20
-                      [0,0,'MeC3','E','Mercury C3','Mercury Capture'], //20
-                      [0,0,'LowMeO','S','Low Merc. Orbit','Mercury Capture'], //20
-                      [0,0,'Mercury','S','Mercury','The Planet Mercury',NaN,NaN], //20
+                      [0,0, 'Earth','N','Earth','Our Planet!',             0,0], //ETH
+                      [0,0,'LEO', 'S','LEO','Low Earth Orbit',             0,0.45], //LEO
+                      [0,0,'GTO', 'S','GTO','Geostationary Transfer Orbit',0.25,0.42], //GTO
+                      [0,0,'GEO','S','GEO','Geostationary Orbit',          0.23,0.29], //GEO
+                      [0,0,'L4L5','E','L4/L5','Stable Lagrange Points',-0.22,0.17], //L45
+                      [0,0,'EC3','S','Earth C3','Earth Capture/Escape',.2+0.09,0.51],
+                      [0,0,'LUO','E','Lunar Orbit','Lunar Orbit',0.5,0.1], //LUO
+                      [0,0,'Moon','N','Moon','The Moon',0.5,0], //LUN
+                      [0,0,'MTR','S','Mars Tr.','Mars Transfer',.2+0.22,0.54], //MTR
+                      [0,0,'MC3','S','Mars C3','Mars Capture/Escape',.2+0.34,0.58], //MC3
+                      [0,0,'DTR','S','Deimos Tr.','Deimos Transfer',.2+0.47,0.58], //DTR
+                      [0,0,'DEI','S','Deimos','Deimos (moon of Mars)',.2+0.46,0.67],
+                      [0,0,'PTR','S','Phobos Tr.','Phobos Transfer',.2+0.58,0.54],
+                      [0,0,'PHO','S','Phobos','Phobos (moon of Mars)',.2+0.63,0.61],
+                      [0,0,'LMO','E','Low Mars Orbit','Low Mars Orbit',0.88,0.25],
+                      [0,0,'Mars','N','Mars','The Red Planet',0.88,0],
+                      [0,0,'VTR','S','Venus Tr.','Venus Transfer',-0.04,0.56], //16
+                      [0,0,'VC3','S','Venus C3','Venus Capture',-0.13,0.62], //17
+                      [0,0,'LVO','S','Low Venus Orbit','Low Venus Orbit',-0.32,0.77], //18
+                      [0,0,'Venus','N','Venus','The Planet Venus',-0.74,0.34], //19
+                      [0,0,'MeTR','S','Mercury Tr.','Mercury Transfer',-0.14,0.44], //20
+                      [0,0,'MeC3','S','Mercury C3','Mercury Capture',-0.32,0.47], //20
+                      [0,0,'LowMeO','S','Low Merc. Orbit','Mercury Capture',-0.38,0.40], //20
+                      [0,0,'Mercury','N','Mercury','The Planet Mercury',-0.51,0.21], //20
                       ];
         
       return {
@@ -508,15 +508,15 @@ It also assumes that at each subsequent waypoint after the original launch point
       const {XXX,pdv,p} = getPDV();
       
       function computeNodeLayout(pdv, p) {
-          const MIN_D = 80;
-          const MAX_D = 200;
-          const SCALE = 1; // pixels per km/s (tune this)
+          const MIN_D = 30;
+          const MAX_D = 250;
+          const SCALE = 30; // pixels per km/s (tune this)
           //
           const Strength = 1.0;
-          const forceManyBodyStrength = -800;//0.1*p.length * Strength * (MAX_D+MIN_D)/2;
+          const forceManyBodyStrength = -50;
           const distanceRepulsionStrength = 50;
           //
-          const ITERATIONS = 500;
+          const ITERATIONS = 250;
 
         function forceBoundingBox(width, height, padding = 20) {
           return function () {
@@ -531,7 +531,8 @@ It also assumes that at each subsequent waypoint after the original launch point
           });
           };
           }
-        function distanceRepulsion(nodes, minDistance = 50, strength = 0.5) {
+        
+        function distanceRepulsion(nodes, minDistance, strength) {
         return (alpha) => {
         for (let i = 0; i < nodes.length; i++) {
         const n1 = nodes[i];
@@ -568,12 +569,16 @@ It also assumes that at each subsequent waypoint after the original launch point
 
 
           // Pin Nodes
-          
           if (Number.isFinite(p[i][6])){
-            n.fx = 420+420*p[i][6]; 
+            n.fx = 420+420*p[i][6];
           }
           if (Number.isFinite(p[i][7])){
             n.fy = 30+420*p[i][7];
+          }
+          if (!Number.isFinite(p[i][6]) && !Number.isFinite(p[i][7])){
+            n.x = 420+30*Math.cos(4*2*Math.PI*i/(pdv.length));
+            //n.vx = ndir*Math.pow(i*MIN_D,2);
+            n.y = 30+20*i;
           }
           
           return n;
@@ -599,20 +604,16 @@ It also assumes that at each subsequent waypoint after the original launch point
           } else if (Number.isFinite(b)) {
           dv = b;
           }
-            
-            
-            
           if (Number.isFinite(pdv[i][j])) {
           links.push({
           source: i,
           target: j,
-          distance: Math.max(MIN_D,Math.min(MAX_D, dv* SCALE))
+          distance: Math.max(MIN_D,Math.min(MAX_D, (Math.min(dv,10)* SCALE)))
           }); 
           }
           }
           }
-          //console.log("d3:", d3)
-
+          
           const sim = d3.forceSimulation(nodes)
           .force(
           "link",
@@ -670,6 +671,7 @@ It also assumes that at each subsequent waypoint after the original launch point
                         const lbl = document.createElement("label");
                         lbl.id = p[i][2] + '_buttonLabel'
                         lbl.labelFor = btn.id;
+                        lbl.htmlFor = btn.id;
                         lbl.className = "container";
                         lbl.textContent = p[i][4];
                         lbl.style.position="absolute";
@@ -716,7 +718,7 @@ It also assumes that at each subsequent waypoint after the original launch point
                       lbl.style.top = (p[i][1] + yshift - lbly + canvasTop) + 'px';
                       lbl.style.left = (p[i][0] + xshift + lblx + canvasLeft) + 'px';
                       
-                      lbl.innerHTML = p[i][4];
+                      lbl.innerHTML = p[i][4];//+"\n"+"["+((p[i][0]-420)/420).toFixed(2).toString()+','+((p[i][1]-30)/420).toFixed(2).toString()+']';
                       
                       const tooltip = document.getElementById("tooltip");
 
