@@ -473,29 +473,29 @@ It also assumes that at each subsequent waypoint after the original launch point
                     // node positions
                     let p = [
                       [0,0, 'Earth','N','Earth','Our Planet!',             0,0], //ETH
-                      [0,0,'LEO', 'S','LEO','Low Earth Orbit',             0,0.45], //LEO
-                      [0,0,'GTO', 'S','GTO','Geostationary Transfer Orbit',0.25,0.42], //GTO
-                      [0,0,'GEO','S','GEO','Geostationary Orbit',          0.23,0.29], //GEO
-                      [0,0,'L4L5','E','L4/L5','Stable Lagrange Points',-0.22,0.17], //L45
-                      [0,0,'EC3','S','Earth C3','Earth Capture/Escape',.2+0.09,0.51],
-                      [0,0,'LUO','E','Lunar Orbit','Lunar Orbit',0.5,0.1], //LUO
-                      [0,0,'Moon','N','Moon','The Moon',0.5,0], //LUN
-                      [0,0,'MTR','S','Mars Tr.','Mars Transfer',.2+0.22,0.54], //MTR
-                      [0,0,'MC3','S','Mars C3','Mars Capture/Escape',.2+0.34,0.58], //MC3
-                      [0,0,'DTR','S','Deimos Tr.','Deimos Transfer',.2+0.47,0.58], //DTR
-                      [0,0,'DEI','S','Deimos','Deimos (moon of Mars)',.2+0.46,0.67],
-                      [0,0,'PTR','S','Phobos Tr.','Phobos Transfer',.2+0.58,0.54],
-                      [0,0,'PHO','S','Phobos','Phobos (moon of Mars)',.2+0.63,0.61],
-                      [0,0,'LMO','E','Low Mars Orbit','Low Mars Orbit',0.88,0.25],
-                      [0,0,'Mars','N','Mars','The Red Planet',0.88,0],
-                      [0,0,'VTR','S','Venus Tr.','Venus Transfer',-0.04,0.56], //16
-                      [0,0,'VC3','S','Venus C3','Venus Capture',-0.13,0.62], //17
-                      [0,0,'LVO','S','Low Venus Orbit','Low Venus Orbit',-0.32,0.77], //18
-                      [0,0,'Venus','N','Venus','The Planet Venus',-0.74,0.34], //19
-                      [0,0,'MeTR','S','Mercury Tr.','Mercury Transfer',-0.14,0.44], //20
-                      [0,0,'MeC3','S','Mercury C3','Mercury Capture',-0.32,0.47], //20
-                      [0,0,'LowMeO','S','Low Merc. Orbit','Mercury Capture',-0.38,0.40], //20
-                      [0,0,'Mercury','N','Mercury','The Planet Mercury',-0.51,0.21], //20
+                      [0,0,'LEO', 'S','LEO','Low Earth Orbit',             0,NaN], //LEO
+                      [0,0,'GTO', 'S','GTO','Geostationary Transfer Orbit',NaN,NaN], //GTO
+                      [0,0,'GEO','S','GEO','Geostationary Orbit',          NaN,NaN], //GEO
+                      [0,0,'L4L5','E','L4/L5','Stable Lagrange Points',NaN,NaN], //L45
+                      [0,0,'EC3','S','Earth C3','Earth Capture/Escape',NaN,NaN],
+                      [0,0,'LUO','E','Lunar Orbit','Lunar Orbit',0.3,NaN], //LUO
+                      [0,0,'Moon','E','The Moon','The Moon',0.3,0.1], //LUN
+                      [0,0,'MTR','S','Mars Tr.','Mars Transfer',NaN,NaN], //MTR
+                      [0,0,'MC3','S','Mars C3','Mars Capture/Escape',NaN,NaN], //MC3
+                      [0,0,'DTR','S','Deimos Tr.','Deimos Transfer',NaN,NaN], //DTR
+                      [0,0,'DEI','S','Deimos','Deimos (moon of Mars)',NaN,NaN],
+                      [0,0,'PTR','S','Phobos Tr.','Phobos Transfer',NaN,NaN],
+                      [0,0,'PHO','S','Phobos','Phobos (moon of Mars)',NaN,NaN],
+                      [0,0,'LMO','E','Low Mars Orbit','Low Mars Orbit',0.7,NaN],
+                      [0,0,'Mars','N','Mars','The Red Planet',0.7,0],
+                      [0,0,'VTR','S','Venus Tr.','Venus Transfer',NaN,NaN], //16
+                      [0,0,'VC3','S','Venus C3','Venus Capture',NaN,NaN], //17
+                      [0,0,'LVO','S','Low Venus Orbit','Low Venus Orbit',-0.4,NaN], //18
+                      [0,0,'Venus','N','Venus','The Planet Venus',-0.4,0], //19
+                      [0,0,'MeTR','S','Mercury Tr.','Mercury Transfer',NaN,NaN], //20
+                      [0,0,'MeC3','S','Mercury C3','Mercury Capture/Escape',NaN*-0.32,NaN*0.47], //20
+                      [0,0,'LowMeO','S','Low Merc. Orbit','Low Mercury Orbit',-0.6,NaN], //20
+                      [0,0,'Mercury','N','Mercury','The Planet Mercury',-0.6,0], //20
                       ];
         
       return {
@@ -508,13 +508,13 @@ It also assumes that at each subsequent waypoint after the original launch point
       const {XXX,pdv,p} = getPDV();
       
       function computeNodeLayout(pdv, p) {
-          const MIN_D = 30;
+          const MIN_D = 0;
           const MAX_D = 250;
-          const SCALE = 30; // pixels per km/s (tune this)
+          const SCALE = 20; // pixels per km/s (tune this)
           //
-          const Strength = 1.0;
+          const Strength = 4.0;
           const forceManyBodyStrength = -50;
-          const distanceRepulsionStrength = 50;
+          const distanceRepulsionStrength = 80;
           //
           const ITERATIONS = 250;
 
@@ -608,7 +608,7 @@ It also assumes that at each subsequent waypoint after the original launch point
           links.push({
           source: i,
           target: j,
-          distance: Math.max(MIN_D,Math.min(MAX_D, (Math.min(dv,10)* SCALE)))
+          distance: Math.max(MIN_D,Math.min(MAX_D, (Math.max(0,Math.min(dv,15))* SCALE)))
           }); 
           }
           }
