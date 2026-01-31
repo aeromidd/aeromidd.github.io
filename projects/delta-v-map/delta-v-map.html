@@ -476,8 +476,8 @@ It also assumes that at each subsequent waypoint after the original launch point
                     "VTR","VC3","LVO","VEN",
                     "MeT","MeC","LMe","MER",
                     "LSO","SUN",
-                    "CeT","CeC","CER",
-                    "JupiterTr",
+                    "CeT","CeO","CER",
+                    "JupiterTr","JupiterC3","CaTr","CaO","Cal","GanTr","GanO","Gany","EuTr","EuO","Eur","IoTr","IoO","Io"
                     ];
                     const links = [
                     // ----- Earth chain -----
@@ -488,12 +488,10 @@ It also assumes that at each subsequent waypoint after the original launch point
                     ["GTO","GEO",1.6],
                     ["GTO","EC3",0.7],
                     ["GTO","LUO",1.6],
-                    ["EC3","MTR",0.6],
-                    ["EC3","VTR",0.3],
                     ["LUO","LUN",1.6],
                     // ----- Mars chain -----
+                    ["EC3","MTR",0.6],
                     ["MTR","MC3",0.9],
-                    ["MTR","CeT",1.3],
                     ["MC3","DTR",0.2],
                     ["DTR","DEI",0.7],
                     ["DTR","PTR",0.3],
@@ -501,6 +499,7 @@ It also assumes that at each subsequent waypoint after the original launch point
                     ["PTR","LMO",0.9],
                     ["LMO","MAR",2.0,4.1],
                     // ----- Venus chain -----
+                    ["EC3","VTR",0.3],
                     ["VTR","VC3",0.4],
                     ["VC3","LVO",3.0],
                     ["LVO","VEN",0.5,29.7],
@@ -513,10 +512,24 @@ It also assumes that at each subsequent waypoint after the original launch point
                     ["MeT","LSO",15.7],
                     ["LSO","SUN",178],
                     // ----- Ceres chain -----
-                    ["CeT","CeC",4.4],
-                    ["CeC","CER",0.4],
+                    ["MTR","CeT",1.3],
+                    ["CeT","CeO",4.8],
+                    ["CeO","CER",0.4],
                     // ----- Jupiter chain -----
                     ["CeT","JupiterTr",1.4],
+                    ["JupiterTr","JupiterC3",0.3],
+                    ["JupiterC3","CaTr",1.1],
+                    ["CaTr","CaO",4.7],
+                    ["CaO","Cal",1.75],
+                    ["CaTr","GanTr",0.8],
+                    ["GanTr","GanO",5.6],
+                    ["GanO","Gany",1.9],
+                    ["GanTr","EuTr",1.1],
+                    ["EuTr","EuO",5.6],
+                    ["EuO","Eur",1.4],
+                    ["EuTr","IoTr",1.6],
+                    ["IoTr","IoO",6.5],
+                    ["IoO","Io",1.8],
                     ];
         
                     let pdv = buildPDV(bodies, links);
@@ -550,19 +563,22 @@ It also assumes that at each subsequent waypoint after the original launch point
                       [0,0,'LSO','W','Low Solar Orbit','Low Solar Orbit',-0.875,0.95],
                       [0,0,'TheSun','W','⠀\n⠀\nThe Sun','The Sun',-0.875,-0.075],
                       [0,0,'CeTr','S','Ceres Tr.','Ceres Transfer',0.45,0.8],
-                      [0,0,'CeTr','S',' ','Ceres Capture/Escape',0.775,0.65],
+                      [0,0,'CeO','S',' ','Low Ceres Orbit',0.775,0.65],
                       [0,0,'Ceres','S','Ceres','The Dwarf Planet Ceres',0.9,0.65],
                       [0,0,'JupiterTr','E','Jupiter Tr.','Jupiter',0.6,1.0],
-                      /*
+                      [0,0,'JupiterC3','E','Jupiter C3','Jupiter Capture/Escape'],
                       [0,0,'CallistoTr','E','Callisto Tr.','Callisto Transfer'],
+                      [0,0,'CallistoOrb','E','Low Orbit','Low Callisto Orbit'],
                       [0,0,'Callisto','E','Callisto','Callisto (Moon of Jupiter)'],
                       [0,0,'GanymedeTr','E','Ganymede Tr.','Ganymede Transfer'],
+                      [0,0,'GanymedeOrb','E','Low Orbit','Low Ganymede Orbit'],
                       [0,0,'Ganymede','E','Ganymede','Ganymede (Moon of Jupiter)'],
                       [0,0,'EuropaTr','E','Europa Tr.','Europa Transfer'],
+                      [0,0,'EuropaOrb','E','Low Orbit','Low Europa Orbit'],
                       [0,0,'Europa','E','Europa','Europa (Moon of Jupiter)'],
                       [0,0,'IoTr','E','Io Tr.','Io Transfer'],
+                      [0,0,'IoOrb','E','Low Orbit','Low Io Orbit'],
                       [0,0,'Io','E','Io','Io (Moon of Jupiter)'],
-                      */
                       ];
         
       return {
@@ -579,7 +595,7 @@ It also assumes that at each subsequent waypoint after the original launch point
           const MAX_D = 250;
           const SCALE = 20; // pixels per km/s (tune this)
           //
-          const Strength = 4.0;
+          const Strength = 1.0;
           const forceManyBodyStrength = -50;
           const distanceRepulsionStrength = 80;
           //
