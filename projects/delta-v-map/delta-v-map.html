@@ -442,39 +442,84 @@ It also assumes that at each subsequent waypoint after the original launch point
       
       function getPDV() {
                     let XXX = NaN;
-                    let pdv = [
-                     //ETH,LEO,GTO,GEO,L45,EC3,LUO,LUN,MTR,MC3,DTR,DEI,PTR,PHO,LMO,MAR,VTR,VC3,LVO, VEN,MeT, MC3,LMe,Mer,LSO,Sun,CeT,CeC,Cer
-                      [XXX,9.3,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //ETH
-                      [1.0,XXX,2.5,3.8,4.1,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LEO
-                      [NaN,2.5,XXX,1.6,NaN,0.7,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //GTO
-                      [NaN,3.8,1.6,XXX,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //GEO
-                      [NaN,4.1,NaN,XXX,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //L45
-                      [NaN,NaN,0.7,NaN,NaN,XXX,XXX,NaN,0.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.3,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //EC3
-                      [NaN,NaN,1.6,NaN,NaN,XXX,XXX,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LUO
-                      [NaN,NaN,NaN,NaN,NaN,NaN,1.6,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LUN
-                      [NaN,NaN,NaN,NaN,NaN,0.6,NaN,NaN,XXX,0.9,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,1.3,NaN,NaN], //MTR
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,XXX,0.2,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //MC3
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.2,XXX,0.7,0.3,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //DTR
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.7,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //DEI
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.3,NaN,XXX,0.5,0.9,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //PTR
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.5,XXX,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //PHO
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,NaN,XXX,2.0,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LMO
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,4.1,XXX,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //MAR
-                      [NaN,NaN,NaN,NaN,NaN,0.3,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,XXX,0.4,NaN, NaN,2.1, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //Venus Transfer
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.4,XXX,3.0, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //Venus C3
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,3.0,XXX, 0.5,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //Low Venus Orbit
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,29.7,XXX,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //Venus
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,2.1,NaN,NaN, NaN,XXX, 6.3,NaN,NaN,15.7,NaN,NaN,NaN,NaN], //Mercury Transfer
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,6.3, XXX,1.2,NaN,NaN,NaN,NaN,NaN,NaN], //Mercury C3
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, 1.2,XXX,3.1,NaN,NaN,NaN,NaN,NaN], //Low Merc.Orbit
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,3.1,XXX,NaN,NaN,NaN,NaN,NaN], //Mercury
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,15.7,NaN,NaN,NaN,XXX,178,NaN,NaN,NaN], //Low Solar Orbit
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,178,XXX,NaN,NaN,NaN], //The Sun
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,1.3,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,XXX,4.4,NaN], //Ceres Tr.
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,4.4,XXX,0.4], //Ceres C3
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,0.4,XXX], //Ceres
-                      
-                      ];
+
+                    function buildPDV(bodies, links) {
+                      const n = bodies.length;
+
+                      const pdv = Array.from({ length: n }, () =>
+                        Array(n).fill(NaN)
+                      );
+
+                      const index = Object.fromEntries(
+                        bodies.map((b, i) => [b, i])
+                      );
+
+                      // diagonals
+                      for (let i = 0; i < n; i++) pdv[i][i] = XXX;
+
+                      for (const [a, b, ab, ba] of links) {
+                        const i = index[a];
+                        const j = index[b];
+
+                        pdv[i][j] = ab;
+                        pdv[j][i] = ba ?? ab; // symmetric if not provided
+                      }
+
+                      return pdv;
+                    }
+                    
+                    //---
+                    
+                    const bodies = [
+                    "ETH","LEO","GTO","GEO","L45","EC3","LUO","LUN",
+                    "MTR","MC3","DTR","DEI","PTR","PHO","LMO","MAR",
+                    "VTR","VC3","LVO","VEN",
+                    "MeT","MeC","LMe","MER",
+                    "LSO","SUN",
+                    "CeT","CeC","CER",
+                    "JupiterTr",
+                    ];
+                    const links = [
+                    // ----- Earth chain -----
+                    ["ETH","LEO",9.3,1.0],
+                    ["LEO","GTO",2.5],
+                    ["LEO","GEO",3.8],
+                    ["LEO","L45",4.1],
+                    ["GTO","GEO",1.6],
+                    ["GTO","EC3",0.7],
+                    ["GTO","LUO",1.6],
+                    ["EC3","MTR",0.6],
+                    ["EC3","VTR",0.3],
+                    ["LUO","LUN",1.6],
+                    // ----- Mars chain -----
+                    ["MTR","MC3",0.9],
+                    ["MTR","CeT",1.3],
+                    ["MC3","DTR",0.2],
+                    ["DTR","DEI",0.7],
+                    ["DTR","PTR",0.3],
+                    ["PTR","PHO",0.5],
+                    ["PTR","LMO",0.9],
+                    ["LMO","MAR",2.0,4.1],
+                    // ----- Venus chain -----
+                    ["VTR","VC3",0.4],
+                    ["VC3","LVO",3.0],
+                    ["LVO","VEN",0.5,29.7],
+                    // ----- Mercury chain -----
+                    ["VTR","MeT",2.1],
+                    ["MeT","MeC",6.3],
+                    ["MeC","LMe",1.2],
+                    ["LMe","MER",3.1],
+                    // ----- Solar -----
+                    ["MeT","LSO",15.7],
+                    ["LSO","SUN",178],
+                    // ----- Ceres chain -----
+                    ["CeT","CeC",4.4],
+                    ["CeC","CER",0.4],
+                    // ----- Jupiter chain -----
+                    ["CeT","JupiterTr",1.4],
+                    ];
+        
+                    let pdv = buildPDV(bodies, links);
                     
                     // node positions
                     let p = [
@@ -507,6 +552,17 @@ It also assumes that at each subsequent waypoint after the original launch point
                       [0,0,'CeTr','S','Ceres Tr.','Ceres Transfer',0.45,0.8],
                       [0,0,'CeTr','S',' ','Ceres Capture/Escape',0.775,0.65],
                       [0,0,'Ceres','S','Ceres','The Dwarf Planet Ceres',0.9,0.65],
+                      [0,0,'JupiterTr','E','Jupiter Tr.','Jupiter',0.6,1.0],
+                      /*
+                      [0,0,'CallistoTr','E','Callisto Tr.','Callisto Transfer'],
+                      [0,0,'Callisto','E','Callisto','Callisto (Moon of Jupiter)'],
+                      [0,0,'GanymedeTr','E','Ganymede Tr.','Ganymede Transfer'],
+                      [0,0,'Ganymede','E','Ganymede','Ganymede (Moon of Jupiter)'],
+                      [0,0,'EuropaTr','E','Europa Tr.','Europa Transfer'],
+                      [0,0,'Europa','E','Europa','Europa (Moon of Jupiter)'],
+                      [0,0,'IoTr','E','Io Tr.','Io Transfer'],
+                      [0,0,'Io','E','Io','Io (Moon of Jupiter)'],
+                      */
                       ];
         
       return {
