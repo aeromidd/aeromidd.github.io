@@ -224,18 +224,18 @@ pointer-events: none;
       ////
     }
   </script>
-  <div class="FLabel1" z-index: 1; style="position:absolute; left:97px; top:105px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
+  <div class="FLabel1" z-index: 1; style="position:absolute; left:297px; top:105px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
     Thrust per engine
   </div>
   <div class="IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII"> </div>
     
-    <div id="ISPlabel1" class="OutputLabel" z-index: 1 style="position:absolute; left:394px; top:105px; font-size: 14px;">
+    <div id="ISPlabel1" class="OutputLabel" z-index: 1 style="position:absolute; left:594px; top:105px; font-size: 14px;">
       I
     </div>
-    <div id="ISPlabel2" class="OutputLabel" z-index: 1 style="position:absolute; left:400px; top:112px; font-size: 11px;">
+    <div id="ISPlabel2" class="OutputLabel" z-index: 1 style="position:absolute; left:600px; top:112px; font-size: 11px;">
       SP
     </div>
-    <div id="ISPlabel3" class="OutputLabel" z-index: 1 style="position:absolute; left:414px; top:105px; font-size: 12px;">
+    <div id="ISPlabel3" class="OutputLabel" z-index: 1 style="position:absolute; left:614px; top:105px; font-size: 12px;">
       (Specific Impulse)
     </div>
   
@@ -284,26 +284,26 @@ pointer-events: none;
 
     <div class="slidecontainer">
       <form>
-    <div class="OutputLabel" z-index: 1 style="position:absolute; left:549px; top:65px; text-align: right; width: 25px;">
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:749px; top:65px; text-align: right; width: 25px;">
       s
   </div>
-    <div class="OutputLabel" z-index: 1 style="position:absolute; left:549px; top:105px; text-align: right; width: 25px;">
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:749px; top:105px; text-align: right; width: 25px;">
       900
   </div>
-    <div class="OutputLabel" z-index: 1 style="position:absolute; left:323px; top:105px; text-align: left; width: 25px;">
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:523px; top:105px; text-align: left; width: 25px;">
       1
   </div>
         <input id="ISPslider" class="slider" type="range" name="ISPslider" min="1" max="900" step="0.01" value="200" oninput="this.form.ISPinput.value=this.value;ISPChangeFunction(this.value);" />
         <input id="ISPinput" class="sliderInput" type="number" name="ISPInput" min="0.01" max="900" value="200" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.ISPslider.value=this.value;ISPChangeFunction(this.value);"/>
       </form>
       <form>
-    <div class="OutputLabel" z-index: 1 style="position:absolute; left:250px; top:65px; text-align: right; width: 25px;">
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:450px; top:65px; text-align: right; width: 25px;">
       N
   </div>
-    <div class="OutputLabel" z-index: 1 style="position:absolute; left:250px; top:105px; text-align: right; width: 25px;">
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:450px; top:105px; text-align: right; width: 25px;">
       1e9
   </div>
-    <div class="OutputLabel" z-index: 1 style="position:absolute; left:22px; top:105px; text-align: left; width: 25px;">
+    <div class="OutputLabel" z-index: 1 style="position:absolute; left:222px; top:105px; text-align: left; width: 25px;">
       1e-1
   </div>
         <input id="FSlider" class="slider" type="range" name="FSlider" min="-1" max="9" step="0.001" value="7" oninput="this.form.FInput.value=Math.pow(10,this.value).toPrecision(5);FChangeFunction(Math.pow(10,this.value));" />
@@ -312,53 +312,53 @@ pointer-events: none;
     
     <div class="slidecontainer">
       <form>
-        <input id="engNoSlider" class="slider" type="range" name="engNoSlider" min="1" max="9" step="1" value="5" oninput="this.form.engNoInput.value=this.value;engNoChangeFunction(this.value);" style="position:absolute; top:773px; left:52px; width: 140px;"/>
-        <input id="engNoInput" class="sliderInput" type="number" name="engNoInput" min="1" max="9" value="5" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.engNoSlider.value=this.value;engNoChangeFunction(this.value);" style="position:absolute; top:752px; left:95.3px; border: 1px solid #00508a;"/>
+        <input id="engNoSlider" class="slider" type="range" name="engNoSlider" min="1" max="9" step="1" value="5" oninput="this.form.engNoInput.value=this.value;engNoChangeFunction(this.value);" style="position:absolute; top:85px; left:52px; width: 140px;"/>
+        <input id="engNoInput" class="sliderInput" type="number" name="engNoInput" min="1" max="9" value="5" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.engNoSlider.value=this.value;engNoChangeFunction(this.value);" style="position:absolute; top:65px; left:95.3px; border: 1px solid #00508a;"/>
       </form>
   </div>
-  <div class="engNoLabel" z-index: 1; style="position:absolute; top:794px; left:68.7px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
+  <div class="engNoLabel" z-index: 1; style="position:absolute; top:105px; left:68.7px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
     Number of Engines
   </div>
   
    <div class="slidecontainer">
       <form>
-        <input id="engMassSlider" class="slider" type="range" name="engMassSlider" min="1" max="1000" step="0.1" value="8" oninput="this.form.engMassInput.value=this.value;engMassChangeFunction(this.value);" style="position:absolute; top:843px; left:52px; width: 140px;"/>
-        <input id="engMassInput" class="sliderInput" type="number" name="engMassInput" min="1" max="1000" value="8" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.engMassSlider.value=this.value;engMassChangeFunction(this.value);" style="position:absolute; top:822px; left:95.3px; border: 1px solid #00508a;"/>
+        <input id="engMassSlider" class="slider" type="range" name="engMassSlider" min="1" max="1000" step="0.1" value="8" oninput="this.form.engMassInput.value=this.value;engMassChangeFunction(this.value);" style="position:absolute; top:283px; left:52px; width: 140px;"/>
+        <input id="engMassInput" class="sliderInput" type="number" name="engMassInput" min="1" max="1000" value="8" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.engMassSlider.value=this.value;engMassChangeFunction(this.value);" style="position:absolute; top:262px; left:95.3px; border: 1px solid #00508a;"/>
       </form>
-      <select id="engMassUnit" class="unitdropdown" style="position:absolute; top:819px; left:164.7px" oninput="engMassUnitChangeFunction();">
+      <select id="engMassUnit" class="unitdropdown" style="position:absolute; top:259px; left:164.7px" oninput="engMassUnitChangeFunction();">
         <option value="kg">kg</option>
         <option value="t" selected>t</option>
       </select>
   </div>
-  <div class="engMassLabel" z-index: 1; style="position:absolute; top:864px; left:68.7px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
+  <div class="engMassLabel" z-index: 1; style="position:absolute; top:304px; left:68.7px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
     Engine Unit Mass
   </div>
   
     <div class="slidecontainer">
       <form>
-        <input id="fuelMassSlider" class="slider" type="range" name="fuelMassSlider" min="1" max="3000" step="0.1" value="2077" oninput="this.form.fuelMassInput.value=this.value;fuelMassChangeFunction(this.value);" style="position:absolute; top:773px; left:238px;"/>
-        <input id="fuelMassInput" class="sliderInput" type="number" name="fuelMassInput" min="1" max="3000" value="2077" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.fuelMassSlider.value=this.value;fuelMassChangeFunction(this.value);" style="position:absolute; top:752px; left:311px; border: 1px solid #00508a;"/>
+        <input id="fuelMassSlider" class="slider" type="range" name="fuelMassSlider" min="1" max="3000" step="0.1" value="2077" oninput="this.form.fuelMassInput.value=this.value;fuelMassChangeFunction(this.value);" style="position:absolute; top:283px; left:238px;"/>
+        <input id="fuelMassInput" class="sliderInput" type="number" name="fuelMassInput" min="1" max="3000" value="2077" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.fuelMassSlider.value=this.value;fuelMassChangeFunction(this.value);" style="position:absolute; top:262px; left:311px; border: 1px solid #00508a;"/>
       </form>
-      <select id="fuelMassUnit" class="unitdropdown" style="position:absolute; top:749px; left:410px" oninput="fuelMassUnitChangeFunction();">
+      <select id="fuelMassUnit" class="unitdropdown" style="position:absolute; top:259px; left:410px" oninput="fuelMassUnitChangeFunction();">
         <option value="kg">kg</option>
         <option value="t" selected>t</option>
       </select>
   </div>
-  <div class="fuelMassLabel" z-index: 1; style="position:absolute; top:794px; left:310px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
+  <div class="fuelMassLabel" z-index: 1; style="position:absolute; top:304px; left:310px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
     Fuel Mass
   </div>
   
   <div class="slidecontainer">
       <form>
-        <input id="payloadMassSlider" class="slider" type="range" name="payloadMassSlider" min="1" max="3000" step="0.1" value="850" oninput="this.form.payloadMassInput.value=this.value;payloadMassChangeFunction(this.value);" style="position:absolute; top:773px; left:488px;"/>
-        <input id="payloadMassInput" class="sliderInput" type="number" name="payloadMassInput" min="1" max="3000" value="850" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.payloadMassSlider.value=this.value;payloadMassChangeFunction(this.value);" style="position:absolute; top:752px; left:561px; border: 1px solid #00508a;"/>
+        <input id="payloadMassSlider" class="slider" type="range" name="payloadMassSlider" min="1" max="3000" step="0.1" value="850" oninput="this.form.payloadMassInput.value=this.value;payloadMassChangeFunction(this.value);" style="position:absolute; top:283px; left:488px;"/>
+        <input id="payloadMassInput" class="sliderInput" type="number" name="payloadMassInput" min="1" max="3000" value="850" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.payloadMassSlider.value=this.value;payloadMassChangeFunction(this.value);" style="position:absolute; top:262px; left:561px; border: 1px solid #00508a;"/>
       </form>
-      <select id="payloadMassUnit" class="unitdropdown" style="position:absolute; top:749px; left:660px" oninput="payloadMassUnitChangeFunction();">
+      <select id="payloadMassUnit" class="unitdropdown" style="position:absolute; top:259px; left:660px" oninput="payloadMassUnitChangeFunction();">
         <option value="kg">kg</option>
         <option value="t" selected>t</option>
       </select>
   </div>
-  <div class="payloadMassLabel" z-index: 1; style="position:absolute; top:794px; left:552px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
+  <div class="payloadMassLabel" z-index: 1; style="position:absolute; top:304px; left:552px; font-family: Garamond, serif; font-size: 14px; color: #757575;">
     Payload Mass
   </div>
     <canvas id="VehicleCanvas"></canvas>
@@ -399,21 +399,21 @@ It also assumes that at each subsequent waypoint after the original launch point
     <script type="text/javascript">
       var ISPslider = document.getElementById("ISPslider");
       ISPslider.style.top = "85px";
-      ISPslider.style.left = "322px";
+      ISPslider.style.left = "522px";
       ISPslider.style.width = "250px";
       var ISPinput = document.getElementById("ISPinput");
       ISPinput.style.top = "65px";
-      ISPinput.style.left = 322 + 85 + "px";
+      ISPinput.style.left = 200+322 + 85 + "px";
       ISPinput.style.width = 75+ "px";
       ISPinput.style.border = "1px solid #00508a";
       var FSlider = document.getElementById("FSlider");
       FSlider.style.top = "85px";
-      FSlider.style.left = "22px";
+      FSlider.style.left = "222px";
       FSlider.style.width = "250px";
       //DtSlider.style.oninput = DtChangeFunction(DtSlider.value);
       var FInput = document.getElementById("FInput");
       FInput.style.top = "65px";
-      FInput.style.left = 95 + "px";
+      FInput.style.left = 200+95 + "px";
       FInput.style.width = 100+ "px";
       FInput.style.border = "1px solid #00508a";
       var vcan = document.getElementById('VehicleCanvas');
@@ -443,59 +443,70 @@ It also assumes that at each subsequent waypoint after the original launch point
       function getPDV() {
                     let XXX = NaN;
                     let pdv = [
-                     //ETH,LEO,GTO,GEO,L45,EC3,LUO,LUN,MTR,MC3,DTR,DEI,PTR,PHO,LMO,MAR,VTR,VC3,LVO, VEN,MeT,MC3,LMe,Mer, 
-                      [XXX,9.3,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //ETH
-                      [1.0,XXX,2.5,3.8,4.1,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //LEO
-                      [NaN,2.5,XXX,1.6,NaN,0.7,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //GTO
-                      [NaN,3.8,1.6,XXX,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //GEO
-                      [NaN,4.1,NaN,XXX,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //L45
-                      [NaN,NaN,0.7,NaN,NaN,XXX,XXX,NaN,0.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.3,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //EC3
-                      [NaN,NaN,1.6,NaN,NaN,XXX,XXX,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //LUO
-                      [NaN,NaN,NaN,NaN,NaN,NaN,1.6,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //LUN
-                      [NaN,NaN,NaN,NaN,NaN,0.6,NaN,NaN,XXX,0.9,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //MTR
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,XXX,0.2,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //MC3
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.2,XXX,0.7,0.3,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //DTR
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.7,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //DEI
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.3,NaN,XXX,0.5,0.9,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //PTR
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.5,XXX,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //PHO
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,NaN,XXX,2.0,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //LMO
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,4.1,XXX,NaN,NaN,NaN, NaN,NaN,NaN,NaN,NaN], //MAR
-                      [NaN,NaN,NaN,NaN,NaN,0.3,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,XXX,0.4,NaN, NaN,2.1,NaN,NaN,NaN], //Venus Transfer
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.4,XXX,3.0, NaN,NaN,NaN,NaN,NaN], //Venus C3
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,3.0,XXX, 0.5,NaN,NaN,NaN,NaN], //Low Venus Orbit
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,29.7,XXX,NaN,NaN,NaN,NaN], //Venus
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,2.1,NaN,NaN, NaN,XXX,6.3,NaN,NaN], //Mercury Transfer
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,6.3,XXX,1.2,NaN], //Mercury C3
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,1.2,XXX,3.1], //Low Merc. Orbit
-                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN,NaN,3.1,XXX], //Mercury
+                     //ETH,LEO,GTO,GEO,L45,EC3,LUO,LUN,MTR,MC3,DTR,DEI,PTR,PHO,LMO,MAR,VTR,VC3,LVO, VEN,MeT, MC3,LMe,Mer,LSO,Sun,CeT,CeC,Cer
+                      [XXX,9.3,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //ETH
+                      [1.0,XXX,2.5,3.8,4.1,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LEO
+                      [NaN,2.5,XXX,1.6,NaN,0.7,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //GTO
+                      [NaN,3.8,1.6,XXX,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //GEO
+                      [NaN,4.1,NaN,XXX,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //L45
+                      [NaN,NaN,0.7,NaN,NaN,XXX,XXX,NaN,0.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.3,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //EC3
+                      [NaN,NaN,1.6,NaN,NaN,XXX,XXX,1.6,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LUO
+                      [NaN,NaN,NaN,NaN,NaN,NaN,1.6,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LUN
+                      [NaN,NaN,NaN,NaN,NaN,0.6,NaN,NaN,XXX,0.9,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,1.3,NaN,NaN], //MTR
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,XXX,0.2,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //MC3
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.2,XXX,0.7,0.3,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //DTR
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.7,XXX,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //DEI
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.3,NaN,XXX,0.5,0.9,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //PTR
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.5,XXX,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //PHO
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.9,NaN,XXX,2.0,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //LMO
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,4.1,XXX,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //MAR
+                      [NaN,NaN,NaN,NaN,NaN,0.3,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,XXX,0.4,NaN, NaN,2.1, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //Venus Transfer
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,0.4,XXX,3.0, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //Venus C3
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,3.0,XXX, 0.5,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //Low Venus Orbit
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,29.7,XXX,NaN, NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN], //Venus
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,2.1,NaN,NaN, NaN,XXX, 6.3,NaN,NaN,15.7,NaN,NaN,NaN,NaN], //Mercury Transfer
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,6.3, XXX,1.2,NaN,NaN,NaN,NaN,NaN,NaN], //Mercury C3
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, 1.2,XXX,3.1,NaN,NaN,NaN,NaN,NaN], //Low Merc.Orbit
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,3.1,XXX,NaN,NaN,NaN,NaN,NaN], //Mercury
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,15.7,NaN,NaN,NaN,XXX,178,NaN,NaN,NaN], //Low Solar Orbit
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,178,XXX,NaN,NaN,NaN], //The Sun
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,1.3,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,XXX,4.4,NaN], //Ceres Tr.
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,4.4,XXX,0.4], //Ceres C3
+                      [NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN,NaN, NaN,NaN, NaN,NaN,NaN,NaN,NaN,NaN,0.4,XXX], //Ceres
+                      
                       ];
                     
                     // node positions
                     let p = [
                       [0,0, 'Earth','N','Earth','Our Planet!',             0,0], //ETH
-                      [0,0,'LEO', 'S','LEO','Low Earth Orbit',             0,NaN], //LEO
-                      [0,0,'GTO', 'S','GTO','Geostationary Transfer Orbit',NaN,NaN], //GTO
-                      [0,0,'GEO','S','GEO','Geostationary Orbit',          NaN,NaN], //GEO
-                      [0,0,'L4L5','E','L4/L5','Stable Lagrange Points',NaN,NaN], //L45
-                      [0,0,'EC3','S','Earth C3','Earth Capture/Escape',NaN,NaN],
-                      [0,0,'LUO','E','Lunar Orbit','Lunar Orbit',0.3,NaN], //LUO
-                      [0,0,'Moon','E','The Moon','The Moon',0.3,0.1], //LUN
-                      [0,0,'MTR','S','Mars Tr.','Mars Transfer',NaN,NaN], //MTR
-                      [0,0,'MC3','S','Mars C3','Mars Capture/Escape',NaN,NaN], //MC3
-                      [0,0,'DTR','S','Deimos Tr.','Deimos Transfer',NaN,NaN], //DTR
-                      [0,0,'DEI','S','Deimos','Deimos (moon of Mars)',NaN,NaN],
-                      [0,0,'PTR','S','Phobos Tr.','Phobos Transfer',NaN,NaN],
-                      [0,0,'PHO','S','Phobos','Phobos (moon of Mars)',NaN,NaN],
-                      [0,0,'LMO','E','Low Mars Orbit','Low Mars Orbit',0.7,NaN],
-                      [0,0,'Mars','N','Mars','The Red Planet',0.7,0],
-                      [0,0,'VTR','S','Venus Tr.','Venus Transfer',NaN,NaN], //16
-                      [0,0,'VC3','S','Venus C3','Venus Capture',NaN,NaN], //17
-                      [0,0,'LVO','S','Low Venus Orbit','Low Venus Orbit',-0.4,NaN], //18
-                      [0,0,'Venus','N','Venus','The Planet Venus',-0.4,0], //19
-                      [0,0,'MeTR','S','Mercury Tr.','Mercury Transfer',NaN,NaN], //20
-                      [0,0,'MeC3','S','Mercury C3','Mercury Capture/Escape',NaN*-0.32,NaN*0.47], //20
-                      [0,0,'LowMeO','S','Low Merc. Orbit','Low Mercury Orbit',-0.6,NaN], //20
+                      [0,0,'LEO', 'W','LEO','Low Earth Orbit',             0,0.40], //LEO
+                      [0,0,'GTO', 'E','GTO','Geostationary Transfer Orbit',0.24,0.40], //GTO
+                      [0,0,'GEO','N','GEO','Geostationary Orbit',          0.17,0.23], //GEO
+                      [0,0,'L4L5','N','L4,L5','Stable Lagrange Points',-0.17,0.23], //L45
+                      [0,0,'EC3','E','Earth C3','Earth Capture/Escape',0.12,0.57],
+                      [0,0,'LUO','E','LLO','Low Lunar Orbit',0.30,0.23], //LUO
+                      [0,0,'Moon','E','The Moon','The Moon (of Earth)',0.30,0.05], //LUN
+                      [0,0,'MTR','S','Mars Tr.','Mars Transfer',0.25,0.72], //MTR
+                      [0,0,'MC3','E','Mars C3','Mars Capture/Escape',0.42,0.57], //MC3
+                      [0,0,'DTR','W',' ','Deimos Transfer',0.49,0.45], //DTR
+                      [0,0,'DEI','N','Deimos','Deimos (moon of Mars)',0.49,0.3],
+                      [0,0,'PTR','S',' ','Phobos Transfer',0.65,0.45],
+                      [0,0,'PHO','N','Phobos','Phobos (moon of Mars)',0.65,0.31],
+                      [0,0,'LMO','E','Low Mars Orbit','Low Mars Orbit',0.825,0.265],
+                      [0,0,'Mars','N','Mars','The Red Planet',0.825,0],
+                      [0,0,'VTR','S','Venus Tr.','Venus Transfer',-0.04,0.65], //16
+                      [0,0,'VC3','E','Venus C3','Venus Capture/Escape',-0.07,0.5], //17
+                      [0,0,'LVO','S','Low Venus Orbit','Low Venus Orbit',-0.35,0.5], //18
+                      [0,0,'Venus','N','Venus','The Planet Venus',-0.35,0], //19
+                      [0,0,'MeTR','S','Mercury Tr.','Mercury Transfer',-0.3,0.74], //20
+                      [0,0,'MeC3','W','Merc. C3','Mercury Capture/Escape',-0.6,0.47], //20
+                      [0,0,'LowMeO','W','Low Merc. Orbit','Low Mercury Orbit',-0.60,0.225], //20
                       [0,0,'Mercury','N','Mercury','The Planet Mercury',-0.6,0], //20
+                      [0,0,'LSO','W','Low Solar Orbit','Low Solar Orbit',-0.875,0.95],
+                      [0,0,'TheSun','W','⠀\n⠀\nThe Sun','The Sun',-0.875,-0.075],
+                      [0,0,'CeTr','S','Ceres Tr.','Ceres Transfer',0.45,0.8],
+                      [0,0,'CeTr','S',' ','Ceres Capture/Escape',0.775,0.65],
+                      [0,0,'Ceres','S','Ceres','The Dwarf Planet Ceres',0.9,0.65],
                       ];
         
       return {
@@ -633,9 +644,9 @@ It also assumes that at each subsequent waypoint after the original launch point
 
           //console.log(nodes.map(n => [n.x, n.y]));
           // Write positions back into p
-          nodes.forEach((n, i) => {
-          p[i][0] = n.x;
-          p[i][1] = n.y;
+          nodes.forEach((n, j) => {
+          p[j][0] = n.x;
+          p[j][1] = n.y;
           });
           console.log('simulation done')
           
@@ -698,7 +709,7 @@ It also assumes that at each subsequent waypoint after the original launch point
                         case 'W':
                           lblx = -LABEL_GAP - LABEL_WIDTH;
                           lbly = -5;
-                          align = "right";
+                          align = 'right';
                           break;
                         case 'E':
                           lblx = LABEL_GAP+LABEL_WIDTH;
@@ -732,6 +743,17 @@ It also assumes that at each subsequent waypoint after the original launch point
                       lbl.addEventListener("mouseleave", () => {
                       tooltip.style.display = "none";
                       });
+                     
+                      btn.addEventListener("mouseenter", e => {
+                      tooltip.textContent = p[i][5];
+                      tooltip.style.left = e.pageX + "px";
+                      tooltip.style.top = e.pageY + "px";
+                      tooltip.style.display = "block";
+                      });
+
+                      btn.addEventListener("mouseleave", () => {
+                      tooltip.style.display = "none";
+                      });  
                       });
       
       
