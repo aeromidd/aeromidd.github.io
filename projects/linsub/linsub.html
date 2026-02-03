@@ -67,9 +67,15 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
 <canvas id="BlurredSimCanvas" tabindex='0'></canvas>
 <canvas id="SimCanvas" tabindex='0' style="position:absolute;top:40px;left:15px;"></canvas>
 <div class="slidecontainer">
-  <input type="range" min="0" max="10" step="1" value="1" class="slider" id="SimSpeedSlider" style="position:absolute; left:650px; top:50px; width: 120px;" oninput="this.nextElementSibling.value = this.value +'x'">
-<output style="position:absolute; left:775px; top:50px;" >1x</output>
+  <input type="range" min="0" max="10" step="1" value="1" class="slider" id="SimSpeedSlider" style="position:absolute; left:20px; top:65px; width: 120px;" oninput="this.nextElementSibling.value = this.value +'x Sim. Speed'">
+<output style="position:absolute; left:145px; top:70px; font-family: Courier New;font-size:12px" >1x Sim. Speed</output>
 </div>
+  
+<div class="slidecontainer">
+  <input type="range" min="0" max="9" step="0.01" value="0" class="slider" id="SeaStateSlider" style="position:absolute; left:20px; top:90px; width: 120px;" oninput="">
+<output id="SSreadout" style="position:absolute; left:145px; top:95px; font-family: Courier New;font-size:12px" >Sea State 0</output>
+</div>
+  
 <table id="AftPlaneGainsTable" style="position:absolute; left:15px; top:190px; display:none">
 <tr>
   <td style="width:45px;text-align:center;font-family:'Garamond';font-size: 14px;background:#00508a;color:#ffffff">Sternplane Control</td>
@@ -198,7 +204,7 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
 </tr>
 </table>
 
-<table id="CtrlSettingsTable" style="position:absolute; left:700px; top:450px; width:180px; display:none;">
+<table id="CtrlSettingsTable" style="position:absolute; left:700px; top:500px; width:180px; display:none;">
 <tr>
   <td colspan="2" style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;background:#00508a;color:#ffffff">Controller Settings</td>
 </tr>
@@ -206,13 +212,17 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
   <td><input id="maxpitchInput" value="10.0" step="0.1" min="0" max="20" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
   <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Max. Pitch Angle</td>
 </tr>
+  <tr>
+  <td><input id="SteadyPitchInput" value="0.0" step="0.1" min="-5" max="5" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Steady Pitch Angle</td>
+</tr>
 <tr>
   <td><input id="UsePitchForDepthChangesInput" type="checkbox" style="width:60px;" checked>
   <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Use Pitch for Depth Changes</td>
 </tr>
 <tr>
   <td><input id="SliderControlMaintainPitchInput" type="checkbox" style="width:60px;" checked>
-  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Maintain Pitch During Slider Control</td>
+  <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Maintain Pitch while Slider Ctrl</td>
 </tr>
 <tr>
   <td><input id="SliderControlRatioInput" value="-0.25" step="0.05" max="2.0" min="-2.0" type="number" style="width:60px;text-align:right" onkeypress="return isNumberKey(event)"/></td>
@@ -269,9 +279,16 @@ b.maxplanerate = maxplanerateInput.value;
 
 <button id="RTDDbutton" style="position:absolute;left:717px;top:350px;width:163px;height:25px;" value="false"  onClick="RTDD();">Order Deep Ops Depth</button>
 
+<button id="ToggleTrimComp" style="position:absolute;left:717px;top:390px;width:163px;height:25px;"  onClick="ToggleTrimComp();">Disable Trim Comp.</button>
+
+<button id="ToggleTrimTarget" style="position:absolute;left:717px;top:415px;width:163px;height:25px;"  onClick="ToggleTrimTarget();">Toggle Trim Target</button>
+
+<button id="ResetIntegrators" style="position:absolute;left:717px;top:455px;width:163px;height:25px;"  onClick="ResetIntegrators();">Reset Integrators</button>
+
 <button id="Timerbutton" style="position:absolute;left:450px;top:80px;width:100px;height:25px;" value="false" >0</button>
 
-<input type="checkbox" style="position:absolute;left:5px;top:90px;" id="NiceGraphicsON" checked>
+<input type="checkbox" style="position:absolute;left:15px;top:110px;" id="NiceGraphicsON" checked>
+<label for="NiceGraphicsON" style="position:absolute;left:35px;top:114px;font-size:12px;font-family:Courier New">Fancy Graphics</label>
 
 
   <input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="BPINTrange" style="position:absolute;left:615px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;" disabled>
@@ -279,6 +296,10 @@ b.maxplanerate = maxplanerateInput.value;
 
   <input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="BPrange" style="position:absolute;left:600px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;">
 <input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="SPrange" style="position:absolute;left:265px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;" disabled>
+
+
+<input type="checkbox" style="position:absolute;left:857px;top:110px;" id="SliderCtrlON" checked onInput="if(BPrange.style.display!='none'){BPrange.style.display='none';BPINTrange.style.display='none';SPrange.style.display='none';SPINTrange.style.display='none';}else{BPrange.style.display='';BPINTrange.style.display='';SPrange.style.display='';SPINTrange.style.display='';}">
+<label for="SliderCtrlON" style="position:absolute;left:742px;top:114px;font-size:12px;font-family:Courier New">Show Slider Ctrl</label>
 
 
 <script type="text/javascript">
@@ -502,7 +523,8 @@ ds: [
             this.periodegInc2 = 12;
           
             this.SeaState = 0.49;//0.49;
-            this.SeaFixed = 1;
+            this.SeaFixed = 0;
+            this.SSControl = false;
             
             this.zDem = new Array(650);
             this.zDem.fill(this.depthDem*this.SF)
@@ -565,7 +587,14 @@ DOM.ResetStatesButton.addEventListener('click', () => sim.ResetStates());
     sim.depthOrder('DD');
 });
 */
-
+SeaStateSlider.addEventListener('mousedown',function(){
+  sim.AssumeSSSlider();
+  console.log('SS range being changed');
+});
+SeaStateSlider.addEventListener('mouseup',function(){
+  sim.ReleaseSSSlider();
+  console.log('SS range released');
+});
 BPrange.addEventListener('mousedown',function(){
   sim.AssumeSliderControl();
   console.log('BPrangeON');
@@ -1163,16 +1192,27 @@ UpdatePlantbutton.addEventListener('click',function(){
                   
                   
                   //Sea Forces
-                  
+                  var SeaStatePrev = b.SeaState;
                   var SeaState
-                  if (b.SeaFixed == 0){
-                    b.SeaState = b.SeaState+0.1*(Math.random()-0.5)
-                    if (b.SeaState < 0){
-                      b.SeaState = 0;
-                    }else if (b.SeaState > 9){
-                      b.SeaState = 9;
+                  if (b.SSControl && SimSpeedSlider.value > 0){
+                    b.SeaState = Math.min(Math.max(SeaStateSlider.value,0),9);
+                    
+                  }else{
+                    if (b.SeaFixed == 0){
+                      b.SeaState = b.SeaState+0.1*(Math.random()-0.5)
+                      if (b.SeaState < 0){
+                        b.SeaState = 0;
+                      }else if (b.SeaState > 9){
+                        b.SeaState = 9;
+                      }
                     }
+                    if ((b.SeaState).toFixed(1)!=SeaStatePrev.toFixed(1))
+                    {
+                      SeaStateSlider.value =b.SeaState.toFixed(1);
+                    };
                   }
+                      SSreadout.innerHTML = "Sea State "+b.SeaState.toFixed(1);
+                    
                   
                   b.SeaForcePerScreenUnit = 0.25*1e3*9.81;
                   let ssFZmag = b.SeaForcePerScreenUnit*b.SeaState; // Newtons per FM trail array element (each approx 2.48m in length)
@@ -1435,13 +1475,27 @@ UpdatePlantbutton.addEventListener('click',function(){
             b.SliderControl = true;
           };
         }
-      
         ReleaseSliderControl(){
           var b;
           for (b of this.subList) {
             b.SliderControl = false;
           };
         }
+      
+        AssumeSSSlider(){
+          var b;
+          for (b of this.subList) {
+            b.SSControl = true;
+            b.SeaState = SeaStateSlider.value;
+          };
+        }
+        ReleaseSSSlider(){
+          var b;
+          for (b of this.subList) {
+            b.SSControl = false;
+          };
+        }
+      
         
         APall(){
           var b;
@@ -1691,7 +1745,7 @@ UpdatePlantbutton.addEventListener('click',function(){
         };
         // Set display size (css pixels).
         var xsize = 865;
-        var ysize = 1200;
+        var ysize = 1000;
         canvas.style.outline = "1px solid #00508a";
         canvas.style.width = xsize + "px";
         canvas.style.height = ysize + "px";
@@ -1736,8 +1790,8 @@ UpdatePlantbutton.addEventListener('click',function(){
                 context.beginPath();
                 context.moveTo(ScreenHor(-5),ScreenVer(0));
                 context.lineTo(ScreenHor(4.5),ScreenVer(0));
-                context.lineTo(ScreenHor(4.5),ScreenVer(8));
-                context.lineTo(ScreenHor(-4.5),ScreenVer(8));
+                context.lineTo(ScreenHor(4.5),ScreenVer(10));
+                context.lineTo(ScreenHor(-4.5),ScreenVer(10));
                 context.strokeStyle = '#129aca';
               //context.stroke(); //uncomment if want to show border around sea background
                 const grd = context.createLinearGradient(ScreenHor(-4.5), ScreenVer(-0.2), ScreenHor(-4.5), ScreenVer(8));
@@ -1851,11 +1905,13 @@ grd.addColorStop(1.0, "rgba(0,150,170,0.1)");
                 context.font = "15px Courier New";
                 context.fillStyle = "#00508a";
                 context.textAlign = "left";
+              /*
                 if (b.SeaFixed == 1){
                   context.fillText("Sea State: ".concat(b.SeaState.toFixed(0).toString()," (fixed)"), ScreenHor(-4.2),ScreenVer(-0.5));
                 }else{
                   context.fillText("Sea State: ".concat(b.SeaState.toFixed(0).toString()), ScreenHor(-4.2),ScreenVer(-0.5));
                 }
+                  */
               
                 
                 //Waves
