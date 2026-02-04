@@ -19,7 +19,7 @@
          if (canvas.getContext) {
            var context = canvas.getContext('2d');
            var xsize = 880;
-           var ysize = 1200;
+           var ysize = 1150;
            canvas.style.width = xsize + "px";
            canvas.style.height = ysize + "px";
            // Set actual size in memory (scaled to account for extra pixel density).
@@ -55,15 +55,14 @@
            context.stroke();
            ////
          }
-      </script>
+      </script> <p style="position:absolute;top:1030px;left:20px;"><strong>Keyboard Shortcuts:</strong><br>
 A/Z: manual sternplane | K/M: manual bowplane | T: toggle depth autopilot | I = reset integrators
 <br>
 Click: depth setpoint | P/L: steady pitch setpoint | O: reset steady pitch
 <br>
 C: toggle compressibility | V: toggle active trim compensator | B: toggle trim target
 <br>
-S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
-<br>
+  S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation</p>
 <canvas id="BlurredSimCanvas" tabindex='0'></canvas>
 <canvas id="SimCanvas" tabindex='0' style="position:absolute;top:40px;left:15px;"></canvas>
 <div class="slidecontainer">
@@ -241,65 +240,57 @@ S = fix/unfix seastate | 0-9 = set seastate | R = reset simulation
   <td style="width:163px;text-align:center;font-family:'Garamond';font-size: 14px;">Max. Sternplane Angle</td>
 </tr>
 </tr>
-  
-  
 </table>
-<script>
-  /*
-b.maxplanerate = maxplanerateInput.value;
-                    b.maxPitch = maxpitchInput.value;
-                    b.maxBowplaneAngle = maxBowplaneAngleInput.value;
-                    b.maxSternplaneAngle = maxSternplaneAngleInput.value;
-                    b.UsePitchForDepthChanges = UsePitchForDepthChangesInput.value;
-                    */
-  </script>
   
-<button id="PlaneGainsToggle" style="position:absolute;left:696px;top:81px;width:184px;height:25px;" onClick="TogglePlaneGainsTable();">Edit Diveplane Controller</button>
+<button id="PlaneGainsToggle" style="position:absolute;left:696px;top:41px;width:184px;height:25px;" onClick="TogglePlaneGainsTable();">Edit Diveplane Controller</button>
   
 <button id="PlantPhysicsToggle" style="position:absolute;left:15px;top:41px;width:200px;height:25px;" onClick="TogglePlantPhysicsTable();">Edit Sim / Plant Settings</button>
   
-<button id="readoutThing" style="position:absolute;left:425px;top:60px;width:200px;height:25px;" onClick="">READOUT</button>
+<button id="readoutThing" style="position:absolute;left:425px;top:60px;width:200px;height:25px;display:none" onClick="">READOUT</button>
   
-<p style="position:absolute;left:15px;top:290px;font-family:Arial;font-size:15px" >Reset:</p>
+<p id="ResetButtonsTxt" style="position:absolute;left:15px;top:290px;font-family:Arial;font-size:15px;display:none" >Reset:</p>
 
-<button id="ResetALLButton" style="position:absolute;left:60px;top:300px;width:35px;height:25px;background:orange" onClick="false">ALL</button>
-<button id="ResetStatesButton" style="position:absolute;left:95px;top:300px;width:70px;height:25px;" onClick="false">Dynamics</button>
-<button id="ResetPlantButton" style="position:absolute;left:165px;top:300px;width:50px;height:25px;" onClick="false">Plant</button>
-<button id="ResetCtrlButton" style="position:absolute;left:215px;top:300px;width:35px;height:25px;" onClick="false">Ctrl</button>
+<button id="ResetALLButton" style="position:absolute;left:60px;top:300px;width:35px;height:25px;background:orange;display:none" onClick="false">ALL</button>
+<button id="ResetStatesButton" style="position:absolute;left:95px;top:300px;width:70px;height:25px;display:none" onClick="false">Dynamics</button>
+<button id="ResetPlantButton" style="position:absolute;left:165px;top:300px;width:50px;height:25px;display:none" onClick="false">Plant</button>
+<button id="ResetCtrlButton" style="position:absolute;left:215px;top:300px;width:35px;height:25px;display:none" onClick="false">Ctrl</button>
 
-<button id="ToggleCompressibility" style="position:absolute;left:15px;top:325px;width:165px;height:25px;" onClick="ToggleCompressibilityFnc();">Disable Compressibility</button>
+<button id="ToggleCompressibility" style="position:absolute;left:15px;top:325px;width:165px;height:25px;display:none" onClick="ToggleCompressibilityFnc();">Disable Compressibility</button>
 
-<button id="FreezeDepthToggle" style="position:absolute;left:15px;top:350px;width:114px;height:25px;" onClick="ToggleFreezeDepth();">Freeze Depth</button>
+<button id="FreezeDepthToggle" style="position:absolute;left:15px;top:350px;width:114px;height:25px;display:none" onClick="ToggleFreezeDepth();">Freeze Depth</button>
 
   <button id="UpdatePlantbutton" style="position:absolute;left:201.5px;top:383px;width:54px;height:19px;text-align:center;font-family:'Garamond';font-size: 14px;border: 1px solid #00508a;display:none;" value="false" onClick="">Update</button>
   
-<button id="RTPDbutton" style="position:absolute;left:717px;top:300px;width:163px;height:25px;" value="false" onClick="RTPD();">Order Periscope Depth</button>
+<button id="RTPDbutton" style="position:absolute;left:717px;top:300px;width:163px;height:25px;display:none" value="false" onClick="RTPD();">Order Periscope Depth</button>
   
-<button id="RTSDbutton" style="position:absolute;left:717px;top:325px;width:163px;height:25px;" value="false"  onClick="RTSD();">Order Standard Depth</button>
+<button id="RTSDbutton" style="position:absolute;left:717px;top:325px;width:163px;height:25px;display:none" value="false"  onClick="RTSD();">Order Standard Depth</button>
 
-<button id="RTDDbutton" style="position:absolute;left:717px;top:350px;width:163px;height:25px;" value="false"  onClick="RTDD();">Order Deep Ops Depth</button>
-
-<button id="ToggleTrimComp" style="position:absolute;left:717px;top:390px;width:163px;height:25px;"  onClick="ToggleTrimComp();">Disable Trim Comp.</button>
-
-<button id="ToggleTrimTarget" style="position:absolute;left:717px;top:415px;width:163px;height:25px;"  onClick="ToggleTrimTarget();">Toggle Trim Target</button>
-
-<button id="ResetIntegrators" style="position:absolute;left:717px;top:455px;width:163px;height:25px;"  onClick="ResetIntegrators();">Reset Integrators</button>
-
-<button id="Timerbutton" style="position:absolute;left:450px;top:80px;width:100px;height:25px;" value="false" >0</button>
-
-<input type="checkbox" style="position:absolute;left:15px;top:110px;" id="NiceGraphicsON" checked>
-<label for="NiceGraphicsON" style="position:absolute;left:35px;top:114px;font-size:12px;font-family:Courier New">Fancy Graphics</label>
+<button id="RTDDbutton" style="position:absolute;left:717px;top:350px;width:163px;height:25px;display:none" value="false"  onClick="RTDD();">Order Deep Ops Depth</button>
 
 
-  <input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="BPINTrange" style="position:absolute;left:615px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;" disabled>
-<input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="SPINTrange" style="position:absolute;left:250px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;" disabled>
+<button id="ToggleAutopilot" style="position:absolute;left:717px;top:390px;width:163px;height:25px;display:none"  onClick="ToggleAP();">Disable Autopilot</button>
 
-  <input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="BPrange" style="position:absolute;left:600px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;">
-<input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="SPrange" style="position:absolute;left:265px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;" disabled>
+<button id="ResetIntegrators" style="position:absolute;left:717px;top:415px;width:163px;height:25px;display:none">Reset Integrators</button>
+
+<button id="ToggleTrimComp" style="position:absolute;left:717px;top:440px;width:163px;height:25px;display:none"  onClick="ToggleTrimCompFnc();">Disable Trim Comp.</button>
+
+<button id="ToggleTrimTarget" style="position:absolute;left:717px;top:465px;width:163px;height:25px;display:none">Toggle Trim Target</button>
+
+<button id="Timerbutton" style="position:absolute;left:450px;top:80px;width:100px;height:25px;display:none" value="false" >0</button>
+
+<input type="checkbox" style="position:absolute;left:857px;top:80px;" id="NiceGraphicsON" checked>
+<label for="NiceGraphicsON" style="position:absolute;left:735px;top:84px;font-size:12px;font-family:Courier New">Fancy Graphics</label>
 
 
-<input type="checkbox" style="position:absolute;left:857px;top:110px;" id="SliderCtrlON" checked onInput="if(BPrange.style.display!='none'){BPrange.style.display='none';BPINTrange.style.display='none';SPrange.style.display='none';SPINTrange.style.display='none';}else{BPrange.style.display='';BPINTrange.style.display='';SPrange.style.display='';SPINTrange.style.display='';}">
-<label for="SliderCtrlON" style="position:absolute;left:742px;top:114px;font-size:12px;font-family:Courier New">Show Slider Ctrl</label>
+  <input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="BPINTrange" style="position:absolute;left:615px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;display:none" disabled>
+<input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="SPINTrange" style="position:absolute;left:250px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;display:none" disabled>
+
+  <input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="BPrange" style="position:absolute;left:600px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;display:none">
+<input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="SPrange" style="position:absolute;left:265px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;display:none" disabled>
+
+
+<input type="checkbox" style="position:absolute;left:857px;top:100px;" id="SliderCtrlON"  onInput="if(BPrange.style.display!='none'){BPrange.style.display='none';BPINTrange.style.display='none';SPrange.style.display='none';SPINTrange.style.display='none';}else{BPrange.style.display='';BPINTrange.style.display='';SPrange.style.display='';SPINTrange.style.display='';}">
+<label for="SliderCtrlON" style="position:absolute;left:742px;top:104px;font-size:12px;font-family:Courier New">Show Slider Ctrl</label>
 
 
 <script type="text/javascript">
@@ -319,7 +310,7 @@ RTDDbutton: $('RTDDbutton'),
 FreezeDepthToggle: $('FreezeDepthToggle'),
 UpdatePlantbutton: $('UpdatePlantbutton'),
 ToggleCompressibility: $('ToggleCompressibility'),
-ResetAllButton: $('ResetAllButton'),
+ResetALLButton: $('ResetALLButton'),
 ResetStatesButton: $('ResetStatesButton'),
 ResetPlantButton: $('ResetPlantButton'),
 ResetCtrlButton: $('ResetCtrlButton'),
@@ -565,8 +556,9 @@ ds: [
             return Math.sqrt(dx*dx + dy*dy);
         }
     }
+ResetIntegrators.addEventListener('click', () => sim.intReset());
 
-DOM.RTPDbutton.addEventListener('click', () => sim.depthOrder('PD'));
+  DOM.RTPDbutton.addEventListener('click', () => sim.depthOrder('PD'));
 DOM.RTSDbutton.addEventListener('click', () => sim.depthOrder('SD'));
 DOM.RTDDbutton.addEventListener('click', () => sim.depthOrder('DD'));
 DOM.ResetStatesButton.addEventListener('click', () => sim.ResetStates());
@@ -603,6 +595,45 @@ BPrange.addEventListener('mouseup',function(){
   sim.ReleaseSliderControl();
   console.log('BPrangeOFF');
 });
+
+ResetALLButton.addEventListener('click',function(){
+    ResetPlantButton.click();
+    ResetStatesButton.click();
+    ResetCtrlButton.click();
+  });
+
+ResetCtrlButton.addEventListener('click',function(){
+    sim.ResetCtrl();
+  });
+ToggleAutopilot.addEventListener('click',function(){
+    sim.APall();
+});
+ToggleTrimTarget.addEventListener('click',function(){
+  sim.toggleTrimTarget();
+})
+  
+ResetPlantButton.addEventListener('click',function(){
+    Plant_rho.value = 1030;
+    Plant_L.value = 75;
+    Plant_mass.value = 5000;
+    Plant_r.value = 5.0;
+    Plant_zcb.value = -1;
+    Plant_Z_Wdot.value = -6;
+    Plant_Z_Qdot.value = -3;
+    Plant_M_Wdot.value = -2;
+    Plant_M_Qdot.value = -1;
+    Plant_Z_UW.value = -36;
+    Plant_Z_UQ.value = -12;
+    Plant_M_UW.value = 3.0;
+    Plant_M_UQ.value = -12;
+    Plant_Z_UUdb.value = -0.8;
+    Plant_Z_UUds.value = -1;
+    Plant_M_UUdb.value = 0.2;
+    Plant_M_UUds.value = -0.3;
+  
+    UpdatePlantbutton.click();
+    
+  });
   
 UpdatePlantbutton.addEventListener('click',function(){
                     
@@ -952,6 +983,7 @@ UpdatePlantbutton.addEventListener('click',function(){
                   
                   
                   let maxPitch = b.maxPitch;
+                  b.pitchSP = SteadyPitchInput.value;
                   var useZdErr;
                   
                   if (b.AP[1] == 1 && b.AP[2] == 1){
@@ -972,11 +1004,11 @@ UpdatePlantbutton.addEventListener('click',function(){
                   if (b.pitchDem < -maxPitch){
                     b.pitchDem = -maxPitch;
                   }
-                  if (b.pitchSP > maxPitch){
-                    b.pitchSP = maxPitch;
+                  if (b.pitchSP > 5){
+                    b.pitchSP = 5;
                   }
-                  if (b.pitchSP < -maxPitch){
-                    b.pitchSP = -maxPitch;
+                  if (b.pitchSP < -5){
+                    b.pitchSP = -5;
                   }
                   
                   
@@ -1425,6 +1457,11 @@ UpdatePlantbutton.addEventListener('click',function(){
                     }else{
                       b.Compressibility = 1;
                     }
+                  if (ToggleTrimComp.innerHTML == 'Enable Trim Comp.'){
+                      b.TrimCompensator = 0;
+                    }else{
+                      b.TrimCompensator = 1;
+                    }
                   
                   if (b.trailCounter > b.trailCounterCap){
                     b.trailCounter = 0;
@@ -1564,19 +1601,22 @@ UpdatePlantbutton.addEventListener('click',function(){
         pitchSP_up(){
           var b;
           for (b of this.subList) {
-            b.pitchSP += 2;
+            SteadyPitchInput.value+=2;
+            //b.pitchSP += 2;
           }
         }
         pitchSP_down(){
           var b;
           for (b of this.subList) {
-            b.pitchSP -= 2;
+            SteadyPitchInput.value-=2;
+            //b.pitchSP -= 2;
           }
         }
         pitchSP_level(){
           var b;
           for (b of this.subList) {
-            b.pitchSP = 0;
+            SteadyPitchInput.value=0;
+            //b.pitchSP = 0;
           }
         }
         toggleCompressibility(){
@@ -1630,14 +1670,14 @@ UpdatePlantbutton.addEventListener('click',function(){
             b.pitchDem = 0;
             b.zh.fill(b.yi[3]*b.SF)
             b.zDem.fill(b.yi[3]*b.SF)
-            b.AP[1] = 1;
-            b.AP[2] = 1;
-            b.APprev[1] = 1;
-            b.APprev[2] = 1;
+            //b.AP[1] = 1;
+            //b.AP[2] = 1;
+            //b.APprev[1] = 1;
+            //b.APprev[2] = 1;
             b.surfaced = false;
             b.Compressibility = 1;
             b.TrimCompensator = 1;
-            b.TrimTarget = 'order';
+            //b.TrimTarget = 'order';
             b.trimz = b.yi[3];
             b.trimErrPrev = 0;
             b.trimErr = 0;
@@ -1655,18 +1695,22 @@ UpdatePlantbutton.addEventListener('click',function(){
           
         }
       ResetCtrl(){
-            ctrldb_zD.value = b.dbGdsG_Original[1];
-            ctrldb_zP.value = b.dbGdsG_Original[3];
-            ctrldb_zI.value = b.dbGdsG_Original[5];
-            ctrldb_thtD.value = b.dbGdsG_Original[2];
-            ctrldb_thtP.value = b.dbGdsG_Original[4];
-            ctrldb_thtI.value = b.dbGdsG_Original[6];
+          var b;
+          for (b of this.subList) {
+            ctrldb_zD.value = b.dbG_Original[1];
+            ctrldb_zP.value = b.dbG_Original[3];
+            ctrldb_zI.value = b.dbG_Original[5];
+            ctrldb_thtD.value = b.dbG_Original[2];
+            ctrldb_thtP.value = b.dbG_Original[4];
+            ctrldb_thtI.value = b.dbG_Original[6];
             ctrlds_zD.value = b.dsG_Original[1];
             ctrlds_zP.value = b.dsG_Original[3];
             ctrlds_zI.value = b.dsG_Original[5];
             ctrlds_thtD.value = b.dsG_Original[2];
             ctrlds_thtP.value = b.dsG_Original[4];
             ctrlds_thtI.value = b.dsG_Original[6];
+          };
+        sim.intReset();
       }
       UpdatePlant(A,B,L,r){
           var b;
@@ -2356,9 +2400,11 @@ shadowgrd.addColorStop(1.0, 'rgba(0,200,220,0.1)');
         Render(sim);
         
         //Timerbutton.innerHTML = dt;
+        /*
         if (Math.round(time*10)%5 == 0){
           Timerbutton.innerHTML = time.toFixed(2);
         }
+        */
         //*/
         window.setTimeout(AnimationFrame, 25); //FrameDelayMillis
     }
@@ -2379,19 +2425,64 @@ function isNumberKey(evt) {
 }
 function TogglePlaneGainsTable(){
   if(AftPlaneGainsTable.style.display=='none'){AftPlaneGainsTable.style.display='';FwdPlaneGainsTable.style.display='';PlaneGainsToggle.innerHTML="Close Diveplane Controller";CtrlSettingsTable.style.display='';
-                                              }else{AftPlaneGainsTable.style.display='none';FwdPlaneGainsTable.style.display='none';PlaneGainsToggle.innerHTML="Edit Diveplane Controller";CtrlSettingsTable.style.display='none';};
-  
-  console.log('togglePlaneCtrl');
+  RTPDbutton.style.display='';
+  RTSDbutton.style.display='';
+  RTDDbutton.style.display='';
+  ToggleAutopilot.style.display='';
+  ResetIntegrators.style.display='';
+  ToggleTrimComp.style.display='';
+  ToggleTrimTarget.style.display='';
+  console.log('ShowPlaneCtrl');
+                                              }else{
+                                                AftPlaneGainsTable.style.display='none';FwdPlaneGainsTable.style.display='none';
+                                                PlaneGainsToggle.innerHTML="Edit Diveplane Controller";
+                                                CtrlSettingsTable.style.display='none';
+  RTPDbutton.style.display='none';
+  RTSDbutton.style.display='none';
+  RTDDbutton.style.display='none';
+  ToggleAutopilot.style.display='none';
+  ResetIntegrators.style.display='none';
+  ToggleTrimComp.style.display='none';
+  ToggleTrimTarget.style.display='none';
+  console.log('HidePlaneCtrl');};
 }
 function TogglePlantPhysicsTable(){
   if(PlantPhysicsTable.style.display=='none'){
     PlantPhysicsTable.style.display='';PlantPhysicsToggle.innerHTML="Close Sim / Plant Settings";UpdatePlantbutton.style.display='';
+  ResetButtonsTxt.style.display='';
+  ResetALLButton.style.display='';
+  ResetPlantButton.style.display='';
+  ResetStatesButton.style.display='';
+  ResetCtrlButton.style.display='';
+  ToggleCompressibility.style.display='';
+  FreezeDepthToggle.style.display='';
                                              }else{
                                                PlantPhysicsTable.style.display='none';PlantPhysicsToggle.innerHTML="Edit Sim / Plant Settings";UpdatePlantbutton.style.display='none';
+  ResetButtonsTxt.style.display='none';
+  ResetALLButton.style.display='none';
+  ResetPlantButton.style.display='none';
+  ResetStatesButton.style.display='none';
+  ResetCtrlButton.style.display='none';
+  ToggleCompressibility.style.display='none';
+  FreezeDepthToggle.style.display='none';
                                              };
   
   console.log('togglePlantPhysics');
 }
+function ToggleAP(){
+  if (ToggleAutopilot.innerHTML == 'Disable Autopilot'){
+    ToggleAutopilot.innerHTML = 'Enable Autopilot';
+    }else{
+      ToggleAutopilot.innerHTML = 'Disable Autopilot';
+    }
+};
+function ToggleTrimCompFnc(){
+  if (ToggleTrimComp.innerHTML == 'Disable Trim Comp.'){
+    ToggleTrimComp.innerHTML = 'Enable Trim Comp.';
+    }else{
+      ToggleTrimComp.innerHTML = 'Disable Trim Comp.';
+    }
+};
 function ToggleFreezeDepth(){
   if (FreezeDepthToggle.innerHTML == 'Unfreeze Depth'){
     FreezeDepthToggle.innerHTML = 'Freeze Depth';
