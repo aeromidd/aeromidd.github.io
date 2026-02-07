@@ -187,7 +187,7 @@ pointer-events: none;
     if (canvas.getContext) {
       var context = canvas.getContext('2d');
       var xsize = 880;
-      var ysize = 1425;
+      var ysize = 1275;
       canvas.style.width = xsize + "px";
       canvas.style.height = ysize + "px";
       // Set actual size in memory (scaled to account for extra pixel density).
@@ -366,7 +366,7 @@ pointer-events: none;
   </div>
       
     <div id="tooltip"></div>
-  <div style="position:absolute; top:1325px; left: 25px; width: 840px; margin: auto;border: 1px solid #fff; font-family: Helvetica, serif; font-size: 13px; color: #757575;text-align:center">
+  <div style="position:absolute; top:1175px; left: 25px; width: 840px; margin: auto;border: 1px solid #fff; font-family: Helvetica, serif; font-size: 13px; color: #757575;text-align:center">
 Click a starting point on the Delta-V map to predict the range of paths achievable by the above rocket engine and vehicle configuration, travelling between the major bodies of the Solar System and significant orbit points. Default start: Earth.
 <br>
 <br>
@@ -383,8 +383,8 @@ Note: This Delta-V budget map does not take rocket-staging into account, nor doe
       <option value="autophage">Autophage hybrid prototype (N2H4O3 + C2H4)</option>
     </select>
   </div>
-    <label for="ISPFexponent" style="position:absolute;top:18px;left:635px;font-family:Garamond,serif;font-size:14px;color:#757575;">ISP-Thrust Tradeoff:</label>
-      <form style="position:absolute;top:15px;left:755px;width:335px;font-family:Garamond,serif;font-size:13px;color:#00508a;">
+    <label for="ISPFexponent" style="position:absolute;top:18px;left:652px;font-family:Garamond,serif;font-size:14px;color:#757575;">ISP-Thrust Tradeoff:</label>
+      <form style="position:absolute;top:15px;left:772px;width:335px;font-family:Garamond,serif;font-size:13px;color:#00508a;">
 
     <label for="exp-relaxed">
       <input
@@ -644,25 +644,25 @@ Note: This Delta-V budget map does not take rocket-staging into account, nor doe
                       [0,0,'Mercury','N','Mercury','The Planet Mercury',-0.6,0], //20
                       [0,0,'LSO','W','Low Solar Orbit','Low Solar Orbit',-0.875,0.95],
                       [0,0,'TheSun','W','⠀\n⠀\nThe Sun','The Sun',-0.875,-0.075],
-                      [0,0,'CeTr','E','Ceres Tr.','Ceres Transfer',0.45,0.75],
-                      [0,0,'CeO','S',' ','Low Ceres Orbit',0.775,0.65],
-                      [0,0,'Ceres','S','Ceres','The Dwarf Planet Ceres',0.9,0.65],
-                      [0,0,'JupiterTr','S','Jupiter Tr.','Jupiter Transfer',0.475,0.975],
+                      [0,0,'CeTr','E','Ceres Tr.','Ceres Transfer',0.5,0.75],
+                      [0,0,'CeO','S',' ','Low Ceres Orbit',0.8,0.675],
+                      [0,0,'Ceres','N','Ceres','The Dwarf Planet Ceres',0.8,0.52],
+                      [0,0,'JupiterTr','S','Jupiter Tr.','Jupiter Transfer',0.471,0.975],
                       [0,0,'JupiterC3','E','Jupiter C3','Jupiter Capture/Escape',0.625,1.05-0.05],
                       [0,0,'CallistoTr','E','Callisto Tr.','Callisto Transfer',0.7575,1.3-.1-0.05],
                       [0,0,'CallistoOrb','E',' ','Low Callisto Orbit',.1+0.475,1.37-0.05],
                       [0,0,'Callisto','N','Callisto','Callisto (Moon of Jupiter)',.1+0.475,1.175-0.05],
-                      [0,0,'GanymedeTr','E','Gany-mede Tr.','Ganymede Transfer',0.7+0.02,1.45-.1-0.05],
+                      [0,0,'GanymedeTr','E','Gany-mede Tr.','Ganymede Transfer',0.7+0.0275,1.45-.1-0.05],
                       [0,0,'GanymedeOrb','E',' ','Low Ganymede Orbit',.15+0.35,1.57-0.05],
                       [0,0,'Ganymede','W','Gany-mede','Ganymede (Moon of Jupiter)',.15+0.35,1.35-0.05],
-                      [0,0,'EuropaTr','E','Europa Tr.','Europa Transfer',0.7+0.025,1.6-.1-0.05],
-                      [0,0,'EuropaOrb','E',' ','Low Europa Orbit',.15+0.275,1.7-0.05],
-                      [0,0,'Europa','N','Europa','Europa (Moon of Jupiter)',.15+0.275,1.5-0.05],
-                      [0,0,'IoTr','E','Io Tr.','Io Transfer',0.625+.025,1.75-.07-0.05],
-                      [0,0,'IoOrb','E',' ','Low Io Orbit',.175+0.175,1.8+.05-0.05],
-                      [0,0,'Io','N','Io','Io (Moon of Jupiter)',.175+0.175,1.55+.05-0.05],
-                      [0,0,'JupLO','S','Low Jovian Orbit','Low Orbit of Jupiter',.9,2.05-0.05],
-                      [0,0,'Jupiter','N','Jupiter','The Planet Jupiter',.9,1.1-0.025],
+                      [0,0,'EuropaTr','E','Europa Tr.','Europa Transfer',0.685,1.6-.1],
+                      [0,0,'EuropaOrb','E',' ','Low Europa Orbit',.15+0.275,1.7-0.025],
+                      [0,0,'Europa','N','Europa','Europa (Moon of Jupiter)',.15+0.275,1.5-0.025],
+                      [0,0,'IoTr','E','Io Tr.','Io Transfer',0.6325,1.725],
+                      [0,0,'IoOrb','E',' ','Low Io Orbit',.175+0.175,1.9-0.05],
+                      [0,0,'Io','N','Io','Io (Moon of Jupiter)',.175+0.175,1.6+.05-0.05],
+                      [0,0,'JupLO','S','Low Jovian Orbit','Low Orbit of Jupiter',.925,1.4],
+                      [0,0,'Jupiter','N','Jupiter','The Planet Jupiter',.925,0.9-0.05],
                       ];
         
       return {
@@ -943,10 +943,10 @@ Note: This Delta-V budget map does not take rocket-staging into account, nor doe
           enginePresetList.value = "saturnv";
         }else if (EPchoice.includes("autophage")) {
           //Autophage
-          FInput.value = 1.2;
+          FInput.value = 98.409;
           FInput.oninput();
           FInput.onchange();
-          ISPinput.value = 397;
+          ISPinput.value = 178.96;
           ISPinput.oninput();
           //
           fuelMassUnit.value = 'kg';
@@ -966,10 +966,10 @@ Note: This Delta-V budget map does not take rocket-staging into account, nor doe
           enginePresetList.value = "autophage";
         } else if (EPchoice.includes("falcon9")) {
           //Falcon 9 1st Stage (Merlin 1D)
-          FInput.value = 1.2;
+          FInput.value = 8.0972e+5;
           FInput.oninput();
           FInput.onchange();
-          ISPinput.value = 397;
+          ISPinput.value = 281.47;
           ISPinput.oninput();
           //
           fuelMassUnit.value = 't';
@@ -989,10 +989,10 @@ Note: This Delta-V budget map does not take rocket-staging into account, nor doe
           enginePresetList.value = "falcon9";
         } else if (EPchoice.includes("ariane5")) {
           //Ariane 5/6 Core Stage (Vulcain 1 or 2?)
-          FInput.value = 1.2;
+          FInput.value = 1.2926e+6;
           FInput.oninput();
           FInput.onchange();
-          ISPinput.value = 397;
+          ISPinput.value = 328.07;
           ISPinput.oninput();
           //
           fuelMassUnit.value = 't';
@@ -1012,10 +1012,10 @@ Note: This Delta-V budget map does not take rocket-staging into account, nor doe
           enginePresetList.value = "ariane5";
         } else if (EPchoice.includes("soyuz2")) {
           //Soyuz-2 1st Stage (RD-107A)
-          FInput.value = 1.2;
+          FInput.value = 2.1014e+5;
           FInput.oninput();
           FInput.onchange();
-          ISPinput.value = 398;
+          ISPinput.value = 288.29;
           ISPinput.oninput();
           //
           fuelMassUnit.value = 't';
@@ -1901,7 +1901,7 @@ function drawRVehicle(){//triggered when msg recieved
                     var context = canvas.getContext('2d');
                      
                     var xsize = 840;
-                    var ysize = 1000;
+                    var ysize = 840;
                     canvas.style.width = xsize + "px";
                     canvas.style.height = ysize + "px";
 
@@ -2133,6 +2133,11 @@ function drawRVehicle(){//triggered when msg recieved
                      let selectx = [];
                      let pvisits = pdv.map(() => 0);//[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
                      let completecol = '#00508a';
+                     
+                        context.font = "16px Baskerville";
+                        context.fillStyle = "grey";
+                        context.textAlign = "center";
+                        context.fillText("More destinations coming soon!",(canvas.width/scale)*0.33, (canvas.height/scale)*0.7);
                      
                      if (twr <= 1){
                         context.font = "15px Baskerville";
