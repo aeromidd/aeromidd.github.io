@@ -367,7 +367,7 @@ pointer-events: none;
       
     <div id="tooltip"></div>
   <div style="position:absolute; top:1325px; left: 25px; width: 840px; margin: auto;border: 1px solid #fff; font-family: Helvetica, serif; font-size: 13px; color: #757575;text-align:center">
-Click a starting point on the Delta-V map to predict the range of paths achievable by the above rocket engine and vehicle configuration, travelling between some of the nearer parts of the Solar System. Default start: Earth.
+Click a starting point on the Delta-V map to predict the range of paths achievable by the above rocket engine and vehicle configuration, travelling between the major bodies of the Solar System and significant orbit points. Default start: Earth.
 <br>
 <br>
 Note: This Delta-V budget map does not take rocket-staging into account, nor does it facilitate boosters (hence why some of the presets fail to lift off from earth when in reality they are able to). The calculation also doesn't account for ISP variation with ambient pressure, so atmospheres of destinations/origins don't alter the engine performance like they would in real life. It also assumes that at each subsequent waypoint after the original launch point, the vehicle has a sufficient thrust to weight ratio (TWR) to lift off again.
@@ -417,8 +417,8 @@ Note: This Delta-V budget map does not take rocket-staging into account, nor doe
     </label>
 
 </form>
-      <label for="AerobrakeOption" style="position:absolute;top:275px;left:730px;text-align:right;font-family:Garamond,serif;font-size:12px;color:#757575;">Aero-braking<br>availability:</label>
-      <form style="position:absolute;top:258px;left:800px;width:335px;font-family:Garamond,serif;font-size:12px;color:#00508a;">
+      <label for="AerobrakeOption" style="position:absolute;top:275px;left:710px;text-align:right;font-family:Garamond,serif;font-size:12px;color:#757575;">Aerobraking<br>availability:</label>
+      <form style="position:absolute;top:258px;left:772px;width:335px;font-family:Garamond,serif;font-size:12px;color:#00508a;">
 
     <label for="ABoff">
       <input
@@ -437,7 +437,7 @@ Note: This Delta-V budget map does not take rocket-staging into account, nor doe
         name="aerobrakeoption"
         value="1"
         checked>
-        Direct
+        Landing Only
     </label>
     <br>
 
@@ -447,7 +447,7 @@ Note: This Delta-V budget map does not take rocket-staging into account, nor doe
         id="ABindirect"
         name="aerobrakeoption"
         value="2">
-        Indirect
+        Any Available
     </label>
 
 </form>
@@ -2138,7 +2138,7 @@ function drawRVehicle(){//triggered when msg recieved
                         context.font = "15px Baskerville";
                         context.fillStyle = "red";
                         context.textAlign = "right";
-                        context.fillText("insufficient TWR for lift-off!",(canvas.width/scale)/2+100, (canvas.height/scale)/2-100);
+                        context.fillText("INSUFFICIENT TWR FOR LIFT-OFF!",(canvas.width/scale)/2+150, (canvas.height/scale)/2-100);
                         //context.fillText("insufficient for lift-off!",(canvas.width/scale)-100, 102);
                        
                        context.beginPath();
