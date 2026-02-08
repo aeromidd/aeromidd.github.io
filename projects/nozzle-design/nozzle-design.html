@@ -177,7 +177,7 @@
     if (canvas.getContext) {
       var context = canvas.getContext('2d');
       var xsize = 880;
-      var ysize = 1425;
+      var ysize = 1325;
       canvas.style.width = xsize + "px";
       canvas.style.height = ysize + "px";
       // Set actual size in memory (scaled to account for extra pixel density).
@@ -629,8 +629,11 @@
       
     </form>
   </div>
-  <div style="position:absolute; top:920px; left: 25px; width: 205px; margin: auto;border: 1px solid #fff; font-family: Helvetica, serif; font-size: 13px; color: #757575;">
-Click a starting point on the Delta-V map to predict the range of paths achievable by the above rocket engine and vehicle configuration, travelling between some of the nearer parts of the Solar System.
+  <div style="position:absolute; top:15px; left: 660px; width: 220px; margin: auto;border: 1px solid #fff; font-family: Helvetica, serif; font-size: 13px; color: #757575;">
+This tool is designed to visualise ideal de Laval rocket nozzle geometry given configurable combustion chamber and ambient conditions.
+  </div>
+  <div style="position:absolute; top:910px; left: 25px; width: 205px; margin: auto;border: 1px solid #fff; font-family: Helvetica, serif; font-size: 13px; color: #757575;">
+Now, apply the configured rocket engine,nozzle & vehicle design to a theoretical space-travel scenario! <br><br>Click a starting point on the Delta-V map to predict the range of paths achievable by the above rocket engine and vehicle configuration, travelling between some of the nearer parts of the Solar System.
 <br>
 Default start: Earth.
 <br>
@@ -643,8 +646,8 @@ Note: This Delta-V budget map does not take rocket-staging into account, nor doe
 It also assumes that at each subsequent waypoint after the original launch point, the vehicle has a sufficient thrust to weight ratio (TWR) to lift off again.
   </div>
   <div>
-    <label for="enginePresetList" style="position:absolute;top:28px;left:250px;font-family:Garamond,serif;font-size:16px;color:#757575;">Engine Preset:</label>
-    <select name="enginePresetList" id="enginePresetList" style="position:absolute;top:28px;left:355px;width:335px;font-family:Garamond,serif;font-size:14px;color:#00508a;"onchange="enginePresetChange(this.value);">
+    <label for="enginePresetList" style="position:absolute;top:23px;left:250px;font-family:Garamond,serif;font-size:16px;color:#757575;">Engine<br> Preset:</label>
+    <select name="enginePresetList" id="enginePresetList" style="position:absolute;top:28px;left:305px;width:335px;font-family:Garamond,serif;font-size:14px;color:#00508a;"onchange="enginePresetChange(this.value);">
       <option value="custom">Custom</option>
       <option value="saturnv">Rocketdyne F-1, Saturn V 1st Stage (LOX + RP-1)</option>
       <option value="falcon9">Merlin 1D, Falcon 9 1st Stage (LOX + RP-1)</option>
@@ -2822,7 +2825,51 @@ function drawRVehicle(){//triggered when msg recieved
                    }
                    //console.log(pshort)
                      
-                     
+                                 //key
+                                 context.font = "12px Baskerville";
+                                 context.fillStyle = "grey";
+                                 context.textAlign = "left";
+                                 context.fillText("KEY: (node-to-node)",(0.05)*canvas.width/scale, (0.61+0.007)*canvas.height/scale);
+                                 context.beginPath()
+                                 context.moveTo(0.05*canvas.width/scale,0.65*canvas.height/scale)
+                                 context.lineTo(0.1*canvas.width/scale,0.65*canvas.height/scale)
+                                 context.strokeStyle = '#019aca';
+                                 context.lineWidth = 2.5;//2
+                                 context.stroke();
+                                 context.font = "12px Baskerville";
+                                 context.fillStyle = "grey";
+                                 context.textAlign = "left";
+                                 context.fillText("Partial Trip",(0.1+0.005)*canvas.width/scale, (0.65+0.007)*canvas.height/scale);
+                                 context.beginPath()
+                                 context.moveTo(0.05*canvas.width/scale,0.69*canvas.height/scale)
+                                 context.lineTo(0.1*canvas.width/scale,0.69*canvas.height/scale)
+                                 context.strokeStyle = '#00508a';
+                                 context.lineWidth = 2.5;//2
+                                 context.stroke();
+                                 context.font = "12px Baskerville";
+                                 context.fillStyle = "grey";
+                                 context.textAlign = "left";
+                                 context.fillText("One-Way Trip",(0.1+0.005)*canvas.width/scale, (0.69+0.007)*canvas.height/scale);
+                                 context.beginPath()
+                                 context.moveTo(0.05*canvas.width/scale,0.73*canvas.height/scale)
+                                 context.lineTo(0.1*canvas.width/scale,0.73*canvas.height/scale)
+                                 context.strokeStyle = '#6350f1';
+                                 context.lineWidth = 2.5;//2
+                                 context.stroke();
+                                 context.font = "12px Baskerville";
+                                 context.fillStyle = "grey";
+                                 context.textAlign = "left";
+                                 context.fillText("Return Trip (+)",(0.1+0.005)*canvas.width/scale, (0.73+0.007)*canvas.height/scale);
+                                 context.beginPath();
+                                 context.moveTo((0.04)*canvas.width/scale, (0.59)*canvas.height/scale);
+                                 context.lineTo((0.04)*canvas.width/scale, (0.75)*canvas.height/scale);
+                                 context.lineTo((0.28)*canvas.width/scale, (0.75)*canvas.height/scale);
+                                 context.lineTo((0.28)*canvas.width/scale, (0.59)*canvas.height/scale);
+                                 context.lineTo((0.04)*canvas.width/scale, (0.59)*canvas.height/scale);
+                                 context.strokeStyle = "grey";
+                                 context.lineWidth = 1;
+                                 context.stroke();
+                                 context.closePath();
                     
                      
                      
@@ -3024,4 +3071,3 @@ function drawRVehicle(){//triggered when msg recieved
 </body>
 
 </html>
-
