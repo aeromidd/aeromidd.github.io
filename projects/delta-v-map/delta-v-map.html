@@ -1990,46 +1990,48 @@ function drawRVehicle(){//triggered when msg recieved
                    //console.log(pshort)
                      
                     //key
+                                 let keybasewidth = 450*scale;
+                                 let keybaseheight = 500*scale;
                                  context.font = "12px Baskerville";
                                  context.fillStyle = "grey";
                                  context.textAlign = "left";
-                                 context.fillText("KEY: (node-to-node)",(0.05)*canvas.width/scale, (0.61+0.007)*canvas.height/scale);
+                                 context.fillText("KEY: (node-to-node)",(0.05)*keybasewidth/scale, (1.01+0.007)*keybaseheight/scale);
                                  context.beginPath()
-                                 context.moveTo(0.05*canvas.width/scale,0.65*canvas.height/scale)
-                                 context.lineTo(0.1*canvas.width/scale,0.65*canvas.height/scale)
+                                 context.moveTo(0.05*keybasewidth/scale,1.05*keybaseheight/scale)
+                                 context.lineTo(0.1*keybasewidth/scale,1.05*keybaseheight/scale)
                                  context.strokeStyle = '#019aca';
                                  context.lineWidth = 2.5;//2
                                  context.stroke();
                                  context.font = "12px Baskerville";
                                  context.fillStyle = "grey";
                                  context.textAlign = "left";
-                                 context.fillText("Partial Trip",(0.1+0.005)*canvas.width/scale, (0.65+0.007)*canvas.height/scale);
+                                 context.fillText("Partial Trip",(0.1+0.005)*keybasewidth/scale, (1.05+0.007)*keybaseheight/scale);
                                  context.beginPath()
-                                 context.moveTo(0.05*canvas.width/scale,0.69*canvas.height/scale)
-                                 context.lineTo(0.1*canvas.width/scale,0.69*canvas.height/scale)
+                                 context.moveTo(0.05*keybasewidth/scale,1.09*keybaseheight/scale)
+                                 context.lineTo(0.1*keybasewidth/scale,1.09*keybaseheight/scale)
                                  context.strokeStyle = '#00508a';
                                  context.lineWidth = 2.5;//2
                                  context.stroke();
                                  context.font = "12px Baskerville";
                                  context.fillStyle = "grey";
                                  context.textAlign = "left";
-                                 context.fillText("One-Way Trip",(0.1+0.005)*canvas.width/scale, (0.69+0.007)*canvas.height/scale);
+                                 context.fillText("One-Way Trip",(0.1+0.005)*keybasewidth/scale, (1.09+0.007)*keybaseheight/scale);
                                  context.beginPath()
-                                 context.moveTo(0.05*canvas.width/scale,0.73*canvas.height/scale)
-                                 context.lineTo(0.1*canvas.width/scale,0.73*canvas.height/scale)
+                                 context.moveTo(0.05*keybasewidth/scale,1.13*keybaseheight/scale)
+                                 context.lineTo(0.1*keybasewidth/scale,1.13*keybaseheight/scale)
                                  context.strokeStyle = '#6350f1';
                                  context.lineWidth = 2.5;//2
                                  context.stroke();
                                  context.font = "12px Baskerville";
                                  context.fillStyle = "grey";
                                  context.textAlign = "left";
-                                 context.fillText("Return Trip (+)",(0.1+0.005)*canvas.width/scale, (0.73+0.007)*canvas.height/scale);
+                                 context.fillText("Return Trip (+)",(0.1+0.005)*keybasewidth/scale, (1.13+0.007)*keybaseheight/scale);
                                  context.beginPath();
-                                 context.moveTo((0.04)*canvas.width/scale, (0.59)*canvas.height/scale);
-                                 context.lineTo((0.04)*canvas.width/scale, (0.75)*canvas.height/scale);
-                                 context.lineTo((0.28)*canvas.width/scale, (0.75)*canvas.height/scale);
-                                 context.lineTo((0.28)*canvas.width/scale, (0.59)*canvas.height/scale);
-                                 context.lineTo((0.04)*canvas.width/scale, (0.59)*canvas.height/scale);
+                                 context.moveTo((0.04)*keybasewidth/scale, (0.99)*keybaseheight/scale);
+                                 context.lineTo((0.04)*keybasewidth/scale, (1.15)*keybaseheight/scale);
+                                 context.lineTo((0.28)*keybasewidth/scale, (1.15)*keybaseheight/scale);
+                                 context.lineTo((0.28)*keybasewidth/scale, (0.99)*keybaseheight/scale);
+                                 context.lineTo((0.04)*keybasewidth/scale, (0.99)*keybaseheight/scale);
                                  context.strokeStyle = "grey";
                                  context.lineWidth = 1;
                                  context.stroke();
