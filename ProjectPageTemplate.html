@@ -229,14 +229,16 @@ iframe {
       
     
     var projiframe = document.getElementById('htmlProjectContent');
-    var innerDoc = projiframe.contentDocument || projiframe.contentWindow.document;
     
-    let ProjBorder = innerDoc.getElementById('BorderCanvas');
-    let ProjHeight = parseFloat(ProjBorder.style.height);
-      console.log('1')
-    console.log(ProjHeight)
-      console.log('2')
-    console.log(ProjHeight);
+    var isolTest = false;
+    var ProjHeight
+    if (isolTest==true){
+      ProjHeight = 1425;
+    }else{
+      var innerDoc = projiframe.contentDocument || projiframe.contentWindow.document;
+      let ProjBorder = innerDoc.getElementById('BorderCanvas');
+      ProjHeight = parseFloat(ProjBorder.style.height);
+    }
     let htmlProjectContentHeight = Math.max(ProjHeight,655)+(1440-1425);
     GeneralDiv.style.height = htmlProjectContentHeight+85+"px";
     htmlProjectContent.style.height = htmlProjectContentHeight+"px";
@@ -251,7 +253,7 @@ iframe {
     graphics_button.style.top = 40-212-htmlProjectContentHeight+"px";
     interactive_button.style.top = 45-212-htmlProjectContentHeight+"px";
     
-    //CRtext.style.top = 200-ProjHeight+"px";
+    CRtext.style.top = -900-ProjHeight+"px";
     DummyTitleArea.style.top = 50-212-htmlProjectContentHeight+"px"
     ProjectTitleArea.style.top = -5-212-htmlProjectContentHeight+"px"
 
