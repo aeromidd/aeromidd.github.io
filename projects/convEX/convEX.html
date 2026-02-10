@@ -6,6 +6,11 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.2.1/math.js">
 </script>
   <style>
+    .Vertslider {
+    -webkit-appearance: slider-vertical;
+  appearance: slider-vertical;
+  writing-mode: bt-lr; /* Recommended for cross-browser compatibility */
+    }
   </style>
 </head>
 <body>
@@ -56,12 +61,12 @@
 <canvas id="SimCanvas" tabindex='0' style="position:absolute;top:15px;left:45px;"></canvas>
 <div class="check"><label for="NiceGraphicsON" style="position:absolute;left:700px;top:595px; display:none"><input type="checkbox" id="NiceGraphicsON" unchecked>Dynamic Graphics</label><div>
 <div class="slidecontainer">
-  <input type="range" min="25" max="65" step="1" value="45" class="slider" id="XupperSplaySlider" style="position:absolute; left:-5px; top:235px; width: 120px;writing-mode: vertical-lr;direction: ltr;" oninput="this.nextElementSibling.value = this.value +'°';AnimationFrame();">
+  <input type="range" min="25" max="65" step="1" value="45" class="Vertslider" id="XupperSplaySlider" style="position:absolute; left:-5px; top:235px; width: 120px;writing-mode: vertical-lr;direction: ltr;" oninput="this.nextElementSibling.value = this.value +'°';AnimationFrame();">
 <output style="position:absolute; left:70px; top:295px; font-family:Courier New; color:#00508a" >45°</output>
 <output style="position:absolute; left:70px; top:315px; font-family:Courier New; color:#019aca" >upper<br>splay</output>
 <div class="slidecontainer">
   <output style="position:absolute; left:70px; top:415px; font-family:Courier New; color:#019aca" >lower<br>splay</output>
-  <input type="range" min="25" max="65" step="1" value="45" class="slider" id="XlowerSplaySlider" style="position:absolute; left:-5px; top:395px; width: 120px;writing-mode: vertical-lr;direction: rtl" oninput="this.nextElementSibling.value = this.value +'°';AnimationFrame();">
+  <input type="range" min="25" max="65" step="1" value="45" class="Vertslider" id="XlowerSplaySlider" style="position:absolute; left:-5px; top:395px; width: 120px;writing-mode: vertical-lr;direction: rtl" oninput="this.nextElementSibling.value = this.value +'°';AnimationFrame();">
 <output style="position:absolute; left:70px; top:455px; font-family:Courier New; color:#00508a" >45°</output>
   <input id="US_defInput" value="0.0" step="0.5" max="25" min="-25" type="number" style="position:absolute;top:660px;left:455px;width:50px;text-align:right" onkeypress="return isNumberKey(event);" onChange="this.value=Math.max(Math.min(this.value,this.max),this.min);sim.EXAorder(1e3,1e3,1,0,0,1,0,0,0); AnimationFrame();"/>
   <input id="LS_defInput" value="0.0" step="0.5" max="25" min="-25" type="number" style="position:absolute;top:690px;left:455px;width:50px;text-align:right" onkeypress="return isNumberKey(event)" onChange="this.value=Math.max(Math.min(this.value,this.max),this.min);sim.EXAorder(1e3,1e3,1,0,0,0,1,0,0); AnimationFrame();"/>
