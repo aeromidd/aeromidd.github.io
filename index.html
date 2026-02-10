@@ -1,131 +1,253 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-      <style>
-        @font-face { font-family: SchemathicPrototype-Regular; src: url('https://aeromidd.com/misc/SchemathicPrototype-Regular.otf'); }
-  div{
-    float: center;
-    border: 0px solid red;
-    height: 600px;
-    width: 540px;
-    padding: 0px;
-    margin: 0 auto;
-    background-color: none;
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+<style>
+@font-face {
+  font-family: SchemathicPrototype-Regular;
+  src: url('https://aeromidd.com/misc/SchemathicPrototype-Regular.otf');
 }
+
+.stage {
+  position: relative;
+  width: 540px;
+  height: 600px;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid red;
+  background-color: transparent;
+}
+
 iframe {
-    display: block;
+  display: block;
 }
-      </style>
+
+/* ===== buttons ===== */
+.thumb {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  border: 2px solid #00508a;
+  border-radius: 10px;
+}
+
+.small-btn {
+  position: absolute;
+  width: 120px;
+  height: 30px;
+  border: 2px solid #00508a;
+  border-radius: 10px;
+}
+
+/* top row */
+#aerospace_button   { left:  12.5px;   top: 200px; }
+#dataviz_button     { left: 142.5px; top: 200px; }
+#graphics_button    { left: 272.5px; top: 200px; }
+#interactive_button { left: 402.5px; top: 200px; }
+
+/* bottom buttons */
+#allprojects_button { left: 272.5px;  top: 430px; }
+#latest_button      { left: 402.5px; top: 430px; }
+
+/* ===== titles ===== */
+#title {
+  position: absolute;
+  top: 250px;
+  left: 7.5px;
+  width: 265px;
+  font-family: SchemathicPrototype-Regular;
+  font-weight: normal;
+  font-size: 95.5px;
+  color: #00508A;
+  text-align: center;
+}
+
+#subtitle {
+  position: absolute;
+  top: 380px;
+  left: 185px;
+  width: 160px;
+  font-weight: normal;
+  font-size: 21px;
+  font-family: Verdana;
+  color: #c7c7c7;
+}
+
+#NameHighlight {
+  position: absolute;
+  top: 380px;
+  left: 333.5px;
+  width: 200px;
+  font-weight: normal;
+  font-size: 21px;
+  font-family: Verdana;
+  color: #c7c7c7;
+}
+
+/* ===== footer ===== */
+#CRtext {
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+  font-weight: normal;
+  font-size: 14px;
+  font-family: Verdana;
+  color: #c7c7c7;
+  text-align: center;
+}
+
+.desktop-note {
+  position: absolute;
+  top: 480px;
+  left: 131px;
+  font-size: 15px;
+  font-family: Verdana;
+  color: #c7c7c7;
+  display: none;
+}
+
+/* Show only on mobile */
+@media (max-width: 768px) {
+  .desktop-note {
+    display: block;
+  }
+}
+</style>
 </head>
+
 <body>
-  <div style="overflow: hidden;">
-  <div style="position:relative;top:200px;height:124px;width:525px;justify-content: center;
-  align-content: center; text-align:center;float:center;overflow: hidden;">
-  <input id="aerospace_button" type="image" value="https://aeromidd.github.io/misc/AerothumbW.png|https://aeromidd.github.io/misc/AerothumbKtxt.png" style="position:relative;left:-195px;top:0px; margin:0 auto; display:block; width:120px;height:120px;border:2px solid #00508a;border-radius: 10px;" src="" alt="Aerospace" onmouseover="this.src=this.value.split('|')[1];" onmouseout="this.src=this.value.split('|')[0];"/>
-  <script>
-  </script>
-  <input id="dataviz_button" type="image" value="https://aeromidd.github.io/misc/DatathumbW.png|https://aeromidd.github.io/misc/DatathumbKtxt.png" style="position:relative;left:-65px;top:-124px; margin:0 auto; display:block; width:120px;height:120px;border:2px solid #00508a;border-radius: 10px;" src="" alt="Data Visuals" onmouseover="this.src=this.value.split('|')[1];" onmouseout="this.src=this.value.split('|')[0];"/>
-  <script>
-  </script>
-  <input id="graphics_button" type="image" value="https://aeromidd.github.io/misc/GDthumbW_edited.jpg|https://aeromidd.github.io/misc/GDthumbKtxt_edited.jpg" style="position:relative;left:65px;top:-248px; margin:0 auto; display:block; width:120px;height:120px;border:2px solid #00508a;border-radius: 10px;" src="" alt="Graphics" onmouseover="this.src=this.value.split('|')[1];" onmouseout="this.src=this.value.split('|')[0];"/>
-  <script>
-  </script>
-  <input id="interactive_button" type="image" value="https://aeromidd.github.io/misc/IAthumbW.png|https://aeromidd.github.io/misc/IAthumbKtxt.png" style="position:relative;left:195px;top:-372px; margin:0 auto; display:block; width:120px;height:120px;border:2px solid #00508a;border-radius: 10px;" src="" alt="Interactive" onmouseover="this.src=this.value.split('|')[1];" onmouseout="this.src=this.value.split('|')[0];"/>
-  </div>
-    
-<div style="position:relative;top:200px;height:92px;width:525px;justify-content: center;overflow:hidden;
-  align-content: center; text-align:center;float:center;">
-  <h1 style="position:relative;top:-65px;left:1px;font-family:SchemathicPrototype-Regular;font-weight:normal;width:265px;font-size: 5.95rem;color:#00508A;text-align:center;" onmouseover="this.style.color='#189ACA';this.style.cursor='pointer';" onmouseout="this.style.color='#00508A';this.style.cursor='default';" onclick="location.href='https://aeromidd.com/';">
+
+<div class="stage">
+
+  <!-- thumbnails -->
+  <input id="aerospace_button" class="thumb" type="image"
+    value="https://aeromidd.github.io/misc/AerothumbW.png|https://aeromidd.github.io/misc/AerothumbKtxt.png"
+    src="" alt="Aerospace"
+    onmouseover="this.src=this.value.split('|')[1];"
+    onmouseout="this.src=this.value.split('|')[0];"/>
+
+  <input id="dataviz_button" class="thumb" type="image"
+    value="https://aeromidd.github.io/misc/DatathumbW.png|https://aeromidd.github.io/misc/DatathumbKtxt.png"
+    src="" alt="Data Visuals"
+    onmouseover="this.src=this.value.split('|')[1];"
+    onmouseout="this.src=this.value.split('|')[0];"/>
+
+  <input id="graphics_button" class="thumb" type="image"
+    value="https://aeromidd.github.io/misc/GDthumbW_edited.jpg|https://aeromidd.github.io/misc/GDthumbKtxt_edited.jpg"
+    src="" alt="Graphics"
+    onmouseover="this.src=this.value.split('|')[1];"
+    onmouseout="this.src=this.value.split('|')[0];"/>
+
+  <input id="interactive_button" class="thumb" type="image"
+    value="https://aeromidd.github.io/misc/IAthumbW.png|https://aeromidd.github.io/misc/IAthumbKtxt.png"
+    src="" alt="Interactive"
+    onmouseover="this.src=this.value.split('|')[1];"
+    onmouseout="this.src=this.value.split('|')[0];"/>
+
+  <!-- titles -->
+  <h1 id="title"
+    onmouseover="this.style.color='#189ACA';this.style.cursor='pointer';"
+    onmouseout="this.style.color='#00508A';this.style.cursor='default';"
+    onclick="location.href='https://aeromidd.com/';">
     AEROMIDD
   </h1>
-  <h2 style="position:relative;top:-142px;left:175px;font-weight:normal;text-align:left;width:540px;font-size: 1.32rem;font-family:Verdana;color:#c7c7c7;">
-    a portfolio by 
-  </h2>
-  <h2 id="NameHighlight" style="position:relative;top:-185px;left:321px;font-weight:normal;width:200px;font-size: 1.32rem;font-family:Verdana;color:#c7c7c7;" onmouseover="this.style.color='#189ACA';this.style.cursor='pointer';" onmouseout="this.style.color='#c7c7c7';this.style.cursor='default';" onclick="location.href='https://aeromidd.com/about';">
+
+  <h2 id="subtitle">a portfolio by</h2>
+
+  <h2 id="NameHighlight"
+    onmouseover="this.style.color='#189ACA';this.style.cursor='pointer';"
+    onmouseout="this.style.color='#c7c7c7';this.style.cursor='default';"
+    onclick="location.href='https://aeromidd.com/about';">
     michael middleton
   </h2>
-    </div>
-  <input id="allprojects_button" type="image" value="https://aeromidd.github.io/misc/allprojectssmallWtxt.png|https://aeromidd.github.io/misc/allprojectssmallK.png" style="position:relative;left:65px;top:201px; margin:0 auto; display:block; width:120px;height:30px;border:2px solid #00508a;border-radius: 10px;" src="" alt="Latest" onmouseover="this.src=this.value.split('|')[1];" onmouseout="this.src=this.value.split('|')[0];"/>
 
-  <script>
-  </script>
-    
-  <input id="latest_button" type="image" value="https://aeromidd.github.io/misc/LatestButton1Wtxt.png|https://aeromidd.github.io/misc/LatestButton1.png|https://aeromidd.github.io/misc/LatestButton1WtxtDisabled.png" style="position:relative;left:195px;top:167px; margin:0 auto; display:block; width:120px;height:30px;border:2px solid #00508a;border-radius: 10px;" src="" alt="Latest" onmouseover="this.src=this.value.split('|')[1];" onmouseout="this.src=this.value.split('|')[0];"/>
+  <!-- small buttons -->
+  <input id="allprojects_button" class="small-btn" type="image"
+    value="https://aeromidd.github.io/misc/allprojectssmallWtxt.png|https://aeromidd.github.io/misc/allprojectssmallK.png"
+    src="" alt="Latest"
+    onmouseover="this.src=this.value.split('|')[1];"
+    onmouseout="this.src=this.value.split('|')[0];"/>
 
-  <script>
-  </script>
-    <h2 id="CRtext" style="position:relative;top:245px;font-weight:normal;font-size: 0.85rem;font-family:Verdana;color:#c7c7c7;text-align:center;">
-    © Michael Middleton ____
-  </h2>
-    <script>
-    </script>
-  </div>
-  
-  <script>
-    console.clear()
-    
-    latest_button.src = latest_button.value.split('|')[1];
-    latest_button.src = latest_button.value.split('|')[0];
-    
-    allprojects_button.src = allprojects_button.value.split('|')[1];
-    allprojects_button.src = allprojects_button.value.split('|')[0];
-    aerospace_button.src = aerospace_button.value.split('|')[1];
-    aerospace_button.src = aerospace_button.value.split('|')[0];
-    dataviz_button.src = dataviz_button.value.split('|')[1];
-    dataviz_button.src = dataviz_button.value.split('|')[0];
-    graphics_button.src = graphics_button.value.split('|')[1];
-    graphics_button.src = graphics_button.value.split('|')[0];
-    interactive_button.src = interactive_button.value.split('|')[1];
-    interactive_button.src = interactive_button.value.split('|')[0];
-    
-    CRtext.innerText = 'Fetching PRJData...'
-  var PRJData
- let response_promise = fetch("https://aeromidd.com/PRJLIST.json");
-           //document.addEventListener("DOMContentLoaded", function() {
-           response_promise.then(response => response.json().then(RESDATA => {
+  <input id="latest_button" class="small-btn" type="image"
+    value="https://aeromidd.github.io/misc/LatestButton1Wtxt.png|https://aeromidd.github.io/misc/LatestButton1.png|https://aeromidd.github.io/misc/LatestButton1WtxtDisabled.png"
+    src="" alt="Latest"
+    onmouseover="this.src=this.value.split('|')[1];"
+    onmouseout="this.src=this.value.split('|')[0];"/>
+
+  <p class="desktop-note"><i>Best viewed with a desktop browser!</i></p>
+
+  <h2 id="CRtext">© Michael Middleton ____</h2>
+
+</div>
+<script>
+console.clear()
+
+latest_button.src = latest_button.value.split('|')[1];
+latest_button.src = latest_button.value.split('|')[0];
+
+allprojects_button.src = allprojects_button.value.split('|')[1];
+allprojects_button.src = allprojects_button.value.split('|')[0];
+aerospace_button.src = aerospace_button.value.split('|')[1];
+aerospace_button.src = aerospace_button.value.split('|')[0];
+dataviz_button.src = dataviz_button.value.split('|')[1];
+dataviz_button.src = dataviz_button.value.split('|')[0];
+graphics_button.src = graphics_button.value.split('|')[1];
+graphics_button.src = graphics_button.value.split('|')[0];
+interactive_button.src = interactive_button.value.split('|')[1];
+interactive_button.src = interactive_button.value.split('|')[0];
+
+CRtext.innerText = 'Fetching PRJData...'
+
+var PRJData
+let response_promise = fetch("https://aeromidd.com/PRJLIST.json");
+
+response_promise.then(response => response.json().then(RESDATA => {
   var PRJData = [...RESDATA];
-  
-    CRtext.innerText = 'fetched PRJData. Determining Project Relative Paths...';
+
+  CRtext.innerText = 'fetched PRJData. Determining Project Relative Paths...';
   let currentURL = document.URL;
-    CRtext.innerText = 'doc URL = '+currentURL;
+  CRtext.innerText = 'doc URL = ' + currentURL;
+
   var ProjectInList = false;
   var ProjectPosition = '';
-  for (j=0;j<PRJData.length;j++){
-    if (PRJData[j].url == currentURL.replace('https://aeromidd.com','')){
+
+  for (j = 0; j < PRJData.length; j++) {
+    if (PRJData[j].url == currentURL.replace('https://aeromidd.com', '')) {
       ProjectInList = true;
       ProjectPosition = j;
     }
   }
-  let LatestProjectPosition = PRJData.length-1;
-  console.log(currentURL);
-  CRtext.innerText = 'ProjectPosition='+ProjectPosition.toString()+', currentURL='+currentURL;
-             
+
+  let LatestProjectPosition = PRJData.length - 1;
+
+  CRtext.innerText = 'ProjectPosition=' + ProjectPosition.toString() + ', currentURL=' + currentURL;
+
   if (ProjectPosition < LatestProjectPosition){
-        latest_button.onclick = function(){ window.location.replace('https://aeromidd.com' + PRJData[LatestProjectPosition].url)}
-  }else{
-      latest_button.src = latest_button.value.split('|')[2];
-      latest_button.onmouseover = "";
-      latest_button.onmouseout = "";
-      latest_button.style.cursor = "default";
-      latest_button.style.border = "2px solid #c7c7c7";
+    latest_button.onclick = function () {
+      window.location.replace('https://aeromidd.com' + PRJData[LatestProjectPosition].url)
+    }
+  } else {
+    latest_button.src = latest_button.value.split('|')[2];
+    latest_button.onmouseover = "";
+    latest_button.onmouseout = "";
+    latest_button.style.cursor = "default";
+    latest_button.style.border = "2px solid #c7c7c7";
   }
-    allprojects_button.onclick = function(){ window.top.location.assign('https://aeromidd.com/c/all-projects')};
-    aerospace_button.onclick = function(){ window.top.location.assign('https://aeromidd.com/c/aerospace')};
-    dataviz_button.onclick = function(){ window.top.location.assign('https://aeromidd.com/c/data-visuals')};
-    graphics_button.onclick = function(){ window.top.location.assign('https://aeromidd.com/c/graphics')};
-    interactive_button.onclick = function(){ window.top.location.assign('https://aeromidd.com/c/interactive')};
-             
-    CRtext.innerText = 'completed loading page nav functions';
-             
-    let D = new Date().getFullYear();
-    CRtext.innerText = "© Michael Middleton " + D.toString();
-             
-             
-  }));//}, false);
-    
-    
-  </script>
+
+  allprojects_button.onclick = function () { window.top.location.assign('https://aeromidd.com/c/all-projects') };
+  aerospace_button.onclick = function () { window.top.location.assign('https://aeromidd.com/c/aerospace') };
+  dataviz_button.onclick = function () { window.top.location.assign('https://aeromidd.com/c/data-visuals') };
+  graphics_button.onclick = function () { window.top.location.assign('https://aeromidd.com/c/graphics') };
+  interactive_button.onclick = function () { window.top.location.assign('https://aeromidd.com/c/interactive') };
+
+  CRtext.innerText = 'completed loading page nav functions';
+
+  let D = new Date().getFullYear();
+  CRtext.innerText = "© Michael Middleton " + D.toString();
+}));
+</script>
+
 </body>
 </html>
