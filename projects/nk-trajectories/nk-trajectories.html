@@ -63,7 +63,7 @@
          if (canvas.getContext) {
            var context = canvas.getContext('2d');
            var xsize = 880;
-           var ysize = 1200;
+           var ysize = 1225;
            canvas.style.width = xsize + "px";
            canvas.style.height = ysize + "px";
            // Set actual size in memory (scaled to account for extra pixel density).
@@ -1153,54 +1153,80 @@ All geometry and distances in this diagram are to scale. Each missile path depic
          let cx = cxid[zoomcase];
          let cy = cyid[zoomcase];
          
-         
-         //Measurement Rings
-         var ringAlt
-         var ringLabel
-           let rings = [0.2,0.5,1,2,3,4,5,7.5,10,20,'GEO',50,100,200,300,'MOON',500];
-         context.save();
-           context.translate(cx, cy);
-             context.rotate(45*Math.PI/180)
-           for (i = 0; i < rings.length; i++){
-             
-             if (typeof(rings[i]) == 'string'){
-                 context.font = "bold 12px Helvetica";
-                 if (rings[i] == 'GEO'){
-                   ringAlt = 35.786;
-                   ringLabel = 'Geostationary Orbit';
-                 }else if (rings[i] == 'MOON'){
-                   ringAlt = (E2M-ER)/1000;
-                   ringLabel = 'The Moon'
-                 }
-             }else{
-                 context.font = "12px Helvetica";
-                 ringAlt = rings[i];
-                 ringLabel = (rings[i]*1000).toString()+' km';
-             }
-             
-             context.moveTo(0,-(ER+ringAlt*1000)*zoom);
-             context.beginPath();
-             context.lineJoin = "round";
-             context.ellipse(0, 0, (ER+ringAlt*1000)*zoom, (ER+ringAlt*1000)*zoom, 0, 0, 2*Math.PI)
-             context.strokeStyle = 'rgb('+math.multiply([0.9,0.9,0.9],255)+')';
-             context.lineWidth = 1;
-             //context.setLineDash([2,2]);
-             context.stroke();
-             context.closePath();
-             context.textAlign = "center";
-             context.fillStyle = 'rgb('+math.multiply([0.7,0.7,0.7],255)+')';
-             context.fillText(ringLabel,0*(ER+ringAlt*1000)*zoom,-(ER+ringAlt*1000)*zoom)
-           }
-         context.restore();
-         
-               //Atmosphere
+         //Atmosphere
            context.moveTo(cx,cy-(ER+100)*zoom);
            context.beginPath();
            context.lineJoin = "round";
            context.ellipse(cx, cy, (ER+100)*zoom, (ER+100)*zoom, 0, 0, 2*Math.PI)
            context.strokeStyle = 'rgb('+math.multiply([0.0,0.9,0.9],255)+')';
            context.lineWidth = 1;
-           context.stroke();
+           context.fillStyle= 'rgb('+math.multiply([0.8,0.99,0.99],255)+')';
+           context.fill();
+           context.closePath();
+         
+         //Measurement Rings
+         var ringAlt
+         var ringLabel
+           let rings = ['ATMOSPHERE',0.2,0.5,1,2,3,4,5,7.5,10,20,'GEO',50,100,200,300,'MOON',500];
+         context.save();
+           context.translate(cx, cy);
+             
+           for (i = 0; i < rings.length; i++){      
+                                              var atmosAng = -0.232 * Math.pow(zoom, -1.07);
+             if (i==0){
+                      context.rotate((atmosAng)*Math.PI/180);
+             }else if (i==1){ context.rotate((45-atmosAng)*Math.PI/180);
+               
+             };
+             
+             if (typeof(rings[i]) == 'string'){
+                 context.font = "bold 12px Helvetica";
+                 if (rings[i] == 'GEO'){
+                   ringAlt = 35.786;
+                   ringLabel = 'Geostationary Orbit';
+                   context.textAlign = "center";
+             context.fillStyle = 'rgb('+math.multiply([0.7,0.7,0.7],255)+')';context.strokeStyle = 'rgb('+math.multiply([0.9,0.9,0.9],255)+')';
+                 }else if (rings[i] == 'MOON'){
+                   ringAlt = (E2M-ER)/1000;
+                   ringLabel = 'The Moon';
+                   context.textAlign = "center";
+             context.fillStyle = 'rgb('+math.multiply([0.7,0.7,0.7],255)+')';context.strokeStyle = 'rgb('+math.multiply([0.9,0.9,0.9],255)+')';
+                 }else if (rings[i] == 'ATMOSPHERE'){
+                   ringAlt = 100.5/1000;
+                   if (zoom > 0.025){
+                   ringLabel = 'Atmosphere';}else {ringLabel = '';}; context.font = "10px Helvetica";context.textAlign = "center";
+             context.fillStyle = 'rgb('+math.multiply([0.0,0.8,0.8],255)+')';context.strokeStyle = 'rgb('+math.multiply([0.0,0.9,0.9],255)+')';
+                 }
+             }else{
+                 context.font = "12px Helvetica";
+                 ringAlt = rings[i];
+                 ringLabel = (rings[i]*1000).toString()+' km';
+               context.textAlign = "center";
+             context.fillStyle = 'rgb('+math.multiply([0.7,0.7,0.7],255)+')';context.strokeStyle = 'rgb('+math.multiply([0.9,0.9,0.9],255)+')';
+             }
+             
+             context.moveTo(0,-(ER+ringAlt*1000)*zoom);
+             context.beginPath();
+             context.lineJoin = "round";
+             context.ellipse(0, 0, (ER+ringAlt*1000)*zoom, (ER+ringAlt*1000)*zoom, 0, 0, 2*Math.PI)
+             
+             context.lineWidth = 1;
+             //context.setLineDash([2,2]);
+             context.stroke();
+             context.closePath();
+             context.fillText(ringLabel,0*(ER+ringAlt*1000)*zoom,-(ER+ringAlt*1000)*zoom)
+           }
+         context.restore();
+         
+               
+           //earthBG
+           context.moveTo(cx,cy-(ER)*zoom);
+           context.beginPath();
+           context.lineJoin = "round";
+           context.ellipse(cx, cy, (ER)*zoom, (ER)*zoom, 0, 0, 2*Math.PI)
+           context.lineWidth = 1;
+           context.fillStyle= 'rgb('+math.multiply([1.0,1.0,1.0],255)+')';
+           context.fill();
            context.closePath();
          
            //Moon
