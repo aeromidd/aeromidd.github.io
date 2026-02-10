@@ -10,6 +10,11 @@
     table, th, td {
   border: 0.5px solid #00508a;
 }
+    .Vertslider {
+    -webkit-appearance: slider-vertical;
+  appearance: slider-vertical;
+  writing-mode: bt-lr; /* Recommended for cross-browser compatibility */
+    }
   </style>
 </head>
 <body>
@@ -283,11 +288,11 @@ C: toggle compressibility | V: toggle active trim compensator | B: toggle trim t
 <label for="NiceGraphicsON" style="position:absolute;left:735px;top:84px;font-size:12px;font-family:Courier New">Fancy Graphics</label>
 
 
-  <input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="BPINTrange" style="position:absolute;left:615px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;display:none" disabled>
-<input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="SPINTrange" style="position:absolute;left:250px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;display:none" disabled>
+  <input type="range" min="-45" max="45" step="0.01" value="0" class="Vertslider" id="BPINTrange" style="position:absolute;left:615px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;display:none" disabled>
+<input type="range" min="-45" max="45" step="0.01" value="0" class="Vertslider" id="SPINTrange" style="position:absolute;left:250px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;display:none" disabled>
 
-  <input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="BPrange" style="position:absolute;left:600px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;display:none">
-<input type="range" min="-45" max="45" step="0.01" value="0" class="slider" id="SPrange" style="position:absolute;left:265px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;display:none" disabled>
+  <input type="range" min="-45" max="45" step="0.01" value="0" class="Vertslider" id="BPrange" style="position:absolute;left:600px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;display:none">
+<input type="range" min="-45" max="45" step="0.01" value="0" class="Vertslider" id="SPrange" style="position:absolute;left:265px;top:300px;width:50px;writing-mode: vertical-lr;direction: rtl;display:none" disabled>
 
 
 <input type="checkbox" style="position:absolute;left:857px;top:100px;" id="SliderCtrlON"  onInput="if(BPrange.style.display!='none'){BPrange.style.display='none';BPINTrange.style.display='none';SPrange.style.display='none';SPINTrange.style.display='none';}else{BPrange.style.display='';BPINTrange.style.display='';SPrange.style.display='';SPINTrange.style.display='';}">
