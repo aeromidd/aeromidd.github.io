@@ -63,7 +63,7 @@
          if (canvas.getContext) {
            var context = canvas.getContext('2d');
            var xsize = 880;
-           var ysize = 1425;
+           var ysize = 1200;
            canvas.style.width = xsize + "px";
            canvas.style.height = ysize + "px";
            // Set actual size in memory (scaled to account for extra pixel density).
@@ -105,7 +105,7 @@
       <canvas id="LaunchGraphCanvas" width="700px" height="150px"
          style="position:absolute;top:637px;left:70px;border: 1px solid #00508a";>
      </canvas>
-      <canvas id="LaunchGraphDateCanvas" width="700px" height="150px"
+      <canvas id="LaunchGraphDateCanvas" width="700px" height="160px"
          style="position:absolute;top:637px;left:70px;border: 1px solid #00508a";>
      </canvas>
      <div class="slidecontainer">
@@ -280,6 +280,22 @@
             <input type="checkbox" id="Brazil" checked= true onchange="VehicleChangeFunction();" style=" position:absolute; left:775px; top:558px;">
          </form>
       </div>
+     <p style=" position:absolute; left:70px; top:800px; width:700px; font-family: Helvetica; font-size: 13px; color: grey;text-align:justify"> This data visualisation represents the State of North Korea’s missile launch trajectories since 1984, directly <b>to scale</b> relative to their range proximity to other countries and territories, the Earth’s circumference, and various orbital altitudes. <br>I started developing this graphic after becoming frustrated that news reports often reported the missile trajectory’s altitude and distance reached in raw numbers, but with no context or intuitive/visual communication of literally how high or how far these weaponisable vehicles flew.
+<br>
+       <br>
+The ranges of the trajectories are visualised against a 2D representation of the Earth, showing how high and far they travel relative to the Earth’s diameter, circumference, and the height of its atmosphere (the little light blue line close to the surface - most of these missiles flew into Low Earth Orbit and several even higher than the International Space Station!). At the same time, the 2D Earth depiction is populated with radial points and slices representing different countries, population centres, territories, and continents, in a <i>“circle of equivalent ranges”</i>: arranged by shortest <a href="https://en.wikipedia.org/wiki/Great-circle_distance">Great Circle distances</a> from the approximate geographical centre of North Korea - hence some entity overlaps because latitude and longitude have been collapsed into Great Circle range equivalents.
+<br>
+       <br>
+
+       Crucially, these are <b>equivalent</b> ranges: missile path endpoints show range proximity to the displayed geographical entities, <u>not actual impact locations</u>. For example, the missile travelling 3,700km in September 2017 reached an <i>equivalent</i> distance to Guam, despite actually splashing down in the Pacific thousands of km to the North-East, presenting no physical threat to Guam - but presumably demonstrating the capability.
+<br>
+       <br>
+
+All geometry and distances in this diagram are to scale. Each missile path depicted is assumed as a 2nd order parabola for the purposes of this visualisation, calculated from available missile spec, apogee and ground distance data provided by the <a href="https://www.nti.org/analysis/articles/cns-north-korea-missile-test-database/">CNS North Korea Missile Test Database via the Nuclear Threat Initiative (NTI)</a>.
+<br>
+       <br>
+
+*<i>”Hypothetical Range” refers to trajectories which have been conducted in a “lofted” configuration, converted to an equivalent conventional strike trajectory (only if such an estimate has been given by official sources of either NK or organizations/countries which monitor their launches). These estimated conventional ranges, if available, are depicted if the “Show Hypothetical Ranges” checkbox is selected.</i></p>
      <script type="text/javascript">
   const trajCanvas = document.getElementById("TrajCanvas");
 
@@ -478,7 +494,7 @@
          var context = canvas.getContext('2d');
          
          var xsize = 700;
-         var ysize = 150;
+         var ysize = 160;
          canvas.style.width = xsize + "px";
          canvas.style.height = ysize + "px";
          
@@ -539,7 +555,7 @@
          var context = canvas.getContext('2d');
          
          var xsize = 700;
-         var ysize = 150;
+         var ysize = 160;
          canvas.style.width = xsize + "px";
          canvas.style.height = ysize + "px";
          
@@ -591,10 +607,27 @@
            
            for(i=0;i<nd;i=i+12){
              context.beginPath();
+             if ((i/12)%2 == 0){
              context.moveTo(xmin+i*xrange/nd,140)
+             }else{
+             context.moveTo(xmin+i*xrange/nd,138)
+             }
              context.lineTo(xmin+i*xrange/nd,130)
              context.stroke();
              context.closePath();
+             // Draw the text diagonally
+             if ((i/12)%2 == 0){
+            context.save(); // save current state
+            let txtx = 6+xmin + i * xrange / nd;
+            let txty = 150;
+            let yrtxt = (1984+i/12).toString();
+            context.textAlign = 'right';
+            yrtxt = "'"+yrtxt.slice(2);
+            context.translate(txtx, txty); 
+            //context.rotate(-60*Math.PI/180);
+            context.fillText(yrtxt, 0, 0);
+            context.restore();
+             };
            }
            let cs_all = new Array(nd).fill(0);
            let cs_SLV = new Array(nd).fill(0);
