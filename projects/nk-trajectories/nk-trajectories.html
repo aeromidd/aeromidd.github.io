@@ -436,6 +436,97 @@ All geometry and distances in this diagram are to scale. Each missile path depic
                DrawTrajectories();
            }
          }
+        const EARTH_RADIUS_KM = 6371;
+
+const imgs = {
+  iss: new Image(),
+  hubble: new Image(),
+  starlink: new Image()
+};
+
+imgs.iss.src = "https://aeromidd.github.io/projects/nk-trajectories/iss_silhouette.png";
+imgs.hubble.src = "https://aeromidd.github.io/projects/nk-trajectories/hubble_silhouette.png";
+        
+const satellites = [
+  {
+    altitude: 400,
+    period: 92.7/10,
+    img: imgs.iss,
+    size: 1,
+    phase: 120*Math.PI/180,
+  }
+];
+  satellites.push({
+    altitude: 550,
+    period: 95.5/10,
+    img: imgs.hubble,
+    scale: 0.8,
+    phase: 80*Math.PI/180,
+  });
+function getThetaWindow(kmScale){
+
+  const p = 0.9;
+
+  const mult = 1.2;               // widen proportionally
+  const buffer = 0*Math.PI/180;    // extra 5° always
+
+  var theta1 =
+      (6 * Math.pow(kmScale, -p)) * mult * Math.PI/180 + buffer;
+
+  var theta2 =
+     -(1.2 * Math.pow(kmScale, -p)) * mult * Math.PI/180 - buffer;
+  if (kmScale < 0.0356){
+    theta1 = 360*Math.PI/180;
+    theta2 = -360*Math.PI/180;
+  }
+  return {
+    theta1: Math.min(theta1, 2*Math.PI),
+    theta2: Math.max(theta2, -2*Math.PI)
+  };
+}
+        
+        let orbitStartTime = performance.now();
+
+function drawSatellites(ctx, cx, cy, kmScale) {
+
+  const t = (performance.now() - orbitStartTime)/1000;
+  //console.log(kmScale)
+  satellites.forEach(s => {
+
+    const r = (EARTH_RADIUS_KM + s.altitude) * kmScale;
+    const {theta1, theta2} = getThetaWindow(kmScale);
+
+    let thetaRaw = 2*Math.PI*t/s.period + s.phase;
+
+    // wrap to 0–2π
+    thetaRaw = (thetaRaw % (2*Math.PI) + 2*Math.PI) % (2*Math.PI);
+
+    // compress into visible arc
+    const theta = theta2 + (thetaRaw/(2*Math.PI))*(theta1 - theta2);
+    
+    const x = cx + r*Math.sin(theta);
+    const y = cy - r*Math.cos(theta);
+
+    ctx.save();
+
+    ctx.translate(x, y);
+
+    // face direction of travel (tangent to orbit)
+    //ctx.rotate(theta + Math.PI/2);
+
+    // optional zoom-based size scaling
+    var sizeScale = 500*kmScale;//1 + zoomInput.value/600;
+    //0.035
+    if (kmScale>0.0356){
+      sizeScale = 0.5/0.0356;
+    }
+
+    ctx.imageSmoothingEnabled = true;   // smooth
+    ctx.drawImage(s.img, -sizeScale/2, -sizeScale/2, sizeScale, sizeScale);
+    ctx.restore();
+  });
+}
+
          
          function ZoomOut(){
            if (Number(zoomSlider.value) > math.min(zoomPts)){
@@ -1572,6 +1663,7 @@ All geometry and distances in this diagram are to scale. Each missile path depic
            }
            }
          }
+           drawSatellites(context, cx, cy, 1.0*zoom);
          
          }
          
@@ -1599,6 +1691,12 @@ All geometry and distances in this diagram are to scale. Each missile path depic
   const result = Array.from({ length: n });
   return result.map((_, i) => arrays.map(xs => xs[i] || 0).reduce((sum, x) => sum + x, 0));
 }
+        function animate() {
+  DrawTrajectories();
+  requestAnimationFrame(animate);
+}
+
+animate();
       </script>
    </body>
 </html>
