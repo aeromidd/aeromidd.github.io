@@ -165,6 +165,11 @@
             <label for="HypRangeCheck" style=" position:absolute; left:595px; top:480px; font-family: Garamond, serif; font-size: 13px; color: #00508a;"> Show Hypothetical Ranges*</label>
             <input type="checkbox" id="HypRangeCheck" checked= true onchange="VehicleChangeFunction();" style=" position:absolute; left:570px; top:478px; filter: hue-rotate(-270deg) brightness(1.0) contrast(5) saturate(0%)">
          </form>
+         <form>
+           <p style=" position:absolute; left:778px; top:560px; font-family: Garamond, serif; font-size: 12px; color: #000000;">_________________</p>
+            <label for="SatOrbCheck" style=" position:absolute; left:795px; top:592px; width:92px; font-family: Garamond, serif; font-size: 12px; color: #00508a;"> Show International Satellite Orbits</label>
+            <input type="checkbox" id="SatOrbCheck" checked= true onchange="VehicleChangeFunction();" style=" position:absolute; left:775px; top:588px; filter: hue-rotate(-270deg) brightness(1.0) contrast(5) saturate(0%)">
+         </form>
       </div>
       <div style="position:absolute;top:20px;left:779px;font-family: Garamond, serif; font-size: 15px; color: #252525;">
          Show Continents:
@@ -280,10 +285,10 @@
             <input type="checkbox" id="Brazil" checked= true onchange="VehicleChangeFunction();" style=" position:absolute; left:775px; top:558px;">
          </form>
       </div>
-     <p style=" position:absolute; left:70px; top:800px; width:700px; font-family: Helvetica; font-size: 13px; color: grey;text-align:justify"> This data visualisation represents the State of North Korea’s ballistic missile trajectories since 1984, directly <b>to scale</b> relative to their range proximity to other countries and territories, the Earth’s circumference, and various orbital altitudes. <br>I started developing this graphic after becoming frustrated that news reports often reported the missile trajectory’s altitude and distance reached in raw numbers, but with no context or intuitive/visual communication of literally how high or how far these weaponisable vehicles flew. Did it fly into space? Did it fly as high as the International Space Station? Could they have hit X country with that range? Well, with this diagram, you can literally see the answers to those questions.
+     <p style=" position:absolute; left:70px; top:800px; width:700px; font-family: Helvetica; font-size: 13px; color: grey;text-align:justify"> This data visualisation represents the State of North Korea’s ballistic missile trajectories since 1984, directly <b>to scale</b> relative to their range proximity to other countries and territories, the Earth’s circumference, and various orbital altitudes. <br>I started developing this graphic after becoming frustrated that news reports often reported the missile trajectory’s altitude and distance reached in raw numbers, but with no context or intuitive/visual communication of literally how high or how far these weaponisable vehicles flew. Did it fly into space? Did it fly as high as the International Space Station? Could they have hit X country with that range? Well, with this diagram, you can literally see the answers to those questions. Hover your mouse over the trajectories for more information!
 <br>
        <br>
-The ranges of the trajectories are visualised against a 2D representation of the Earth, showing how high and far they travel relative to the Earth’s diameter, circumference, and the height of its atmosphere (the little light blue line close to the surface - most of these missiles flew into Low Earth Orbit and several even higher than the International Space Station!). At the same time, the 2D Earth depiction is populated with radial points and slices representing different countries, population centres, territories, and continents, in a <i>“circle of equivalent ranges”</i>: arranged by shortest <a href="https://en.wikipedia.org/wiki/Great-circle_distance">Great Circle distances</a> from the approximate geographical centre of North Korea - hence some entity overlaps because latitude and longitude have been collapsed into Great Circle range equivalents.
+The ranges of the trajectories are visualised against a latitude-collapsed 2D representation of the Earth, showing how high and far they travel relative to the Earth’s diameter, circumference, and the height of its atmosphere (the little light blue line close to the surface - most of these missiles flew into Low Earth Orbit and several even higher than the International Space Station!). At the same time, the 2D Earth depiction is populated with radial points and slices representing different countries, population centres, territories, and continents, in a <i>“circle of equivalent ranges”</i>: arranged by shortest <a href="https://en.wikipedia.org/wiki/Great-circle_distance">Great Circle distances</a> from the approximate geographical centre of North Korea... hence some overlaps.
 <br>
        <br>
 
@@ -291,7 +296,7 @@ The ranges of the trajectories are visualised against a 2D representation of the
 <br>
        <br>
 
-All geometry and distances in this diagram are to scale. Each missile path depicted is assumed as a 2nd order parabola for the purposes of this visualisation, calculated from available missile spec, apogee and ground distance data provided by the <a href="https://www.nti.org/analysis/articles/cns-north-korea-missile-test-database/">CNS North Korea Missile Test Database via the Nuclear Threat Initiative (NTI)</a>. (Sadly, the database seems to have not been updated again since the end of 2024).
+All geometry and distances in this diagram are to scale. Each missile path depicted is assumed as a 2nd order parabola for the purposes of this visualisation, calculated from available missile spec, apogee and ground distance data provided by the <a href="https://www.nti.org/analysis/articles/cns-north-korea-missile-test-database/">CNS North Korea Missile Test Database via the Nuclear Threat Initiative (NTI)</a>. (Sadly, the database seems to have not been updated since late 2024).
 <br>
        <br>
 
@@ -436,12 +441,24 @@ All geometry and distances in this diagram are to scale. Each missile path depic
                DrawTrajectories();
            }
          }
+        
+let mouse = { x: 0, y: 0, inside: false };
+
+TrajCanvas.addEventListener("mousemove", e => {
+  const rect = TrajCanvas.getBoundingClientRect();
+  mouse.x = (e.clientX - rect.left);
+  mouse.y = (e.clientY - rect.top);
+  mouse.inside = true;
+});
+
+canvas.addEventListener("mouseleave", () => {
+  mouse.inside = false;
+});
         const EARTH_RADIUS_KM = 6371;
 
 const imgs = {
   iss: new Image(),
   hubble: new Image(),
-  starlink: new Image()
 };
 
 imgs.iss.src = "https://aeromidd.github.io/projects/nk-trajectories/iss_silhouette.png";
@@ -450,19 +467,45 @@ imgs.hubble.src = "https://aeromidd.github.io/projects/nk-trajectories/hubble_si
 const satellites = [
   {
     altitude: 400,
-    period: 92.7/10,
+    period: 90/6,
+    name: "ISS orbit",
     img: imgs.iss,
-    size: 1,
+    size: 1.0,
     phase: 120*Math.PI/180,
   }
 ];
   satellites.push({
     altitude: 550,
-    period: 95.5/10,
+    period: 96/6,
+    name: "Hubble orbit",
     img: imgs.hubble,
-    scale: 0.8,
+    scale: 1.0,
     phase: 80*Math.PI/180,
   });
+        
+function getHoveredOrbit(cx, cy, kmScale) {
+
+  if (!mouse.inside) return null;
+
+  const dx = mouse.x - cx;
+  const dy = mouse.y - cy;
+
+  const dist = Math.hypot(dx, dy);
+
+  const tolerance = 6; // pixels
+
+  for (const s of satellites) {
+
+    const r = (EARTH_RADIUS_KM + s.altitude) * kmScale;
+
+    if (Math.abs(dist - r) < tolerance) {
+      return s.name;
+    }
+  }
+
+  return null;
+}
+
 function getThetaWindow(kmScale){
 
   const p = 0.9;
@@ -484,7 +527,64 @@ function getThetaWindow(kmScale){
     theta2: Math.max(theta2, -2*Math.PI)
   };
 }
+function getHoveredTrajectory(trajectories,cx,cy,kmScale){
+
+  if (!mouse.inside) return null;
+
+  const tol = 6; // pixels
+
+  let best = null;
+  let bestDist = Infinity;
+
+  for (const tr of trajectories){
+
+    const xpts = tr.x;
+    const ypts = tr.y;
+    
+    for (let i=0; i<xpts.length-1; i++){
+      //context.lineTo(cx+xt[i][j]*zoom,cy-yt[i][j]*zoom);
+      const ax = cx+xpts[i]*kmScale;
+      const bx = cx+xpts[i+1]*kmScale;
+      const ay = cy-ypts[i]*kmScale;
+      const by = cy-ypts[i+1]*kmScale;
+
+      const {dist, t} =
+        pointSegmentDistance(mouse.x, mouse.y, ax, ay, bx, by);
+
+      if (dist < tol && dist < bestDist){
+
+        // interpolate metadata
+        bestDist = dist;
         
+        best = tr.date+"\nAlt: "+tr.altitude.toFixed(0).toString()+"km\nDist: "+tr.distance.toFixed(0).toString()+"km";
+      }
+    }
+  }
+
+  return best;
+}
+function pointSegmentDistance(px, py, x1, y1, x2, y2){
+
+  const vx = x2 - x1;
+  const vy = y2 - y1;
+
+  const wx = px - x1;
+  const wy = py - y1;
+
+  const c1 = vx*wx + vy*wy;
+  const c2 = vx*vx + vy*vy;
+
+  let t = c1 / c2;
+  t = Math.max(0, Math.min(1, t));
+
+  const sx = x1 + t*vx;
+  const sy = y1 + t*vy;
+
+  return {
+    dist: Math.hypot(px-sx, py-sy),
+    t
+  };
+}
         let orbitStartTime = performance.now();
 
 function drawSatellites(ctx, cx, cy, kmScale) {
@@ -506,6 +606,12 @@ function drawSatellites(ctx, cx, cy, kmScale) {
     
     const x = cx + r*Math.sin(theta);
     const y = cy - r*Math.cos(theta);
+    
+    ctx.strokeStyle = "rgba(150,150,150,0.5)";
+    ctx.lineWidth='4px';
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, 2*Math.PI);
+    ctx.stroke();
 
     ctx.save();
 
@@ -590,7 +696,7 @@ function drawSatellites(ctx, cx, cy, kmScale) {
          canvas.style.height = ysize + "px";
          
          // Set actual size in memory (scaled to account for extra pixel density).
-         var scale = 4;//window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+         var scale = 2;//window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
          canvas.width = Math.floor(xsize * scale);
          canvas.height = Math.floor(ysize * scale);
          
@@ -651,7 +757,7 @@ function drawSatellites(ctx, cx, cy, kmScale) {
          canvas.style.height = ysize + "px";
          
          // Set actual size in memory (scaled to account for extra pixel density).
-         var scale = 4;//window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+         var scale = 2;//window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
          canvas.width = Math.floor(xsize * scale);
          canvas.height = Math.floor(ysize * scale);
          
@@ -1610,6 +1716,7 @@ function drawSatellites(ctx, cx, cy, kmScale) {
              //context.fillText(dateSelectY,cx,cy); //ER*LMRbot*zoom
            
            
+         let MT = [];
          //Plot Trajectories
          for (i = 0; i < xt.length; i++) {
            var PlotValid = false;
@@ -1660,13 +1767,67 @@ function drawSatellites(ctx, cx, cy, kmScale) {
            }
            if (PlotValid == true){
              context.stroke();
+            if (HypRangeCheck.checked == false || isNaN(hypxt[i][0])){
+             MT.push(
+              {
+                altitude: ldata[i][0],
+                distance: ldata[i][1],
+                date: ldata[i][4].toString()+"-"+ldata[i][5].toString()+"-"+ldata[i][6].toString(),
+                x: xt[i],
+                y: yt[i],
+              });
+            }else{
+              MT.push(
+              {
+                altitude: ldata[i][1],
+                distance: ldata[i][2],
+                date: ldata[i][4].toString()+"-"+ldata[i][5].toString()+"-"+ldata[i][6].toString(),
+                x: hypxt[i],
+                y: hypyt[i],
+              });
+            }
            }
            }
          }
-           drawSatellites(context, cx, cy, 1.0*zoom);
-         
+           if (SatOrbCheck.checked ==true){
+             drawSatellites(context, cx, cy, 1.0*zoom);
+             const hoveredOrbit = getHoveredOrbit(cx, cy, zoom);
+             if (hoveredOrbit){
+               drawTooltip(context, mouse.x, mouse.y, hoveredOrbit);
+             }
+           };
+           //console.log(MT)
+           const hit = getHoveredTrajectory(MT,cx,cy,zoom);
+
+          if (hit){
+            drawTooltip(context, mouse.x, mouse.y,hit);
+          }
+           
          }
-         
+        
+         function drawTooltip(ctx,x,y,text){
+
+  ctx.save();
+
+  ctx.font = "12px monospace";
+
+  const lines = text.split("\n");
+  const pad = 6;
+
+  const width = Math.max(...lines.map(l=>ctx.measureText(l).width));
+  const lineH = 14;
+
+  ctx.fillStyle = "rgba(0,0,0,0.8)";
+  ctx.fillRect(x+12, y-18, width+pad*2, lineH*lines.length+pad*2);
+
+  ctx.fillStyle = "white";
+
+  lines.forEach((l,i)=>{
+    ctx.fillText(l, x+12+pad, y-18+pad+lineH*(i+0.8));
+  });
+
+  ctx.restore();
+}
          function interpolateArray(data, fitCount) {
          
          var linearInterpolate = function (before, after, atPoint) {
