@@ -1779,8 +1779,8 @@ function drawSatellites(ctx, cx, cy, kmScale) {
             }else{
               MT.push(
               {
-                altitude: ldata[i][1],
-                distance: ldata[i][2],
+                altitude: ldata[i][0],
+                distance: ldata[i][1],
                 date: ldata[i][4].toString()+"-"+ldata[i][5].toString()+"-"+ldata[i][6].toString(),
                 x: hypxt[i],
                 y: hypyt[i],
