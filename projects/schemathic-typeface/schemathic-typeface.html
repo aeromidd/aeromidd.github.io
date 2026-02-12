@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width">
+      <title>THESE ISLANDS</title>
+      <style>
+        @font-face { font-family: SchemathicPrototype-Regular; src: url('https://aeromidd.com/misc/SchemathicPrototype-Regular.otf'); }
+
+
+    #typing {
+      border-right: 2px solid #fff;
+      font-family: SchemathicPrototype-Regular;
+      white-space: pre-wrap;
+      overflow: hidden;
+    }
+      </style>
+   </head>
+   <body>
+     <div id="typing" style="position:absolute;top:425px;text-align:left;left:30px;width:860px;font:45px SchemathicPrototype-Regular"></div>
+     
+     <p style="position:absolute;top:20px;text-align:center;center:15px;width:865px;color:#757575;font:13px Helvetica"><span>I made a font! I mean, I made a typeface. And also a font.
+<br>
+I've used it all over this website now for headings and stuff.
+<br>
+If you're interested in using it, give me a shout at aeromidd@gmail.com.
+<br>
+I might license it, but if you're friendly I might let you use it for free (for non-commercial uses).<br>
+       </span>
+       <span style="font:82px SchemathicPrototype-Regular;color:#00508A">schemathic</span><span style="font:45px SchemathicPrototype-Regular;color:grey"><br>
+A B C D E F G H I J
+<br>
+K L M N O P Q R S
+<br>
+T U V W X Y Z
+<br>
+? ! . , : ; ' "
+       </span>
+</p>
+     
+     
+      <canvas id="BorderCanvas"></canvas>
+      <script type="text/javascript">
+         var canvas = document.getElementById('BorderCanvas');
+         if (canvas.getContext) {
+           var context = canvas.getContext('2d');
+           var xsize = 880;
+           var ysize = 900;
+           canvas.style.width = xsize + "px";
+           canvas.style.height = ysize + "px";
+           // Set actual size in memory (scaled to account for extra pixel density).
+           var scale = 2; //window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+           canvas.width = Math.floor(xsize * scale);
+           canvas.height = Math.floor(ysize * scale);
+           // Normalize coordinate system to use css pixels.
+           context.scale(scale, scale);
+           context.clearRect(0, 0, canvas.width / scale, canvas.height / scale);
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(0, 0);
+           context.lineTo(canvas.width / scale, 0);
+           context.strokeStyle = '#00508a';
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(0, 0);
+           context.lineTo(0, canvas.height / scale);
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(canvas.width / scale, canvas.height / scale);
+           context.lineTo(canvas.width / scale, 0);
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(canvas.width / scale, canvas.height / scale);
+           context.lineTo(0, canvas.height / scale);
+           context.stroke();
+           ////
+         }
+      </script>
+      
+      <script type="text/javascript">
+         const quotes = [
+  "Old woman!",
+  "Man!",
+  "Man. Sorry. What knight lives in that castle over there?",
+  "I'm thirty seven.",
+  "What?",
+  "I'm thirty seven. I'm not old.",
+  "Well, I can't just call you 'Man'.",
+  "Well, you could say 'Dennis'.",
+  "Well, I didn't know you were called 'Dennis'.",
+  "Well, you didn't bother to find out, did you?",
+  "I did say 'sorry' about the 'old woman', but from behind you looked...",
+  "What I object to is that you automatically treat me like an inferior!",
+  "Well, I am King!",
+  "Oh, King, eh, very nice. And how did you get that, eh? By exploiting the workers! By hanging on to outdated imperialist dogma which perpetuates the economic and social differences in our society. If there's ever going to be any progress with the...",
+  "Dennis, there's some lovely filth down here. Oh! How d'you do?",
+  "How do you do, good lady? I am Arthur, King of the Britons. Who's castle is that?",
+  "King of the who?",
+  "The Britons.",
+  "Who are the Britons?",
+  "Well, we all are. We are all Britons, and I am your king.",
+  "I didn't know we had a king. I thought we were an autonomous collective.",
+  "You're fooling yourself. We're living in a dictatorship: a self perpetuating autocracy in which the working classes...",
+  "Oh, there you go bringing class into it again.",
+  "That's what it's all about. If only people would hear of...",
+  "Please! Please, good people. I am in haste. Who lives in that castle?",
+  "No one lives there.",
+  "Then who is your lord?",
+  "We don't have a lord.",
+  "What?",
+  "I told you. We're an anarcho syndicalist commune. We take it in turns to act as a sort of executive officer for the week...",
+  "Yes...",
+  "...but all the decisions of that officer have to be ratified at a special bi weekly meeting...",
+  "Yes, I see.",
+  "...by a simple majority in the case of purely internal affairs...",
+  "Be quiet!",
+  "...but by a two thirds majority in the case of more major...",
+  "Be quiet! I order you to be quiet!",
+  "Order, eh? Who does he think he is? Heh.",
+  "I am your king!",
+  "Well, I didn't vote for you.",
+  "You don't vote for kings.",
+  "Well, how did you become King, then?",
+  "The Lady of the Lake,",
+  "...her arm clad in the purest shimmering samite, held aloft Excalibur from the bosom of the water signifying by Divine Providence that I, Arthur, was to carry Excalibur. That is why I am your king!",
+  "Listen. Strange women lying in ponds distributing swords is no basis for a system of government. Supreme executive power derives from a mandate from the masses, not from some farcical aquatic ceremony.",
+  "Be quiet!"
+];
+
+const speakers = [
+  "A","B","A","B","A","B","A","B","A","B",
+  "A","B","A","B","C","A","C","A","C","A",
+  "C","B","C","B","A","C","A","C","A","B",
+  "A","B","A","B","A","B","A","C","A","C",
+  "A","C","A","A","B","A"
+];
+
+const speakerColors = {
+  "A": "rgb(255,153,0)",
+  "B": "#00508a",
+  "C": "#019aca"
+};
+
+const typingElement = document.getElementById("typing");
+const containerWidth = typingElement.clientWidth;
+const speed = 64;
+const pause = 1300;
+let quoteIndex = 0;
+
+function typeQuote() {
+  const quote = quotes[quoteIndex];
+  const speaker = speakers[quoteIndex];
+  typingElement.style.color = speakerColors[speaker];
+  typingElement.textContent = "";
+
+  const words = quote.split(" ");
+  let currentLine = "";
+  let wordIndex = 0;
+
+  function typeNextWord() {
+    if (wordIndex >= words.length) {
+      setTimeout(() => {
+        quoteIndex = (quoteIndex + 1) % quotes.length;
+        typeQuote();
+      }, pause);
+      return;
+    }
+
+    const word = words[wordIndex];
+    const testLine = currentLine.length ? currentLine + " " + word : word;
+
+    const tempSpan = document.createElement("span");
+    tempSpan.style.visibility = "hidden";
+    tempSpan.style.whiteSpace = "pre";
+    tempSpan.textContent = testLine;
+    typingElement.appendChild(tempSpan);
+    const lineWidth = tempSpan.getBoundingClientRect().width;
+    typingElement.removeChild(tempSpan);
+
+    if (lineWidth > containerWidth && currentLine !== "") {
+      currentLine = "";
+      typeWordChars("\n" + word + " ", 0, () => {
+        currentLine = word + " ";
+        wordIndex++;
+        typeNextWord();
+      });
+    } else {
+      typeWordChars((currentLine ? " " : "") + word, 0, () => {
+        currentLine = testLine + " ";
+        wordIndex++;
+        typeNextWord();
+      });
+    }
+  }
+
+  function typeWordChars(text, charIndex, callback) {
+    if (charIndex < text.length) {
+      typingElement.textContent += text[charIndex];
+      setTimeout(() => typeWordChars(text, charIndex + 1, callback), speed);
+    } else {
+      callback();
+    }
+  }
+
+  typeNextWord();
+}
+
+typeQuote();
+
+
+
+           
+      </script>
+   </body>
+</html>
