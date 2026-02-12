@@ -117,7 +117,7 @@
                position:absolute;
                top: 50px;
                left: 750px;" oninput="this.form.zoomInput.value=this.value;ZoomChangeFunction(this.value);" />
-            <input id="zoomInput" class="sliderInput" type="number" name="zoomInput" style="top:25px;left:700px;" min="1" max="900" value="320" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.zoomSlider.value=this.value;ZoomChangeFunction(this.value);"/>
+            <input id="zoomInput" class="sliderInput" type="number" name="zoomInput" style="top:25px;left:700px;display:none" min="1" max="900" value="320" oninput="this.value=Math.min(this.max,Math.max(this.min,this.value));this.form.zoomSlider.value=this.value;ZoomChangeFunction(this.value);"/>
          </form>
       </div>
       <div>
@@ -167,7 +167,7 @@
          </form>
          <form>
            <p style=" position:absolute; left:778px; top:560px; font-family: Garamond, serif; font-size: 12px; color: #000000;">_________________</p>
-            <label for="SatOrbCheck" style=" position:absolute; left:795px; top:592px; width:92px; font-family: Garamond, serif; font-size: 12px; color: #00508a;"> Show International Satellite Orbits</label>
+            <label for="SatOrbCheck" style=" position:absolute; left:795px; top:592px; width:92px; font-family: Garamond, serif; font-size: 12px; color: #00508a;"> Show International Satellite Orbits (animated)</label>
             <input type="checkbox" id="SatOrbCheck" checked= true onchange="VehicleChangeFunction();" style=" position:absolute; left:775px; top:588px; filter: hue-rotate(-270deg) brightness(1.0) contrast(5) saturate(0%)">
          </form>
       </div>
@@ -458,11 +458,19 @@ canvas.addEventListener("mouseleave", () => {
 
 const imgs = {
   iss: new Image(),
+  starlink: new Image(),
   hubble: new Image(),
+  iridium: new Image(),
+  gps: new Image(),
+  galileo: new Image(),
 };
 
 imgs.iss.src = "https://aeromidd.github.io/projects/nk-trajectories/iss_silhouette.png";
+imgs.starlink.src = "https://aeromidd.github.io/projects/nk-trajectories/starlink_silhouette.png";
 imgs.hubble.src = "https://aeromidd.github.io/projects/nk-trajectories/hubble_silhouette.png";
+imgs.iridium.src = "https://aeromidd.github.io/projects/nk-trajectories/iridium_silhouette.png";
+imgs.gps.src = "https://aeromidd.github.io/projects/nk-trajectories/gps_silhouette.png";
+imgs.galileo.src = "https://aeromidd.github.io/projects/nk-trajectories/galileo_silhouette.png";
         
 const satellites = [
   {
@@ -471,9 +479,17 @@ const satellites = [
     name: "ISS orbit",
     img: imgs.iss,
     size: 1.0,
-    phase: 120*Math.PI/180,
+    phase: 30*Math.PI/180,
   }
 ];
+  satellites.push({
+    altitude: 480,
+    period: 83/6,
+    name: "Starlink orbit",
+    img: imgs.starlink,
+    scale: 1.0,
+    phase: 120*Math.PI/180,
+  });
   satellites.push({
     altitude: 550,
     period: 96/6,
@@ -481,6 +497,30 @@ const satellites = [
     img: imgs.hubble,
     scale: 1.0,
     phase: 80*Math.PI/180,
+  });
+  satellites.push({
+    altitude: 780,
+    period: 101/6,
+    name: "Iridium orbit",
+    img: imgs.iridium,
+    scale: 1.0,
+    phase: 210*Math.PI/180,
+  });
+  satellites.push({
+    altitude: 20200,
+    period: 0.15*720/6,
+    name: "GPS (US) orbit",
+    img: imgs.gps,
+    scale: 1.0,
+    phase: 20*Math.PI/180,
+  });
+  satellites.push({
+    altitude: 23250,
+    period: 0.15*825/6,
+    name: "Galileo (Europe) orbit",
+    img: imgs.galileo,
+    scale: 1.0,
+    phase: 30*Math.PI/180,
   });
         
 function getHoveredOrbit(cx, cy, kmScale) {
@@ -492,7 +532,7 @@ function getHoveredOrbit(cx, cy, kmScale) {
 
   const dist = Math.hypot(dx, dy);
 
-  const tolerance = 6; // pixels
+  const tolerance = Math.min(Math.max(30*kmScale,3),30); // pixels
 
   for (const s of satellites) {
 
@@ -594,7 +634,11 @@ function drawSatellites(ctx, cx, cy, kmScale) {
   satellites.forEach(s => {
 
     const r = (EARTH_RADIUS_KM + s.altitude) * kmScale;
-    const {theta1, theta2} = getThetaWindow(kmScale);
+    var {theta1, theta2} = getThetaWindow(kmScale);
+    if (s.altitude>5000){
+      theta1 = 100*Math.PI/180;
+      theta2 = -20*Math.PI/180;
+    }
 
     let thetaRaw = 2*Math.PI*t/s.period + s.phase;
 
@@ -607,8 +651,9 @@ function drawSatellites(ctx, cx, cy, kmScale) {
     const x = cx + r*Math.sin(theta);
     const y = cy - r*Math.cos(theta);
     
-    ctx.strokeStyle = "rgba(150,150,150,0.5)";
-    ctx.lineWidth='4px';
+    ctx.strokeStyle = "rgba(0,150,180,0.12)";
+    ctx.lineWidth=Math.min(Math.max(30*kmScale,2),30);
+    ctx.setLineDash([]);
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, 2*Math.PI);
     ctx.stroke();
@@ -618,17 +663,33 @@ function drawSatellites(ctx, cx, cy, kmScale) {
     ctx.translate(x, y);
 
     // face direction of travel (tangent to orbit)
-    //ctx.rotate(theta + Math.PI/2);
+    ctx.rotate(theta - Math.PI/2);
 
     // optional zoom-based size scaling
-    var sizeScale = 500*kmScale;//1 + zoomInput.value/600;
+    var imgScl = 0.01;
+    var sizeScale = imgScl*s.img.height*500*kmScale;//1 + zoomInput.value/600;
     //0.035
     if (kmScale>0.0356){
-      sizeScale = 0.5/0.0356;
+      sizeScale = imgScl*s.img.height*0.5/0.0356;
     }
 
-    ctx.imageSmoothingEnabled = true;   // smooth
-    ctx.drawImage(s.img, -sizeScale/2, -sizeScale/2, sizeScale, sizeScale);
+    ctx.imageSmoothingEnabled = false;   // smooth
+    const aspect = s.img.width / s.img.height;
+    let drawWidth, drawHeight;
+
+    if (aspect > 1) {
+      // wider than tall
+      drawWidth = sizeScale;
+      drawHeight = sizeScale / aspect;
+    } else {
+      // taller than wide or square
+      drawHeight = sizeScale;
+      drawWidth = sizeScale * aspect;
+    }
+
+    // Draw centered
+    ctx.drawImage(s.img, -drawWidth/2, -drawHeight/2, drawWidth, drawHeight);
+    //ctx.drawImage(s.img, -sizeScale/2, -sizeScale/2, sizeScale, sizeScale);
     ctx.restore();
   });
 }
@@ -775,6 +836,7 @@ function drawSatellites(ctx, cx, cy, kmScale) {
          let ymin = 130;
          let yrange = ymax-ymin;
            
+           /*
              context.beginPath();
          context.moveTo(xmin,140);
          context.lineTo(xmin,120);
@@ -789,6 +851,7 @@ function drawSatellites(ctx, cx, cy, kmScale) {
          context.strokeStyle = 'rgb('+math.multiply([1,.6,0],255)+')';
          context.stroke();
          context.closePath();
+         */
          
          let cumulativeCheck = cumulativeLaunchesCheck.checked;
          let ICBMcheck = ICBMCheck.checked;
@@ -898,7 +961,6 @@ function drawSatellites(ctx, cx, cy, kmScale) {
                                      ));
              }
            
-           //console.log(totalShown)
            context.lineWidth = 0.1;
          context.strokeStyle = 'rgb('+math.multiply([0,0,0],255)+')';
            // ICBM
@@ -1134,6 +1196,76 @@ function drawSatellites(ctx, cx, cy, kmScale) {
            context.fillStyle = 'rgb('+math.multiply([.7,.7,.7],255)+')';
            context.fill();
            }
+           
+           drawHorizontalGrid(context, xmin, xmax, ymin, yrange, totalShown);
+           function drawHorizontalGrid(ctx, xmin, xmax, ymin, yrange, totalShown) {
+              if (totalShown <= 0) return;
+
+              // 1️⃣ Determine a “nice” integer step
+              let step = 1;
+              const maxLines = 8;
+
+              // Start with rough step
+              let roughStep = Math.ceil(totalShown / maxLines);
+
+              // Round roughStep to nearest 1, 2, 5, 10, 20, 50, ... integer
+              const magnitude = Math.pow(10, Math.floor(Math.log10(roughStep)));
+              const normalized = roughStep / magnitude;
+              if (normalized <= 1) step = 1 * magnitude;
+              else if (normalized <= 2) step = 2 * magnitude;
+              else if (normalized <= 5) step = 5 * magnitude;
+              else step = 10 * magnitude;
+
+              // Ensure minimum step of 1
+              step = Math.max(1, Math.floor(step));
+
+              // 2️⃣ Generate gridline values (skip zero)
+              const gridValues = [];
+              for (let val = step; val < totalShown; val += step) {
+                  gridValues.push(val);
+              }
+              gridValues.push(totalShown); // ensure top line exactly
+
+              // 3️⃣ Helper: convert value to canvas Y (invert Y)
+              function valueToY(val) {
+                  return ymax - yrange * (1 - val / totalShown);
+              }
+
+              // 4️⃣ Draw gridlines and labels
+              ctx.strokeStyle = 'rgba(70,70,70,0.2)';
+              ctx.lineWidth = 1;
+              ctx.font = "14px Courier New";
+              ctx.fillStyle = 'grey';
+              ctx.textAlign = "left";
+
+              for (let i = 0; i < gridValues.length; i++) {
+                  const val = gridValues[i];
+                  const y = valueToY(val);
+                  if (i==gridValues.length-1){
+                  // gridline
+                  ctx.beginPath();
+                  ctx.moveTo(xmin+48, y);
+                  ctx.lineTo(xmax, y);
+                  ctx.stroke();
+                  ctx.closePath();
+
+                  // label
+                  ctx.fillText(val, xmin + 24, y + 5);
+                  }else{
+                  // gridline
+                  ctx.beginPath();
+                  ctx.moveTo(xmin+20, y);
+                  ctx.lineTo(xmax, y);
+                  ctx.stroke();
+                  ctx.closePath();
+
+                  // label
+                  ctx.fillText(val, xmin-5, y + 5);
+                  }
+              }
+          }
+
+           
          }
          
          
@@ -1779,8 +1911,8 @@ function drawSatellites(ctx, cx, cy, kmScale) {
             }else{
               MT.push(
               {
-                altitude: ldata[i][0],
-                distance: ldata[i][1],
+                altitude: ldata[i][1],
+                distance: ldata[i][2],
                 date: ldata[i][4].toString()+"-"+ldata[i][5].toString()+"-"+ldata[i][6].toString(),
                 x: hypxt[i],
                 y: hypyt[i],
