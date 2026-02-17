@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>High-Res Terrain Shader</title>
+<title>High-Res Terrain Shader with Zoom</title>
 <style>
   body { margin:0; overflow:hidden; }
   #container { width:100vw; height:100vh; display:block; }
@@ -11,59 +11,74 @@
 </head>
 <body>
 
-<input id="slider" type="range" min="1" max="6" step="1" value="1">
+<input id="slider" type="range" min="1" max="20" step="1" value="1">
 <div id="container"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.124.0/examples/js/controls/OrbitControls.js"></script>
 
 <script>
-(function(){
+  
+(async function(){
 console.clear();
-const SF = 0.3; //0.1<-->0.75
-const nx = Math.ceil(3000*SF);  // downsampled mesh
-const ny = Math.ceil(2250*SF);
-const heightScale = nx/200;
+
+const HX = 3000;
+const HY = 2250;
+const heightScaleFactor = 0.01;//HX/200; // scales height relative to plane
+let zFull, cFull; // full-res data
 
 let scene, camera, renderer, mesh, geometry;
 let heightTex, colorTex;
-
 const container = document.getElementById('container');
 const slider = document.getElementById('slider');
 
-window.addEventListener('load', init);
+let meshNX = 0, meshNY = 0;
 
 // ----------------- Init -----------------
-function init(){
+async function init(){
   scene = new THREE.Scene();
 
   // Camera
   camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 5000);
-  var cx = 0;
-  var cy = 0;
-  camera.position.set(cx, nx, cy);
-  camera.lookAt(cx, heightScale, cy);
+  camera.position.set(0, 1000, 0);
+  camera.lookAt(0, 0, 0);
 
   // Renderer
   renderer = new THREE.WebGLRenderer({antialias:true});
-  renderer.setClearColor(0xffffff); // white background
+  renderer.setClearColor(0xffffff);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-  //renderer.toneMappingExposure = 1.5; // helps brightness
   container.appendChild(renderer.domElement);
 
   // Lights
-  const directional = new THREE.DirectionalLight(0xffffff, 1.1);//1.5
-  directional.position.set(-nx/2,nx,-ny);
+  const directional = new THREE.DirectionalLight(0xffffff, 1.2);
+  directional.position.set(-HX/2, 1000, -HY/2);
   scene.add(directional);
+  scene.add(new THREE.AmbientLight(0x222222));
 
-  const ambient = new THREE.AmbientLight(0x222222);
-  scene.add(ambient);
+  // Controls
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-  buildMesh();
+  controls.enableDamping = true;
+  controls.enablePan = false;
+  controls.maxPolarAngle = Math.PI/2; // stay above terrain
+  controls.enableRotate = false;   // disable mouse drag rotate
+  controls.enableZoom   = true;
+  controls.zoomToCursor = true;
+  controls.minDistance = 100;
+  controls.maxDistance = 1500;
+  controls.addEventListener('change', updateTextureResolution);
 
-  slider.oninput = e => loadFrame(parseInt(e.target.value));
-  loadFrame(1);
+  // Load first frame (full-res)
+  await loadFullFrame(1);
+
+  buildMesh(0.3); // initial downsample factor
+
+  slider.oninput = async e => {
+    await loadFullFrame(parseInt(e.target.value));
+    updateTextureResolution();
+  };
 
   window.addEventListener('resize', ()=>{
     camera.aspect = window.innerWidth/window.innerHeight;
@@ -74,117 +89,103 @@ function init(){
   animate();
 }
 
+// ----------------- Load full-resolution frame -----------------
+async function loadFullFrame(t){
+  const url = `https://raw.githubusercontent.com/aeromidd/aeromidd.github.io/main/projects/euro-settle-america/binFiles/frame_${String(t).padStart(4,'0')}.bin.gz`;
+  const res = await fetch(url);
+  if(!res.ok) throw new Error("Failed frame "+t);
+  const compressed = await res.arrayBuffer();
+  const decompressed = pako.inflate(new Uint8Array(compressed));
+
+  const fullCount = HX*HY;
+  zFull = decompressed.subarray(0, fullCount);
+  cFull = decompressed.subarray(fullCount, fullCount*4);
+}
+
 // ----------------- Build Mesh -----------------
-function buildMesh(){
+function buildMesh(SF){
+  meshNX = Math.ceil(HX*SF);
+  meshNY = Math.ceil(HY*SF);
 
-  geometry = new THREE.PlaneGeometry(nx, ny, nx-1, ny-1);
-  geometry.rotateX(-Math.PI/2);   // now X/Z plane, Y is up
-  geometry.computeVertexNormals();
-  
+  geometry = new THREE.PlaneGeometry(meshNX, meshNY, meshNX-1, meshNY-1);
+  geometry.rotateX(-Math.PI/2);
 
-  // ---- textures ----
-  heightTex = new THREE.DataTexture(
-    new Uint8Array(nx*ny),
-    nx, ny,
-    THREE.RedFormat
-  );
-  //heightTex.minFilter = heightTex.magFilter = THREE.LinearFilter;
-heightTex.flipY = false;
-
-  colorTex = new THREE.DataTexture(
-    new Uint8Array(nx*ny*3),
-    nx, ny,
-    THREE.RGBFormat
-  );
-  colorTex.colorSpace = THREE.SRGBColorSpace;
-  //colorTex.minFilter = colorTex.magFilter = THREE.LinearFilter;
-  colorTex.flipY = false;
-  
-
-  // smoother sampling (important)
+  heightTex = new THREE.DataTexture(new Uint8Array(meshNX*meshNY), meshNX, meshNY, THREE.RedFormat);
+  heightTex.flipY = false;
   heightTex.minFilter = heightTex.magFilter = THREE.LinearFilter;
-  colorTex.minFilter  = colorTex.magFilter  = THREE.LinearFilter;
 
-  heightTex.needsUpdate = true;
-  colorTex.needsUpdate  = true;
+  colorTex = new THREE.DataTexture(new Uint8Array(meshNX*meshNY*3), meshNX, meshNY, THREE.RGBFormat);
+  colorTex.colorSpace = THREE.SRGBColorSpace;
+  colorTex.flipY = false;
+  colorTex.minFilter = colorTex.magFilter = THREE.LinearFilter;
 
-  // ---- MATERIAL (no shaders) ----
   const material = new THREE.MeshStandardMaterial({
-  map: colorTex,
-  displacementMap: heightTex,
-  displacementScale: heightScale,
-
-  roughness: 0.9,
-  metalness: 0.0,
-
-  side: THREE.DoubleSide,
-  flatShading: true
-});
-
+    map: colorTex,
+    displacementMap: heightTex,
+    displacementScale: meshNX * heightScaleFactor,
+    roughness: 0.9,
+    metalness: 0.0,
+    side: THREE.DoubleSide,
+    flatShading: true
+  });
 
   mesh = new THREE.Mesh(geometry, material);
-  // Center the mesh
-mesh.position.x = 0;//-nx / 4;
-mesh.position.z = 0///-ny / 4;
-mesh.position.y = 0; // optional, usually 0 for displacement from plane
+  mesh.position.set(0,0,0);
   scene.add(mesh);
+
+  updateTextureResolution();
 }
 
+// ----------------- Update texture resolution dynamically -----------------
+function updateTextureResolution(){
+  if(!zFull || !cFull || !mesh) return;
 
-// ----------------- Load Frame -----------------
-async function loadFrame(t){
-  try{
-    const url = `https://raw.githubusercontent.com/aeromidd/aeromidd.github.io/main/projects/euro-settle-america/binFiles/frame_${String(t).padStart(4,'0')}.bin.gz`;
-    const res = await fetch(url);
-    if(!res.ok) throw new Error("Failed frame "+t);
-    const compressed = await res.arrayBuffer();
-    const decompressed = pako.inflate(new Uint8Array(compressed));//.buffer
+  // Map camera distance to SF
+  const minSF = 0.1;
+  const maxSF = 0.75;
+  const minDist = 100;
+  const maxDist = 3000;
+  const t = THREE.MathUtils.clamp((camera.position.y - minDist) / (maxDist - minDist), 0, 1);
+  const SF = minSF + (maxSF - minSF)*(1-t);
+  //console.log(camera.position)
+  const nx = Math.ceil(HX*SF);
+  const ny = Math.ceil(HY*SF);
 
-    const hx = 3000;
-    const hy = 2250;
-    const fullCount = hx*hy;
-    //const zFull = new Uint8Array(decompressed,0,fullCount);
-    //const cFull = new Uint8Array(decompressed,fullCount,fullCount*3);
-    const zFull = decompressed.subarray(0, fullCount);
-    const cFull = decompressed.subarray(fullCount, fullCount*4);
+  const zSmall = new Uint8Array(nx*ny);
+  const cSmall = new Uint8Array(nx*ny*3);
 
-    // Downsample to nx x ny
-    const stepX = Math.floor(hx/nx);
-    const stepY = Math.floor(hy/ny);
-
-    const zSmall = new Uint8Array(nx*ny);
-    const cSmall = new Uint8Array(nx*ny*3);
-    //*
-    for (let i = 0; i < ny; i++) {
-  const v = i / (ny - 1);  // normalized 0->1
-  const hiF = v * (hy - 1);
-  const hi = Math.floor(hiF);
-
-  for (let j = 0; j < nx; j++) {
-    const u = j / (nx - 1);
-    const hjF = u * (hx - 1);
-    const hj = Math.floor(hjF);
-
-    const idxSmall = i * nx + j;
-    const idxFull = hi * hx + hj;
-
-    zSmall[idxSmall] = zFull[idxFull];
-    const idxSmallC = idxSmall*3;
-    cSmall[idxSmallC]   = cFull[idxFull*3];
-    cSmall[idxSmallC+1] = cFull[idxFull*3+1];
-    cSmall[idxSmallC+2] = cFull[idxFull*3+2];
+  for(let i=0;i<ny;i++){
+    const v = i/(ny-1);
+    const hi = Math.floor(v*(HY-1));
+    for(let j=0;j<nx;j++){
+      const u = j/(nx-1);
+      const hj = Math.floor(u*(HX-1));
+      const idxSmall = i*nx + j;
+      const idxFull = hi*HX + hj;
+      zSmall[idxSmall] = zFull[idxFull];
+      const idxSmallC = idxSmall*3;
+      cSmall[idxSmallC]   = cFull[idxFull*3];
+      cSmall[idxSmallC+1] = cFull[idxFull*3+1];
+      cSmall[idxSmallC+2] = cFull[idxFull*3+2];
+    }
   }
-}
-    //*/
 
-    heightTex.image.data = zSmall;
-    heightTex.needsUpdate = true;
+  heightTex.image.width = nx;
+  heightTex.image.height = ny;
+  heightTex.image.data = zSmall;
+  heightTex.needsUpdate = true;
 
-    colorTex.image.data = cSmall;
-    colorTex.needsUpdate = true;
-    mesh.material.needsUpdate = true;
+  colorTex.image.width = nx;
+  colorTex.image.height = ny;
+  colorTex.image.data = cSmall;
+  colorTex.needsUpdate = true;
 
-  }catch(err){console.error(err);}
+  // update geometry resolution if SF changed significantly
+  if(Math.abs(nx - mesh.geometry.parameters.widthSegments) > 1000){
+    mesh.geometry.dispose();
+    mesh.geometry = new THREE.PlaneGeometry(nx, ny, nx-1, ny-1);
+    mesh.geometry.rotateX(-Math.PI/2);
+  }
 }
 
 // ----------------- Animate -----------------
@@ -193,9 +194,9 @@ function animate(){
   renderer.render(scene,camera);
 }
 
+window.addEventListener('load', init);
 })();
 </script>
 
 </body>
 </html>
-
