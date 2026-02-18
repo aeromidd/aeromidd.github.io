@@ -2,78 +2,84 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>High-Res Terrain Shader with Zoom</title>
+<title>High-Res Terrain Shader Zoom + Slider + Pan</title>
 <style>
   body { margin:0; overflow:hidden; }
   #container { width:100vw; height:100vh; display:block; }
-  #slider { position:absolute; top:10px; left:50%; transform:translateX(-50%); z-index:10; }
+  #ui {
+    position:absolute;
+    top:10px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:10;
+  }
+  button, input { font-size:16px; margin:2px; }
 </style>
 </head>
 <body>
 
-<input id="slider" type="range" min="1" max="20" step="1" value="1">
+<div id="ui">
+  <button id="zoomIn">+</button>
+  <button id="zoomOut">-</button>
+  <input id="slider" type="range" min="1" max="20" step="1" value="1">
+</div>
 <div id="container"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.124.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
 
 <script>
-  
 (async function(){
 console.clear();
 
-const HX = 3000;
-const HY = 2250;
-const heightScaleFactor = 0.01;//HX/200; // scales height relative to plane
-let zFull, cFull; // full-res data
+const HX = 3000, HY = 2250;
+const heightScaleFactor = 0.0075;
+let zFull, cFull;
 
-let scene, camera, renderer, mesh, geometry;
+let scene, camera, renderer, mesh, controls;
 let heightTex, colorTex;
 const container = document.getElementById('container');
 const slider = document.getElementById('slider');
 
 let meshNX = 0, meshNY = 0;
+const minY = 100, maxY = 700, zoomStep = 125;
+const planeWidth = HX, planeHeight = HY;
 
-// ----------------- Init -----------------
 async function init(){
   scene = new THREE.Scene();
 
-  // Camera
   camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 5000);
-  camera.position.set(0, 1000, 0);
-  camera.lookAt(0, 0, 0);
+  camera.position.set(0, 700, 0);
 
-  // Renderer
   renderer = new THREE.WebGLRenderer({antialias:true});
   renderer.setClearColor(0xffffff);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   container.appendChild(renderer.domElement);
 
-  // Lights
   const directional = new THREE.DirectionalLight(0xffffff, 1.2);
-  directional.position.set(-HX/2, 1000, -HY/2);
+  directional.position.set(-HX/2, 1500, -HY/2);
   scene.add(directional);
-  scene.add(new THREE.AmbientLight(0x222222));
+  scene.add(new THREE.AmbientLight(0x222222,1.33));
 
-  // Controls
-  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableRotate = false;
+  controls.enableZoom = false;
+  controls.enablePan = true;
+  controls.screenSpacePanning = true;
+  controls.enableDamping = false;
+  controls.maxPolarAngle = Math.PI/2;
+  controls.minPolarAngle = 0;
 
-  controls.enableDamping = true;
-  controls.enablePan = false;
-  controls.maxPolarAngle = Math.PI/2; // stay above terrain
-  controls.enableRotate = false;   // disable mouse drag rotate
-  controls.enableZoom   = true;
-  controls.zoomToCursor = true;
-  controls.minDistance = 100;
-  controls.maxDistance = 1500;
+  controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE };
   controls.addEventListener('change', updateTextureResolution);
 
-  // Load first frame (full-res)
   await loadFullFrame(1);
+  buildMesh(0.3);
 
-  buildMesh(0.3); // initial downsample factor
+  document.getElementById('zoomIn').onclick = () => zoomCamera(-zoomStep);
+  document.getElementById('zoomOut').onclick = () => zoomCamera(zoomStep);
 
   slider.oninput = async e => {
     await loadFullFrame(parseInt(e.target.value));
@@ -89,7 +95,6 @@ async function init(){
   animate();
 }
 
-// ----------------- Load full-resolution frame -----------------
 async function loadFullFrame(t){
   const url = `https://raw.githubusercontent.com/aeromidd/aeromidd.github.io/main/projects/euro-settle-america/binFiles/frame_${String(t).padStart(4,'0')}.bin.gz`;
   const res = await fetch(url);
@@ -101,13 +106,12 @@ async function loadFullFrame(t){
   zFull = decompressed.subarray(0, fullCount);
   cFull = decompressed.subarray(fullCount, fullCount*4);
 }
-
-// ----------------- Build Mesh -----------------
+  
 function buildMesh(SF){
   meshNX = Math.ceil(HX*SF);
   meshNY = Math.ceil(HY*SF);
 
-  geometry = new THREE.PlaneGeometry(meshNX, meshNY, meshNX-1, meshNY-1);
+  const geometry = new THREE.PlaneGeometry(meshNX, meshNY, meshNX-1, meshNY-1);
   geometry.rotateX(-Math.PI/2);
 
   heightTex = new THREE.DataTexture(new Uint8Array(meshNX*meshNY), meshNX, meshNY, THREE.RedFormat);
@@ -123,31 +127,32 @@ function buildMesh(SF){
     map: colorTex,
     displacementMap: heightTex,
     displacementScale: meshNX * heightScaleFactor,
-    roughness: 0.9,
+    roughness: 0.8,
     metalness: 0.0,
     side: THREE.DoubleSide,
     flatShading: true
   });
 
   mesh = new THREE.Mesh(geometry, material);
-  mesh.position.set(0,0,0);
   scene.add(mesh);
+  
+  //create border
+  const edges = new THREE.EdgesGeometry(geometry);
+  const lineMaterial = new THREE.LineBasicMaterial({ color: 0x00508a, linewidth: 1 });
+  borderMesh = new THREE.LineSegments(edges, lineMaterial);
+  scene.add(borderMesh);
 
   updateTextureResolution();
 }
 
-// ----------------- Update texture resolution dynamically -----------------
 function updateTextureResolution(){
   if(!zFull || !cFull || !mesh) return;
 
-  // Map camera distance to SF
-  const minSF = 0.1;
-  const maxSF = 0.75;
-  const minDist = 100;
-  const maxDist = 3000;
-  const t = THREE.MathUtils.clamp((camera.position.y - minDist) / (maxDist - minDist), 0, 1);
+  const minSF = 0.3, maxSF = 1.2;
+  const maxY = 1400, minY = 50;
+  const t = THREE.MathUtils.clamp((camera.position.y - minY) / (maxY - minY), 0, 1);
   const SF = minSF + (maxSF - minSF)*(1-t);
-  //console.log(camera.position)
+
   const nx = Math.ceil(HX*SF);
   const ny = Math.ceil(HY*SF);
 
@@ -180,17 +185,33 @@ function updateTextureResolution(){
   colorTex.image.data = cSmall;
   colorTex.needsUpdate = true;
 
-  // update geometry resolution if SF changed significantly
-  if(Math.abs(nx - mesh.geometry.parameters.widthSegments) > 1000){
-    mesh.geometry.dispose();
-    mesh.geometry = new THREE.PlaneGeometry(nx, ny, nx-1, ny-1);
-    mesh.geometry.rotateX(-Math.PI/2);
-  }
+  constrainCamera();
 }
 
-// ----------------- Animate -----------------
+function zoomCamera(step){
+  camera.position.y = THREE.MathUtils.clamp(camera.position.y + step, minY, maxY);
+  updateTextureResolution();
+}
+
+function constrainCamera(){
+  if(!mesh) return;
+
+  var halfW = planeWidth/1.9;
+  var halfH = planeHeight/1.9;
+  var marginW = Math.max(camera.position.y*2.2,1000);
+  var marginH = marginW*(HY/HX);
+  console.log(marginW)
+  
+  controls.target.x = THREE.MathUtils.clamp(controls.target.x, -halfW+marginW, halfW-marginW);
+  controls.target.z = THREE.MathUtils.clamp(controls.target.z, -halfH+marginH, halfH-marginH);
+
+  camera.position.x = controls.target.x;
+  camera.position.z = controls.target.z + 0.01; // slightly offset for panning
+  camera.lookAt(controls.target.x, 0, controls.target.z);
+}
 function animate(){
   requestAnimationFrame(animate);
+  controls.update();
   renderer.render(scene,camera);
 }
 
