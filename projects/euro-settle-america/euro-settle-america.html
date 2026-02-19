@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>High-Res Terrain Shader Zoom + Slider + Pan</title>
+<title>European Settlement of North America</title>
 <style>
   body { margin:0; overflow:hidden; }
   #container { width:100vw; height:100vh; display:block; }
@@ -25,66 +25,186 @@
 </div>
 <div id="container"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/controls/OrbitControls.js"></script>
 
 <script>
 (async function(){
 console.clear();
 
-const HX = 3000, HY = 2250;
-const heightScaleFactor = 0.0075;
-let zFull, cFull;
-
-let scene, camera, renderer, mesh, controls;
-let heightTex, colorTex;
+let scene, camera, renderer, controls;
+let mesh, borderMesh;
 const container = document.getElementById('container');
-const slider = document.getElementById('slider');
 
-let meshNX = 0, meshNY = 0;
-const minY = 100, maxY = 700, zoomStep = 125;
-const planeWidth = HX, planeHeight = HY;
+const minY = 100, maxY = 5000, zoomStep = 250;
 
+// ---------------- Terrain cache ----------------
+const terrainCache = {};       // frameNum -> { verticesArray, facesArray, colorsArray }
+const CACHE_SIZE = 10;          // max frames to keep in cache
+
+// ---------------- Load a terrain frame ----------------
+async function loadTerrain(frameNum){
+    // Use cache if available
+    if(terrainCache[frameNum]) return terrainCache[frameNum];
+
+    const frameStr = frameNum.toString().padStart(4,'0');
+    const filename = `https://raw.githubusercontent.com/aeromidd/aeromidd.github.io/main/projects/euro-settle-america/binFiles/frame_${frameStr}.bin.gz`;
+    const res = await fetch(filename);
+    const compressed = await res.arrayBuffer();
+    const decompressed = pako.inflate(new Uint8Array(compressed));
+
+    const dv = new DataView(decompressed.buffer);
+    let offset = 0;
+
+    const numVertices = dv.getUint32(offset, true); offset += 4;
+    const numFaces = dv.getUint32(offset, true); offset += 4;
+
+    // Read vertices
+    const vertices = new Float32Array(numVertices*3);
+    for(let i=0;i<numVertices*3;i++){
+        vertices[i] = dv.getFloat32(offset, true);
+        offset += 4;
+    }
+
+    // Read faces
+    const faces = new Uint32Array(numFaces*3);
+    for(let i=0;i<numFaces*3;i++){
+        faces[i] = dv.getUint32(offset, true);
+        offset += 4;
+    }
+
+    // Read color indices
+    const colorIndex = new Uint8Array(numVertices);
+    for(let i=0;i<numVertices;i++){
+        colorIndex[i] = dv.getUint8(offset);
+        offset += 1;
+    }
+
+    // Reconstruct vertices
+    const verticesArray = [];
+    for(let i=0; i<numVertices; i++){
+        const x = vertices[i];
+        const y = vertices[i + numVertices];
+        const z = vertices[i + 2*numVertices];
+        verticesArray.push([x, z, -y]);
+    }
+
+    // Reconstruct faces
+    const facesArray = [];
+    for (let i = 0; i < numFaces; i++) {
+        const a = faces[i];
+        const b = faces[i + numFaces];
+        const c = faces[i + 2*numFaces];
+        facesArray.push([a, b, c]);
+    }
+
+    // Map indices to colors
+    const colorMap = [
+        [1,1,1],      // 0 = background
+        [0,0.6,0.75], // 1 = external
+        [1,0.8,0]     // 2 = internal
+    ];
+    const colorsArray = [];
+    for(let i=0;i<numVertices;i++){
+        colorsArray.push(colorMap[colorIndex[i]]);
+    }
+
+    const data = { verticesArray, facesArray, colorsArray };
+
+    // Add to cache
+    terrainCache[frameNum] = data;
+
+    // Limit cache size
+    const keys = Object.keys(terrainCache);
+    if(keys.length > CACHE_SIZE){
+        delete terrainCache[keys[0]];
+    }
+
+    return data;
+}
+
+// ---------------- Build Mesh ----------------
+function buildMesh(verticesArray, facesArray, colorsArray){
+  if(mesh){
+    scene.remove(mesh);
+    mesh.geometry.dispose();
+    mesh.material.dispose();
+  }
+  if(borderMesh){
+    scene.remove(borderMesh);
+    borderMesh.geometry.dispose();
+    borderMesh.material.dispose();
+  }
+
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(verticesArray.flat(), 3));
+  geometry.setIndex(facesArray.flat());
+  geometry.setAttribute('color', new THREE.Float32BufferAttribute(colorsArray.flat(), 3));
+  geometry.computeVertexNormals();
+
+  const material = new THREE.MeshStandardMaterial({
+    vertexColors: true,
+    side: THREE.DoubleSide,
+    flatShading: true
+  });
+
+  mesh = new THREE.Mesh(geometry, material);
+  scene.add(mesh);
+}
+
+// ---------------- Init ----------------
 async function init(){
   scene = new THREE.Scene();
 
   camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 5000);
-  camera.position.set(0, 700, 0);
 
   renderer = new THREE.WebGLRenderer({antialias:true});
   renderer.setClearColor(0xffffff);
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
   container.appendChild(renderer.domElement);
 
-  const directional = new THREE.DirectionalLight(0xffffff, 1.2);
-  directional.position.set(-HX/2, 1500, -HY/2);
+  // Lights
+  const directional = new THREE.DirectionalLight(0xffffff, 1.21);
+  directional.position.set(1000, 2000, -1000);
   scene.add(directional);
-  scene.add(new THREE.AmbientLight(0x222222,1.33));
+  scene.add(new THREE.AmbientLight(0x222222));
 
+  // Controls
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.enableRotate = false;
-  controls.enableZoom = false;
+  controls.enableZoom = true;
   controls.enablePan = true;
   controls.screenSpacePanning = true;
-  controls.enableDamping = false;
-  controls.maxPolarAngle = Math.PI/2;
+  controls.maxPolarAngle = 0;
   controls.minPolarAngle = 0;
-
   controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE };
-  controls.addEventListener('change', updateTextureResolution);
 
-  await loadFullFrame(1);
-  buildMesh(0.3);
+  let gx = 3000/2;
+  let gy = 0;
+  let gz = -2250/2;
+  let InitialZoom = 2000;
+  controls.target.set(gx,gy,gz)
+  camera.position.set(gx, InitialZoom,gz);
+  camera.lookAt(gx,gy,gz);
 
+  // Load initial terrain (frame 1)
+  const {verticesArray, facesArray, colorsArray} = await loadTerrain(1);
+  buildMesh(verticesArray, facesArray, colorsArray);
+
+  // Slider setup
+  const slider = document.getElementById('slider');
+  slider.disabled = false;
+  slider.value = 1;
+  slider.oninput = async () => {
+    const frameNum = parseInt(slider.value);
+    const {verticesArray, facesArray, colorsArray} = await loadTerrain(frameNum);
+    buildMesh(verticesArray, facesArray, colorsArray);
+  };
+
+  // Zoom buttons
   document.getElementById('zoomIn').onclick = () => zoomCamera(-zoomStep);
   document.getElementById('zoomOut').onclick = () => zoomCamera(zoomStep);
-
-  slider.oninput = async e => {
-    await loadFullFrame(parseInt(e.target.value));
-    updateTextureResolution();
-  };
 
   window.addEventListener('resize', ()=>{
     camera.aspect = window.innerWidth/window.innerHeight;
@@ -95,120 +215,12 @@ async function init(){
   animate();
 }
 
-async function loadFullFrame(t){
-  const url = `https://raw.githubusercontent.com/aeromidd/aeromidd.github.io/main/projects/euro-settle-america/binFiles/frame_${String(t).padStart(4,'0')}.bin.gz`;
-  const res = await fetch(url);
-  if(!res.ok) throw new Error("Failed frame "+t);
-  const compressed = await res.arrayBuffer();
-  const decompressed = pako.inflate(new Uint8Array(compressed));
-
-  const fullCount = HX*HY;
-  zFull = decompressed.subarray(0, fullCount);
-  cFull = decompressed.subarray(fullCount, fullCount*4);
-}
-  
-function buildMesh(SF){
-  meshNX = Math.ceil(HX*SF);
-  meshNY = Math.ceil(HY*SF);
-
-  const geometry = new THREE.PlaneGeometry(meshNX, meshNY, meshNX-1, meshNY-1);
-  geometry.rotateX(-Math.PI/2);
-
-  heightTex = new THREE.DataTexture(new Uint8Array(meshNX*meshNY), meshNX, meshNY, THREE.RedFormat);
-  heightTex.flipY = false;
-  heightTex.minFilter = heightTex.magFilter = THREE.LinearFilter;
-
-  colorTex = new THREE.DataTexture(new Uint8Array(meshNX*meshNY*3), meshNX, meshNY, THREE.RGBFormat);
-  colorTex.colorSpace = THREE.SRGBColorSpace;
-  colorTex.flipY = false;
-  colorTex.minFilter = colorTex.magFilter = THREE.LinearFilter;
-
-  const material = new THREE.MeshStandardMaterial({
-    map: colorTex,
-    displacementMap: heightTex,
-    displacementScale: meshNX * heightScaleFactor,
-    roughness: 0.8,
-    metalness: 0.0,
-    side: THREE.DoubleSide,
-    flatShading: true
-  });
-
-  mesh = new THREE.Mesh(geometry, material);
-  scene.add(mesh);
-  
-  //create border
-  const edges = new THREE.EdgesGeometry(geometry);
-  const lineMaterial = new THREE.LineBasicMaterial({ color: 0x00508a, linewidth: 1 });
-  borderMesh = new THREE.LineSegments(edges, lineMaterial);
-  scene.add(borderMesh);
-
-  updateTextureResolution();
-}
-
-function updateTextureResolution(){
-  if(!zFull || !cFull || !mesh) return;
-
-  const minSF = 0.3, maxSF = 1.2;
-  const maxY = 1400, minY = 50;
-  const t = THREE.MathUtils.clamp((camera.position.y - minY) / (maxY - minY), 0, 1);
-  const SF = minSF + (maxSF - minSF)*(1-t);
-
-  const nx = Math.ceil(HX*SF);
-  const ny = Math.ceil(HY*SF);
-
-  const zSmall = new Uint8Array(nx*ny);
-  const cSmall = new Uint8Array(nx*ny*3);
-
-  for(let i=0;i<ny;i++){
-    const v = i/(ny-1);
-    const hi = Math.floor(v*(HY-1));
-    for(let j=0;j<nx;j++){
-      const u = j/(nx-1);
-      const hj = Math.floor(u*(HX-1));
-      const idxSmall = i*nx + j;
-      const idxFull = hi*HX + hj;
-      zSmall[idxSmall] = zFull[idxFull];
-      const idxSmallC = idxSmall*3;
-      cSmall[idxSmallC]   = cFull[idxFull*3];
-      cSmall[idxSmallC+1] = cFull[idxFull*3+1];
-      cSmall[idxSmallC+2] = cFull[idxFull*3+2];
-    }
-  }
-
-  heightTex.image.width = nx;
-  heightTex.image.height = ny;
-  heightTex.image.data = zSmall;
-  heightTex.needsUpdate = true;
-
-  colorTex.image.width = nx;
-  colorTex.image.height = ny;
-  colorTex.image.data = cSmall;
-  colorTex.needsUpdate = true;
-
-  constrainCamera();
-}
-
+// ---------------- Zoom ----------------
 function zoomCamera(step){
   camera.position.y = THREE.MathUtils.clamp(camera.position.y + step, minY, maxY);
-  updateTextureResolution();
 }
 
-function constrainCamera(){
-  if(!mesh) return;
-
-  var halfW = planeWidth/1.9;
-  var halfH = planeHeight/1.9;
-  var marginW = Math.max(camera.position.y*2.2,1000);
-  var marginH = marginW*(HY/HX);
-  console.log(marginW)
-  
-  controls.target.x = THREE.MathUtils.clamp(controls.target.x, -halfW+marginW, halfW-marginW);
-  controls.target.z = THREE.MathUtils.clamp(controls.target.z, -halfH+marginH, halfH-marginH);
-
-  camera.position.x = controls.target.x;
-  camera.position.z = controls.target.z + 0.01; // slightly offset for panning
-  camera.lookAt(controls.target.x, 0, controls.target.z);
-}
+// ---------------- Animate ----------------
 function animate(){
   requestAnimationFrame(animate);
   controls.update();
