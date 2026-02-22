@@ -4,8 +4,21 @@
 <meta charset="UTF-8">
 <title>European Settlement of North America</title>
 <style>
-  body { margin:0; overflow:hidden; }
-  #container { width:100vw; height:100vh; display:block; }
+  body { margin:0; overflow:auto; }
+  #container {
+  position:absolute;
+  top:10px;
+  left: 7.5px;
+  width:860px;
+  height:610px;
+  border:1px solid red;
+}
+  #colorPanel label {
+  display: block;
+  margin-bottom: 0px;
+  font-family: "Garamond";
+  font-size: 14px;
+}
   #ui {
     position:absolute;
     top:10px;
@@ -17,13 +30,66 @@
 </style>
 </head>
 <body>
-
-<div id="ui">
-  <button id="zoomIn">+</button>
-  <button id="zoomOut">-</button>
-  <input id="slider" type="range" min="1" max="20" step="1" value="1">
-</div>
+<canvas id="BorderCanvas"></canvas>
+      <script type="text/javascript">
+         var canvas = document.getElementById('BorderCanvas');
+         if (canvas.getContext) {
+           var context = canvas.getContext('2d');
+           var xsize = 880;
+           var ysize = 1025;
+           canvas.style.width = xsize + "px";
+           canvas.style.height = ysize + "px";
+           // Set actual size in memory (scaled to account for extra pixel density).
+           var scale = 2; //window.devicePixelRatio; // Change to 1 on retina screens to see blurry canvas.
+           canvas.width = Math.floor(xsize * scale);
+           canvas.height = Math.floor(ysize * scale);
+           // Normalize coordinate system to use css pixels.
+           context.scale(scale, scale);
+           context.clearRect(0, 0, canvas.width / scale, canvas.height / scale);
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(0, 0);
+           context.lineTo(canvas.width / scale, 0);
+           context.strokeStyle = '#00508a';
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(0, 0);
+           context.lineTo(0, canvas.height / scale);
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(canvas.width / scale, canvas.height / scale);
+           context.lineTo(canvas.width / scale, 0);
+           context.stroke();
+           ////
+           context.beginPath();
+           context.lineJoin = "round";
+           context.moveTo(canvas.width / scale, canvas.height / scale);
+           context.lineTo(0, canvas.height / scale);
+           context.stroke();
+           ////
+         }
+      </script>
 <div id="container"></div>
+  <p style="position:absolute;top:810px;text-align:center;left:12px;width:865px;color:#757575;font:13px Helvetica">Blah Blah Blah</p>
+      
+  <button id="zoomIn" style="position:absolute;top:30px;left:835px;width:25px">+</button>
+  <button id="zoomOut" style="position:absolute;top:60px;left:835px;width:25px">-</button>
+  <input id="slider" type="range" min="1" max="20" step="1" value="1" style="position:absolute;top:600px;left:135px;width:250px">
+  <input id="TLslider" style="position:absolute;top:620px;left:35px;width:800px" type="range" min="1" max="1" step="0.1" value="1">
+  <label id="TLlabel" style="position:absolute;top:590px;left:795px;">985 AD</label>
+  
+  <div id="colorPanel" style="position:absolute; top:500px; left:20px; width:100px;">
+  <label><input type="radio" name="colors" value="popcorn" checked> Popcorn</label>
+  <label><input type="radio" name="colors" value="oasis"> Oasis</label>
+  <label><input type="radio" name="colors" value="surf"> Surf</label>
+  <label><input type="radio" name="colors" value="magma"> Magma</label>
+  <label><input type="radio" name="colors" value="poison"> Poison</label>
+  <label><input type="radio" name="colors" value="corruption"> Corruption</label>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -33,11 +99,112 @@
 (async function(){
 console.clear();
 
+let currentScheme = "popcorn";
+let currentData = null;   // store latest terrain frame
+  
+const minYear = 985;
+const maxYear = 1900;
+
+let years = [985,  1000,  1014,  1050,  1250,  1450,  1492,  1500,  1510,  1520,  1530,  1540,  1550,  1560,  1570,  1580,  1590,  1600,  1610,  1620,  1630,  1640,  1650,  1660,  1670,  1680,  1690,  1700,  1710,  1720,  1730,  1740,  1750,  1760,  1770,  1780,  1790,  1800,  1810,  1820,  1830,  1840,  1850,  1860,  1870,  1880,  1890,  1900];
+
+TLslider.min = 0;
+TLslider.max = 1;
+TLslider.value = 0;
+TLslider.step = 0.0001;
+
+TLslider.oninput = async () => {
+    const t = parseFloat(TLslider.value);     // 0 → 1
+    const year = minYear + t * (maxYear - minYear);
+
+    const nearestIndex = findClosestFrame(year);
+    const nearestYear = Math.round(years[nearestIndex])
+    TLlabel.textContent = nearestYear + " AD";
+    console.log((nearestYear-minYear)/(maxYear-minYear));
+    TLslider.value = (nearestYear-minYear)/(maxYear-minYear);
+
+    //const data = await loadTerrain(nearestIndex+1);
+    //buildMesh(data.verticesArray, data.facesArray, data.colorsArray);
+};
+function findClosestFrame(y){
+    let best = 0;
+    let bestDist = Infinity;
+    for(let i=0;i<years.length;i++){
+        const d = Math.abs(years[i]-y);
+        if(d < bestDist){
+            bestDist = d;
+            best = i;
+        }
+    }
+    return best;
+}
+  
+  
+
 let scene, camera, renderer, controls;
 let mesh, borderMesh;
 const container = document.getElementById('container');
 
 const minY = 100, maxY = 5000, zoomStep = 250;
+  
+const colorSchemes = {
+    popcorn: [
+        [1,1,1],     // 0 = background
+        [.7,.7,.7],  // 1 = external
+        [1,.72,0]    // 2 = internal
+    ],
+    magma: [
+        [1,1,1],      // 0 = background
+        [0.1,0.1,0.1], // 1 = external
+        [1,.3,0]      // 2 = internal
+    ],
+    oasis: [
+        [1,1,1],      // 0 = background
+        [0.7882 ,  0.6902 ,  0.5137], // 1 = external
+        [0 ,  0.3608 ,  0.1333]      // 2 = internal
+    ],
+    surf: [
+        [1,1,1],      // 0 = background
+        [0  ,  0.3576 ,  0.5412], // 1 = external
+        [0.3039  , 0.8539  , 0.9922]      // 2 = internal
+    ],
+    poison: [
+        [1,1,1],      // 0 = background
+        [0.7656 ,  0.5664  , 0.3672], // 1 = external
+        [.6,.1,.5]      // 2 = internal
+    ],
+    corruption: [
+        [1,1,1],      // 0 = background
+        [0.3373 ,  0.5020 ,  0.2118], // 1 = external
+        [.1,.1,.1]      // 2 = internal
+    ]
+    
+};
+function buildColors(colorIndex, schemeName){
+  const scheme = colorSchemes[schemeName];
+
+  const colors = new Float32Array(colorIndex.length * 3);
+
+  for(let i=0;i<colorIndex.length;i++){
+    const c = scheme[colorIndex[i]];
+    colors[i*3+0] = c[0];
+    colors[i*3+1] = c[1];
+    colors[i*3+2] = c[2];
+  }
+
+  return colors;
+}
+function recolorMesh(){
+  if(!mesh || !currentData) return;
+
+  const colors = buildColors(currentData.colorIndex, currentScheme);
+
+  mesh.geometry.setAttribute(
+    'color',
+    new THREE.BufferAttribute(colors, 3)
+  );
+
+  mesh.geometry.attributes.color.needsUpdate = true;
+}
 
 // ---------------- Terrain cache ----------------
 const terrainCache = {};       // frameNum -> { verticesArray, facesArray, colorsArray }
@@ -98,19 +265,19 @@ async function loadTerrain(frameNum){
         const c = faces[i + 2*numFaces];
         facesArray.push([a, b, c]);
     }
-
+    /*
     // Map indices to colors
     const colorMap = [
-        [1,1,1],      // 0 = background
-        [0,0.6,0.75], // 1 = external
-        [1,0.8,0]     // 2 = internal
+        [1,1,1],//[1,1,1],      // 0 = background
+        [.8,.8,.80],//[0,0.6,0.75], // 1 = external
+        [1,.72,0]     // 2 = internal
     ];
     const colorsArray = [];
     for(let i=0;i<numVertices;i++){
         colorsArray.push(colorMap[colorIndex[i]]);
-    }
+    }*/
 
-    const data = { verticesArray, facesArray, colorsArray };
+    const data = { verticesArray, facesArray, colorIndex };
 
     // Add to cache
     terrainCache[frameNum] = data;
@@ -125,7 +292,7 @@ async function loadTerrain(frameNum){
 }
 
 // ---------------- Build Mesh ----------------
-function buildMesh(verticesArray, facesArray, colorsArray){
+function buildMesh(verticesArray, facesArray, colorIndex){
   if(mesh){
     scene.remove(mesh);
     mesh.geometry.dispose();
@@ -140,7 +307,9 @@ function buildMesh(verticesArray, facesArray, colorsArray){
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(verticesArray.flat(), 3));
   geometry.setIndex(facesArray.flat());
-  geometry.setAttribute('color', new THREE.Float32BufferAttribute(colorsArray.flat(), 3));
+  //geometry.setAttribute('color', new THREE.Float32BufferAttribute(colorsArray.flat(), 3));
+  const colors = buildColors(colorIndex, currentScheme);
+geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
   geometry.computeVertexNormals();
 
   const material = new THREE.MeshStandardMaterial({
@@ -161,11 +330,16 @@ async function init(){
 
   renderer = new THREE.WebGLRenderer({antialias:true});
   renderer.setClearColor(0xffffff);
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  const w = container.clientWidth;
+  const h = container.clientHeight;
+
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
   container.appendChild(renderer.domElement);
 
   // Lights
-  const directional = new THREE.DirectionalLight(0xffffff, 1.21);
+  const directional = new THREE.DirectionalLight(0xffffff, 1.20);
   directional.position.set(1000, 2000, -1000);
   scene.add(directional);
   scene.add(new THREE.AmbientLight(0x222222));
@@ -180,17 +354,23 @@ async function init(){
   controls.minPolarAngle = 0;
   controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE };
 
-  let gx = 3000/2;
+  let gx = 4500/2;
   let gy = 0;
-  let gz = -2250/2;
-  let InitialZoom = 2000;
+  let gz = -3375/2;
+  let InitialZoom = 2750;
   controls.target.set(gx,gy,gz)
   camera.position.set(gx, InitialZoom,gz);
   camera.lookAt(gx,gy,gz);
 
+  document.querySelectorAll('input[name="colors"]').forEach(r => {
+  r.addEventListener('change', e => {
+    currentScheme = e.target.value;
+    recolorMesh();
+  });
+});
   // Load initial terrain (frame 1)
-  const {verticesArray, facesArray, colorsArray} = await loadTerrain(1);
-  buildMesh(verticesArray, facesArray, colorsArray);
+  currentData = await loadTerrain(1);
+buildMesh(currentData.verticesArray, currentData.facesArray, currentData.colorIndex);
 
   // Slider setup
   const slider = document.getElementById('slider');
@@ -198,8 +378,8 @@ async function init(){
   slider.value = 1;
   slider.oninput = async () => {
     const frameNum = parseInt(slider.value);
-    const {verticesArray, facesArray, colorsArray} = await loadTerrain(frameNum);
-    buildMesh(verticesArray, facesArray, colorsArray);
+    currentData = await loadTerrain(frameNum);
+buildMesh(currentData.verticesArray, currentData.facesArray, currentData.colorIndex);
   };
 
   // Zoom buttons
@@ -207,9 +387,12 @@ async function init(){
   document.getElementById('zoomOut').onclick = () => zoomCamera(zoomStep);
 
   window.addEventListener('resize', ()=>{
-    camera.aspect = window.innerWidth/window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    const w = container.clientWidth;
+const h = container.clientHeight;
+
+camera.aspect = w / h;
+camera.updateProjectionMatrix();
+renderer.setSize(w, h);
   });
 
   animate();
