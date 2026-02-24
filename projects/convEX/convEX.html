@@ -20,7 +20,7 @@
          if (canvas.getContext) {
            var context = canvas.getContext('2d');
            var xsize = 880;
-           var ysize = 850;
+           var ysize = 865;
            canvas.style.width = xsize + "px";
            canvas.style.height = ysize + "px";
            // Set actual size in memory (scaled to account for extra pixel density).
@@ -82,14 +82,22 @@
   <output style="position:absolute; left:475px; top:640px; font-family:Courier New; color:#019aca" >US</output>
   <output style="position:absolute; left:475px; top:715px; font-family:Courier New; color:#019aca" >LS</output>
   
+  <div class="check"><label for="UP_FAIL" style="position:absolute;left:330px;top:665px; font-family:Garamond; color:#757575; font-size: 12px"><input type="checkbox" id="UP_FAIL" style='position:absolute;top:-3.5px;left:25px' onclick="AnimationFrame();" unchecked><i> FAIL </label>
+    <div class="check"><label for="LP_FAIL" style="position:absolute;left:330px;top:695px; font-family:Garamond; color:#757575; font-size: 12px"><input type="checkbox" id="LP_FAIL" style='position:absolute;top:-3.5px;left:25px' onclick="AnimationFrame();" unchecked><i> FAIL </label>
+      
+  <div class="check"><label for="US_FAIL" style="position:absolute;left:538px;top:665px; font-family:Garamond; color:#757575; font-size: 12px"><input type="checkbox" id="US_FAIL" style='position:absolute;top:-3.5px;left:-22px' onclick="AnimationFrame();" unchecked><i> FAIL </label>
+    <div class="check"><label for="LS_FAIL" style="position:absolute;left:538px;top:695px; font-family:Garamond; color:#757575; font-size: 12px"><input type="checkbox" id="LS_FAIL" style='position:absolute;top:-3.5px;left:-22px' onclick="AnimationFrame();" unchecked><i> FAIL </label>
+  
+  
+  
+  
       <div class="check"><label for="InvertERAcheckbox" style="position:absolute;left:715px;top:430px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="InvertERAcheckbox" style='position:absolute;top:-3.5px;left:95px' onclick="AnimationFrame();" unchecked><i> Invert Rudder Input </label>
         
-    <div class="check"><label for="ShowRollContrib" style="position:absolute;left:700px;top:775px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="ShowRollContrib" style='position:absolute;top:-3.5px;left:-20px' onclick="AnimationFrame();" checked><i><strong> Roll </strong></label><div>
-    <div class="check"><label for="ShowRollContrib" style="position:absolute;left:760px;top:775px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="ShowPitchContrib" style='position:absolute;top:-3.5px;left:-20px' onclick="AnimationFrame();" checked><i><strong> Pitch </strong></label><div>
-    <div class="check"><label for="ShowRollContrib" style="position:absolute;left:820px;top:775px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="ShowYawContrib" style='position:absolute;top:-3.5px;left:-20px' onclick="AnimationFrame();" checked><i><strong> Yaw </strong></label><div>
-  </output>
 </div><div>
-  <output style="position:absolute; left:50px; top:730px; width:799px; font-family:Garamond; color:#757575; font-size: 12px"><span style="font-size: 15px">A tool visualising submarine x-plane configurations and their cruciform-equivalent Diveplane / Rudder / Roll angle contributions.</span><br style="line-height: 30px" />Note that the background vehicle motion is a visual aid <i> only </i> of (uncoupled) total roll, pitch, yaw <i><b> reaction directions </b></i> imparted by the control surfaces, <br> and should not be conflated with nor used to verify any resulting vehicle orientation in conventional reference frames.<span style="color: #019aca"><b> Visualise:</b></span><span style="color: #00508a"><br><b>Instructions:</b> Alter xplane Splay angles with the sliders on the left. Click/Drag in the central circle to assign cruciform-equivalent angles (zero roll solution), or Click+Drag individual xplanes to assign their angles. Alternatively, type + enter these values in the input boxes. Xplanes are coloured darker when trailing edge <u>up.</u></span>
+  <output style="position:absolute; left:50px; top:730px; width:799px; font-family:Garamond; color:#757575; font-size: 12px"><span style="font-size: 15px">A tool visualising submarine x-plane configurations and their cruciform-equivalent Diveplane / Rudder / Roll angle contributions.</span><br style="line-height: 30px" />Note that the background vehicle motion is a visual aid <i> only </i> of (uncoupled) total roll, pitch, yaw <i><b> reaction directions </b></i> imparted by the control surfaces, <br> and should not be conflated with nor used to verify any resulting vehicle orientation in conventional reference frames.<span style="color: #019aca"><b> Visualise:</b></span><span style="color: #00508a"><br><b>Instructions:</b> Alter xplane Splay angles with the sliders on the left. Click/Drag in the central circle to assign cruciform-equivalent angles (zero roll solution), or Click+Drag individual xplanes to assign their angles. Alternatively, type + enter these values in the input boxes. It is possible to invert the rudder input relative to how a real operator might intuit a joystick/inceptor input, and also simulate individual Xplane failures (jams) and observe the reduced capability polygon (cruciform-equivalent inputs are disabled under this condition). Xplanes are coloured darker when trailing edge points <u>up.</u></span></output>
+        <div class="check"><label for="ShowRollContrib" style="position:absolute;left:700px;top:775px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="ShowRollContrib" style='position:absolute;top:-3.5px;left:-20px' onclick="AnimationFrame();" checked><i><strong> Roll </strong></label><div>
+    <div class="check"><label for="ShowRollContrib" style="position:absolute;left:760px;top:775px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="ShowPitchContrib" style='position:absolute;top:-3.5px;left:-20px' onclick="AnimationFrame();" checked><i><strong> Pitch </strong></label><div>
+    <div class="check"><label for="ShowRollContrib" style="position:absolute;left:820px;top:775px; font-family:Garamond; color:#019aca; font-size: 12px"><input type="checkbox" id="ShowYawContrib" style='position:absolute;top:-3.5px;left:-20px' onclick="AnimationFrame();" checked><i><strong> Yaw </strong></label></div>
 <script type="text/javascript">
 'use strict';
 
@@ -109,6 +117,8 @@
             this.Kradius = 0*this.SF; // Roll knuckle radius
             this.Cradius = 0; // Center
             this.Fradius = this.Eradius*1.1; //Fuselage or hull radius
+            this.PolyX = [0,0,0,0,0,0,0,0,0];
+            this.PolyY = [0,0,0,0,0,0,0,0,0];
             this.XL = 32*this.SF; // Xplane length
             this.XW = 7.5*this.SF; // Xplane width (chord)
             this.UXA = 90-45;//90-UpperSplay; //deg
@@ -137,9 +147,11 @@
             this.ClickLP = false;
             this.ClickUP = false;
             //
+            this.AtLeastOneFail = false;
             this.InvertERA = false;
             //
             this.DynamicsOn = false;
+            
         }
 
         Distance(x, y) {
@@ -172,8 +184,14 @@
                 b.InvertERA = InvertERAcheckbox.checked;
                 //console.log(b.InvertERA)
                 b.DynamicsOn = NiceGraphicsON.checked;
-                b.UXA = 90-XupperSplaySlider.value; 
+                b.UXA = 90-XupperSplaySlider.value;
                 b.LXA = 90-XlowerSplaySlider.value;
+                
+                if (UP_FAIL.checked || LP_FAIL.checked || LS_FAIL.checked || US_FAIL.checked){
+                  b.AtLeastOneFail = true;
+                }else{
+                  b.AtLeastOneFail = false;
+                }
               
                 if (b.DynamicsOn){
                 
@@ -204,7 +222,7 @@
                 b.ESA_act = b.ESA;
                 b.EKA_act = b.EKA;
                 
-                if (b.ClickFuselage == true){
+                if (b.ClickFuselage == true && b.AtLeastOneFail==false){
                     // Basic Sunny Day Zero Roll Solution:
                     b.US = (-b.ERA_act+b.ESA_act)/b.MaxX;
                     b.LS = (+b.ERA_act+b.ESA_act)/b.MaxX;
@@ -232,9 +250,116 @@
                     
                   b.KradiusR = Math.max(Math.abs(RollKnuckle1[1][0]),Math.abs(RollKnuckle2[1][0]))*b.SF;
                   b.KradiusS = Math.max(Math.abs(RollKnuckle1[0][0]),Math.abs(RollKnuckle2[0][0]))*b.SF;
+              
+              
+                  
+                // inputs (degrees)
+  const SU_ANGLE = b.US*b.MaxX,  SU_FAIL = US_FAIL.checked;
+  const SL_ANGLE = b.LS*b.MaxX, SL_FAIL = LS_FAIL.checked;
+  const PL_ANGLE = b.LP*b.MaxX, PL_FAIL = LP_FAIL.checked;
+  const PU_ANGLE = b.UP*b.MaxX,  PU_FAIL = UP_FAIL.checked;
+
+  const LIMIT = b.MaxX;//25*b.SF;
+
+  const deg = Math.PI / 180;
+
+
+  // ---------- build vectors ----------
+  const FIXED  = math.matrix([[SU_FAIL],[SL_FAIL],[PL_FAIL],[PU_FAIL]]);
+
+  const ANGLES = math.multiply(
+    math.matrix([[SU_ANGLE],[SL_ANGLE],[PL_ANGLE],[PU_ANGLE]]),
+    deg
+  );
+
+
+  // ---------- combos ----------
+  const COMBOS = math.matrix([
+    [-1,-1, 1, 1],
+    [ 1,-1, 1, 1],
+    [ 1,-1,-1, 1],
+    [ 1, 1,-1, 1],
+    [ 1, 1,-1,-1],
+    [-1, 1,-1,-1],
+    [-1, 1, 1,-1],
+    [-1,-1, 1,-1],
+    [-1,-1, 1, 1]
+  ]);
+
+  const COMBOS_SCALED = math.multiply(COMBOS, LIMIT * deg);
+
+
+  // replicate rows (MATLAB ones(9,1)*v')
+  const F9 = math.multiply(math.ones(9,1), math.transpose(FIXED));
+  const A9 = math.multiply(math.ones(9,1), math.transpose(ANGLES));
+
+
+  // elementwise logic
+  const COMBOS_WITHFAILS = math.add(
+    math.dotMultiply(COMBOS_SCALED, math.not(F9)),
+    math.dotMultiply(F9, A9)
+  );
+
+
+  // ---------- projection ----------
+  var UXAmax = XupperSplaySlider.value;
+  var LXAmax = XlowerSplaySlider.value;
+              console.log(UXAmax)
+  const { M: MUUdx, N: NUUdx } = Normalise_MN(UXAmax*Math.PI/180, LXAmax*Math.PI/180);
+
+              
+  // ---------- Normalise_MN ----------
+  function Normalise_MN(U, L) {
+    var xU; var yU;
+    var xL; var yL;
+    var M;
+    var N;
+    if (U>L){
+      xU = Math.cos(U), yU = Math.sin(U);
+      xL = Math.cos(L), yL = Math.sin(L);
+
+      M = [  yU,  -yL, -yL,  yU];
+      N = [ -xU, -xL,  xL,  xU];
+    }else{
+      xU = Math.cos(U), yU = Math.sin(U);
+      xL = Math.cos(L), yL = Math.sin(L);
+
+      M = [-yU, -yL,  yL,  yU];
+      N = [ xU, -xL, -xL,  xU];
+      
+    }
+
+    return { M, N };
+  }
+const projM = math.multiply(COMBOS_SCALED, MUUdx);
+const projN = math.multiply(COMBOS_SCALED, NUUdx);
+
+const maxM = math.max((projM));
+const maxN = math.max((projN));
+
+  const M = math.multiply(COMBOS_WITHFAILS, MUUdx);
+  const N = math.multiply(COMBOS_WITHFAILS, NUUdx);
+
+
+  // ---------- final coordinates ----------
+  const Y = math.multiply(-b.SF*LIMIT / maxM, M);
+              var X;
+              if (b.InvertERA){
+                
+                X = math.multiply(+b.SF*LIMIT / maxN, N);
+              }else{
+                
+                X = math.multiply(-b.SF*LIMIT / maxN, N);
+              }
+  b.polyY = math.flatten(Y).toArray();
+  b.polyX = math.flatten(X).toArray();
+
+              //////////////
                 
             }
 
+          
+          
             function X2E(US,LS,LP,UP){
                       var M1 = [
                                 [Math.sin((90-b.UXA)*Math.PI/180)],
@@ -376,7 +501,7 @@
             }
             let ClickDistX = X-b.FirstClickX;
             let ClickDistY = Y-b.FirstClickY;
-            if (b.ClickFuselage){
+            if (b.ClickFuselage  && b.AtLeastOneFail==false){
               if (Math.abs(X)+Math.abs(Y) <= b.MaxX){
                 //within capability (zero roll)
                 if (b.InvertERA){
@@ -467,7 +592,7 @@
       
         // Set display size (css pixels).
         var xsize = 800;
-        var ysize = 800;
+        var ysize = 716;
         canvas.style.width = xsize + "px";
         canvas.style.height = ysize + "px";
 
@@ -494,6 +619,8 @@
               let DarkSubColor = "#9797b7";
               let LightPlaneColor = "#d7d7f7";
               let DarkPlaneColor = "#8787a7";
+              let LightFailColor = "#d17f79";
+              let DarkFailColor = "#a3544e";
               
               //Fwd Fuselage
               var ShiftFuselageX = 1.0*b.Fradius*b.Yaw*(ShowYawContrib.checked);
@@ -639,6 +766,18 @@
               context.closePath();
               context.stroke();
               
+              // Fail Region
+              if (b.AtLeastOneFail){
+              context.beginPath();
+              context.moveTo(ScreenHor(b.Cradius+b.polyX[0]),ScreenVer(b.Cradius+b.polyY[0]));
+             for (var f=1;f<b.polyX.length;f++){ context.lineTo(ScreenHor(b.Cradius+b.polyX[f]),ScreenVer(b.Cradius+b.polyY[f]));
+              }
+              context.lineWidth = 1.5;
+              context.strokeStyle = '#df0000';
+              context.closePath();
+              context.stroke();
+              };
+              
               // Upper STBD Plane
               //Axis
               context.beginPath();  context.moveTo(ScreenHor(b.Fradius*Math.cos(b.UXA*Math.PI/180)),ScreenVer(b.Fradius*Math.sin(b.UXA*Math.PI/180)));context.lineTo(ScreenHor((b.XL+b.Fradius)*Math.cos(b.UXA*Math.PI/180)),ScreenVer((b.XL+b.Fradius)*Math.sin(b.UXA*Math.PI/180)));
@@ -664,8 +803,14 @@
               context.closePath();
               if (b.US > 0){
                 context.fillStyle = LightPlaneColor; //TL down - light on top
+                if (US_FAIL.checked){
+                  context.fillStyle = LightFailColor;
+                }
               }else{
                 context.fillStyle = DarkPlaneColor; //TL up - light on bottom
+                if (US_FAIL.checked){
+                  context.fillStyle = DarkFailColor;
+                }
               }
               context.fill();
               context.stroke();
@@ -696,8 +841,15 @@
               context.closePath();
               if (b.LS > 0){
                 context.fillStyle = LightPlaneColor; //TL down - light on top
+                
+                if (LS_FAIL.checked){
+                  context.fillStyle = LightFailColor;
+                }
               }else{
                 context.fillStyle = DarkPlaneColor; //TL up - light on bottom
+                if (LS_FAIL.checked){
+                  context.fillStyle = DarkFailColor;
+                }
               }
               context.fill();
               context.stroke();
@@ -728,8 +880,14 @@
               context.closePath();
               if (b.LP < 0){
                 context.fillStyle = LightPlaneColor; //TL down - light on top
+                if (LP_FAIL.checked){
+                  context.fillStyle = LightFailColor;
+                }
               }else{
                 context.fillStyle = DarkPlaneColor; //TL up - light on bottom
+                if (LP_FAIL.checked){
+                  context.fillStyle = DarkFailColor;
+                }
               }
               context.fill();
               context.stroke();
@@ -760,8 +918,14 @@
               context.closePath();
               if (b.UP < 0){
                 context.fillStyle = LightPlaneColor; //TL down - light on top
+                if (UP_FAIL.checked){
+                  context.fillStyle = LightFailColor;
+                }
               }else{
                 context.fillStyle = DarkPlaneColor; //TL up - light on bottom
+                if (UP_FAIL.checked){
+                  context.fillStyle = DarkFailColor;
+                }
               }
               context.fill();
               context.stroke();
