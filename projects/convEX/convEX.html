@@ -148,6 +148,7 @@
             this.ClickUP = false;
             //
             this.AtLeastOneFail = false;
+            this.FailNum = 0;
             this.InvertERA = false;
             //
             this.DynamicsOn = false;
@@ -266,6 +267,7 @@
 
   // ---------- build vectors ----------
   const FIXED  = math.matrix([[SU_FAIL],[SL_FAIL],[PL_FAIL],[PU_FAIL]]);
+  b.FailNum = math.sum(FIXED);
 
   const ANGLES = math.multiply(
     math.matrix([[SU_ANGLE],[SL_ANGLE],[PL_ANGLE],[PU_ANGLE]]),
@@ -304,25 +306,28 @@
   // ---------- projection ----------
   var UXAmax = XupperSplaySlider.value;
   var LXAmax = XlowerSplaySlider.value;
-              console.log(UXAmax)
-  const { M: MUUdx, N: NUUdx } = Normalise_MN(UXAmax*Math.PI/180, LXAmax*Math.PI/180);
+              
+  const { M: MUUdx, N: NUUdx } = Normalise_MN(UXAmax*Math.PI/180, LXAmax*Math.PI/180, (SU_FAIL||PL_FAIL),math.sum(FIXED)==1);
 
               
   // ---------- Normalise_MN ----------
-  function Normalise_MN(U, L) {
+  function Normalise_MN(U, L, USorLPfail,only1Fail) {
     var xU; var yU;
     var xL; var yL;
     var M;
     var N;
-    if (U>L){
       xU = Math.cos(U), yU = Math.sin(U);
       xL = Math.cos(L), yL = Math.sin(L);
-
-      M = [  yU,  -yL, -yL,  yU];
-      N = [ -xU, -xL,  xL,  xU];
+    if (U>L && only1Fail){
+      if(USorLPfail){
+        M = [  -yU,  yL, yL,  -yU];
+        N = [ xU, xL,  -xL,  -xU];
+        
+      }else{
+        M = [  yU,  -yL, -yL,  yU];
+        N = [ -xU, -xL,  xL,  xU];
+      };
     }else{
-      xU = Math.cos(U), yU = Math.sin(U);
-      xL = Math.cos(L), yL = Math.sin(L);
 
       M = [-yU, -yL,  yL,  yU];
       N = [ xU, -xL, -xL,  xU];
@@ -740,7 +745,12 @@ const maxN = math.max((projN));
               context.strokeStyle = '#019aca';
               context.closePath();
               context.stroke();
+              if (b.FailNum == 4){
+              context.fillStyle = '#ffcccc';
+                
+              }else{
               context.fillStyle = '#ffffff';
+              };
               context.fill();
               
               // Quadrant Splitter
