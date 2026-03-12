@@ -102,42 +102,6 @@ console.clear();
 let currentScheme = "popcorn";
 let currentData = null;   // store latest terrain frame
   
-const minYear = 985;
-const maxYear = 1900;
-
-let years = [985,  1000,  1014,  1050,  1250,  1450,  1492,  1500,  1510,  1520,  1530,  1540,  1550,  1560,  1570,  1580,  1590,  1600,  1610,  1620,  1630,  1640,  1650,  1660,  1670,  1680,  1690,  1700,  1710,  1720,  1730,  1740,  1750,  1760,  1770,  1780,  1790,  1800,  1810,  1820,  1830,  1840,  1850,  1860,  1870,  1880,  1890,  1900];
-
-TLslider.min = 0;
-TLslider.max = 1;
-TLslider.value = 0;
-TLslider.step = 0.0001;
-
-TLslider.oninput = async () => {
-    const t = parseFloat(TLslider.value);     // 0 → 1
-    const year = minYear + t * (maxYear - minYear);
-
-    const nearestIndex = findClosestFrame(year);
-    const nearestYear = Math.round(years[nearestIndex])
-    TLlabel.textContent = nearestYear + " AD";
-    console.log((nearestYear-minYear)/(maxYear-minYear));
-    TLslider.value = (nearestYear-minYear)/(maxYear-minYear);
-
-    //const data = await loadTerrain(nearestIndex+1);
-    //buildMesh(data.verticesArray, data.facesArray, data.colorsArray);
-};
-function findClosestFrame(y){
-    let best = 0;
-    let bestDist = Infinity;
-    for(let i=0;i<years.length;i++){
-        const d = Math.abs(years[i]-y);
-        if(d < bestDist){
-            bestDist = d;
-            best = i;
-        }
-    }
-    return best;
-}
-  
   
 
 let scene, camera, renderer, controls;
@@ -149,7 +113,7 @@ const minY = 100, maxY = 5000, zoomStep = 250;
 const colorSchemes = {
     popcorn: [
         [1,1,1],     // 0 = background
-        [.7,.7,.7],  // 1 = external
+        [.77,.77,.77],  // 1 = external
         [1,.72,0]    // 2 = internal
     ],
     magma: [
@@ -174,10 +138,9 @@ const colorSchemes = {
     ],
     corruption: [
         [1,1,1],      // 0 = background
-        [0.3373 ,  0.5020 ,  0.2118], // 1 = external
+        [0.3373 ,  0.5020 ,  0.1117], // 1 = external
         [.1,.1,.1]      // 2 = internal
     ]
-    
 };
 function buildColors(colorIndex, schemeName){
   const scheme = colorSchemes[schemeName];
@@ -208,7 +171,7 @@ function recolorMesh(){
 
 // ---------------- Terrain cache ----------------
 const terrainCache = {};       // frameNum -> { verticesArray, facesArray, colorsArray }
-const CACHE_SIZE = 10;          // max frames to keep in cache
+const CACHE_SIZE = 5;          // max frames to keep in cache
 
 // ---------------- Load a terrain frame ----------------
 async function loadTerrain(frameNum){
@@ -369,18 +332,53 @@ async function init(){
   });
 });
   // Load initial terrain (frame 1)
-  currentData = await loadTerrain(1);
-buildMesh(currentData.verticesArray, currentData.facesArray, currentData.colorIndex);
+  currentData = await loadTerrain(985);
+  buildMesh(currentData.verticesArray, currentData.facesArray, currentData.colorIndex);
 
   // Slider setup
-  const slider = document.getElementById('slider');
-  slider.disabled = false;
-  slider.value = 1;
-  slider.oninput = async () => {
-    const frameNum = parseInt(slider.value);
+  /*
+  const TLslider = document.getElementById('TLslider');
+  TLslider.disabled = false;
+  TLslider.value = 985;
+  TLslider.oninput = async () => {
+    const frameNum = parseInt(TLslider.value);
     currentData = await loadTerrain(frameNum);
 buildMesh(currentData.verticesArray, currentData.facesArray, currentData.colorIndex);
-  };
+  };*/
+  const minYear = 985;
+const maxYear = 1900;
+
+let years = [985,  1000,  1014,  1050,  1250,  1450,  1492,  1500,  1510,  1520,  1530,  1540,  1550,  1560,  1570,  1580,  1590,  1600,  1610,  1620,  1630,  1640,  1650,  1660,  1670,  1680,  1690,  1700,  1710,  1720,  1730,  1740,  1750,  1760,  1770,  1780,  1790,  1800,  1810,  1820,  1830,  1840,  1850,  1860,  1870,  1880,  1890,  1900];
+
+TLslider.min = 0;
+TLslider.max = 1;
+TLslider.value = 0;
+TLslider.step = 0.0001;
+
+TLslider.oninput = async () => {
+    const t = parseFloat(TLslider.value);     // 0 → 1
+    const year = minYear + t * (maxYear - minYear);
+
+    const nearestIndex = findClosestFrame(year);
+    const nearestYear = Math.round(years[nearestIndex])
+    TLlabel.textContent = nearestYear + " AD";
+    TLslider.value = (nearestYear-minYear)/(maxYear-minYear);
+
+    currentData = await loadTerrain(nearestYear);
+    buildMesh(currentData.verticesArray, currentData.facesArray, currentData.colorIndex);
+};
+function findClosestFrame(y){
+    let best = 0;
+    let bestDist = Infinity;
+    for(let i=0;i<years.length;i++){
+        const d = Math.abs(years[i]-y);
+        if(d < bestDist){
+            bestDist = d;
+            best = i;
+        }
+    }
+    return best;
+}
 
   // Zoom buttons
   document.getElementById('zoomIn').onclick = () => zoomCamera(-zoomStep);
